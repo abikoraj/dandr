@@ -33,3 +33,5 @@ Artisan::command('clear', function () {
 Artisan::command('password', function(){
      User::where('role',1)->orWhere('role',2)->update(['password'=>bcrypt(12345)]);
 });
+
+

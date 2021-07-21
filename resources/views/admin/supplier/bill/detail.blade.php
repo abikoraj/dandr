@@ -35,7 +35,7 @@
     </div>
     <hr>
     <div class="row">
-      <div class="col-md-7 b-1 py-3">
+      <div class="col-md-12 b-1 py-3">
         <h5>
           Bill Items
         </h5>
@@ -43,6 +43,9 @@
           <tr>
             <th>
               Particular
+            </th>
+            <th>
+              Expiry Date
             </th>
             <th>
               Rate
@@ -53,6 +56,7 @@
             <th>
               Total
             </th>
+          
           </tr>
           @php
               $tot=0;
@@ -63,10 +67,17 @@
                   {{$item->title}}
                 </td>
                 <td>
-                  {{$item->qty}}
+                  @if ($item->has_expairy)
+                    {{$item->expiry_date}}
+                  @else
+                    --
+                  @endif
                 </td>
                 <td>
                   {{$item->rate}}
+                </td>
+                <td>
+                  {{$item->qty}}
                 </td>
                 <td>
                   {{$item->qty*$item->rate}}
@@ -74,39 +85,40 @@
                       $tot+=$item->qty*$item->rate;
                   @endphp
                 </td>
+               
               </tr>
           @endforeach
           <tr>
-            <td class="text-right font-weight-bold" colspan="3">Total</td>
+            <td class="text-right font-weight-bold" colspan="4">Total</td>
             <td>{{$tot}}</td>
           </tr>
           <tr>
-            <td class="text-right font-weight-bold" colspan="3">Discount</td>
+            <td class="text-right font-weight-bold" colspan="4">Discount</td>
             <td>{{$bill->discount}}</td>
           </tr>
           <tr>
-            <td class="text-right font-weight-bold" colspan="3">Taxable</td>
+            <td class="text-right font-weight-bold" colspan="4">Taxable</td>
             <td>{{$bill->taxable}}</td>
           </tr>
           <tr>
-            <td class="text-right font-weight-bold" colspan="3">Tax</td>
+            <td class="text-right font-weight-bold" colspan="4">Tax</td>
             <td>{{$bill->tax}}</td>
           </tr>
           <tr>
-            <td class="text-right font-weight-bold" colspan="3">Grand Total</td>
+            <td class="text-right font-weight-bold" colspan="4">Grand Total</td>
             <td>{{$bill->total}}</td>
           </tr>
           <tr>
-            <td class="text-right font-weight-bold" colspan="3">Paid</td>
+            <td class="text-right font-weight-bold" colspan="4">Paid</td>
             <td>{{$bill->paid}}</td>
           </tr>
           <tr>
-            <td class="text-right font-weight-bold" colspan="3">Due</td>
+            <td class="text-right font-weight-bold" colspan="4">Due</td>
             <td>{{$bill->due}}</td>
           </tr>
         </table>
       </div>
-      <div class="col-md-5 b-1 py-3">
+      <div class="col-md-12 b-1 py-3">
         <h5>
           Bill Expenses
         </h5>

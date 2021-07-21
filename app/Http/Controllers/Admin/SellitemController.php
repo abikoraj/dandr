@@ -67,6 +67,12 @@ class SellitemController extends Controller
             if ($item->trackstock == 1){
                 $item->stock = $item->stock - $request->qty;
                 $item->save();
+                if(env('multi_stock',false)){
+                    $stock=$item->stock($request->center_id);
+                    $stock->amount=$stock->amount-$request->qty;
+                    $stock->save();
+                }
+
             }
             
             $manager=new LedgerManage($user->id);

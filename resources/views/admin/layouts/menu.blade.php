@@ -53,6 +53,7 @@
                     <li><a href="{{ route('admin.distributer.payemnt') }}" class="waves-effect waves-block">payment</a></li>
                     <li><a href="{{ route('admin.distributer.detail.opening') }}" class="waves-effect waves-block">Account Opening</a></li>
                     <li><a href="{{ route('admin.distributer.request') }}" class="waves-effect waves-block">Distributor Request</a></li>
+                    <li><a href="{{ route('admin.distributer.credit.list') }}" class="waves-effect waves-block"> Credit List</a></li>
                 </ul>
             </li>
             <li><a href="javascript:void(0);" class="waves-effect waves-block menu-toggle"><i class="zmdi zmdi-shopping-cart"></i><span>Manage Expense</span></a>
@@ -75,6 +76,13 @@
                     <li><a href="{{ route('admin.employee.account.index') }}" class="waves-effect waves-block">Account Opening</a></li>
                     <li><a href="{{ route('admin.employee.advance') }}" class="waves-effect waves-block">Advance</a></li>
                     <li><a href="{{ route('admin.salary.pay') }}" class="waves-effect waves-block">Salary Pay</a></li>
+                </ul>
+            </li>
+
+            <li><a href="javascript:void(0);" class="waves-effect waves-block menu-toggle"><i class="zmdi zmdi-shopping-cart"></i><span>Customers</span></a>
+                <ul class="ml-menu">
+                    <li><a href="{{ route('admin.customer.home') }}" class="waves-effect waves-block">List </a></li>
+                    <li><a href="{{ route('admin.customer.payment.index') }}" class="waves-effect waves-block">Payment</a></li>
                 </ul>
             </li>
 

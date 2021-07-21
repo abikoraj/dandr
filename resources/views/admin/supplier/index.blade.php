@@ -121,6 +121,7 @@
 @endsection
 @section('js')
 <script>
+    lock=false;
     function initEdit(ele) {
         var supplier = JSON.parse(ele.dataset.supplier);
         $('#ename').val(supplier.name);
@@ -131,7 +132,10 @@
     }
 
     function saveData(e) {
+
         e.preventDefault();
+        if(!lock){
+            lock=true;
         var bodyFormData = new FormData(document.getElementById('form_validation'));
         axios({
                 method: 'post',
@@ -147,16 +151,23 @@
                 $('#largeModal').modal('toggle');
                 $('#form_validation').trigger("reset")
                 $('#supplierData').prepend(response.data);
+                lock=false;
+
             })
             .catch(function(response) {
                 //handle error
                 console.log(response);
+                lock=false;
+
             });
+        }
     }
 
     // edit data
     function editData(e) {
         e.preventDefault();
+        if(!lock){
+            lock=true;
         var rowid = $('#eid').val();
         var bodyFormData = new FormData(document.getElementById('editform'));
         axios({
@@ -172,11 +183,16 @@
                 showNotification('bg-success', 'Updated successfully!');
                 $('#editModal').modal('toggle');
                 $('#supplier-' + rowid).replaceWith(response.data);
+                lock=false;
+
             })
             .catch(function(response) {
                 //handle error
                 console.log(response);
+                lock=false;
+
             });
+        }
     }
 
     axios({

@@ -35,9 +35,12 @@
 @section('js')
 <script>
     initTableSearch('sid', 'itemData', ['name']);
+    lock=false;
     function saveData(e) {
         e.preventDefault();
-        var bodyFormData = new FormData(document.getElementById('form_validation'));
+        if(!lock){
+            lock=true;
+        var bodyFormData = new FormData(document.getElementById('add-bill'));
         axios({
                 method: 'post',
                 url: '{{ route("admin.item.save")}}',
@@ -52,12 +55,16 @@
                 $('#largeModal').modal('toggle');
                 $('#form_validation').trigger("reset")
                 $('#itemData').prepend(response.data);
+                lock=false;
             })
             .catch(function(response) {
                 showNotification('bg-danger','Item Number already exist!');
                 //handle error
                 console.log(response);
+                lock=false;
+
             });
+        }
     }
 
     function initEdit(id) {
@@ -65,22 +72,30 @@
     }
 
     function editData(e) {
+
         e.preventDefault();
+        if(!lock){
+            lock=true;
         var trid = $('#eid').val();
         var dataBody = new FormData(document.getElementById('editform'));
         axios({
                 method: 'post',
-                url: '/admin/item-update',
+                url: '{{route('admin.item.update')}}',
                 data: dataBody,
             })
             .then(function(response) {
                 showNotification('bg-success', 'Item updated successfully!');
                 win.hide();
                 $('#item-' + trid).replaceWith(response.data);
+                lock=false;
+
             })
             .catch(function(response) {
-                console.log(response);
-            })
+                console.log(response);    
+                lock=false;
+
+            });
+        }
     }
 
     // delete item

@@ -205,10 +205,6 @@ class EmployeeController extends Controller
         return response()->json(['status' => 'success']);
     }
 
-
-
-
-
     // employee salary pay
 
     public function salaryIndex()

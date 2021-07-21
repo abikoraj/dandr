@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\LedgerManage;
 use App\Models\BillExpenses;
+use App\Models\Item;
 use App\Models\Ledger;
 use App\Models\Supplierbill;
 use App\Models\Supplierbillitem;
@@ -81,16 +82,30 @@ class SupplierController extends Controller
             $bill->user_id = $request->user_id;
             $bill->transport_charge = 0;
             $bill->save();
-            $traker = explode(',', $request->counter);
+            $traker =  $request->counter;
             $total=0;
             foreach ($traker as $key => $value) {
                 $billItem = new Supplierbillitem();
                 $billItem->title = $request->input('ptr_' . $value);
                 $billItem->rate = $request->input('rate_' . $value);
                 $billItem->qty = $request->input('qty_' . $value);
+                $billItem->remaning = $request->input('qty_' . $value);
                 $billItem->item_id = $request->input('item_id_' . $value);
+                if($request->filled('has_exp_'.$value)){
+                    $billItem->expiry_date = $request->input('exp_date_' . $value);
+                    $billItem->has_expairy=1;
+                }else{
+                    $billItem->has_expairy=0;
+                }
+
+                
                 $billItem->supplierbill_id = $bill->id;
                 $billItem->save();
+                //XXX Add Stock
+                $item=Item::where('id',$billItem->item_id)->first();
+                $item->stock+=$billItem->qty;
+                $item->save();
+
                 $total+=$billItem->rate*$billItem->qty;
             }
             $bill->discount=$request->idiscount;

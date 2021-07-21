@@ -7,7 +7,7 @@
         {{-- <td>{{ $user->distributer()->rate }}</td>
         <td>{{ $user->distributer()->amount }}</td> --}}
         <td>
-            <button type="button" data-distributer="{{$user->toJson()}}" data-rate="{{ $user->distributer()->rate }}" data-amount="{{ $user->distributer()->amount }}" class="btn btn-primary btn-sm" onclick="initEdit(this);">Edit</button>
+            <button type="button" data-distributer="{{$user->toJson()}}" data-days="{{ $user->distributer()->credit_days }}" data-limit="{{ $user->distributer()->credit_limit }}"  class="btn btn-primary btn-sm" onclick="initEdit(this);">Edit</button>
             |
             <a href="{{ route('admin.distributer.detail',$user->id) }}" class="btn btn-primary btn-sm">View</a>
             |

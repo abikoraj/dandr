@@ -84,15 +84,21 @@
                                             </div>
                                         </div>
 
-                                        <div class="col-md-3">
+                                        <div class="col-md-2">
                                             <div class="from-group">
                                                 <label for="rate"> Total </label>
                                                 <input type="number" class="form-control" id="total" value="0"
-                                                     step="0.001">
+                                                     step="0.001" readonly>
                                             </div>
                                         </div>
-
-                                        <div class="col-md-2" style="margin-top: 26px;">
+                                        
+                                        <div class="col-md-2">
+                                            <div class="from-group">
+                                                <label for="has_expairy"><input type="checkbox" id="has_expairy"> Expairy </label>
+                                                <input type="date" class="form-control" id="exp_date" disabled>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-2" >
                                             <div class="from-group">
                                                 <span class="btn btn-primary btn-block" id="additem"
                                                     onclick="addItems();">Add</span>
@@ -102,7 +108,6 @@
                                 </div>
                                 <div class="col-md-6 b-1">
                                     <div class="row">
-                                        <input type="hidden" name="counter" id="counter" val="" />
                                         <div class="col-md-12 mt-4 mb-3">
                                             <table class="table table-bordered">
                                                 <thead>
@@ -111,6 +116,7 @@
                                                         <th>Rate</th>
                                                         <th>Qty</th>
                                                         <Th>Total</Th>
+                                                        <th>exp_date</th>
                                                         <th>Action</th>
                                                     </tr>
                                                 </thead>
@@ -204,6 +210,7 @@
                         $('#igrandtotal').val(0);
                         $('#ipaid').val(0);
                         $('#idue').val(0);
+                        $('#supplier').val('').change();;
                     })
                     .catch(function(response) {
                         //handle error
@@ -231,20 +238,28 @@
             // console.log(item);
             html = "<tr id='row-" + i + "'>";
             html += "<td>" + title + "<input type='hidden' name='ptr_" + i + "' value='" + title +
-                "' /> <input type='hidden' name='item_id_" + i + "' value='" + id + "' /></td>";
+                "' /> <input type='hidden' name='item_id_" + i + "' value='" + id + "' /><input type='hidden' name='counter[]' value='" + i + "' /></td>";
             html += "<td>" + $('#rate').val() + "<input type='hidden' name='rate_" + i + "' value='" + $('#rate').val() +
                 "'/></td>";
             html += "<td>" + $('#qty').val() + "<input type='hidden' name='qty_" + i + "' value='" + $('#qty').val() +
                 "'/></td>";
             html += "<td>" + $('#total').val() + "<input type='hidden' name='total_" + i + "' id='total_" + i +
                 "' value='" + $('#total').val() + "'/></td>";
+            if(document.getElementById('has_expairy').checked){
+                html += "<td>" + $('#exp_date').val() + "<input type='hidden' name='has_exp_" + i + "' id='has_exp_" + i +
+                    "' value='1'/><input type='hidden' name='exp_date_" + i + "' id='exp_date_" + i +
+                    "' value='"+$('#exp_date').val() +"'/></td>";
+            }else{
+
+            }
             html += "<td> <span class='btn btn-danger btn-sm' onclick='RemoveItem(" + i + ");'>Remove</span></td>";
             html += "</tr>";
             $("#item_table").append(html);
             $('#ptr').val('').change();
             $('#rate').val('0');
             $('#qty').val('1');
-            $('#total').val('0');
+            $('#total').val('0')
+          
             itemKeys.push(i);
             i += 1;
             suffle();
@@ -317,6 +332,14 @@
         $('#total').bind('keydown', function(e) {
             if(e.which==13){
                 addItems();
+            }
+        });
+
+        $('#has_expairy').change(function(){
+            if(this.checked){
+                $('#exp_date').removeAttr('disabled');
+            }else{
+                $('#exp_date').attr('disabled', 'disabled');
             }
         });
     </script>

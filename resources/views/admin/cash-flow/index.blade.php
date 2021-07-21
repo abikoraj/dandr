@@ -111,7 +111,7 @@
             'date2': $('#date2').val(),
             'type':$('#type').val(),
         };
-        axios.post("{{route('cash.flow.data')}}",d)
+        axios.post("{{route('admin.cash.flow.data')}}",d)
         .then(function(response){
             $('#allData').html(response.data);
 

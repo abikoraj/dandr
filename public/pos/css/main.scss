@@ -1,0 +1,246 @@
+@import '_sm';
+::placeholder { /* Chrome, Firefox, Opera, Safari 10.1+ */
+    color: #f1f1f1;
+    opacity: 1; /* Firefox */
+  }
+  
+  :-ms-input-placeholder { /* Internet Explorer 10-11 */
+    color: #f1f1f1;
+  }
+  
+  ::-ms-input-placeholder { /* Microsoft Edge */
+    color: #f1f1f1;
+  }
+  /* width */
+::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+    padding: 0px 2px;;
+  }
+  
+  /* Track */
+  ::-webkit-scrollbar-track {
+    background: #cfbcbc;
+  }
+  
+  /* Handle */
+  ::-webkit-scrollbar-thumb {
+    background: #242424;
+  }
+  
+  /* Handle on hover */
+  ::-webkit-scrollbar-thumb:hover {
+    background: #555;
+  }
+#main{
+    background: #01567B;
+    height: 100vh;
+    width: 100%;
+    #header{
+        height: 40px;
+        background:#0D6A9C;
+        display: flex;
+        align-items: center;
+        padding:0px 50px;
+        justify-content: space-between;
+        .link{
+            background: rgba(255,255,255,0.2);
+            padding:5px 10px;
+            margin-left: 5px;
+            color:white;
+            font-weight:600;
+            font-size: 14px;
+            &:hover{
+                text-decoration: underline;
+                cursor: pointer;
+            }
+           
+        }
+    }
+    #panel{
+        height: calc(100% - 40px);
+        padding:15px 0px;
+        background: #bb10102a;
+        #panel1{
+            height:100%;
+            display:flex;
+            flex-direction: column;
+            #barcode-container{
+                background: rgba(255,255,255,0.4);
+                padding:10px ;
+                border-radius: 5px;
+                input{
+                    width:calc(100% - 70px);
+                    background: transparent;
+                    border:transparent;
+                    outline: transparent;
+                    font-size:18-x;
+                    font-weight: 600;
+                    color:white;
+                }
+                img{
+                    width:30px;
+                    height:30px;
+                    cursor: pointer;
+                }
+            }
+            #particulars{
+                flex-grow:1;
+                max-height:60vh;
+                border-radius:5px;
+                overflow: hidden;
+                #particular-container{
+                    height:100%;
+                    box-shadow: 0px 0px 3px 0px rgba(255,255,255,0.4);
+                    background: rgba(255,255,255,0.2);
+
+                    overflow: auto;
+                    table{
+                        width:100%;
+                        .table-header{
+                            th{
+                                background: #7993A6;
+                                position: sticky; top: 0; z-index: 1; 
+                            }
+                        }
+                        .bill-item{
+                            td{
+                                border-bottom:1px rgb(134, 134, 134) solid;
+                                font-weight: 600;
+                                color:#242424;
+                                .qty{
+                                    display: flex !important;
+                                }
+                                .btn-qty{
+                                    height:25px;
+                                    width:25px;
+                                    display: flex;
+                                    justify-content: center;
+                                    align-items: center;
+                                    background: white;
+                                    color:black;
+                                    border-radius:50%;
+                                    margin:0px 5px;
+                                }
+                                .qty-value{
+                                    height:25px;
+                                    width:60px;
+                                    text-align: center;
+                                    display: flex;
+                                    justify-content: center;
+                                    align-items: center;
+                                }
+                            }
+                        }
+                    }
+                    td{
+                        padding:5px;
+                    }
+                    th{
+                        padding:5px 5px;
+                    }
+                }
+            }
+            #calc{
+                .input-group{
+                    
+                    display:flex;flex-direction: column;height: 100%;
+                    background: rgba(255,255,255,0.2);
+                    border:1px solid #204B6A;
+                    table{
+                        width:100%;
+                        tr{
+                            border-bottom:solid 1px rgb(143, 143, 143);
+                            td{
+                                padding:5px;
+                            }
+                        }
+                        label{
+                            width:100%;
+                            display: inline-block;
+                            text-align: right;
+                            font-weight: 600;
+                        }
+                        input{
+                            width:100%;
+                            border:none;
+                            background: rgba(255,255,255,0.4);
+                        }
+                    }
+                    .btn-bill{
+                        background: rgba(255,255,255,0.2);
+                        color:white;
+                        border:1px solid #204B6A;
+                        padding:5px;
+                    }
+                }
+                #total-container{
+                    padding-bottom:100%;
+                    position: relative;
+                    border:1px solid #204B6A;
+
+                    #total{
+                        background: rgba(255,255,255,0.2);
+                        position:absolute;top:0px;left:0px;right:0px;bottom:0px;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        font-weight:600;
+                        color:white;
+                        #total-label{
+                            font-weight: 700;
+                            font-size: 18px;
+                        }
+                        #input-grandtotal{
+                            font-weight: 600;
+                            font-size: 18px;
+                            width: 100%;
+                            text-align: center;
+                            background: transparent;
+                            outline: transparent;
+                            border:none;
+                        }
+
+                    }
+                }
+            }
+        }
+
+        .item-panel{
+            background: rgba(255,255,255,0.2);
+            border-radius: 5px;
+        }
+    }
+}
+
+.working{
+    z-index: 99999;
+    position: fixed;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    top:0;
+    left:0;
+    right:0;
+    bottom:0;
+    background: rgba(0,0,0,0.4);
+    flex-direction: column;
+    padding:0px 250px;
+    display: none;
+    &.active{
+        display:flex;
+    }
+    .working-child{
+        background: white;
+        width:100%;
+        padding:50px 100px;
+        text-align: center;
+        .working-title{
+            font-size: 25px;
+            font-weight:700;
+        }
+        img{
+            max-width:100px;
+        }
+    }
+}

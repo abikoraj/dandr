@@ -59,6 +59,9 @@ class LedgerManage
     * "128" = "Previous balance of supplier"
     * "128" = "Previous balance of supplier"
 
+    **customer section
+    * "130" = "Sold to customer"
+    * "131" = "customer Payment"
     */
     public function addLedger($particular, $type, $amount, $date, $identifier, $foreign_id = null)
     {

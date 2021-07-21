@@ -98,7 +98,7 @@ class ItemController extends Controller
     public function centerStock($id,Request $request){
         if(env('multi_stock',false)){
 
-            $totalStock=0;
+            // $totalStock=0;
             $item = Item::find($id);
             if($request->getMethod()=="POST"){
                 foreach ($request->center_ids as $center_id) {
@@ -113,10 +113,10 @@ class ItemController extends Controller
                     $stock->amount=$amount;
                     $stock->rate=$rate;
                     $stock->save();
-                    $totalStock+=$amount;
+                    // $totalStock+=$amount;
                 }
-                $item->stock=$totalStock;
-                $item->save();
+                // $item->stock=$totalStock;
+                // $item->save();
                 return redirect()->back()->with('msg','Stock Updated Sucessfully');
             }else{
                 $centers=Center::select('id','name')->get();

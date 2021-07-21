@@ -44,6 +44,10 @@ class User extends Authenticatable
     ];
 
 
+    /**
+     * role=11;FloorManager
+     * role=12;Pos User
+     */
     public function getRole(){
         if($this->role == 0){
             return 'admin';
@@ -53,6 +57,8 @@ class User extends Authenticatable
             return "distributer";
         }elseif($this->role == 3){
             return "supplier";
+        }elseif($this->role == 5){
+            return "customer";
         }else{
             return "employee";
         }
@@ -74,8 +80,18 @@ class User extends Authenticatable
         return Farmer::where('user_id',$this->id)->first();
     }
 
+    public function customer(){
+        return Customer::where('user_id',$this->id)->first();
+    }
+
 
     public function ledgers(){
         return $this->hasMany(Ledger::class);
     }
+
+    public function customerPayments(){
+        return $this->hasMany(CustomerPayment::class);
+    }
+
+
 }

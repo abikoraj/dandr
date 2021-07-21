@@ -9,6 +9,9 @@ class Distributer extends Model
 {
     use HasFactory;
 
+    protected $casts = [
+        'lastsms' => 'datetime',
+    ];
     public function user(){
         return $this->belongsTo(User::class);
     }

@@ -35,6 +35,7 @@ Route::match(['get', 'post'], 'logout', 'AuthController@logout')->name('logout')
 
 Route::name('admin.')->group(function () {
 
+
     Route::group(['middleware' => 'role:admin', 'prefix' => 'admin'], function () {
         Route::get('dashboard', 'Admin\DashboardController@index')->name('dashboard');
         Route::prefix('collection-centers')->name('center.')->group(function () {
@@ -133,6 +134,8 @@ Route::name('admin.')->group(function () {
             Route::get('request', 'Admin\DistributerController@distributerRequest')->name('request');
             Route::get('change/status/{id}', 'Admin\DistributerController@distributerRequestChangeStatus')->name('request.change.status');
 
+            Route::match(['GET','POST'],'credit-list', 'Admin\DistributerController@creditList')->name('credit.list');
+
 
 
             // XXX distributer sell
@@ -155,7 +158,7 @@ Route::name('admin.')->group(function () {
             Route::post('add', 'Admin\ItemController@save')->name('save');
             Route::match(['GET','POST'],'item-center-stock/{id}', 'Admin\ItemController@centerStock')->name('center-stock');
             Route::get('item-delete/{id}', 'Admin\ItemController@delete')->name('delete')->middleware('authority');
-            Route::post('item-update', 'Admin\ItemController@update')->middleware('authority');
+            Route::post('item-update', 'Admin\ItemController@update')->name('update')->middleware('authority');
         });
 
         Route::prefix('sell-items')->name('sell.item.')->group(function () {
@@ -242,6 +245,9 @@ Route::name('admin.')->group(function () {
         });
 
 
+        Route::prefix('sms')->name('sms.')->group(function(){
+            Route::post('distributer-credit','SMSController@distributerCredit')->name('distributer.credit');
+        });
 
 
 
@@ -312,6 +318,24 @@ Route::name('admin.')->group(function () {
         });
 
 
+        //XXX Customer
+        Route::group(['prefix' => 'customer'], function () {
+            Route::name('customer.')->group(function () {
+                Route::get('', 'Admin\CustomerController@index')->name('home');
+                Route::post('add', 'Admin\CustomerController@add')->name('add');
+                Route::post('update', 'Admin\CustomerController@update')->name('update')->middleware('authority');
+                Route::post('del', 'Admin\CustomerController@del')->name('del')->middleware('authority');
+
+                //detail
+                Route::match(['get', 'post'], 'detail/{id}','Admin\CustomerController@detail')->name('detail');
+
+                Route::name('payment.')->prefix('payment')->group(function(){
+                    Route::match(['get', 'post'],  '','Admin\CustomerController@payment')->name('index');
+                    Route::match(['get', 'post'],  'add','Admin\CustomerController@addPayment')->name('add');
+                });
+            });
+        });
+
         //XXX report routes
 
         Route::group(['prefix' => 'report'], function () {
@@ -334,10 +358,23 @@ Route::name('admin.')->group(function () {
             });
         });
 
+        ///XXX billing
         Route::group(['prefix' => 'billing'], function () {
             Route::name('billing.')->group(function () {
                 Route::get('', 'Billing\BillingController@index')->name('home');
+                Route::get('detail/{id}', 'Billing\BillingController@detail')->name('detail');
                 Route::post('save', 'Billing\BillingController@save')->name('save');
+            });
+        });
+
+        //XXX Counter
+        Route::group(['prefix' => 'counter'], function () {
+            Route::name('counter.')->group(function () {
+                Route::get('', 'Admin\CounterController@index')->name('home');
+                Route::post('update/{id}', 'Admin\CounterController@update')->name('update');
+                Route::post('add', 'Admin\CounterController@add')->name('add');
+                Route::post('delete/{id}', 'Admin\CounterController@delete')->name('delete');
+                Route::match(['get', 'post'], 'status/{id}','Admin\CounterController@status')->name('status');
             });
         });
 
@@ -366,8 +403,21 @@ Route::name('admin.')->group(function () {
             });
         });
     });
+
 });
 
+
+Route::name('pos.')->prefix('pos')->group(function(){
+    Route::middleware(['pos'])->group(function () {
+        Route::match(['GET', 'POST'], 'bill', 'POS\POSController@index')->name('index');
+        Route::match(['GET', 'POST'], 'counter', 'POS\POSController@counter')->name('counter');
+        Route::get('counter/status', 'POS\POSController@counterStatus')->name('counterStatus');
+        Route::get('items', 'POS\POSController@items')->name('items');
+        Route::get('customers', 'POS\POSController@customers')->name('customers');
+        Route::post('customers-add', 'POS\POSController@customersAdd')->name('customers-add');
+        Route::post('customer-search', 'POS\POSController@searchCustomer')->name('customers-search');
+    });
+});
 
 
 Route::group(['middleware' => 'role:farmer', 'prefix' => 'farmer'], function () {
