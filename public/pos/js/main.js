@@ -16,6 +16,17 @@ $("#barcode").focus(function (e) {
     }
 });
 
+$('#input_customer_search').keydown(function(e){
+    if(e.which==13){
+        billpanel.customerSearch();
+    }
+});
+
+function customerSearchInit(){
+    $('#customer-input-panel').addClass('d-none');
+    $('#cutomer-search-panel').removeClass('d-none');
+
+}
 function addItem(barcode) {
     console.log(barcode);
 }
@@ -23,6 +34,8 @@ function addItem(barcode) {
 const producturl = "";
 
 var billpanel = {
+    customer:null,
+    customerSelected:false,
     products: [],
     index: 0,
     billitems: [],
@@ -293,8 +306,38 @@ var billpanel = {
         axios.post(customerSearchURL,data)
         .then((res)=>{
             console.log(res);
+            html="";
+            if(res.data.length>0){
+
+                res.data.forEach(customer => {
+                    html="<div ";
+                    debugger;
+                    for (const key in customer) {
+                        html+="data-"+key+"='"+customer[key]+"' ";
+                       
+                    }
+                    debugger;
+                    html+=" class='customer-single' onclick='billpanel.selectCustomer(this)'><b class='name'>"+customer.name+"</b><br>"+
+                    "<b class='phone'>"+customer.phone+"</b><br>"+
+                    "</div>";
+                });
+            }else{
+                html="<div class='customer-single'>No Customer Found</div>"
+            }
+            console.log(html);
+            $('#customer_list').html(html);
         })
         .catch((err)=>{});
+    },
+    selectCustomer:function(ele){
+        this.customer=ele.dataset;
+        console.log(this.customer);
+        this.customerSelected=true;
+        $('#customer-input-panel').removeClass('d-none');
+        $('#cutomer-search-panel').addClass('d-none');
+        $('#customer-name').val(this.customer.name);
+        $('#customer-phone').val(this.customer.phone);
+        $('#customer-address').val(this.customer.address);
     }
 };
 

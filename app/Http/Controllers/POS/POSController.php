@@ -114,7 +114,7 @@ class POSController extends Controller
     }
 
     public function searchCustomer(Request $request){
-        $items=Customer::join('users','users.id','=','customers.user_id')->select('customers.id','users.name','customers.user_id','users.phone');
+        $items=Customer::join('users','users.id','=','customers.user_id')->select('customers.id','users.name','users.address','customers.user_id','users.phone');
         if($request->filled('name')){
             $items=$items->where('users.name','like',$request->name."%");
         }

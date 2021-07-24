@@ -211,6 +211,22 @@
             border-radius: 5px;
         }
     }
+
+    #customer_list{
+        .customer-single{
+            box-shadow: 0px 0px 10px 0px rgba(255,255,255,0.4);
+            border-radius: 5px;
+            padding: 5px 10px;
+            color: white;
+            background: rgba(255,255,2555,0.1);
+            cursor: pointer;
+            &:hover{
+                box-shadow: 0px 0px 10px 0px rgba(255,255,255,0.5);
+                background: rgba(255,255,2555,0.2);
+            
+            }
+        }
+    }
 }
 
 .working{
