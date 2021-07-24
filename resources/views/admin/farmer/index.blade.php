@@ -152,7 +152,7 @@
         if (confirm('Are you sure?')) {
             axios({
                     method: 'get',
-                    url: '/admin/farmer/delete/' + dataid,
+                    url: '/admin/farmers/delete/' + dataid,
                 })
                 .then(function(response) {
                     // console.log(response.data);

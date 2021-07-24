@@ -51,12 +51,12 @@
                                 </div>
                             </div>
 
-                            <div class="col-lg-6">
+                            {{-- <div class="col-lg-6">
                                 <label for="name">Advance Amount </label>
                                 <div class="form-group">
                                     <input type="number" id="advance" name="advance" step="0.001" value="0" class="form-control" placeholder="Enter advance">
                                 </div>
-                            </div>
+                            </div> --}}
                             <div class="col-lg-6">
 
                                 <div class="form-group">
