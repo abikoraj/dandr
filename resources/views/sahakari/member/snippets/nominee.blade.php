@@ -27,9 +27,9 @@
             <div class="col-md-3">
                 <label for="n_gender">Gender</label>
                 <select id="n_gender" id="n_gender" class="form-control select2 ms next" data-next="n_relation">
-                    <option value="male">Male</option>
-                    <option value="female">Female</option>
-                    <option value="others">Others</option>
+                    <option value="0">Male</option>
+                    <option value="1">Female</option>
+                    <option value="2">Others</option>
                 </select>
             </div>
             <div class="col-md-3">

@@ -16,6 +16,7 @@
 
     <link rel="stylesheet" href="{{ asset('backend/css/style.min.css') }}">
     <link rel="stylesheet" href="{{ asset('backend/css/local.css') }}">
+    <link rel="stylesheet" href="{{ asset('backend/css/noti.css') }}">
     <link rel="stylesheet" href="{{ asset('calender/nepali.datepicker.v3.2.min.css') }}" />
     @include('admin.layouts.css')
     @yield('css')
@@ -106,6 +107,7 @@
     <script src="{{ asset('backend/js/pages/forms/form-validation.js') }}"></script>
     <script src="{{ asset('backend/js/pages/ui/notifications.js') }}"></script> <!-- Custom Js -->
     <script src="{{ asset('backend/js/jquery.mask.min.js') }}"></script> <!-- jquery mask Js -->
+    <script src="{{ asset('backend/js/noti.js') }}"></script> <!-- jquery toastr Js -->
 
 
 
@@ -133,7 +135,10 @@
     <script src="{{ asset('backend/js/input.js') }}"></script>
     <script src="{{ asset('backend/js/jquery.hotkeys.js') }}"></script>
     @include('admin.layouts.ledgerjs')
-    
+    <script>
+        toastr.options.progressBar = true;
+        // toastr.options.timeOut = 30;
+    </script>
     @yield('js')
     @yield('js1')
     @yield('js2')

@@ -78,6 +78,7 @@
 <script src="{{ asset('backend/plugins/dropify/js/dropify.min.js') }}"></script>
 <script src="{{ asset('backend/js/dropify-multiple.js') }}"></script>
 <script>
+
     function resetForm() {
         document.getElementById('member-add').reset();
         $('.toogle').each(function() {
@@ -119,10 +120,17 @@
             .then((res) => {
                 console.log(res);
                 hideProgress();
+                toastr.success(res.data, '{{env('APP_NAME')}}');
+
             })
             .catch((err) => {
                 console.log(err);
                 hideProgress();
+                for (let index = 0; index < err.response.data.length; index++) {
+                    const element = err.response.data[index];
+                    toastr.error(element, '{{env('APP_NAME')}}');
+                    
+                }
 
             });
     }

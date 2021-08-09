@@ -7,6 +7,8 @@ use App\Models\Center;
 use App\Models\Distributer;
 use App\Models\Farmer;
 use App\Models\Member;
+use App\Models\MemberDocument;
+use App\Models\MemberDocumentImage;
 use App\Models\User;
 use App\NepaliDate;
 use Illuminate\Http\Request;
@@ -21,6 +23,8 @@ class MemberController extends Controller
     public function add(Request $request)
     {
         if ($request->getMethod() == "POST") {
+            // dd();
+            // dd($request->all());
             $messages = [];
             if ($request->filled('is_farmer')) {
 
@@ -91,6 +95,12 @@ class MemberController extends Controller
                 }
             }
 
+            if($request->filled('member_no')){
+                if(Member::where('member_no',$request->member_no)->count()>0){
+                    array_push($messages, "Member with Member No:- ".$request->member_no." Already Exists.");
+
+                }
+            }
             if (count($messages) > 0) {
                 return response()->json($messages, 500);
             }
@@ -103,20 +113,22 @@ class MemberController extends Controller
             $user->save();
 
             $member=new Member();
+            $member->user_id=$user->id;
             //XXX General Info
+
             $member->name=$request->name;
             $member->name_nepali=$request->name_nepali;
             $member->phone=$request->phone??"NA";
             $member->type=$request->type;
             $member->acc_type=$request->acc_type;
-            $member->is_farmer=$request->is_farmer;
-            $member->is_distributer=$request->is_distributer;
-            $member->is_supplier=$request->is_supplier;
-            $member->is_customer=$request->is_customer;
+            $member->is_farmer=$request->is_farmer??0;
+            $member->is_distributer=$request->is_distributer??0;
+            $member->is_supplier=$request->is_supplier??0;
+            $member->is_customer=$request->is_customer??0;
             $member->member_no=$request->member_no;
             $member->ref_acc=$request->ref_acc;
-            $member->join_date=$request->join_date;
-            $member->dob=$request->dob;
+            $member->join_date=toNepaliDate($request->join_date);
+            $member->dob=toNepaliDate($request->dob);
             $member->gender=$request->gender;
             $member->pan_no=$request->pan_no;
             $member->reg_no=$request->reg_no;
@@ -143,7 +155,7 @@ class MemberController extends Controller
             $member->name=$request->name;
             $member->name_nepali=$request->name_nepali;
             $member->n_relation=$request->n_relation;
-            $member->n_dob=$request->n_dob;
+            $member->n_dob=toNepaliDate($request->n_dob);
             $member->n_gender=$request->n_gender;
             $member->father_name=$request->father_name;
             $member->mother_name=$request->mother_name;
@@ -160,12 +172,32 @@ class MemberController extends Controller
             //nomiee document
             $member->n_document_name=$request->n_document_name;
             $member->n_document_no=$request->n_document_no;
-            $member->n_issued_date=$request->n_issued_date;
+            $member->n_issued_date=toNepaliDate($request->n_issued_date);
             $member->n_issued_from=$request->n_issued_from;
             if($request->hasFile('image')){
                 $member->image=$request->image->store('members/'.userDir($user->id)) ;
             }
             $member->save();
+
+            //XXX adding member Documents
+            if($request->filled('d')){
+                foreach ($request->d as $key => $d) {
+                    $md=new MemberDocument();
+                    $md->title=$request->input('dt-'.$d);
+                    $md->document_name=$request->input('dt-'.$d);
+                    $md->document_no=$request->input('dn-'.$d);
+                    $md->issued_from=$request->input('dif-'.$d);
+                    $md->issued_date=toNepaliDate($request->input('di-'.$d));
+                    $md->member_id=$member->id;
+                    $md->save();
+                    foreach ($request->file('doc-image-0') as $key => $image) {
+                        $im=new MemberDocumentImage();
+                        $im->path=$image->store('members/'.userDir($user->id)."/docs");
+                        $im->member_document_id=$md->id;
+                        $im->save();
+                    }
+                }
+            }
             if($member->is_farmer==1){
                 $farmer=new Farmer();
                 $farmer->user_id = $user->id;
@@ -192,10 +224,9 @@ class MemberController extends Controller
                 $dis->save();
             }
 
-           
-            
+            return response()->json(['member_no'=>$member->memeber_no,'member_name'=>$member->name]);
         } else {
-            return view('sahakari.member.add');
+            return view('sahakari.member.add',['members'=>Member::select('name','member_no')->get()]);
         }
     }
 }

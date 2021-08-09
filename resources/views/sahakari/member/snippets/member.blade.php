@@ -13,7 +13,7 @@
     <div class="row" id="general-info">
         <div class="col-md-3">
             <label for="member_no" class="required">Member No</label>
-            <input type="text" class="form-control next" data-next="dob" id="member_no" name="member_no">
+            <input type="text" class="form-control next" data-next="dob" id="member_no" name="member_no" required>
         </div>
         <div class="col-md-3">
             <label for="dob" ><span class="type-person">Date Of Birth</span><span class="type-org">Registration Date</span></label>

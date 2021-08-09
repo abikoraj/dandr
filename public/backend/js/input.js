@@ -253,6 +253,10 @@ $('.switch').each(function(){
     $(this).change(function(){
         target=this.dataset.switch;
         cs=this.dataset.case;
+        d_main=this.dataset.main;
+        if(d_main!=undefined){
+            $(d_main).addClass('d-none');
+        }
         if(cs!=undefined){
             if(this.checked){
                 $(cs).addClass('d-none');

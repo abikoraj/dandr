@@ -74,15 +74,15 @@
                     <hr class="mt-0 mb-2">
                 </div>
                 <div class="col-md-3">
-                    <input type="radio" name="gender" id="gender-male"  value="male" checked><label class="pl-2"
+                    <input type="radio" name="gender" id="gender-male"  value="0" checked><label class="pl-2"
                     for="gender-male">Male</label>
                 </div>
                 <div class="col-md-3">
-                    <input type="radio" name="gender" id="gender-female"  value="female" ><label class="pl-2"
+                    <input type="radio" name="gender" id="gender-female"  value="1" ><label class="pl-2"
                     for="gender-female">Female</label>
                 </div>
                 <div class="col-md-3">
-                    <input type="radio" name="gender" id="gender-others"  value="others" ><label class="pl-2"
+                    <input type="radio" name="gender" id="gender-others"  value="2" ><label class="pl-2"
                     for="gender-others">Others</label>
                 </div>
             </div>

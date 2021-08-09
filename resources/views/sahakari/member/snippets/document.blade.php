@@ -77,12 +77,11 @@
         function addImage(docid) {
             html = ' <div class="col-md-3 p-r image-' + docid + '" id="doc-image-wrapper-' + img_id + '">' +
                 '<button class="btn-close" onclick="removeImage(' + img_id + ',' + docid + ')">&times;</button>' +
-                '<input type="file" name="doc-image-' + doc_id + '[]" id="doc-image-' + img_id +
+                '<input type="file" name="doc-image-' + docid + '[]" id="doc-image-' + img_id +
                 '" accept="image/*,.pdf,.doc,.docx,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document" required>' +
                 '</div>';
             $('#images-' + docid).append(html);
             $('#doc-image-' + img_id).dropify();
-            doc_id = parseInt(doc_id) + 1;
             img_id = parseInt(img_id) + 1;
         }
 
