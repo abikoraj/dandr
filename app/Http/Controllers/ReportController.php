@@ -217,7 +217,6 @@ class ReportController extends Controller
             $grandtotal=$data->grandtotal??0;
 
             if($data->grandtotal>0 ){
-
                 $ledger->addLedger("Payment for milk (".($data->milk)."l X ".($data->rate??0).")",2,$data->grandtotal??0,$lastdate,'108');
             }
 

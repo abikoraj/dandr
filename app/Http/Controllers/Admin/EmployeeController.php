@@ -161,8 +161,6 @@ class EmployeeController extends Controller
 
         $date = str_replace('-', '', $request->date);
         $np = new NepaliDate($date);
-
-
         $employee = Employee::where('id', $request->employee_id)->first();
 
         if (!($employee->sessionClosed($np->year, $np->month))) {

@@ -56,7 +56,13 @@ $(".load-session").each(function () {
 });
 //XXX load nepali calenders
 $(".calender").each(function () {
-    $("#" + $(this).attr("id")).nepaliDatePicker();
+    cc_id=$(this).attr("id");
+    $("#" + cc_id).nepaliDatePicker();
+    $("#" + cc_id).mask('0000-00-00');
+    $(this).attr("placeholder",'YYYY-MM-DD');
+    $(this).focus(function(){
+        this.select();
+    })
     $(this).val(
         NepaliFunctions.GetCurrentBsYear() +
             "-" +
@@ -66,9 +72,20 @@ $(".calender").each(function () {
     );
 });
 
+$(".mask").each(function () {
+    maskid=$(this).attr("id");
+    console.log('ading mask',maskid );
+    $("#" + maskid).mask($("#" + maskid).data('dmask'));
+    console.log('added mask',maskid );
+    
+});
+
 //XXX set nepali calender
 function setDate(id, current = false) {
     if(exists('#'+id)){
+        $("#" + id).mask('0000-00-00');
+        $("#" + id).attr("placeholder",'YYYY-MM-DD');
+
         var mainInput = document.getElementById(id);
         mainInput.nepaliDatePicker();
         if (current) {
@@ -97,6 +114,24 @@ $(".next").keydown(function (event) {
 
         id = $(this).data("next");
         console.log("next id", id);
+        $("#" + id).focus();
+    }
+});
+
+$(".next-switch").keydown(function (event) {
+    var key = event.keyCode ? event.keyCode : event.which;
+    // console.log(key);
+
+    if (key == "13") {
+        id='';
+        event.preventDefault();
+        f=$(this).data("from");
+        if(document.getElementById(f).checked){
+            id = $(this).data("next");
+        }else{
+            id = $(this).data("switch");
+        }
+        console.log("next id", id,f,document.getElementById(f).checked);
         $("#" + id).focus();
     }
 });
@@ -203,9 +238,37 @@ function closeModal(id, value) {
 $('.image-input').each(function(){
     c_id=$(this).attr('id');
     $(this).append('<span class="clear" onclick="remove_image(\''+c_id+'\')">X</span>');
-    $('#'+c_id+">label").append('<img src="" class="w-100" alt="">');
+    $('#'+c_id+">label").append('<img src="" style="min-height: 100px;" class="w-100" alt="">');
+    $('#'+c_id+">input").attr('accept','image/*');
 });
 
+$('.switch').each(function(){
+    target=this.dataset.switch;
+    if(this.checked){
+        $(target).removeClass('d-none');
+    }else{
+        $(target).addClass('d-none');
+    }
+    console.log('switching',target,this.checked);
+    $(this).change(function(){
+        target=this.dataset.switch;
+        cs=this.dataset.case;
+        if(cs!=undefined){
+            if(this.checked){
+                $(cs).addClass('d-none');
+            }else{
+                $(cs).removeClass('d-none');
+            }
+        }
+        if(this.checked){
+            $(target).removeClass('d-none');
+        }else{
+            $(target).addClass('d-none');
+        }
+        console.log('switching again',target,this.checked);
+
+    });
+});
 $('.image-input>input').change(function(){
     m = new FileReader();
     c_id=$(this).parent().attr('id');
@@ -236,4 +299,63 @@ function showProgress(title){
 function hideProgress(){
     $('#xxx_123').removeClass('active');
 
+}
+
+$('.toogle').each(function(){
+    on=$(this).data('on');
+    collapse=$(this).data('collapse');
+    if(on){
+        $(collapse).removeClass('d-none');
+        $(this).children('.on').removeClass('d-none');
+        $(this).children('.off').addClass('d-none');
+    }else{
+        $(collapse).addClass('d-none');
+        $(this).children('.on').addClass('d-none');
+        $(this).children('.off').removeClass('d-none');
+
+    }
+    console.log(collapse,on,'collapse');
+    $(this).click(function(){
+        on=$(this).data('on');
+        collapse=$(this).data('collapse');
+        on=!on;
+        if(on){
+            $(collapse).removeClass('d-none');
+            $(this).children('.on').removeClass('d-none');
+            $(this).children('.off').addClass('d-none');
+        }else{
+            $(collapse).addClass('d-none');
+            $(this).children('.on').addClass('d-none');
+            $(this).children('.off').removeClass('d-none');
+
+        }
+        $(this).data('on',on);
+        console.log(collapse,on,'collapse');
+
+    });
+    
+});
+
+function validate(selector,type){
+    val='';
+    val=$(selector).val();
+    if(type=='date'){
+        if(val==''){
+            return false;
+        }
+        minlist=val.split('-');
+        if(minlist.length<3){
+            return false;
+        }
+    }
+    return true;
+}
+
+function copyInput(list){
+    console.log(list);
+    for (let index = 0; index < list.length; index+=2) {
+        const element1 = list[index];
+        const element2 = list[index+1];
+        $(element1).val($(element2).val());
+    }
 }

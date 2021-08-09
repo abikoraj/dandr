@@ -214,7 +214,84 @@
             </div>
         </div> --}}
 
-    @include('admin.farmer.detail.ledger')
+        @if (count($farmer1->ledger)>0)
+            <div class="col-md-12 mt-3">
+                <div style="border: 1px solid rgb(136, 126, 126); padding:1rem;">
+
+                    <div id="ledger-data">
+                        <style>
+                            @media print {
+                                td{
+                                    font-size: 1.2rem !important;
+                                    font-weight: 600 !important;
+                                }
+
+
+                                th:last-child, td:last-child {
+                                    display: none;
+                                }
+
+                            }
+                            td,th{
+                                border:1px solid black !important;
+                                padding:2px !important;
+                                font-weight: 600 !important;
+                            }
+
+                            table{
+                                width:100%;
+                                border-collapse: collapse;
+                            }
+                            thead {display: table-header-group;}
+                            tfoot {display: table-header-group;}
+                        </style>
+                        <strong>Ledger</strong>
+                        <hr>
+                        <table class="table table-bordered table-striped table-hover js-basic-example dataTable">
+                            <tr>
+                                <th>Date</th>
+                                <th>Particular</th>
+                                <th>Cr. (Rs.)</th>
+                                <th>Dr. (Rs.)</th>
+                                <th>Balance (Rs.)</th>
+                                <th class="d-print-none"></th>
+                            </tr>
+
+                            @foreach ($farmer1->ledger as $l)
+                                <tr>
+                                    <td>{{ _nepalidate($l->date) }}</td>
+                                    <td>{{ $l->title }}</td>
+
+                                    <td>
+                                        @if ($l->type==1)
+                                            {{ (float)$l->amount }}
+                                        @endif
+                                    </td>
+                                    <td>
+                                        @if($l->type==2)
+                                        {{ (float)$l->amount }}
+                                        @endif
+                                    </td>
+                                    <td>
+                                        {{ $l->dr>0 ?"Dr. ".(float)$l->dr:""}}
+
+                                        {{ $l->cr>0 ?"Cr. ".(float)$l->cr:"" }}
+
+                                        {{($l->cr==0 || $l->cr==null) && ($l->dr==0 || $l->dr==null)?"--":""}}
+                                    </td>
+                                    <td class="d-print-none">
+                                        
+                                        <button  onclick="initEditLedger('{{$l->title}}',{{$l->id}});">Edit</button>
+                                        <button  onclick="deleteLedger({{$l->id}},loadData);">Delete</button>
+                                           
+                                    </td>
+                                </tr>
+                            @endforeach
+                        </table>
+                    </div>
+                </div>
+            </div>
+        @endif
 
         <div class="col-md-12">
 
@@ -377,7 +454,7 @@
                                 <input type="hidden" name="paidamount" value=" {{ $farmer1->paidamount}}">
                                 <input type="hidden" name="fpaid" value=" {{ $farmer1->fpaid}}">
                                 <label for=>Session Close Date</label>
-                                <input type="text" name="date" id="closedate" value="{{_nepalidate($closingDate)}}" readonly required>
+                                <input type="text" name="date" id="closedate" readonly required>
                                 <button class="btn btn-sm btn-success">Close Session</button>
                             </form>
                              @else

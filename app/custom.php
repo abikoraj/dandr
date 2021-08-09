@@ -19,3 +19,10 @@ function rupee($amount) {
     $fmt = new NumberFormatter($locale = 'en_IN', NumberFormatter::DECIMAL);
     return $fmt->format($amount);
 }
+
+function userDir($id){
+  
+    $data= sprintf("%'.09d",$id);
+    $arr=str_split($data,3);
+    return implode('/',$arr);
+}

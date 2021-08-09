@@ -155,3 +155,12 @@ label{
         }
     }
 }
+
+label{
+    &.required{
+        ::after{
+            content: "*";
+            color: red;
+        }
+    }
+}

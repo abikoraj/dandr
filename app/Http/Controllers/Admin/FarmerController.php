@@ -89,7 +89,7 @@ class FarmerController extends Controller
         return view('admin.farmer.detail', compact('user'));
     }
 
-   
+
 
     public function loadSessionData(Request $r)
     {
@@ -149,8 +149,37 @@ class FarmerController extends Controller
         $farmer1->due = Ledger::where('user_id', $r->user_id)->where('date', '>=', $range[1])->where('date', '<=', $range[2])->where('identifire', '103')->sum('amount');;
 
         $previousMonth = Ledger::where('user_id', $r->user_id)->where('date', '>=', $range[1])->where('date', '<=', $range[2])->where('identifire', '101')->sum('amount');
-        $previousMonth1 = Ledger::where('user_id', $r->user_id)->where('date', '>=', $range[1])->where('date', '<=', $range[2])->where('identifire', '120')->where('type', 1)->sum('amount');
-        $previousBalance = Ledger::where('user_id', $r->user_id)->where('date', '>=', $range[1])->where('date', '<=', $range[2])->where('identifire', '120')->where('type', 2)->sum('amount');
+        // $previousMonth1 = Ledger::where('user_id', $r->user_id)->where('date', '>=', $range[1])->where('date', '<=', $range[2])->where('identifire', '120')->where('type', 1)->sum('amount');
+        // $previousBalance = Ledger::where('user_id', $r->user_id)->where('date', '>=', $range[1])->where('date', '<=', $range[2])->where('identifire', '120')->where('type', 2)->sum('amount');
+        $previousMonth1 = 0;
+        $previousBalance = 0;
+        $base = 0;
+        $prev = 0;
+        $closing = 0;
+        $arr = [];
+        $ledgers = Ledger::where('user_id', $r->user_id)->where('date', '<=', $range[2])->where('identifire', '!=', 109)->where('identifire', '!=', 120)->orderBy('date', 'asc')->orderBy('id', 'asc')->get();
+        foreach ($ledgers as $key => $l) {
+
+            if ($l->type == 1) {
+                $base -= $l->amount;
+            } else {
+                $base += $l->amount;
+            }
+            if ($l->date < $range[1]) {
+                $prev = $base;
+            }
+            if ($l->date >= $range[1] && $l->date <= $range[2]) {
+                $l->amt = $base;
+                $closing = $base;
+                array_push($arr, $l);
+            }
+        }
+        $farmer1->ledger = $arr;
+        if ($prev < 0) {
+            $previousMonth1 = -1 * $prev;
+        } else {
+            $previousBalance = $prev;
+        }
 
         $farmer1->advance = (float)(Advance::where('user_id', $r->user_id)->where('date', '>=', $range[1])->where('date', '<=', $range[2])->sum('amount'));
         $farmer1->prevdue = (float)$previousMonth + (float)$previousMonth1;
@@ -167,11 +196,12 @@ class FarmerController extends Controller
             $farmer1->nettotal = $balance;
         }
 
-        $farmer1->ledger = Ledger::where('user_id', $r->user_id)->where('date', '>=', $range[1])->where('date', '<=', $range[2])->orderBy('id', 'asc')->get();
+        // $farmer1->ledger = Ledger::where('user_id', $r->user_id)->where('date', '>=', $range[1])->where('date', '<=', $range[2])->orderBy('id', 'asc')->get();
         $milk_rate = FarmerReport::where(['user_id' => $r->user_id, 'year' => $r->year, 'month' => $r->month, 'session' => $r->session])->first();
         // dd($milk_rate);
         // dd(compact('snfFats','milkData','data','center','farmer1'));
-        return view('admin.farmer.detail.index', compact('snfFats', 'milkData', 'data', 'center', 'farmer1', 'milk_rate'));
+        $closingDate=NepaliDate::getDateSessionLast($r->year, $r->month, $r->session);
+        return view('admin.farmer.detail.index', compact('snfFats', 'milkData', 'data', 'center', 'farmer1', 'milk_rate','prev','closing','closingDate'));
     }
 
 
@@ -234,7 +264,7 @@ class FarmerController extends Controller
         $farmerPay->payment_detail = $request->detail;
         $farmerPay->user_id = $user->id;
         $farmerPay->save();
-    
+
         $ledger = new LedgerManage($user->id);
         $ledger->addLedger('Paid by farmer amount', 2, $request->pay, $date, '107', $farmerPay->id);
         return response('Payment Added Sucessfully');
@@ -264,7 +294,7 @@ class FarmerController extends Controller
         $date = str_replace('-', '', $request->date);
         $user = User::join('farmers', 'users.id', '=', 'farmers.user_id')->where('users.no', $request->id)->where('farmers.center_id', $request->center_id)->select('users.*', 'farmers.center_id')->first();
         $ledger = new LedgerManage($user->id);
-        $l = $ledger->addLedger('previous Balance', $request->type, $request->amount, $date, '120');
+        $l = $ledger->addLedger('Opening Balance', $request->type, $request->amount, $date, '101');
         $l->name = $user->name;
         $l->no = $user->no;
         return view('admin.farmer.due.list.single', ['ledger' => $l]);

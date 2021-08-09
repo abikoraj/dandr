@@ -1,7 +1,9 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-
+use App\Http\Controllers\Sahakari\HomeController;
+use App\Http\Controllers\Sahakari\Member\MemberController;
+use App\Models\Sahakari\HomeCntroller;
 
 /*
 |--------------------------------------------------------------------------
@@ -23,8 +25,13 @@ Route::get('/test-distributor-date', 'TestController@distributorByDate')->name('
 
 
 Route::get('/pass', function () {
-    $pass = bcrypt('admin');
-    dd($pass);
+    // $pass = bcrypt('admin');
+    // dd($pass);
+    $id=1;
+    $data= sprintf("%'.09d",$id);
+    $arr=str_split($data,3);
+    echo implode('/',$arr);
+    
 });
 
 
@@ -442,5 +449,14 @@ Route::group(['middleware' => 'role:distributer', 'prefix' => 'distributor'], fu
         Route::post('make-a-request-add', 'Users\DistributorDashboardController@makeArequestAdd')->name('request.add');
         Route::post('make-a-request-update', 'Users\DistributorDashboardController@makeArequestUpdate')->name('request.update');
         Route::get('make-a-request/{id}', 'Users\DistributorDashboardController@requestDelete')->name('request.delete');
+    });
+});
+
+Route::name('sahakari.')->prefix('sahakari')->group(function(){
+    Route::get('',[HomeController::class,'index'])->name('home');
+    Route::name('members.')->prefix('members')->group(function(){
+        Route::match(['GET','POST'],'',[MemberController::class,'index'])->name('index');
+
+        Route::match(['GET','POST'],'add',[MemberController::class,'add'])->name('add');
     });
 });

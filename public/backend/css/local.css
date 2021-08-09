@@ -205,4 +205,9 @@ label {
 .working .working-child img {
   max-width: 100px;
 }
+
+label.required ::after {
+  content: "*";
+  color: red;
+}
 /*# sourceMappingURL=local.css.map */
