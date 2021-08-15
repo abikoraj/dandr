@@ -73,7 +73,9 @@ class FarmerController extends Controller
 
     public function listFarmerByCenter(Request $request)
     {
-        $farmers = User::join('farmers', 'farmers.user_id', '=', 'users.id')->where('farmers.center_id', $request->center)->where('users.role', 1)->select('users.*', 'farmers.center_id', 'farmers.usecc', 'farmers.usetc', 'farmers.userate', 'farmers.rate')->orderBy('users.no', 'asc')->get();
+        // dd($request->all());
+        $farmers = User::join('farmers', 'farmers.user_id', '=', 'users.id')->where('farmers.center_id', $request->center)->select('users.id','users.name','users.phone','users.address', 'farmers.center_id', 'farmers.usecc', 'farmers.usetc', 'farmers.userate', 'farmers.rate','farmers.no')->orderBy('users.no', 'asc')->get();
+        // dd($farmers);
         return view('admin.farmer.list', ['farmers' => $farmers]);
     }
 
@@ -85,7 +87,7 @@ class FarmerController extends Controller
 
     public function farmerDetail($id)
     {
-        $user = User::where('id', $id)->where('role', 1)->first();
+        $user = User::where('id', $id)->first();
         return view('admin.farmer.detail', compact('user'));
     }
 

@@ -1,4 +1,9 @@
 <?php
+define('farmer',1);
+define('distributer',2);
+define('employee',3);
+define('supplier',4);
+define('customer',5);
 
 function _nepalidate($date)
 {
@@ -39,8 +44,9 @@ function rupee($amount)
 
 function userDir($id)
 {
-
     $data = sprintf("%'.09d", $id);
     $arr = str_split($data, 3);
     return implode('/', $arr);
 }
+
+// function 

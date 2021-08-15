@@ -6,4 +6,8 @@ class MemberManager{
         'organization'=>"Organization"
     ];
     const documentType=["CitizenShip","Registration","Passport","Driving Lisence"];
+
+    function getFarmer($member,$){
+
+    }
 }

@@ -5,8 +5,38 @@
 @endsection
 @section('css')
 <style>
-    .col-md-3 {
-        margin-bottom: 5px;
+    .form-control{
+        height: auto !important;
+        padding: 5px 10px !important;
+    }
+    .row{
+        margin:0px -7px;
+    }
+    .col-md-3{
+        padding:0px 7px;
+    }
+    .col-md-2{
+        padding:0px 7px;
+    }
+    .col-md-6{
+        padding:0px 7px;
+    }
+    .col-md-9{
+        padding:0px 7px;
+    }
+    .form-group{
+        margin-bottom:5px;
+    }
+    /* .col-md-3 {
+        margin-bottom: 1px;
+    } */
+    .col-md-4 {
+        padding:0px 7px;
+       
+    } 
+    .col-md-8 {
+        padding:0px 7px;
+       
     }
 
     label {
@@ -17,6 +47,7 @@
     .title {
         margin: 0 !important;
         font-weight: 900;
+        font-size: 16px;
     }
 
     .center-fg {
@@ -44,7 +75,17 @@
         border-radius: 5px;
         cursor: pointer;
     }
+    hr{
+        margin:5px 0px;
+    }
 
+    .save-holder{
+        position: fixed;
+        bottom: 20px;
+        right: calc(50% - 300px);
+        width: 600px;
+        background: white
+    }
 </style>
 <link rel="stylesheet" href="{{ asset('backend/css/dropify-multiple.min.css') }}">
 @endsection
@@ -55,14 +96,15 @@
     @include('partials.adressdatalist')
     @include('sahakari.member.snippets.basic')
     @include('sahakari.member.snippets.allac')
-    @include('sahakari.member.snippets.member')
+    {{-- @include('sahakari.member.snippets.member') --}}
     @include('sahakari.member.snippets.address')
     @include('sahakari.member.snippets.nominee')
-    @include('sahakari.member.snippets.farmerdetail')
-    @include('sahakari.member.snippets.distributer')
+    {{-- @include('sahakari.member.snippets.farmerdetail') --}}
+    {{-- @include('sahakari.member.snippets.distributer') --}}
+    {{-- @include('sahakari.member.snippets.employee') --}}
     @include('sahakari.member.snippets.document')
-    <div class="card my-3 px-3 py-1 shadow">
-        <div class="row justify-content-end">
+    <div class="card my-3 px-3 py-1 shadow save-holder">
+        <div class="row justify-content-center">
             <div class="col-md-3 pr-md-0 ">
                 <button class="btn btn-primary w-100">Save Member</button>
             </div>
@@ -134,5 +176,25 @@
 
             });
     }
+
+
+    setFocusShortCut([
+        'f1','name',
+        'f2','center_id',
+        'f3','credit_limit',
+        'f4','salary',
+        'f5','member_no',
+
+    ]);
+
+    setClickShortCut([
+        "alt+n",'acc_type_normal',
+        "alt+d",'acc_type_dependent',
+        "alt+f",'is_farmer',
+        "alt+s",'is_supplier',
+        "alt+i",'is_distributer',
+        "alt+e",'is_emp',
+        "alt+c",'is_customer',
+    ])
 </script>
 @endsection

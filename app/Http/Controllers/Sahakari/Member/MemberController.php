@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Sahakari\Member;
 use App\Http\Controllers\Controller;
 use App\Models\Center;
 use App\Models\Distributer;
+use App\Models\Employee;
 use App\Models\Farmer;
 use App\Models\Member;
 use App\Models\MemberDocument;
@@ -16,8 +17,8 @@ use Illuminate\Http\Request;
 class MemberController extends Controller
 {
     //XXX Loading members
-    public function index(){
-        return view('sahakari.member.index',['members'=>Member::select('name','member_no','is_farmer','is_distributer','is_supplier','is_customer','id')->get()]);
+    public function index(Request $request){
+        return view('sahakari.member.index',['members'=>Member::select('name','member_no','is_farmer','is_distributer','is_supplier','is_customer','is_emp','id','user_id')->get()]);
     }
     //XXX Adding a new member
     public function add(Request $request)
@@ -45,6 +46,12 @@ class MemberController extends Controller
                         $center = Center::where('id', $request->center_id)->first();
                         array_push($messages, "Farmer With Farmer No " . $request->farmer_no . " already exists in" . $center->name);
                     }
+                }
+            }
+
+            if ($request->filled('is_emp')) {
+                if (!$request->filled('salary')) {
+                    array_push($messages, "Please Enter Employee Salary.");
                 }
             }
 
@@ -101,6 +108,7 @@ class MemberController extends Controller
 
                 }
             }
+
             if (count($messages) > 0) {
                 return response()->json($messages, 500);
             }
@@ -125,6 +133,7 @@ class MemberController extends Controller
             $member->is_distributer=$request->is_distributer??0;
             $member->is_supplier=$request->is_supplier??0;
             $member->is_customer=$request->is_customer??0;
+            $member->is_emp=$request->is_emp??0;
             $member->member_no=$request->member_no;
             $member->ref_acc=$request->ref_acc;
             $member->join_date=toNepaliDate($request->join_date);
@@ -177,6 +186,7 @@ class MemberController extends Controller
             if($request->hasFile('image')){
                 $member->image=$request->image->store('members/'.userDir($user->id)) ;
             }
+            // dd($member->toArray());
             $member->save();
 
             //XXX adding member Documents
@@ -198,6 +208,7 @@ class MemberController extends Controller
                     }
                 }
             }
+
             if($member->is_farmer==1){
                 $farmer=new Farmer();
                 $farmer->user_id = $user->id;
@@ -205,8 +216,10 @@ class MemberController extends Controller
                 $farmer->usecc = $request->usecc ?? 0;
                 $farmer->usetc = $request->usetc ?? 0;
                 $farmer->userate = $request->userate ?? 0;
-                $farmer->rate = $request->rate;
+                $farmer->rate = $request->rate??0;
+                $farmer->no = $request->farmer_no;
                 $farmer->save();
+                // dd($farmer);
             }
             
             if($member->is_distributer==1){
@@ -224,9 +237,17 @@ class MemberController extends Controller
                 $dis->save();
             }
 
+            if($member->is_emp==1){
+                $emp = new Employee();
+                $emp->user_id = $user->id;
+                $emp->salary = $request->salary;
+                $emp->acc = $request->acc;
+                $emp->save();
+            }
             return response()->json(['member_no'=>$member->memeber_no,'member_name'=>$member->name]);
         } else {
-            return view('sahakari.member.add',['members'=>Member::select('name','member_no')->get()]);
+            $sel=$request->sel;
+            return view('sahakari.member.add',['members'=>Member::select('name','member_no')->get(),'sel']);
         }
     }
 }

@@ -244,31 +244,67 @@ $('.image-input').each(function(){
 
 $('.switch').each(function(){
     target=this.dataset.switch;
-    if(this.checked){
-        $(target).removeClass('d-none');
+    _if=this.dataset.if;
+    if(_if!=undefined){
+        if($(_if)[0].checked){
+            $(target).removeClass('d-none');
+        }else{
+            if(this.checked){
+                $(target).removeClass('d-none');
+            }else{
+                $(target).addClass('d-none');
+            }
+        }
     }else{
-        $(target).addClass('d-none');
+
+        if(this.checked){
+            $(target).removeClass('d-none');
+        }else{
+            $(target).addClass('d-none');
+        }
     }
     console.log('switching',target,this.checked);
     $(this).change(function(){
         target=this.dataset.switch;
         cs=this.dataset.case;
         d_main=this.dataset.main;
+        _if=this.dataset.if;
         if(d_main!=undefined){
             $(d_main).addClass('d-none');
         }
-        if(cs!=undefined){
-            if(this.checked){
-                $(cs).addClass('d-none');
+        if(_if!=undefined){
+            if($(_if)[0].checked){
+                $(target).removeClass('d-none');
             }else{
-                $(cs).removeClass('d-none');
+                if(cs!=undefined){
+                    if(this.checked){
+                        $(cs).addClass('d-none');
+                    }else{
+                        $(cs).removeClass('d-none');
+                    }
+                }
+                if(this.checked){
+                    $(target).removeClass('d-none');
+                }else{
+                    $(target).addClass('d-none');
+                }
+            }
+        }else{
+            if(cs!=undefined){
+                if(this.checked){
+                    $(cs).addClass('d-none');
+                }else{
+                    $(cs).removeClass('d-none');
+                }
+            }
+            if(this.checked){
+                $(target).removeClass('d-none');
+            }else{
+                $(target).addClass('d-none');
             }
         }
-        if(this.checked){
-            $(target).removeClass('d-none');
-        }else{
-            $(target).addClass('d-none');
-        }
+        
+       
         console.log('switching again',target,this.checked);
 
     });
@@ -340,6 +376,8 @@ $('.toogle').each(function(){
     
 });
 
+
+
 function validate(selector,type){
     val='';
     val=$(selector).val();
@@ -361,5 +399,28 @@ function copyInput(list){
         const element1 = list[index];
         const element2 = list[index+1];
         $(element1).val($(element2).val());
+    }
+}
+
+function setFocusShortCut(list){
+    for (let index = 0; index < list.length; index+=2) {
+        const element1 = list[index];
+        const element2 = list[index+1];
+        $('body,.form-control1, .form-control').bind('keydown', element1, function(e){
+            e.preventDefault();
+            $('#'+element2).focus();
+            $('#'+element2).select();
+        });
+    }
+}
+
+function setClickShortCut(list){
+    for (let index = 0; index < list.length; index+=2) {
+        const element1 = list[index];
+        const element2 = list[index+1];
+        $('body,.form-control1, .form-control').bind('keydown', element1, function(e){
+            e.preventDefault();
+            $('#'+element2).trigger( "click" );
+        });
     }
 }
