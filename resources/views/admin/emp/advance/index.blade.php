@@ -26,12 +26,10 @@
                 <div class="form-group">
                    <select name="employee_id" id="employee_id" class="form-control show-tick ms select2">
                         <option ></option>
-                        @foreach (\App\Models\Employee::all() as $employee)
-                                @if (isset($employee->user))
+                        @foreach($emps as $employee)
                                    <option value="{{$employee->id}}">
                                        {{ $employee->user->name }}
                                     </option>
-                                @endif
                         @endforeach
                    </select>
                 </div>

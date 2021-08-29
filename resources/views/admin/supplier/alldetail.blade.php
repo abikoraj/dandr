@@ -67,7 +67,7 @@
                           <th>Balance (Rs.)</th>
                           <th></th>
                       </tr>
-                      @if ($prev>0)
+                      @if ($prev!=0)
                           
                           <tr>
                               <td>

@@ -13,7 +13,7 @@
             <label for="employee">Employee</label>
             <select type="text" name="employee" id="employee" class="form-control ms" required>
                 @foreach ($emps as $emp)
-                    <option value="{{$emp->id}}">{{$emp->name}}</option>
+                    <option value="{{$emp->user_id}}">{{$emp->user->name}}</option>
                 @endforeach
             </select>
         </div>
