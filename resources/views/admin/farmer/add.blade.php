@@ -60,9 +60,9 @@
                             <div class="col-lg-6">
 
                                 <div class="form-group">
-                                    <input type="checkbox" name="usecc" class="mx-3" value="1">Has Cooling Cost
-                                    <input type="checkbox" name="usetc" class="mx-3" value="1">Has TS <br>
-                                    <input type="checkbox"  name="userate" class="mx-2" value="1">Fixed Rate
+                                    <input type="checkbox" name="usecc" class="mr-2" value="1">Has Cooling Cost <br>
+                                    <input type="checkbox" name="usetc" class="mr-2" value="1">Has TS <br>
+                                    <input type="checkbox"  name="userate" class="mr-2" value="1">Fixed Rate
                                     <input type="number" step="0.01" min="0" value="0" name="rate">
                                 </div>
                             </div>

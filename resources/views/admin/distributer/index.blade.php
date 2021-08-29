@@ -29,147 +29,13 @@
 
 <!-- modal -->
 
-<div class="modal fade" id="largeModal" tabindex="-1" role="dialog" data-ff="name">
-    <div class="modal-dialog modal-lg" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h4 class="title" id="largeModalLabel">Create Distributer</h4>
-            </div>
-            <hr>
-            <div class="card">
-                <div class="body">
-                    <form id="form_validation" method="POST" onsubmit="return saveData(event);">
-                        @csrf
-                        <div class="row">
-                            <div class="col-lg-6">
-                                <label for="name">Distributer Name</label>
-                                <div class="form-group">
-                                    <input type="text" id="name" name="name" class="form-control next" data-next="phone" placeholder="Enter distributer name" required>
-                                </div>
-                            </div>
-
-                            <div class="col-lg-6">
-                                <label for="name">Distributer Phone</label>
-                                <div class="form-group">
-                                    <input type="number" id="phone" name="phone" class="form-control next" data-next="address" placeholder="Enter distributer phone" required>
-                                </div>
-                            </div>
-
-                            <div class="col-lg-12">
-                                <label for="name">Distributer Address</label>
-                                <div class="form-group">
-                                    <input type="text" id="address" name="address" class="form-control " data-next="rate" placeholder="Enter distributer address" required>
-                                </div>
-                            </div>
-                            
-                            <div class="col-lg-6">
-                                <label for="credit_days">Credit Days</label>
-                                <div class="form-group">
-                                    <input type="number" id="credit_days" name="credit_days" min="0" step="0.01" class="form-control next" data-next="address" placeholder="Enter Credit Days" required>
-                                </div>
-                            </div>
-                            <div class="col-lg-6">
-                                <label for="credit_limit">Credit Limit</label>
-                                <div class="form-group">
-                                    <input type="number" id="credit_limit" name="credit_limit" min="0" step="0.01" class="form-control next" data-next="address" placeholder="Enter Credit Days" required>
-                                </div>
-                            </div>
-
-                            {{-- <div class="col-lg-6">
-                                <label for="rate">Rate</label>
-                                <div class="form-group">
-                                    <input type="number" id="rate" name="rate" step="0.001" min="0.001" class="form-control next" data-next="amt" placeholder="Enter rate" required>
-                                </div>
-                            </div>
-                            <div class="col-lg-6">
-                                <label for="amt">Amount(Qty)</label>
-                                <div class="form-group">
-                                    <input type="number" id="amt" name="amount" step="0.001" min="0.001" class="form-control" placeholder="Enter amount" required>
-                                </div>
-                            </div> --}}
-                        </div>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button class="btn btn-raised btn-primary waves-effect" type="submit">Submit Data</button>
-                <button type="button" class="btn btn-danger waves-effect" data-dismiss="modal">Close</button>
-            </div>
-            </form>
-        </div>
-    </div>
-</div>
+@include('admin.distributer.add')
 
 <!-- edit modal -->
 
+@include('admin.distributer.edit')
 
-<div class="modal fade" id="editModal" tabindex="-1" role="dialog" data-ff="ename">
-    <div class="modal-dialog modal-lg" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h4 class="title" id="largeModalLabel">Edit Distributer</h4>
-            </div>
-            <hr>
-            <div class="card">
-                <div class="body">
-                    <form id="editform" onsubmit="return editData(event);">
-                        @csrf
-                        <input type="hidden" name="id" id="eid">
-                        <div class="row">
-                            <div class="col-lg-6">
-                                <label for="name">Distributer Name</label>
-                                <div class="form-group">
-                                    <input type="text" id="ename" name="name" class="form-control next" data-next="ephone" placeholder="Enter distributer name" required>
-                                </div>
-                            </div>
 
-                            <div class="col-lg-6">
-                                <label for="name">Distributer Phone</label>
-                                <div class="form-group">
-                                    <input type="number" id="ephone" name="phone" class="form-control next" data-next="eaddress" placeholder="Enter distributer phone" required>
-                                </div>
-                            </div>
-
-                            <div class="col-lg-12">
-                                <label for="name">Distributer Address</label>
-                                <div class="form-group">
-                                    <input type="text" id="eaddress" name="address" value="" class="form-control next" data-next="erate" placeholder="Enter distributer address" required>
-                                </div>
-                            </div>
-                            <div class="col-lg-6">
-                                <label for="ecredit_days">Credit Days</label>
-                                <div class="form-group">
-                                    <input type="number" id="ecredit_days" name="credit_days" min="0" step="0.01" class="form-control next" data-next="address" placeholder="Enter Credit Days" required>
-                                </div>
-                            </div>
-                            <div class="col-lg-6">
-                                <label for="ecredit_limit">Credit Limit</label>
-                                <div class="form-group">
-                                    <input type="number" id="ecredit_limit" name="credit_limit" min="0" step="0.01" class="form-control next" data-next="address" placeholder="Enter Credit Days" required>
-                                </div>
-                            </div>
-                            {{-- <div class="col-lg-6">
-                                <label for="rate">Rate</label>
-                                <div class="form-group">
-                                    <input type="number" id="erate" name="rate" step="0.001" min="0.001" class="form-control next" data-next="eamt" placeholder="Enter rate" required>
-                                </div>
-                            </div>
-                            <div class="col-lg-6">
-                                <label for="amt">Amount(Qty)</label>
-                                <div class="form-group">
-                                    <input type="number" id="eamt" name="amount" step="0.001" min="0.001" class="form-control" placeholder="Enter amount" required>
-                                </div>
-                            </div> --}}
-                        </div>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button class="btn btn-raised btn-primary waves-effect" type="submit">Submit Data</button>
-                <button type="button" class="btn btn-danger waves-effect" data-dismiss="modal">Close</button>
-            </div>
-            </form>
-        </div>
-    </div>
-</div>
 @endsection
 @section('js')
 <script>
@@ -182,6 +48,16 @@
         $('#ecredit_days').val(ele.dataset.days);
         $('#ecredit_limit').val(ele.dataset.limit);
         $('#eaddress').val(distributer.address);
+        $('#esnf_rate').val(distributer.snf_rate);
+        $('#efat_rate').val(distributer.fat_rate);
+        $('#efat_rate').val(distributer.fat_rate);
+        $('#eadded_rate').val(distributer.added_rate);
+        if(distributer.is_fixed==1){
+            $('#eis_fixed')[0].checked=true;
+        }else{
+            $('#eis_fixed')[0].checked=false;
+        }
+        $('#efixed_rate').val(distributer.fixed_rate);
         // $('#erate').val(ele.dataset.rate);
         // $('#eamt').val(ele.dataset.amount);
         $('#eid').val(distributer.id);

@@ -205,10 +205,73 @@ class SupplierController extends Controller
         $user = User::where('id', $id)->where('role', 3)->first();
         return view('admin.supplier.detail', compact('user'));
     }
-    public function loadDetail($id)
+    public function loadDetail(Request $request)
     {
-        $user = User::where('id', $id)->where('role', 3)->first();
-        return view('admin.supplier.detail', compact('user'));
+        $year = $request->year;
+        $month = $request->month;
+        $week = $request->week;
+        $session = $request->session;
+        $type = $request->type;
+        $range = [];
+        $data = [];
+        $date = 1;
+        $title = "";
+        $user = user::where('id', $request->user_id)->first();
+        $ledger = Ledger::where('user_id', $request->user_id)->orderBy('date', 'asc')->orderBy('id', 'asc');
+        if ($type == 0) {
+            $range = NepaliDate::getDate($request->year, $request->month, $request->session);
+            $ledger = $ledger->where('date', '<=', $range[2]);
+            $title = "<span class='mx-2'>Year:" . $year . "</span>";
+            $title .= "<span class='mx-2'>Month:" . $month . "</span>";
+            $title .= "<span class='mx-2'>Session:" . $session . "</span>";
+        } elseif ($type == 1) {
+            $date = $date = str_replace('-', '', $request->date1);
+            $ledger = $ledger->where('date', '=', $date);
+            $title = "<span class='mx-2'>Date:" . _nepalidate($date) . "</span>";
+        } elseif ($type == 2) {
+            $range = NepaliDate::getDateWeek($request->year, $request->month, $request->week);
+            $ledger = $ledger->where('date', '<=', $range[2]);
+            $title = "<span class='mx-2'>Year:" . $year . "</span>";
+            $title .= "<span class='mx-2'>Month:" . $month . "</span>";
+            $title .= "<span class='mx-2'>Week:" . $week . "</span>";
+        } elseif ($type == 3) {
+            $range = NepaliDate::getDateMonth($request->year, $request->month);
+            $ledger = $ledger->where('date', '<=', $range[2]);
+            $title = "<span class='mx-2'>Year:" . $year . "</span>";
+            $title .= "<span class='mx-2'>Month:" . $month . "</span>";
+        } elseif ($type == 4) {
+            $range = NepaliDate::getDateYear($request->year);
+            $ledger = $ledger->where('date', '<=', $range[2]);
+            $title = "<span class='mx-2'>Year:" . $year . "</span>";
+        } elseif ($type == 5) {
+            $range[1] = str_replace('-', '', $request->date1);;
+            $range[2] = str_replace('-', '', $request->date2);;
+            $ledger = $ledger->where('date', '<=', $range[2]);
+            $title = "<span class='mx-2'>from:" . $request->date1 . "</span>";
+            $title .= "<span class='mx-2'>To:" . $request->date2 . "</span>";
+        }
+        $base = 0;
+        $prev = 0;
+        $closing = 0;
+        $arr = [];
+        $ledgers = $ledger->orderBy('id', 'asc')->get();
+        foreach ($ledgers as $key => $l) {
+
+            if ($l->type == 1) {
+                $base -= $l->amount;
+            } else {
+                $base += $l->amount;
+            }
+            if ($l->date < $range[1]) {
+                $prev = $base;
+            }
+            if ($l->date >= $range[1] && $l->date <= $range[2]) {
+                $l->amt = $base;
+                $closing = $base;
+                array_push($arr, $l);
+            }
+        }
+        return view('admin.supplier.alldetail',compact('prev','title','user','arr'));
     }
 
     public function billItems(Request $request)

@@ -39,8 +39,8 @@
             <input readonly type="text" name="date" id="nepali-datepicker" class="form-control" placeholder="Date">
         </div>
         <div class="col-md-4">
-            <label for="total"> Current Balance ({{$user->amounttype==1?"CR":"DR"}}) </label>
-            <input type="text" id="totaldue" class="form-control" value="{{ $user->amount }}" readonly>
+            <label for="total"> Current Balance ({{$user->balance<0?"CR":"DR"}}) </label>
+            <input type="text" id="totaldue" class="form-control" value="{{ $user->balance<0?(-1*$user->balance):$user->balance }}" readonly>
         </div>
         <div class="col-md-4">
             <label for="pay">Pay Amount </label>

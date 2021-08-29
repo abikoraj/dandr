@@ -1,11 +1,58 @@
 <style>
-  .d-print-show{
+    .d-print-show{
         display:none !important;
     }
 
 </style>
 <div class="row">
-   
+    {{-- <div class="col-md-12 mt-3">
+        <div style="border: 1px solid rgb(136, 126, 126); padding:1rem;">
+            <strong>Sold Items</strong>
+            <hr>
+            <table class="table table-bordered table-striped table-hover js-basic-example dataTable">
+                <tr>
+                    <th>Date</th>
+                    <th>Rate</th>
+                    <th>Quantity</th>
+                    <th>Total</th>
+                    <th>Paid</th>
+                    <th>Due</th>
+                </tr>
+                   @php
+                       $total = 0;
+                       $paid = 0;
+                       $due = 0;
+                   @endphp
+                   @foreach ($sell as $item)
+                   <tr>
+                       <td>{{ _nepalidate($item->date)}}</td>
+                       <td>{{ $item->rate }}</td>
+                       <td>{{ $item->qty }}</td>
+                       <td>{{ $item->total }}</td>
+                       <td>{{ $item->paid }}</td>
+                       <td>{{ $item->deu }}</td>
+                   </tr>
+                       @php
+                           $total += $item->total;
+                           $paid += $item->paid;
+                           $due += $item->deu;
+                       @endphp
+                   @endforeach
+                    <tr>
+                        <td colspan="5" class="text-right">Grand Total</td>
+                        <td>{{ $total }}</td>
+                    </tr>
+                    <tr>
+                        <td colspan="5" class="text-right">Total Paid</td>
+                        <td> {{ $paid }}</td>
+                    </tr>
+                    <tr>
+                        <td colspan="5" class="text-right">Total Due</td>
+                        <td>{{ $due }}</td>
+                    </tr>
+            </table>
+        </div>
+    </div> --}}
 
     <div class="col-md-12 mt-3">
         <div style="border: 1px solid rgb(136, 126, 126); padding:1rem;">
@@ -67,77 +114,28 @@
                         <th>Balance (Rs.)</th>
                         <th></th>
                     </tr>
-                    @if ($prev>0)
-                        
-                        <tr>
-                            <td>
-                                --
-                            </td>
-                            <td>
-                                Previous Balance
-                            </td>
-                            @if ($prev>0)
 
-                            <td>
-
-                            </td>
-                            <td>
-                            {{$prev}}
-                            </td>
-                                <td>
-                                    Dr.{{$prev}}
-                                </td>
-                                @elseif ($prev<0)
-                                <td>
-                                    {{-1*$prev}}
-                                </td>
-                                <td>
-
-                                </td>
-                                <td>
-                                    Cr.{{-1*$prev}}
-                                </td>
-                                @else
-                                <td>
-                                    --
-                                </td>
-                                <td>
-                                    --
-                                </td>
-                                <td>
-                                    --
-                                </td>
-                            @endif
-                            <td></td>
-                        </tr>
-                    @endif
-                    @foreach ($arr as $l)
-                        <tr>
+                    @foreach ($ledgers as $l)
+                        <tr data-id="ledger{{$l->id}}">
                             <td>{{ _nepalidate($l->date) }}</td>
                             <td>{!! $l->title !!}</td>
 
                             <td>
                                 @if ($l->type==1)
-                                    {{ (float)$l->amount }}
+                                    {{ rupee((float)$l->amount) }}
                                 @endif
                             </td>
                             <td>
                                 @if($l->type==2)
-                                {{ (float)$l->amount }}
+                                {{ rupee((float)$l->amount) }}
                                 @endif
                             </td>
                             <td>
-                                @if ($l->amt>0)
-
-                                    Dr. {{(float)$l->amt}}
-                                @elseif ($l->amt<0)
-                                    Cr. {{(float)(-1*$l->amt)}}
-                                @else
-                                    --
-                                @endif
+                                {{ (($l->dr == null)|| ($l->dr<=0))?"":"Dr. ".rupee((float)$l->dr) }}
+                                {{(($l->cr == null)|| ($l->cr<=0))?"":"Cr. ".rupee((float)$l->cr )}}
                             </td>
-                            <td class="d-print-none">
-                                @if ( $l->identifire==119)
+                            <td>
+                                {{-- @if ( $l->identifire==119)
                                     <button onclick="initLedgerChange(this);"  data-ledger="{{$l->toJson()}}">Edit</button>
                                 @elseif($l->identifire==105)
                                     @if ($l->getForeign()!=null)
@@ -147,8 +145,9 @@
                                     @if($l->getForeign()!=null)
                                         <button onclick="payLedgerChange(this);" data-foreign="{{$l->getForeign()->toJson()}}"  data-ledger="{{$l->toJson()}}">Edit</button>
                                     @endif
-                                @endif
-
+                                @endif --}}
+                                <button  onclick="initEditLedger('{{$l->title}}',{{$l->id}});">Edit</button>
+                                <button  onclick="deleteLedger({{$l->id}},loadData);">Delete</button>
                             </td>
                         </tr>
                     @endforeach
@@ -157,9 +156,4 @@
         </div>
     </div>
 </div>
-  
-
-@if ($type==0 && env('dis_snffat',0)==1)
-    @include('admin.distributer.milkdata')
-@endif
 

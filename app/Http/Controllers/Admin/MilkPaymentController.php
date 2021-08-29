@@ -43,6 +43,7 @@ class MilkPaymentController extends Controller
             $payment->center_id=$request->center_id;
             $payment->amount=$request->amount;
             $payment->user_id=$user->id;
+            $payment->date=$date;
             $payment->save();
             $payment->name=$user->name;
             $payment->no=$user->no;
@@ -58,18 +59,35 @@ class MilkPaymentController extends Controller
         // dd($request->all());
         $date = str_replace('-', '', $request->date);
         $payment=MilkPayment::find($request->id);
-        $oldamount=$payment->amount;
+        $payment->date=$date;
         $payment->amount=$request->amount;
         $payment->save();
-
-        LedgerManage::updateLedger(Ledger::where(
+        $l=Ledger::where(
             [
                 ['identifire','=',121],
                 ['foreign_key','=',$request->id]
             ]
-        )->first(),$request->amount);
-        
+        )->first();
+        $l->amount=$request->amount;
+        $l->date=$date;
+        $l->save();
+        return response('ok');
+    }
+
+    public function delete(Request $request){
+        // dd($request->all());
+        $date = str_replace('-', '', $request->date);
+        $payment=MilkPayment::find($request->id);
        
+        $payment->delete();
+        $l=Ledger::where(
+            [
+                ['identifire','=',121],
+                ['foreign_key','=',$request->id]
+            ]
+        )->first();
+     
+        $l->delete();
         return response('ok');
     }
 }

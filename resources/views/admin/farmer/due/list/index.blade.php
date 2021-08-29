@@ -1,5 +1,5 @@
 @extends('admin.layouts.app')
-@section('title','Farmer Balance')
+@section('title','Account Opening')
 @section('css')
 <link rel="stylesheet" href="{{ asset('backend/plugins/select2/select2.css') }}" />
 <link rel="stylesheet" href="{{ asset('calender/nepali.datepicker.v3.2.min.css') }}" />
@@ -15,7 +15,7 @@
         tfoot {display: table-header-group;}
 </style>
 @endsection
-@section('head-title','Farmer Balance')
+@section('head-title','Account Opening')
 @section('toobar')
 
 @endsection
@@ -66,7 +66,7 @@
                     <div class="col-md-3">
                         <div class="form-group">
                             <label for="amount">Amount</label>
-                            <input type="number" id="amount" name="amount" class="form-control next" data-next="product_id">
+                            <input type="number" id="amount" name="amount" class="form-control next" data-next="type">
 
                         </div>
                     </div>
@@ -124,13 +124,13 @@
 <script>
     // $( "#x" ).prop( "disabled", true );
     initTableSearch('sId', 'datas', ['name']);
-    initTableSearch('s_dis', 'distributors', ['name']);
-    initTableSearch('productsearch', 'products', ['name']);
+    // initTableSearch('s_dis', 'distributors', ['name']);
+    // initTableSearch('productsearch', 'products', ['name']);
 
 
     function farmerSelected(id){
-        $('#id').focus();
-        $('#id').val();
+        $('#id').val(id);
+        $('#amount').focus();
     }
     function saveData() {
         if ($('#nepali-datepicker').val() == '' || $('#id').val() == '' || $('#amount').val()=="" || $('#amount').val()=="0") {
@@ -208,8 +208,9 @@
         if($(this).val()!=""){
 
             if(!exists('#farmer-'+$(this).val())){
-                alert('Distributor Not Found');
+                alert('Farmer Not Found');
                 $(this).focus();
+                $(this).val('');
                 $(this).select();
 
             }

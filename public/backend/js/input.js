@@ -72,6 +72,19 @@ $(".calender").each(function () {
     );
 });
 
+function loadDates(selector){
+    $(selector).each(function () {
+        cc_id=$(this).attr("id");
+        $("#" + cc_id).nepaliDatePicker();
+        $("#" + cc_id).mask('0000-00-00');
+        $(this).attr("placeholder",'YYYY-MM-DD');
+        $(this).focus(function(){
+            this.select();
+        })
+        
+    });
+}
+
 $(".mask").each(function () {
     maskid=$(this).attr("id");
     console.log('ading mask',maskid );

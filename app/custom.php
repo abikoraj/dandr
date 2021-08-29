@@ -14,6 +14,11 @@ function _nepalidate($date)
     return $year . "-" . ($month < 10 ? "0" . $month : $month) . "-" . ($day < 10 ? "0" . $day : $day);
 }
 
+function sessionType(int $s){
+    $st=['Any','Morning','Evening'];
+    return $st[$s];
+}
+
 function toNepaliDate($date)
 {
     if ($date == null) {

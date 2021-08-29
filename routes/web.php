@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\Admin\DistributerMilkController;
+use App\Http\Controllers\Admin\DistributerSnfFatController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Sahakari\HomeController;
 use App\Http\Controllers\Sahakari\Member\MemberController;
@@ -93,6 +95,7 @@ Route::name('admin.')->group(function () {
                     // Route::post('load','Admin\ProductController@index')->name('load');
                     Route::post('add', 'Admin\MilkPaymentController@add')->name('add');
                     Route::post('update', 'Admin\MilkPaymentController@update')->name('update')->middleware('authority');
+                    Route::post('delete', 'Admin\MilkPaymentController@delete')->name('delete')->middleware('authority');
                     // Route::post('del','Admin\ProductController@del')->name('del')->middleware('authority');
                 });
             });
@@ -156,6 +159,23 @@ Route::name('admin.')->group(function () {
             Route::get('payment', 'Admin\DistributorPaymentController@index')->name('payemnt');
             Route::post('due-list', 'Admin\DistributorPaymentController@due')->name('due');
             Route::post('due-pay', 'Admin\DistributorPaymentController@pay')->name('pay');
+
+            //XXXX Distributer Milk Data
+            Route::prefix('milk-data')->name('MilkData.')->group(function () {
+                Route::match(['get', 'post'], '',[DistributerMilkController::class,'index'])->name('index');
+                Route::match(['get', 'post'], 'add',[DistributerMilkController::class,'add'])->name('add');
+                Route::match(['get', 'post'], 'update',[DistributerMilkController::class,'update'])->name('update');
+                Route::match(['get', 'post'], 'delete',[DistributerMilkController::class,'delete'])->name('delete');
+                Route::match(['get', 'post'], 'add-to-ledger',[DistributerMilkController::class,'addToLedger'])->name('addToLedger');
+            });
+            //XXXX Distributer Milk Data
+            Route::prefix('snf-fat')->name('snffat.')->group(function () {
+                Route::match(['get', 'post'], '',[DistributerSnfFatController::class,'index'])->name('index');
+                Route::match(['get', 'post'], 'add',[DistributerSnfFatController::class,'add'])->name('add');
+                Route::match(['get', 'post'], 'update',[DistributerSnfFatController::class,'update'])->name('update');
+                Route::match(['get', 'post'], 'delete',[DistributerSnfFatController::class,'delete'])->name('delete');
+            });
+            
         });
 
         Route::prefix('items')->name('item.')->group(function () {

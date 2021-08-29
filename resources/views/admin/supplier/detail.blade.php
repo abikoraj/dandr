@@ -64,7 +64,7 @@
         };
         axios({
                 method: 'post',
-                url: '{{ route("admin.distributer.detail.load") }}',
+                url: '{{ route("admin.supplier.load-detail") }}',
                 data:data ,
         })
         .then(function(response) {

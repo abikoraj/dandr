@@ -36,7 +36,7 @@
     </span>
 </div>
 @if ($newsession)
-<form action="{{route('report.farmer.session')}}" method="POST">
+<form action="{{route('admin.report.farmer.session')}}" method="POST">
     <input type="hidden" name="year" value="{{$year}}" >
     <input type="hidden" name="month" value="{{$month}}" >
     <input type="hidden" name="session" value="{{$session}}" >

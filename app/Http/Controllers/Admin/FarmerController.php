@@ -56,6 +56,8 @@ class FarmerController extends Controller
         $farmer->usetc = $request->usetc ?? 0;
         $farmer->userate = $request->userate ?? 0;
         $farmer->rate = $request->rate;
+        $farmer->no = $max;
+
         $farmer->save();
         if ($request->has('advance')) {
             if ($request->advance > 0) {
@@ -81,7 +83,7 @@ class FarmerController extends Controller
 
     public function minlistFarmerByCenter(Request $request)
     {
-        $farmers = User::join('farmers', 'farmers.user_id', '=', 'users.id')->where('farmers.center_id', $request->center)->where('users.role', 1)->select('users.no', 'users.name')->orderBy('users.no', 'asc')->get();
+        $farmers = User::join('farmers', 'farmers.user_id', '=', 'users.id')->where('farmers.center_id', $request->center)->select('users.no', 'users.name')->orderBy('users.no', 'asc')->get();
         return view('admin.farmer.minlist', ['farmers' => $farmers]);
     }
 
@@ -211,7 +213,7 @@ class FarmerController extends Controller
 
     public function updateFarmer(Request $request)
     {
-        $user = User::where('id', $request->id)->where('role', 1)->first();
+        $user = User::where('id', $request->id)->first();
         if ($request->filled('phone')) {
 
             $user->phone = $request->phone;
@@ -226,6 +228,8 @@ class FarmerController extends Controller
         $farmer->usetc = $request->usetc ?? 0;
         $farmer->userate = $request->userate ?? 0;
         $farmer->rate = $request->rate;
+        $farmer->no = $request->no;
+
         $farmer->save();
 
         $user->usecc = $farmer->usecc;
@@ -253,6 +257,8 @@ class FarmerController extends Controller
     public function dueLoad(Request $request)
     {
         $user = User::join('farmers', 'users.id', '=', 'farmers.user_id')->where('users.no', $request->no)->where('farmers.center_id', $request->center_id)->select('users.*', 'farmers.center_id')->first();
+        $user->balance=Ledger::where('user_id',$user->id)->where('type',2)->sum('amount') - Ledger::where('user_id',$user->id)->where('type',1)->sum('amount');
+        // dd($balance);
         return view('admin.farmer.due.due', compact('user'));
     }
 
@@ -281,7 +287,7 @@ class FarmerController extends Controller
                 ->join('ledgers', 'ledgers.user_id', '=', 'users.id')
                 ->where('farmers.center_id', $request->center)
                 ->where('ledgers.date', $date)
-                ->where('ledgers.identifire', 120)
+                ->where('ledgers.identifire', 101)
                 ->select('ledgers.id', 'ledgers.amount', 'ledgers.type', 'users.no', 'users.name', 'farmers.center_id')->get();
             // dd($ledgers,$request->all());
             return view('admin.farmer.due.list.list', compact('ledgers'));

@@ -4,7 +4,7 @@
 <link rel="stylesheet" href="{{ asset('calender/nepali.datepicker.v3.2.min.css') }}" />
 @endsection
 @section('head-title')
-    <a href="{{route('report.home')}}">Report</a> / Farmer
+    <a href="{{route('admin.report.home')}}">Report</a> / Farmer
 
 @endsection
 @section('toobar')
@@ -20,7 +20,7 @@
         $('#s_n').val('');
         $('#e_n').val('');
     }
-    "> Search By Custome Farmer Number
+    "> Search By Custom Farmer Number
 </div>
 <div class="row">
     <div class="col-md-3">
@@ -113,7 +113,7 @@
             's_number' :$('#s_n').val(),
             'e_number' :$('#e_n').val()
         };
-        axios.post("{{route('report.farmer')}}",d)
+        axios.post("{{route('admin.report.farmer')}}",d)
         .then(function(response){
             $('#allData').html(response.data);
             var edit = document.getElementById("closedate");

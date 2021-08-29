@@ -43,9 +43,15 @@ class AdvanceController extends Controller
 
     public function list(Request $r){
         $date = str_replace('-','',$r->date);
-        $user = User::join('farmers','users.id','=','farmers.user_id')->where('farmers.center_id',$r->center_id)->select('farmers.user_id')->get();
+        $advs = User::join('farmers','users.id','=','farmers.user_id')
+        ->join('advances','advances.user_id','=','farmers.user_id')
+        ->where('farmers.center_id',$r->center_id)
+        ->where('advances.date',$date)
+        // ->where('advance')
+        ->select('farmers.user_id','users.no','advances.*','users.name')->get();
         // dd($user);
-        $advs = Advance::where('date',$date)->whereIn('user_id',$user)->get();
+        // dd($user);
+        // $advs = Advance::where('date',$date)->whereIn('user_id',$user)->get();
         return view('admin.farmer.advance.list',compact('advs'));
     }
 
@@ -70,9 +76,10 @@ class AdvanceController extends Controller
         $adv = Advance::where('id',$request->id)->first();
 
         $ledger = Ledger::where(['user_id' => $adv->user_id, 'identifire' => '104', 'foreign_key' => $request->id])->first();
-        if($ledger!=null){
-            LedgerManage::delLedger([$ledger]);
-        }
+        // if($ledger!=null){
+        //     LedgerManage::delLedger([$ledger]);
+        // }
+        $ledger->delete();
         $adv->delete();
         return response('Advance Deleted Sucessfully');
     }
@@ -80,9 +87,11 @@ class AdvanceController extends Controller
         $adv = Advance::where('id',$request->id)->first();
         $adv->amount=$request->amount;
         $ledger = Ledger::where(['user_id' => $adv->user_id, 'identifire' => '104', 'foreign_key' => $request->id])->first();
-        if($ledger!=null){
-            LedgerManage::updateLedger($ledger,$request->amount);
-        }
+        $ledger->amount=$request->amount;
+        $ledger->save();
+        // if($ledger!=null){
+        //     LedgerManage::updateLedger($ledger,$request->amount);
+        // }
         $adv->save();
         return view('admin.farmer.advance.single',compact('adv'));
 

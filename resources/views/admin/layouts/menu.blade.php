@@ -25,11 +25,10 @@
                 <ul class="ml-menu">
                     <li><a href="{{ route('admin.farmer.list') }}" class="waves-effect waves-block">Farmer List</a></li>
                     <li><a href="{{ route('admin.farmer.advance') }}" class="waves-effect waves-block">Advance</a></li>
-                    <li><a href="{{ route('admin.farmer.due') }}" class="waves-effect waves-block">Paid By Former</a></li>
+                    <li><a href="{{ route('admin.farmer.due') }}" class="waves-effect waves-block">Farmer Payment</a></li>
                     <li><a href="{{ route('admin.farmer.due.add.list') }}" class="waves-effect waves-block">Account Opening</a></li>
                     <li><a href="{{ route('admin.farmer.milk.payment.index') }}" class="waves-effect waves-block">Milk Payment</a></li>
                     <li><a href="{{ route('admin.sell.item.index') }}" class="waves-effect waves-block">Farmer Sell</a></li>
-
                 </ul>
             </li>
 
@@ -54,6 +53,11 @@
                     <li><a href="{{ route('admin.distributer.detail.opening') }}" class="waves-effect waves-block">Account Opening</a></li>
                     <li><a href="{{ route('admin.distributer.request') }}" class="waves-effect waves-block">Distributor Request</a></li>
                     <li><a href="{{ route('admin.distributer.credit.list') }}" class="waves-effect waves-block"> Credit List</a></li>
+                    @if (env('dis_snffat',0)==1)
+                    <li><a href="{{ route('admin.distributer.snffat.index') }}" class="waves-effect waves-block">SNF FAT</a></li>
+                    <li><a href="{{ route('admin.distributer.MilkData.index') }}" class="waves-effect waves-block">Milk Data</a></li>
+                        
+                    @endif
                 </ul>
             </li>
             <li><a href="javascript:void(0);" class="waves-effect waves-block menu-toggle"><i class="zmdi zmdi-shopping-cart"></i><span>Manage Expense</span></a>
@@ -65,7 +69,7 @@
             <li><a href="javascript:void(0);" class="waves-effect waves-block menu-toggle"><i class="zmdi zmdi-shopping-cart"></i><span>Suppliers</span></a>
                 <ul class="ml-menu">
                     <li><a href="{{ route('admin.supplier.index') }}" class="waves-effect waves-block">Supplier List</a></li>
-                    <li><a href="{{ route('admin.supplier.bill') }}" class="waves-effect waves-block">Supplier Bill</a></li>
+                    <li><a href="{{ route('admin.supplier.bill') }}" class="waves-effect waves-block">Purchase Bill</a></li>
                     <li><a href="{{ route('admin.supplier.pay') }}" class="waves-effect waves-block">Supplier Payment</a></li>
                     <li><a href="{{ route('admin.supplier.previous.balance') }}" class="waves-effect waves-block">Previous Blance</a></li>
                 </ul>
@@ -85,6 +89,14 @@
                     <li><a href="{{ route('admin.customer.payment.index') }}" class="waves-effect waves-block">Payment</a></li>
                 </ul>
             </li>
+            <li><a href="javascript:void(0);" class="waves-effect waves-block menu-toggle"><i class="zmdi zmdi-shopping-cart"></i><span>POS</span></a>
+                <ul class="ml-menu">
+                    <li><a href="{{ route('admin.counter.home') }}" class="waves-effect waves-block">Counters </a></li>
+                    <li><a href="{{ route('pos.index') }}" class="waves-effect waves-block">POS Interface</a></li>
+                </ul>
+            </li>
+
+            <li><a href="{{route('admin.report.home')}}" class="waves-effect waves-block"><i class="zmdi zmdi-shopping-cart"></i><span>Reports</span></a></li>
 
             {{-- 
 

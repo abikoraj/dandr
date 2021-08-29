@@ -108,6 +108,7 @@
     <script src="{{ asset('backend/bundles/mainscripts.bundle.js') }}"></script>
     <script src="{{ asset('backend/js/pages/forms/form-validation.js') }}"></script>
     <script src="{{ asset('backend/js/pages/ui/notifications.js') }}"></script> <!-- Custom Js -->
+    <script src="{{ asset('backend/js/jquery.mask.min.js') }}"></script> <!-- jquery mask Js -->
 
 
 

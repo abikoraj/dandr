@@ -14,7 +14,7 @@
     <form id="form_validation" method="POST" onsubmit="return saveData(event);">
         @csrf
         <div class="row">
-            <div class="col-md-12">
+            <div class="col-md-6">
                 <div class="form-group">
                     <label for="date">Collection Center</label>
                     <select name="center_id" id="center_id" class="form-control show-tick ms next">
@@ -29,6 +29,10 @@
                 <label for="date">Date</label>
                 <input type="text" name="date" id="nepali-datepicker" class="form-control next calender" data-next="u_id">
             </div>
+            <div class="col-lg-3">
+                <span class="btn btn-primary w-100" onclick="loadData();" style="margin-top:30px;">Load Data</span>
+            </div>
+            <div class="col-md-12"><hr></div>
 
             <div class="col-lg-4">
                 <label for="u_number">Farmer Number</label>
@@ -75,9 +79,13 @@
 <script src="{{ asset('backend/plugins/select2/select2.min.js') }}"></script>
 <script src="{{ asset('calender/nepali.datepicker.v3.2.min.js') }}"></script>
 <script>
-    // initTableSearch('searchid', 'farmerforData', ['name']);
+    initTableSearch('searchid', 'farmerforData', ['name']);
     // load by date
     $("input#nepali-datepicker").bind('click', function (e) {
+        loadData();
+    });
+
+    function loadData(){
         var date = $('#nepali-datepicker').val();
         var center_id = $('#center_id').val();
         axios({
@@ -94,7 +102,7 @@
                 //handle error
                 console.log(response);
             });
-    });
+    }
 
     function initEdit(ele) {
         var adv = JSON.parse(ele.dataset.advance);
@@ -187,24 +195,7 @@
 
     // load advance
    $('#center_id').change(function(){
-        var datadate = $('#nepali-datepicker').val();
-        var center_id = $('#center_id').val();
-        // alert(center_id);
-        // console.log(datadate);
-        axios({
-                method: 'post',
-                url: '{{ route("admin.farmer.advance.list-by-date")}}',
-                data:{'date':datadate,'center_id':center_id}
-        })
-        .then(function(response) {
-            $('#advanceData').empty();
-            $('#advanceData').html(response.data);
-            // $('').html(response.data);
-        })
-        .catch(function(response) {
-            //handle error
-            console.log(response);
-        });
+        loadData();
    })
 
     window.onload = function() {
@@ -213,10 +204,7 @@
         // loadAdvance();
     };
 
-    var month = ('0'+ NepaliFunctions.GetCurrentBsDate().month).slice(-2);
-    var day = ('0' + NepaliFunctions.GetCurrentBsDate().day).slice(-2);
-    $('#nepali-datepicker').val(NepaliFunctions.GetCurrentBsYear() + '-' + month + '-' + day);
-
+ 
     function farmerSelected(id){
         $('#u_id').val(id);
         $('#farmermodal').modal('hide');

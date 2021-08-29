@@ -101,7 +101,7 @@
                     <table id="newstable1" class="table table-bordered">
                         <thead>
                             <tr>
-                                <th><input type="checkbox" id="allchecked" onchange="selectAll(this.checked);"> User No.</th>
+                                <th><input type="checkbox" id="allchecked" onchange="selectAll(this.checked);"> Farmer No.</th>
                                 <th>Item Name</th>
                                 <th>Rate</th>
                                 <th>Quantity</th>

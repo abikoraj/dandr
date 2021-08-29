@@ -25,11 +25,11 @@
 @endsection
 @section('content')
 <div class="row">
-    <div class="col-md-2">
+    {{-- <div class="col-md-2">
         <label for="date">Date</label>
-        <input type="text"  id="currentdate" class="form-control" >
-    </div>
-    <div class="col-md-10"></div>
+        <input type="text"  id="currentdate" class="form-control " >
+    </div> --}}
+    {{-- <div class="col-md-10"></div> --}}
     <div class="col-md-2">
         <label for="date">Year</label>
         <select name="year" id="year" class="form-control show-tick ms select2">
@@ -71,13 +71,17 @@
     </div>
     <div class="col-md-9 d-none" id="dataField">
         <div class="row">
-            <div class="col-md-4">
+            <div class="col-md-3">
+                {{-- <label for="date">Date</label> --}}
+                <input type="text"  id="currentdate" class="form-control " >
+            </div>
+            <div class="col-md-3">
                 <input type="number" id="no" placeholder="Farmer No" class="form-control next checkfarmer"  data-next="amount">
             </div>
-            <div class="col-md-4">
+            <div class="col-md-3">
                 <input type="number" id="amount" placeholder="Payment Amount" class="form-control" min="1">
             </div>
-            <div class="col-md-4 ">
+            <div class="col-md-3 ">
                 <button class="btn btn-success" onclick="saveDate();">Save</button>
             </div>
             <div class="col-md-12 pt-4">
@@ -112,6 +116,11 @@
 <script>
 
     loaded=false;
+    function farmerSelected(id){
+        $('#no').val(id);
+        $('#amount').select();
+        $('#amount').focus();
+    }
     function Toogle(){
         if(loaded){
             loaded=false;
@@ -209,6 +218,7 @@
         .then(function(response){
             $('#allData').html(response.data);
             Toogle();
+            loadDates('.payment-date');
         })
         .catch(function(error){
             alert('some error occured');
@@ -257,15 +267,15 @@
         });
     })
 
-    function updateData(id,value){
+    function updateData(id,value,date){
         console.log(id,value);
         axios.post("{{route('admin.farmer.milk.payment.update')}}",{
             'id':id,
             'amount':value,
-            'date':$('#currentdate').val()
+            'date':date
         })
             .then(function(response){
-                showNotification('bg-success', 'Deleted successfully!');
+                showNotification('bg-success', 'Updated successfully!');
             })
             .catch(function(error){
                 if(error.response){
@@ -282,6 +292,34 @@
                 }
             });
     }
+
+    function amountDelete(id){
+        if(confirm('Do you Want Delete Milk Payment')){
+
+            axios.post("{{route('admin.farmer.milk.payment.delete')}}",{
+                'id':id,
+               
+            })
+                .then(function(response){
+                    showNotification('bg-success', 'Deleted successfully!');
+                    $('#payment-'+id).remove();
+                })
+                .catch(function(error){
+                    if(error.response){
+                        if(error.response.status==401){
+    
+                            alert(error.response.data);
+                        }else{
+                            alert('some error occured');
+    
+                        }
+                    }else{
+    
+                        alert('some error occured');
+                    }
+                });
+        }
+    }
     $('#amount').bind('keydown', 'return', function(e){
        saveDate();
     });
@@ -291,8 +329,9 @@
     }
     function amountUpdate(id){
         ele=document.getElementById('amount-'+id);
+        eledate=document.getElementById('date-'+id);
         if( confirm('Do You Want To Update Data?')){
-                updateData(ele.dataset.id,ele.value);
+                updateData(ele.dataset.id,ele.value,eledate.value);
            }else{
                 ele.value=ele.dataset.amount;
            }
@@ -302,7 +341,8 @@
         // console.log(key);
         if(key=='13'){
            if( confirm('Do You Want To Update Data?')){
-                updateData(ele.dataset.id,ele.value);
+                eledate=document.getElementById('date-'+ele.dataset.id);
+                updateData(ele.dataset.id,ele.value,eledate.value);
            }else{
                 ele.value=ele.dataset.amount;
            }

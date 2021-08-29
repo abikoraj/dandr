@@ -40,7 +40,7 @@ class LedgerManage
     * "115" = "distributer sell cancel"
     * "118" = "Account Adjustment"
     * "119" = "Distributor opening balance"
-    * "120" = ""
+    * "132" = "Milk total Distributer"
 
     * "112" = "Employee Advaance payment"
     * "113" = "Employee Account Open"
@@ -66,19 +66,6 @@ class LedgerManage
     public function addLedger($particular, $type, $amount, $date, $identifier, $foreign_id = null)
     {
         $nepalidate = new NepaliDate($date);
-        $_amount = $this->user->amount;
-        $amounttype = $this->user->amounttype ?? 1;
-
-        if ($amounttype == 1) {
-            $_amount = -1 * $_amount;
-        }
-
-        if ($type == 1) {
-            $_amount -= $amount;
-        } else {
-            $_amount += $amount;
-        }
-
         $l = new \App\Models\Ledger();
         $l->amount = $amount;
         $l->title = $particular;
@@ -90,22 +77,11 @@ class LedgerManage
         $l->month = $nepalidate->month;
         $l->session = $nepalidate->session;
         $l->type = $type;
-        $t = 1;
-
-        if ($_amount > 0) {
-            $t = 2;
-            $l->dr = $_amount;
-        } else if ($_amount < 0) {
-            $t = 1;
-            $_amount = -1 * $_amount;
-            $l->cr = $_amount;
-        }
-        $this->user->amount = $_amount;
-        $this->user->amounttype = $t;
-        $this->user->save();
         $l->save();
         return $l;
     }
+
+  
 
 
 
@@ -168,93 +144,91 @@ class LedgerManage
         }
     }
 
-    public static function updateLedger($ledger,$amount,$type=null,$title=null){
-        $ledgers=Ledger::where('id','>',$ledger->id)->where('user_id',$ledger->user_id)->orderBy('id','asc')->get();
-        $track=0;
+    public static function updateLedger($ledger, $amount, $type = null, $title = null)
+    {
+        $ledgers = Ledger::where('id', '>', $ledger->id)->where('user_id', $ledger->user_id)->orderBy('id', 'asc')->get();
+        $track = 0;
 
         //find first point
-        if($ledger->cr>0){
-            $track=(-1)*$ledger->cr;
+        if ($ledger->cr > 0) {
+            $track = (-1) * $ledger->cr;
         }
-        if($ledger->dr>0){
-            $track=$ledger->dr;
+        if ($ledger->dr > 0) {
+            $track = $ledger->dr;
         }
 
         // echo 'first'.$track."<br>";
 
         //find old data
 
-        if($ledger->type==1){
-            $track+=$ledger->amount;
-        }else{
-            $track-=$ledger->amount;
+        if ($ledger->type == 1) {
+            $track += $ledger->amount;
+        } else {
+            $track -= $ledger->amount;
         }
 
         // echo 'second'.$track."<br>";
 
-        if($type==null){
-            $type=$ledger->type;
+        if ($type == null) {
+            $type = $ledger->type;
         }
-        if($title==null){
-            $title=$ledger->title;
+        if ($title == null) {
+            $title = $ledger->title;
         }
         //set new data
-        if($type==1){
-            $track-=$amount;
-        }else{
-            $track+=$amount;
+        if ($type == 1) {
+            $track -= $amount;
+        } else {
+            $track += $amount;
         }
 
         // echo 'third'.$track."<br>";
 
 
-        $ledger->amount=$amount;
-        $ledger->type=$type;
-        $ledger->title=$title;
+        $ledger->amount = $amount;
+        $ledger->type = $type;
+        $ledger->title = $title;
 
-        if($track<0){
-            $ledger->cr=(-1)*$track;
-            $ledger->dr=0;
-        }else{
-            $ledger->dr=$track;
-            $ledger->cr=0;
+        if ($track < 0) {
+            $ledger->cr = (-1) * $track;
+            $ledger->dr = 0;
+        } else {
+            $ledger->dr = $track;
+            $ledger->cr = 0;
         }
         $ledger->save();
 
-        foreach($ledgers as $l){
+        foreach ($ledgers as $l) {
 
-            if($l->type==1){
-                $track-=$l->amount;
-            }else{
-                $track+=$l->amount;
+            if ($l->type == 1) {
+                $track -= $l->amount;
+            } else {
+                $track += $l->amount;
             }
 
-            if($track<0){
-                $l->cr=(-1)*$track;
-                $l->dr=0;
-            }else{
-                $l->dr=$track;
-                $l->cr=0;
+            if ($track < 0) {
+                $l->cr = (-1) * $track;
+                $l->dr = 0;
+            } else {
+                $l->dr = $track;
+                $l->cr = 0;
             }
             $l->save();
 
             // echo $l->title . ",".$track."<br>";
         }
 
-        $t=0;
-        if($track>0){
-            $t=2;
-
-        }else if($track<0){
-            $t=1;
-            $track=(-1)*$track;
-
-
+        $t = 0;
+        if ($track > 0) {
+            $t = 2;
+        } else if ($track < 0) {
+            $t = 1;
+            $track = (-1) * $track;
         }
 
-        $user=User::where('id',$ledger->user_id)->first();
-        $user->amount=$track;
-        $user->amounttype=$t;
+        $user = User::where('id', $ledger->user_id)->first();
+        $user->amount = $track;
+        $user->amounttype = $t;
         $user->save();
     }
 
@@ -303,17 +277,42 @@ class LedgerManage
         if (env('hasextra', 0) == 1) {
             $farmer1->bonus = (int)($farmer1->grandtotal * $center->bonus / 100);
         }
-        $farmer1->fpaid=(Ledger::where('user_id',$user_id)->where('date','>=',$range[1])->where('date','<=',$range[2])->where('identifire','106')->sum('amount')+Ledger::where('user_id',$user_id)->where('date','>=',$range[1])->where('date','<=',$range[2])->where('identifire','107')->sum('amount'));
-        $farmer1->due=Ledger::where('user_id',$user_id)->where('date','>=',$range[1])->where('date','<=',$range[2])->where('identifire','103')->sum('amount');;
+        $farmer1->fpaid = (Ledger::where('user_id', $user_id)->where('date', '>=', $range[1])->where('date', '<=', $range[2])->where('identifire', '106')->sum('amount') + Ledger::where('user_id', $user_id)->where('date', '>=', $range[1])->where('date', '<=', $range[2])->where('identifire', '107')->sum('amount'));
+        $farmer1->due = Ledger::where('user_id', $user_id)->where('date', '>=', $range[1])->where('date', '<=', $range[2])->where('identifire', '103')->sum('amount');;
         $previousMonth = Ledger::where('user_id', $user_id)->where('date', '>=', $range[1])->where('date', '<=', $range[2])->where('identifire', '101')->sum('amount');
-        $previousMonth1 = Ledger::where('user_id', $user_id)->where('date', '>=', $range[1])->where('date', '<=', $range[2])->where('identifire', '120')->where('type', 1)->sum('amount');
-        $previousBalance = Ledger::where('user_id', $user_id)->where('date', '>=', $range[1])->where('date', '<=', $range[2])->where('identifire', '120')->where('type', 2)->sum('amount');
+        // $previousMonth1 = Ledger::where('user_id', $user_id)->where('date', '>=', $range[1])->where('date', '<=', $range[2])->where('identifire', '120')->where('type', 1)->sum('amount');
+        // $previousBalance = Ledger::where('user_id', $user_id)->where('date', '>=', $range[1])->where('date', '<=', $range[2])->where('identifire', '120')->where('type', 2)->sum('amount');
+        $n3 = Ledger::where('user_id', $user_id)->where('date', '>=', $range[1])->where('date', '<=', $range[2])->where('identifire', '120')->get();
+        // $previousMonth1 = Ledger::where('user_id', $user_id)->where('date', '>=', $range[1])->where('date', '<=', $range[2])->where('identifire', '120')->where('type', 1)->sum('amount');
+        // $ledgers= Ledger::where('user_id',$user_id)->where('date','<',$range[1])->where('identifire','!=',109)->where('identifire','!=',120)->orderBy('date','asc')->orderBy('id','asc')->get();
+        $previousMonth1 = 0;
+        $previousBalance = 0;
+        // $n1=Ledger::where('user_id',$user_id)->where('date','<',$range[1])->where('identifire','!=',109)->where('identifire','!=',120)->where('type',1)->sum('amount');
+        // $n2=Ledger::where('user_id',$user_id)->where('date','<',$range[1])->where('identifire','!=',109)->where('identifire','!=',120)->where('type',2)->sum('amount');
+        $n1 = Ledger::where('user_id', $user_id)->where('date', '<', $range[1])->where('type', 1)->sum('amount');
+        $n2 = Ledger::where('user_id', $user_id)->where('date', '<', $range[1])->where('type', 2)->sum('amount');
+
+        $prev = $n2 - $n1;
+        foreach ($n3 as  $value) {
+            if ($value->type == 1) {
+                $prev -= $value->amount;
+            } else {
+                $prev += $value->amount;
+            }
+        }
+
+
+        if ($prev < 0) {
+            $previousMonth1 = -1 * $prev;
+        } else {
+            $previousBalance = $prev;
+        }
 
         $farmer1->advance = (float)(Advance::where('user_id', $user_id)->where('date', '>=', $range[1])->where('date', '<=', $range[2])->sum('amount'));
         $farmer1->prevdue = (float)$previousMonth + (float)$previousMonth1;
         $farmer1->prevbalance = (float)$previousBalance;
         $farmer1->paidamount = (float)Ledger::where('user_id', $user_id)->where('date', '>=', $range[1])->where('date', '<=', $range[2])->where('identifire', '121')->where('type', 1)->sum('amount');
-        $balance = $farmer1->grandtotal + $farmer1->balance - $farmer1->prevdue - $farmer1->advance - $farmer1->due - $farmer1->paidamount + $farmer1->prevbalance - $farmer1->bonus+$farmer1->fpaid;
+        $balance = $farmer1->grandtotal + $farmer1->balance - $farmer1->prevdue - $farmer1->advance - $farmer1->due - $farmer1->paidamount + $farmer1->prevbalance - $farmer1->bonus + $farmer1->fpaid;
         $farmer1->balance = 0;
         $farmer1->nettotal = 0;
         if ($balance < 0) {
