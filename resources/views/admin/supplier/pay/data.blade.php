@@ -2,78 +2,18 @@
     $t=0;$bt=0;$pt=0;
 
 @endphp
-{{-- <table id="newstable1" class="table table-bordered">
-    <thead>
-        <tr>
-            <th>Date</th>
-            <th>Product</th>
-            <th>Rate</th>
-            <th>Quantity</th>
-            <th>Total</th>
-            <th>Paid</th>
-            <th>Due</th>
 
-        </tr>
-    </thead>
-    <tbody >
-
-        @foreach ($bills as $bill)
-            <tr>
-                <td>
-                    {{_nepalidate($bill->date)}}
-                </td>
-                <td>
-                    {{$bill->product->name}}
-                </td>
-                <td>
-                    {{$bill->rate}}
-                </td>
-                <td>
-                    {{$bill->qty}}
-                </td>
-                <td>
-                    {{$bill->total}}
-                    @php
-                        $bt+=$bill->total;
-                    @endphp
-                </td>
-                <td>
-                    {{$bill->paid}}
-                    @php
-                        $pt+=$bill->paid;
-                    @endphp
-                </td>
-                <td>
-                    {{$bill->deu}}
-                    @php
-                        $t+=$bill->deu
-                    @endphp
-                </td>
-            </tr>
-        @endforeach
-        <tr>
-            <td colspan="4" class="text-right">
-                Total
-            </td>
-            <td>
-                {{$bt}}
-            </td>
-            <td>
-                {{$pt}}
-            </td>
-            <td>
-                {{$t}}
-            </td>
-        </tr>
-    </tbody>
-</table> --}}
 
 <div class="card py-4 px-2 my-3 shadow" style="font-size:2rem;font-weight:600;">
     <strong>
         Current Balance :
     </strong>
-    {{rupee((float)$supplier->amount )}}
-    {{$supplier->amounttype==1?"CR":"DR" }}
+    @if ($supplier->balance==0)
+        0
+    @else
+    {{rupee((float)($supplier->balance>0? $supplier->balance:(-1*$supplier->balance)))}}
+    {{$supplier->balance<0?"CR":"DR" }}
+    @endif
 </div>
 <div class="card py-4 px-2 my-3 shadow">
     <div class="row">

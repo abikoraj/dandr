@@ -211,6 +211,8 @@
                         $('#ipaid').val(0);
                         $('#idue').val(0);
                         $('#supplier').val('').change();;
+                        itemKeys=[];
+                        suffle();
                     })
                     .catch(function(response) {
                         //handle error

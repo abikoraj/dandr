@@ -240,6 +240,7 @@ Route::name('admin.')->group(function () {
             Route::get('bill-delete', 'Admin\SupplierController@deleteBill')->name('bill.delete')->middleware('authority');
             Route::post('bill-item', 'Admin\SupplierController@billItems')->name('bill.item.list');
             Route::get('bill-detail/{bill}', 'Admin\SupplierController@billDetail')->name('bill.item.detail');
+            Route::post('bill-cancel', 'Admin\SupplierController@cancelBill')->name('bill.item.cancel');
 
             // XXX supplier previous
             Route::get('previous-balance', 'Admin\SupplierController@previousBalance')->name('previous.balance');

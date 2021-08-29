@@ -76,6 +76,20 @@
         });
     }
 
+    function cancelBill(bill_id){
+        showProgress('Cancelling Bill');
+        axios.post('{{route('admin.supplier.bill.item.cancel')}}',{
+            "bill_id":bill_id
+        })
+        .then((res)=>{
+            hideProgress();
+            loadData();
+        })
+        .catch((err)=>{
+            hideProgress();
+        })
+    }
+
     window.onload = function() {
 
         $('#type').val(0).change();

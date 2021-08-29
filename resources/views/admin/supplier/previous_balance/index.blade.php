@@ -1,5 +1,5 @@
 @extends('admin.layouts.app')
-@section('title','Supplier Balance')
+@section('title','Opening Balance')
 @section('css')
 <link rel="stylesheet" href="{{ asset('backend/plugins/select2/select2.css') }}" />
 <link rel="stylesheet" href="{{ asset('calender/nepali.datepicker.v3.2.min.css') }}" />
@@ -15,7 +15,7 @@
         tfoot {display: table-header-group;}
 </style>
 @endsection
-@section('head-title','Supplier Balance')
+@section('head-title','Opening Balance')
 @section('toobar')
 
 @endsection

@@ -138,9 +138,14 @@
                                 </td>
                               <td class="d-print-none">
                                  @if ($l->identifire==125)
-                                 <a   class="btn btn-primary " target="_blank" href="{{route('admin.supplier.bill.item.detail',['bill'=>$l->foreign_key])}}">Bill Detail</a>
-                                 <button onclick="cancelBill(this);"  data-ledger="{{$l->toJson()}}" class="btn btn-danger">Cancel</button>
+                                 <a class="btn btn-primary " target="_blank" href="{{route('admin.supplier.bill.item.detail',['bill'=>$l->foreign_key])}}">Bill Detail</a>
+                                 <button onclick="cancelBill({{$l->foreign_key}});"  class="btn btn-danger">Cancel</button>
                                  @endif
+                                 @if ($l->identifire==127 || $l->identifire==128)
+                                    <button  onclick="initEditLedger('{{$l->title}}',{{$l->id}});">Edit</button>
+                                    <button  onclick="deleteLedger({{$l->id}},loadData);">Delete</button>
+                                 @endif
+
   
                               </td>
                           </tr>

@@ -71,7 +71,7 @@
                     <li><a href="{{ route('admin.supplier.index') }}" class="waves-effect waves-block">Supplier List</a></li>
                     <li><a href="{{ route('admin.supplier.bill') }}" class="waves-effect waves-block">Purchase Bill</a></li>
                     <li><a href="{{ route('admin.supplier.pay') }}" class="waves-effect waves-block">Supplier Payment</a></li>
-                    <li><a href="{{ route('admin.supplier.previous.balance') }}" class="waves-effect waves-block">Previous Blance</a></li>
+                    <li><a href="{{ route('admin.supplier.previous.balance') }}" class="waves-effect waves-block">Opening Blance</a></li>
                 </ul>
             </li>
             <li><a href="javascript:void(0);" class="waves-effect waves-block menu-toggle"><i class="zmdi zmdi-shopping-cart"></i><span>Staff Manage</span></a>
@@ -129,7 +129,8 @@
                 </ul>
             </li>
             @endif
-            <li><a href="{{ route('logout') }}" class="waves-effect waves-block" target="_top"><i class="zmdi zmdi-power"></i><span>Sign Out</span></a></li> --}}
+            --}}
+            <li><a href="{{ route('logout') }}" class="waves-effect waves-block" target="_top"><i class="zmdi zmdi-power"></i><span>Sign Out</span></a></li> 
         </ul>
     </div>
 </aside>
