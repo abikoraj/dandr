@@ -1,7 +1,9 @@
 <?php
 
+use App\Http\Controllers\Admin\CounterController;
 use App\Http\Controllers\Admin\DistributerMilkController;
 use App\Http\Controllers\Admin\DistributerSnfFatController;
+use App\Http\Controllers\POS\BillingController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Sahakari\HomeController;
 use App\Http\Controllers\Sahakari\Member\MemberController;
@@ -399,10 +401,19 @@ Route::name('admin.')->group(function () {
         Route::group(['prefix' => 'counter'], function () {
             Route::name('counter.')->group(function () {
                 Route::get('', 'Admin\CounterController@index')->name('home');
+                Route::get('stat/{counter}', [CounterController::class,'getStatus'])->name('status.get');
                 Route::post('update/{id}', 'Admin\CounterController@update')->name('update');
                 Route::post('add', 'Admin\CounterController@add')->name('add');
                 Route::post('delete/{id}', 'Admin\CounterController@delete')->name('delete');
                 Route::match(['get', 'post'], 'status/{id}','Admin\CounterController@status')->name('status');
+
+                Route::group(['prefix' => 'day'], function () {
+                    Route::name('day.')->group(function () {
+                        Route::get('', 'Admin\CounterController@day')->name('index');
+                        Route::post('open', 'Admin\CounterController@dayOpen')->name('open');
+                    });
+                });
+
             });
         });
 
@@ -437,13 +448,19 @@ Route::name('admin.')->group(function () {
 
 Route::name('pos.')->prefix('pos')->group(function(){
     Route::middleware(['pos'])->group(function () {
+        Route::view('day', 'pos.counter.day')->name('day');
         Route::match(['GET', 'POST'], 'bill', 'POS\POSController@index')->name('index');
         Route::match(['GET', 'POST'], 'counter', 'POS\POSController@counter')->name('counter');
+        Route::match(['GET', 'POST'], 'counter-open', 'POS\POSController@counterOpen')->name('counter.open');
         Route::get('counter/status', 'POS\POSController@counterStatus')->name('counterStatus');
         Route::get('items', 'POS\POSController@items')->name('items');
+
         Route::get('customers', 'POS\POSController@customers')->name('customers');
         Route::post('customers-add', 'POS\POSController@customersAdd')->name('customers-add');
         Route::post('customer-search', 'POS\POSController@searchCustomer')->name('customers-search');
+        Route::name('billing.')->prefix('billing')->group(function(){
+            Route::post('add', [BillingController::class,'add'])->name('add');
+        });
     });
 });
 

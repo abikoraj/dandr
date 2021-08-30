@@ -19,6 +19,11 @@ function sessionType(int $s){
     return $st[$s];
 }
 
+function counterStatus(int $s){
+    $st=['','Requested','Running','Closed'];
+    return $st[$s];
+}
+
 function toNepaliDate($date)
 {
     if ($date == null) {

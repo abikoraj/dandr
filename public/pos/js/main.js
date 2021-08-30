@@ -32,7 +32,7 @@ function addItem(barcode) {
 }
 
 const producturl = "";
-
+lock=false;
 var billpanel = {
     customer:null,
     customerSelected:false,
@@ -47,6 +47,7 @@ var billpanel = {
         grandtotal: 0,
         paid: 0,
         due: 0,
+        return: 0,
     },
     resetInput: function () {
         for (const key in this.total) {
@@ -73,6 +74,9 @@ var billpanel = {
             this.total.discount = 0;
         }
         this.total.taxable = this.total.total - this.total.discount;
+        if(this.total.taxable<0){
+            this.total.taxable=0;
+        }
         this.setVal("taxable", this.total.taxable);
         this.total.tax = parseFloat(this.getVal("tax"));
         if (isNaN(this.total.tax)) {
@@ -85,10 +89,13 @@ var billpanel = {
             this.total.paid = 0;
         }
         this.total.due = this.total.grandtotal - this.total.paid;
+        this.total.return=0;
         if (this.total.due < 0) {
+            this.total.return=(-1*this.total.due);
             this.total.due = 0;
         }
         this.setVal("due", this.total.due);
+        this.setVal("return", this.total.return);
     },
     ele: function () {
         return $("#bill-items");
@@ -284,15 +291,17 @@ var billpanel = {
         if (confirm("Do You Want To Cancel Current Bill")) {
             this.resetInput();
             this.billitems = [];
+            this.billitems = [];
             this.ele().html("");
         }
     },
     customerSearch:function(){
+        console.log('search started');
         searchType=$('input[name="radio_customer_search"]:checked').val();
         keyword=$('#input_customer_search').val();
         data={};
         if(searchType==1){
-            if(keyword.length<8){
+            if(keyword.length<5){
                 return;
             }
             data={"phone":keyword};
@@ -338,6 +347,76 @@ var billpanel = {
         $('#customer-name').val(this.customer.name);
         $('#customer-phone').val(this.customer.phone);
         $('#customer-address').val(this.customer.address);
+    },
+    resetCustomer:function(){
+        this.customer=null;
+        console.log(this.customer);
+        this.customerSelected=false;
+        $('#customer-input-panel').removeClass('d-none');
+        $('#cutomer-search-panel').addClass('d-none');
+        $('#customer-name').val('');
+        $('#customer-phone').val('');
+        $('#customer-address').val('');
+        $('#customer-panvat').val('');
+    },
+    closeCusSearch:function(){
+        $('#customer-input-panel').removeClass('d-none');
+        $('#cutomer-search-panel').addClass('d-none');
+    },
+    saveCustomer:function(e,ele){
+        e.preventDefault();
+        if(!lock){
+            lock=true;
+            showProgress('Adding Customer');
+            var data=new FormData(ele);
+            axios.post(addCustomer,data)
+            .then((res)=>{
+                hideProgress();
+                this.customer=res.data;
+                console.log(this.customer);
+                this.customerSelected=true;
+                $('#customer-input-panel').removeClass('d-none');
+                $('#cutomer-search-panel').addClass('d-none');
+                $('#customer-name').val(this.customer.name);
+                $('#customer-phone').val(this.customer.phone);
+                $('#customer-address').val(this.customer.address);
+                lock=false;
+                $('#addCustomerModal').modal('hide');
+                ele.reset();
+            })
+            .catch((err)=>{
+                hideProgress();
+                lock=false;
+            })
+        }
+    },
+    saveBill:function(print){
+        if(this.billitems.length<=0){
+            alert('No Items added to bill.');
+            return;
+        }
+        if(this.total.due>0){
+            if(this.customer==null){
+                alert('Please Select A customer For Due Bill.');
+                return;
+            }
+        }
+        
+        if(this.total.paid>0){
+            $('#payment').modal('show');
+        }
+        // axios.post(addBillURL,{
+        //     "customer":this.customer,
+        //     "billitems":this.billitems,
+        //     "total":this.total,
+        //     "panvat":$('#customer-panvat').val()
+        // })
+        // .then((res)=>{
+        //     console.log(res);
+        // })
+        // .catch((err)=>{
+        //     console.log(err);
+        // });
     }
 };
 

@@ -8,7 +8,7 @@
                     <input type="radio" name="radio_customer_search" checked value="2"> <label for="" class="text-white">Name</label>
                 </span>
                 <span>
-                    <button class="btn btn-danger">Close</button>
+                    <button class="btn btn-danger" onclick="billpanel.closeCusSearch()">Close</button>
                 </span>
             </div>
         </div>
@@ -30,7 +30,7 @@
         <span>Customer</span>
         <span>
             <button class="btn btn-primary" onclick="customerSearchInit()">Search</button>
-            <button class="btn btn-primary">Add Customer</button>
+            <button class="btn btn-primary" onclick="$('#addCustomerModal').modal('show');">Add Customer</button>
         </span>
     </h4>
     <hr>
@@ -59,5 +59,12 @@
                 <input class="form-control" type="text" name="customer-panvat" id="customer-panvat">
             </td>
         </tr>
+        <tr>
+            <td colspan="2" class="p-1 text-end ">
+                <button class="btn btn-danger btn-sm" onclick="billpanel.resetCustomer()">Clear</button>
+
+            </td>
+        </tr>
     </table>
 </div>
+@include('pos.layout.add_customer')

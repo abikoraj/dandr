@@ -21,6 +21,7 @@
    
       @include('pos.layout.item_selector')
       @include('pos.layout.customer_selector')
+      @include('pos.layout.payment')
     </div>
 </div>
 @endsection

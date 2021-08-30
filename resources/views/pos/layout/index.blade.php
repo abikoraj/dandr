@@ -27,6 +27,8 @@
       const beaconURL='{{route('pos.counterStatus')}}';
       const itemsURL='{{route('pos.items')}}';
       const customerSearchURL='{{route('pos.customers-search')}}';
+      const addCustomer='{{route('pos.customers-add')}}';
+      const addBillURL='{{route('pos.billing.add')}}';
     </script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>

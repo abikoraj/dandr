@@ -17,10 +17,18 @@ class Counter extends Model
     }
 
     public function currentStatus(){
-        return CounterStatus::where('status',1)->where('counter_id',$this->id)->first();
+        $setting=PosSetting::first();
+        if($setting==null){
+            return null;
+        }
+        return CounterStatus::where('date',$setting->date)->where('counter_id',$this->id)->first();
     }
 
     public function hasStatus(){
-        return $this->status==1;
+        $setting=PosSetting::first();
+        if($setting==null){
+            return false;
+        }
+        return CounterStatus::where('date',$setting->date)->where('counter_id',$this->id)->count()>0;
     }
 }

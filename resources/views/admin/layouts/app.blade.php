@@ -136,7 +136,13 @@
     <script src="{{ asset('backend/js/input.js') }}"></script>
     <script src="{{ asset('backend/js/jquery.hotkeys.js') }}"></script>
     @include('admin.layouts.ledgerjs')
-    
+    <script>
+        @if($errors->any())
+            @foreach ($errors->all() as $error)
+                showNotification('bg-danger','{{$error}}');
+            @endforeach
+        @endif
+    </script>
     @yield('js')
     @yield('js1')
     @yield('js2')

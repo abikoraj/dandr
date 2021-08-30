@@ -4,8 +4,10 @@ namespace App\Http\Controllers\POS;
 
 use App\Http\Controllers\Controller;
 use App\Models\Counter;
+use App\Models\CounterStatus;
 use App\Models\Customer;
 use App\Models\Item;
+use App\Models\PosSetting;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -14,6 +16,15 @@ use Illuminate\Support\Facades\DB;
 class POSController extends Controller
 {
     public function index(){
+        $setting=PosSetting::first();
+        if($setting==null){
+            return redirect()->route('pos.day');
+        }else{
+            if(!$setting->open){
+                return redirect()->route('pos.day');
+
+            }
+        }
         $id=session('counter');
         $xid=session('xid');
         // dd(session('counter'),session('xid'));
@@ -44,9 +55,61 @@ class POSController extends Controller
             return redirect()->route('pos.counter');
         }
         $counter=Counter::find($id);
+        $status=$counter->currentStatus();
+        if($status==null){
+            return redirect()->route('pos.counter.open');
+        }else{
+            if($status->status==1){
+                return redirect()->route('pos.counter.open');
+            }
+        }
+        // if($status=)
+        // dd($counter->currentStatus());
         return view('pos.index',compact('counter'));
     }
 
+    public function counterOpen(Request $request){
+        $id=session('counter');
+        $xid=session('xid');
+        if($id==null || $xid==null){
+            return redirect()->route('pos.counter');
+        }
+        $counter=Counter::find($id);
+        $status=$counter->currentStatus();
+        $setting=PosSetting::first();
+        if($request->getMethod()=="POST"){
+            if($status!=null){
+                if($status->status>1){
+                    return  redirect()->route('pos.index');
+                }else{
+                    return redirect()->back();
+                }
+            }
+            $status=new CounterStatus();
+            $status->counter_id=$id;
+            $status->request=$request->amount;
+            if($setting->direct){
+                $status->opening=$request->amount;
+                $status->current=$request->amount;
+                $status->status=2;
+
+            }else{
+                $status->status=1;
+            }
+            $status->active=1;
+            $status->date=$setting->date;
+            $status->save();
+           
+            return redirect()->back();
+        }else{
+            if($status!=null){
+                if($status->status>1){
+                    return  redirect()->route('pos.index');
+                }
+            }
+            return view('pos.counter.open',compact('setting','status'));
+        }
+    }
     public function counter(Request $request){
         // dd($request->all());
         if($request->getMethod()=="POST"){
@@ -62,7 +125,6 @@ class POSController extends Controller
                 }
 
             }
-
             $_xid=mt_rand(10000,99999);
             $counter->status=1;
             $counter->sid=$_xid;
@@ -72,6 +134,17 @@ class POSController extends Controller
             session(['counter'=>$counter->id]);
             return redirect()->route('pos.index');
         }else{
+        
+            $setting=PosSetting::first();
+            if($setting==null){
+                return redirect()->route('pos.day');
+            }else{
+                if(!$setting->open){
+                    return redirect()->route('pos.day');
+    
+                }
+            }
+
             $counters=Counter::all();
             $data=[];
             foreach ($counters as $key => $counter) {
@@ -95,7 +168,9 @@ class POSController extends Controller
         if($id==null){
             return response('counter expired',500);
         }
-        Counter::where('id',$id)->update(['last' => Carbon::now()]);
+        $date=Carbon::now();
+        Counter::where('id',$id)->update(['last' => $date]);
+        dd($date);
     
     }
 
@@ -141,7 +216,8 @@ class POSController extends Controller
         $customer->user_id=$user->id;
         $customer->save();
         $customer->user=$user;
-        return response()->json($customer);
+        $data=Customer::join('users','users.id','=','customers.user_id')->select('customers.id','users.name','users.address','customers.user_id','users.phone')->where('customers.id',$customer->id)->first();
+        return response()->json($data);
        
     }
 

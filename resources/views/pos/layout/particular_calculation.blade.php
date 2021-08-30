@@ -26,13 +26,14 @@
           <table >
             <tr><td><label >Paid</label></td><td><input type="number"  id="input-paid" value="0" oninput="billpanel.calculateTotal();" class="f-sel"></td></tr>
             <tr><td><label >Due</label></td><td><input type="number" readonly id="input-due" value="0"></td></tr>
+            <tr><td><label >Return</label></td><td><input type="number" readonly id="input-return" value="0"></td></tr>
           </table>
           <div class="row m-0">
             <div class="col-md-6 p-0">
-              <button class="btn-bill w-100">Save</button>
+              <button class="btn-bill w-100" onclick="billpanel.saveBill(false)">Save</button>
             </div>
             <div class="col-md-6 p-0">
-              <button class="btn-bill w-100">Save and Print</button>
+              <button class="btn-bill w-100" onclick="billpanel.saveBill(true)">Save and Print</button>
             </div>
             <div class="col-md-6 p-0">
               <button class="btn-bill w-100">Hold Bill</button>

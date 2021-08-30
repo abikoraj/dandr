@@ -2,7 +2,8 @@
 @section('title','Counters')
 @section('head-title','Counters')
 @section('toobar')
-<button type="button" class="btn btn-primary waves-effect m-r-20" data-toggle="modal" data-target="#addModal">New Counter</button>
+<button type="button" class="btn btn-primary waves-effect mr-2" data-toggle="modal" data-target="#addModal">New Counter</button> 
+<a href="{{route('admin.counter.day.index')}}" class="btn btn-primary">Day Management</a>
 @endsection
 @section('content')
 
@@ -49,6 +50,20 @@
                 })
             }
             }
+    }
+
+    function refreshCounter(url,id){
+        showProgress('Refreshing');
+            axios.get(url)
+            .then((res)=>{
+                $('#status-'+id).html(res.data);
+                hideProgress();
+            })
+            .catch((err)=>{
+                hideProgress();
+
+            });
+        
     }
 </script>
 @endsection
