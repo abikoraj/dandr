@@ -96,6 +96,12 @@
                     <li><a href="{{ route('pos.index') }}" class="waves-effect waves-block">POS Interface</a></li>
                 </ul>
             </li>
+            <li><a href="javascript:void(0);" class="waves-effect waves-block menu-toggle"><i class="zmdi zmdi-shopping-cart"></i><span>Payment Setting</span></a>
+                <ul class="ml-menu">
+                    <li><a href="{{ route('admin.bank.index') }}" class="waves-effect waves-block">Banks </a></li>
+                    <li><a href="{{ route('admin.gateway.index') }}" class="waves-effect waves-block">Payment Gateways</a></li>
+                </ul>
+            </li>
 
             <li><a href="{{route('admin.report.home')}}" class="waves-effect waves-block"><i class="zmdi zmdi-shopping-cart"></i><span>Reports</span></a></li>
 
