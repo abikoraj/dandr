@@ -30,10 +30,10 @@
           </table>
           <div class="row m-0">
             <div class="col-md-6 p-0">
-              <button class="btn-bill w-100" onclick="billpanel.saveBill(false)">Save</button>
+              <button class="btn-bill w-100" onclick="billpanel.initSaveBill(false)">Save</button>
             </div>
             <div class="col-md-6 p-0">
-              <button class="btn-bill w-100" onclick="billpanel.saveBill(true)">Save and Print</button>
+              <button class="btn-bill w-100" onclick="billpanel.initSaveBill(true)">Save and Print</button>
             </div>
             <div class="col-md-6 p-0">
               <button class="btn-bill w-100">Hold Bill</button>
@@ -43,6 +43,7 @@
             </div>
           </div>
         </div>
+       
 
       </div>
     </div>

@@ -22,7 +22,7 @@
                 </div>
                 <div class="col-md-3 d-flex align-items-center">
 
-                    <input {{ $setting == null ? '' : ($setting->open ? 'disabled' : '') }} {{ $setting == null ? '' : ($setting->open ? 'checked' : '') }} type="checkbox" name="direct" id="direct" class="mr-2" value="1"> <label for="direct"
+                    <input {{ $setting == null ? '' : ($setting->open ? 'disabled' : '') }} {{ $setting == null ? '' : ($setting->direct ? 'checked' : '') }} type="checkbox" name="direct" id="direct" class="mr-2" value="1"> <label for="direct"
                         class="mb-0 pb-0">Open Directly</label>
 
                 </div>
@@ -42,7 +42,31 @@
         </form>
     </div>
     <hr>
-
+    @if ($setting!=null)
+        @if ($setting->open)
+            <table class="table table-bordered">
+                <tr >
+                    <th>Counter</th>
+                    <th>Request Amount</th>
+                    <th></th>
+                </tr>
+                @foreach ($setting->requests() as $req)
+                    <tr id="req-{{$req->id}}">
+                        <th>
+                            {{$req->counter->name}}
+                        </th>
+                        <td>
+                            {{$req->request}}
+                        </td>
+                        <td>
+                            <input id="req-amount-{{$req->id}}" type="number" min="0" value="{{$req->request}}" class="">
+                            <button class="btn btn-sm btn-primary" onclick="approveAmount({{$req->id}})">Approve Amount</button>
+                        </td>
+                    </tr>
+                @endforeach
+            </table>
+        @endif
+    @endif
 
 @endsection
 @section('js')
@@ -55,5 +79,24 @@
                 setDate('date',true);
             @endif
         @endif
+
+        function approveAmount(id){
+            if(confirm('DO You Accecpt Counter Opening Request')){
+
+                showProgress('Approving Amount');
+                axios.post('{{route('admin.counter.day.approve')}}',{
+                    "id":id,
+                    "amount":$('#req-amount-'+id).val()
+                })
+                .then((res)=>{
+                    hideProgress();
+                    $('#req-'+id).remove();
+                })
+                .catch((err)=>{
+                    hideProgress();
+                    showNotification('bg-danger',"Cannot Accecpt Request Please Try Again");
+                });
+            }
+        }
     </script>
 @endsection

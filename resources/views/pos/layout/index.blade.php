@@ -38,5 +38,10 @@
     <script src="{{asset('pos/js/names.js')}}"></script>
     <script src="{{asset('pos/js/funcstions.js')}}"></script>
     <script src="{{asset('pos/js/main.js')}}"></script>
+    @yield('js')
+    @yield('js1')
+    @yield('js2')
+    @yield('js3')
+    @yield('js4')
   </body>
 </html>

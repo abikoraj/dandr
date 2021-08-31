@@ -92,6 +92,7 @@
             <li><a href="javascript:void(0);" class="waves-effect waves-block menu-toggle"><i class="zmdi zmdi-shopping-cart"></i><span>POS</span></a>
                 <ul class="ml-menu">
                     <li><a href="{{ route('admin.counter.home') }}" class="waves-effect waves-block">Counters </a></li>
+                    <li><a href="{{ route('admin.counter.day.index') }}" class="waves-effect waves-block">Day Management </a></li>
                     <li><a href="{{ route('pos.index') }}" class="waves-effect waves-block">POS Interface</a></li>
                 </ul>
             </li>

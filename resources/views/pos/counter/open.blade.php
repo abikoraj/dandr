@@ -27,7 +27,7 @@
                             @if ($setting->direct)
                             <button class="btn btn-primary w-100">Open Counter</button>
                             @else
-                            <button class="btn btn-primary w-100">Request Counter Amount</button>
+                                <button class="btn btn-primary w-100">Request Counter Amount</button>
 
                             @endif
                             
@@ -35,7 +35,12 @@
                     </div>
                 </form>  
                 
+                
             @endif
+            <hr>
+            <h6 class="text-center">
+                <a href="{{route('pos.counter.another')}}">Use Another Counter</a>
+            </h6>
         </div>
     </div>
 @endsection

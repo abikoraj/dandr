@@ -3,10 +3,12 @@
 namespace App\Http\Controllers\POS;
 
 use App\Http\Controllers\Controller;
+use App\Models\Bank;
 use App\Models\Counter;
 use App\Models\CounterStatus;
 use App\Models\Customer;
 use App\Models\Item;
+use App\Models\PaymentGateway;
 use App\Models\PosSetting;
 use App\Models\User;
 use Carbon\Carbon;
@@ -65,7 +67,9 @@ class POSController extends Controller
         }
         // if($status=)
         // dd($counter->currentStatus());
-        return view('pos.index',compact('counter'));
+        $banks=Bank::all();
+        $gateways=PaymentGateway::all();
+        return view('pos.index',compact('counter','banks','gateways'));
     }
 
     public function counterOpen(Request $request){
@@ -152,6 +156,7 @@ class POSController extends Controller
                     array_push($data,$counter);
                 }else{
                     $now=Carbon::now();
+                    // dd($now);
                     $diff=$counter->last->diffInSeconds($now);
                     // dd($diff);
                     if($diff>30){
@@ -172,6 +177,11 @@ class POSController extends Controller
         Counter::where('id',$id)->update(['last' => $date]);
         dd($date);
     
+    }
+
+    public function counterAnother(Request $request){
+        $request->session()->forget(['counter', 'xid']);
+        return redirect()->route('pos.index');
     }
 
     public function items(){

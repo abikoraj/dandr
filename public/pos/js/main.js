@@ -39,6 +39,7 @@ var billpanel = {
     products: [],
     index: 0,
     billitems: [],
+    print:false,
     total: {
         total: 0,
         discount: 0,
@@ -390,7 +391,7 @@ var billpanel = {
             })
         }
     },
-    saveBill:function(print){
+    initSaveBill:function(_print){
         if(this.billitems.length<=0){
             alert('No Items added to bill.');
             return;
@@ -401,22 +402,36 @@ var billpanel = {
                 return;
             }
         }
+        this.print=_print;
         
         if(this.total.paid>0){
             $('#payment').modal('show');
+        }else{
+            saveBill();
         }
-        // axios.post(addBillURL,{
-        //     "customer":this.customer,
-        //     "billitems":this.billitems,
-        //     "total":this.total,
-        //     "panvat":$('#customer-panvat').val()
-        // })
-        // .then((res)=>{
-        //     console.log(res);
-        // })
-        // .catch((err)=>{
-        //     console.log(err);
-        // });
+    },
+    saveBill:function(){
+        
+        axios.post(addBillURL,{
+            "customer":this.customer,
+            "billitems":this.billitems,
+            "total":this.total,
+            "panvat":$('#customer-panvat').val(),
+            "payment_type":$("input[name='payment-method']:checked").val(),
+            "bank":$('#bank').val(),
+            "gateway":$('#gateway').val(),
+            "bank_name":$('#bank-name').val(),
+            "cardno":$('#cardno').val(),
+            "txnno":$('#txnno').val(),
+            "chequeno":$('#chequeno').val(),
+
+        })
+        .then((res)=>{
+            console.log(res);
+        })
+        .catch((err)=>{
+            console.log(err);
+        });
     }
 };
 

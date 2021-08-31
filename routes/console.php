@@ -1,9 +1,11 @@
 <?php
 
+use App\Models\Bank;
 use App\Models\Distributer;
 use App\Models\Distributorsell;
 use App\Models\FiscalYear;
 use App\Models\Ledger;
+use App\Models\PaymentGateway;
 use App\Models\User;
 use App\NepaliDate;
 use Illuminate\Foundation\Inspiring;
@@ -33,7 +35,81 @@ Artisan::command('loadFiscalYears', function () {
         echo $fy->name.",".$fy->startdate." - ".$fy->enddate ."||".$bs[$n][0]. PHP_EOL;
     }
 })->purpose('Display an inspiring quote');
-
+Artisan::command('loadBanks', function () {
+    $faker = Faker\Factory::create();
+    $banks=["Nepal Bank Ltd. (NBL)",
+    "Rastriya Banijya Bank Ltd. (RBB)",
+    "Nabil Bank Ltd. (NABIL)",
+    "Nepal Investment Bank Ltd. (NIBL)",
+    "Standard Chartered Bank Nepal Ltd. (SCBNL)",
+    "Himalayan Bank Ltd. (HBL)",
+    "Nepal SBI Bank Ltd. (NSBI)",
+    "Nepal Bangladesh Bank Ltd. (NBB)",
+    "Everest Bank Ltd. (EBL)",
+    "Bank of Kathmandu Lumbini Ltd. (BOK)",
+    "Nepal Credit and Commerce Bank Ltd. (NCC)",
+    "NIC ASIA Bank Ltd. (NIC)",
+    "Machhapuchhre Bank Ltd. (MBL)",
+    "Kumari Bank Ltd. (Kumari)",
+    "Laxmi Bank Ltd. (Laxmi)",
+    "Siddhartha Bank Ltd. (SBL)",
+    "Agriculture Development Bank Ltd. (ADBNL)",
+    "Global IME Bank Ltd. (Global)",
+    "Citizens Bank International Ltd. (Citizens)",
+    "Prime Commercial Bank Ltd. (Prime)",
+    "Sunrise Bank Ltd. (Sunrise)",
+    "NMB Bank Ltd. (NMB)",
+    "Prabhu Bank Ltd. (PRABHU)",
+    "Mega Bank Nepal Ltd. (Mega)",
+    "Civil Bank Ltd. (Civil)",
+    "Century Commercial Bank Ltd. (Century)",
+    "Sanima Bank Ltd. (Sanima)"];
+    $phone=9800110000;
+    for ($i=0; $i < 5; $i++) { 
+        $bank=new Bank();
+        $bank->name=$banks[ mt_rand(0,(count($banks)-1))];
+        $bank->address=$faker->address;
+        $bank->phone=$faker->e164PhoneNumber;
+        $bank->accno=$faker->bankAccountNumber;
+        $bank->save();
+    }
+});
+Artisan::command('loadGateways', function () {
+    $faker = Faker\Factory::create();
+    $banks=["Nepal Bank Ltd. (NBL)",
+    "Rastriya Banijya Bank Ltd. (RBB)",
+    "Nabil Bank Ltd. (NABIL)",
+    "Nepal Investment Bank Ltd. (NIBL)",
+    "Standard Chartered Bank Nepal Ltd. (SCBNL)",
+    "Himalayan Bank Ltd. (HBL)",
+    "Nepal SBI Bank Ltd. (NSBI)",
+    "Nepal Bangladesh Bank Ltd. (NBB)",
+    "Everest Bank Ltd. (EBL)",
+    "Bank of Kathmandu Lumbini Ltd. (BOK)",
+    "Nepal Credit and Commerce Bank Ltd. (NCC)",
+    "NIC ASIA Bank Ltd. (NIC)",
+    "Machhapuchhre Bank Ltd. (MBL)",
+    "Kumari Bank Ltd. (Kumari)",
+    "Laxmi Bank Ltd. (Laxmi)",
+    "Siddhartha Bank Ltd. (SBL)",
+    "Agriculture Development Bank Ltd. (ADBNL)",
+    "Global IME Bank Ltd. (Global)",
+    "Citizens Bank International Ltd. (Citizens)",
+    "Prime Commercial Bank Ltd. (Prime)",
+    "Sunrise Bank Ltd. (Sunrise)",
+    "NMB Bank Ltd. (NMB)",
+    "Prabhu Bank Ltd. (PRABHU)",
+    "Mega Bank Nepal Ltd. (Mega)",
+    "Civil Bank Ltd. (Civil)",
+    "Century Commercial Bank Ltd. (Century)",
+    "Sanima Bank Ltd. (Sanima)"];
+    $phone=9800110000;
+    for ($i=0; $i < 5; $i++) { 
+        $gateway=new PaymentGateway();
+        $gateway->name=$banks[ mt_rand(0,(count($banks)-1))];
+        $gateway->save();
+    }
+});
 Artisan::command('clear', function () {
     $user=User::find(685);
     Ledger::where('user_id',685)->delete();

@@ -1,8 +1,10 @@
 <?php
 
+use App\Http\Controllers\Admin\BankController;
 use App\Http\Controllers\Admin\CounterController;
 use App\Http\Controllers\Admin\DistributerMilkController;
 use App\Http\Controllers\Admin\DistributerSnfFatController;
+use App\Http\Controllers\Admin\GatewayController;
 use App\Http\Controllers\POS\BillingController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Sahakari\HomeController;
@@ -411,9 +413,27 @@ Route::name('admin.')->group(function () {
                     Route::name('day.')->group(function () {
                         Route::get('', 'Admin\CounterController@day')->name('index');
                         Route::post('open', 'Admin\CounterController@dayOpen')->name('open');
+                        Route::post('approve', 'Admin\CounterController@dayApprove')->name('approve');
                     });
                 });
 
+            });
+        });
+
+        Route::group(['prefix' => 'bank'], function () {
+            Route::name('bank.')->group(function () {
+                Route::get('', [BankController::class,'index'])->name('index');
+                Route::post('add', [BankController::class,'add'])->name('add');
+                Route::post('update', [BankController::class,'update'])->name('update');
+                Route::post('delete', [BankController::class,'delete'])->name('delete');
+            });
+        });
+        Route::group(['prefix' => 'gateway'], function () {
+            Route::name('gateway.')->group(function () {
+                Route::get('', [GatewayController::class,'index'])->name('index');
+                Route::post('add', [GatewayController::class,'add'])->name('add');
+                Route::post('update', [GatewayController::class,'update'])->name('update');
+                Route::post('delete', [GatewayController::class,'delete'])->name('delete');
             });
         });
 
@@ -441,6 +461,8 @@ Route::name('admin.')->group(function () {
                 Route::match(['GET', 'POST'], 'non-super-admin/change/password/{id}', 'Admin\UserController@nonSuperadminChangePassword')->name('non.super.admin.change.password');
             });
         });
+
+
     });
 
 });
@@ -452,6 +474,7 @@ Route::name('pos.')->prefix('pos')->group(function(){
         Route::match(['GET', 'POST'], 'bill', 'POS\POSController@index')->name('index');
         Route::match(['GET', 'POST'], 'counter', 'POS\POSController@counter')->name('counter');
         Route::match(['GET', 'POST'], 'counter-open', 'POS\POSController@counterOpen')->name('counter.open');
+        Route::match(['GET', 'POST'], 'counter-another', 'POS\POSController@counterAnother')->name('counter.another');
         Route::get('counter/status', 'POS\POSController@counterStatus')->name('counterStatus');
         Route::get('items', 'POS\POSController@items')->name('items');
 

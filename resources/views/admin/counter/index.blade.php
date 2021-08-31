@@ -33,7 +33,7 @@
             if(prompt('Please Type Yes To Delete').toLowerCase()=="yes"){
 
                 lock=true;
-                showProgress('Updating Customer');
+                showProgress('Deleting Counter');
                 var data={'id':id};
                 axios.post('{{route('admin.customer.del')}}',data)
                 .then((res)=>{

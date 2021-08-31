@@ -19,15 +19,16 @@
                <b>
                    {{$counter->name}}
                </b>
+               <hr class="mt-0">
+               @php
+                   $status=$counter->currentStatus();
+               @endphp
+               <div id="status-{{$counter->id}}">
+                   @include('admin.counter.status',['status'=>$status])
+               </div>
            </div>
            @endif
         </div>
-        <hr class="mt-0">
-        @php
-            $status=$counter->currentStatus();
-        @endphp
-        <div id="status-{{$counter->id}}">
-            @include('admin.counter.status',['status'=>$status])
-        </div>
+       
     </div>
 </div>
