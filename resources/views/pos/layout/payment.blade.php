@@ -6,7 +6,7 @@
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">
-            <div>
+            <form id="">
                 <span class="me-2">
                     <input name="payment-type" id="payment-type-1" type="radio" value="0" class="me-1 payment-type" checked> Cash |
                 </span>

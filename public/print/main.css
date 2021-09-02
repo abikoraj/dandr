@@ -1,0 +1,134 @@
+.print-table {
+  width: 100%;
+  border: 1px solid black;
+  border-collapse: collapse;
+}
+
+.print-table tr {
+  border: 1px solid black;
+}
+
+.print-table tr.no-border {
+  border: none !important;
+}
+
+.print-table tr th {
+  padding: 2px 5px;
+}
+
+.print-table tr td {
+  padding: 2px 5px;
+}
+
+hr {
+  border-top: solid 1px #000 !important;
+}
+
+.line-1 {
+  border-top: solid 1px #000 !important;
+}
+
+.line-2 {
+  border-top: solid 2px #000 !important;
+}
+
+.line-3 {
+  border-top: solid 3px #000 !important;
+}
+
+.line-4 {
+  border-top: solid 4px #000 !important;
+}
+
+.line-5 {
+  border-top: solid 5px #000 !important;
+}
+
+.line-6 {
+  border-top: solid 6px #000 !important;
+}
+
+.line-7 {
+  border-top: solid 7px #000 !important;
+}
+
+.line-8 {
+  border-top: solid 8px #000 !important;
+}
+
+.line-9 {
+  border-top: solid 9px #000 !important;
+}
+
+.b-100 {
+  font-weight: 100;
+}
+
+.b-200 {
+  font-weight: 200;
+}
+
+.b-300 {
+  font-weight: 300;
+}
+
+.b-400 {
+  font-weight: 400;
+}
+
+.b-500 {
+  font-weight: 500;
+}
+
+.b-600 {
+  font-weight: 600;
+}
+
+.b-700 {
+  font-weight: 700;
+}
+
+.b-800 {
+  font-weight: 800;
+}
+
+.b-900 {
+  font-weight: 900;
+}
+
+.f-8 {
+  font-size: 8px;
+}
+
+.f-10 {
+  font-size: 10px;
+}
+
+.f-12 {
+  font-size: 12px;
+}
+
+.f-14 {
+  font-size: 14px;
+}
+
+.f-16 {
+  font-size: 16px;
+}
+
+.f-18 {
+  font-size: 18px;
+}
+
+.f-20 {
+  font-size: 20px;
+}
+
+.f-22 {
+  font-size: 22px;
+}
+
+.f-24 {
+  font-size: 24px;
+}
+/*# sourceMappingURL=main.css.map */

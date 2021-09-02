@@ -10,5 +10,10 @@
     </span>
     <span>
       <span class="link">Hold List</span>
+      @if (Route::is('pos.index'))
+          <span>
+            @include("pos.layout.print")
+          </span>
+      @endif
     </span>
   </div>

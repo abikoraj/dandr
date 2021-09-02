@@ -469,6 +469,7 @@ Route::name('admin.')->group(function () {
 
 
 Route::name('pos.')->prefix('pos')->group(function(){
+    
     Route::middleware(['pos'])->group(function () {
         Route::view('day', 'pos.counter.day')->name('day');
         Route::match(['GET', 'POST'], 'bill', 'POS\POSController@index')->name('index');
@@ -477,12 +478,14 @@ Route::name('pos.')->prefix('pos')->group(function(){
         Route::match(['GET', 'POST'], 'counter-another', 'POS\POSController@counterAnother')->name('counter.another');
         Route::get('counter/status', 'POS\POSController@counterStatus')->name('counterStatus');
         Route::get('items', 'POS\POSController@items')->name('items');
-
+        
         Route::get('customers', 'POS\POSController@customers')->name('customers');
         Route::post('customers-add', 'POS\POSController@customersAdd')->name('customers-add');
         Route::post('customer-search', 'POS\POSController@searchCustomer')->name('customers-search');
         Route::name('billing.')->prefix('billing')->group(function(){
             Route::post('add', [BillingController::class,'add'])->name('add');
+            Route::post('printed', [BillingController::class,'printed'])->name('printed');
+            Route::get('print/{bill}', [BillingController::class,'print'])->name('print');
         });
     });
 });

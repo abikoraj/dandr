@@ -1,0 +1,37 @@
+.print-table{
+    width: 100%;
+    border:1px solid black;
+    border-collapse: collapse;
+    tr{
+        border:1px solid black;
+        &.no-border{
+            border:none !important;
+        }
+        th{
+            padding: 2px 5px;
+        }
+        td{
+            padding: 2px 5px;
+        }
+    }
+}
+hr {
+  border-top: solid 1px #000 !important;
+}
+@for $i from 1 through 9 {
+    .line-#{$i} {
+        border-top: solid $i*1px #000 !important;
+      }
+}
+
+@for $i from 1 through 9 {
+    .b-#{$i*100} {
+      font-weight:  $i * 100;
+    }
+}
+
+@for $i from 4 through 12 {
+    .f-#{$i*2} {
+        font-size:  $i * 2px;
+      }
+}

@@ -21,5 +21,10 @@ class PosSetting extends Model
         }
         return CounterStatus::where('date',$this->date)->with('counter')->get();
     }
+    public function fiscalYear(){
+        return FiscalYear::where('startdate','<=',$this->date)->where('enddate','>=',$this->date)->first();
+
+    }
+
    
 }

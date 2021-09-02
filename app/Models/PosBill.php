@@ -8,4 +8,10 @@ use Illuminate\Database\Eloquent\Model;
 class PosBill extends Model
 {
     use HasFactory;
+    public function billItems(){
+        return $this->hasMany(PosBillItem::class);
+    }
+    public function payment(){
+        return $this->hasOne(Payment::class,'foreign_key','id');
+    }
 }

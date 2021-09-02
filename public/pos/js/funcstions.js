@@ -665,3 +665,8 @@ function hideProgress(){
     $('#xxx_123').removeClass('active');
 
 }
+
+function newTab(url){
+	$('#xxx_52').attr('href',url);
+	$('#xxx_52')[0].click();
+}

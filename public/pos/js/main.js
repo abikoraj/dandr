@@ -16,30 +16,59 @@ $("#barcode").focus(function (e) {
     }
 });
 
-$('#input_customer_search').keydown(function(e){
-    if(e.which==13){
+$("#input_customer_search").keydown(function (e) {
+    if (e.which == 13) {
         billpanel.customerSearch();
     }
 });
 
-function customerSearchInit(){
-    $('#customer-input-panel').addClass('d-none');
-    $('#cutomer-search-panel').removeClass('d-none');
-
+function customerSearchInit() {
+    $("#customer-input-panel").addClass("d-none");
+    $("#cutomer-search-panel").removeClass("d-none");
 }
 function addItem(barcode) {
     console.log(barcode);
 }
 
 const producturl = "";
-lock=false;
+lock = false;
+const states = {
+    connecting: 0,
+    connected: 1,
+    reconnecting: 2,
+    disconnected: 4,
+};
+const stateText = [
+    " connecting",
+    " connected",
+   " reconnecting",
+   "",
+    " disconnected",
+];
+const stateClass = [
+    "bg-secondary",
+    " bg-success",
+    " bg-warning text-dark",
+    "",
+    " bg-danger",
+];
+$.connection.hub.url = "http://localhost:4200/signalr";
+try {
+    $.connection.hub.error(function (error) {
+        console.log("SignalR error: " + error);
+    });
+
+    var chat = $.connection.billHub;
+} catch (err) {
+    console.log(err);
+}
 var billpanel = {
-    customer:null,
-    customerSelected:false,
+    customer: null,
+    customerSelected: false,
     products: [],
     index: 0,
     billitems: [],
-    print:false,
+    print: false,
     total: {
         total: 0,
         discount: 0,
@@ -75,8 +104,8 @@ var billpanel = {
             this.total.discount = 0;
         }
         this.total.taxable = this.total.total - this.total.discount;
-        if(this.total.taxable<0){
-            this.total.taxable=0;
+        if (this.total.taxable < 0) {
+            this.total.taxable = 0;
         }
         this.setVal("taxable", this.total.taxable);
         this.total.tax = parseFloat(this.getVal("tax"));
@@ -90,9 +119,9 @@ var billpanel = {
             this.total.paid = 0;
         }
         this.total.due = this.total.grandtotal - this.total.paid;
-        this.total.return=0;
+        this.total.return = 0;
         if (this.total.due < 0) {
-            this.total.return=(-1*this.total.due);
+            this.total.return = -1 * this.total.due;
             this.total.due = 0;
         }
         this.setVal("due", this.total.due);
@@ -103,7 +132,7 @@ var billpanel = {
     },
     init: function () {
         var p = Array();
-        showProgress('Loading Items');
+        showProgress("Loading Items");
         axios
             .get(itemsURL)
             .then((res) => {
@@ -138,8 +167,7 @@ var billpanel = {
                 hideProgress();
             })
             .catch((err) => {
-              hideProgress();
-
+                hideProgress();
             });
 
         setInterval(() => {
@@ -174,7 +202,7 @@ var billpanel = {
     },
     removeBillItem: function (key) {
         $("#bill-item-" + key).remove();
-        delete(this.billitems[key]);
+        delete this.billitems[key];
         // console.log($temparr);
         // this.billitems = $temparr;
         this.calculateTotal();
@@ -290,151 +318,309 @@ var billpanel = {
     },
     cancelBill: function () {
         if (confirm("Do You Want To Cancel Current Bill")) {
-            this.resetInput();
-            this.billitems = [];
-            this.billitems = [];
-            this.ele().html("");
+            this.resetBill();
         }
     },
-    customerSearch:function(){
-        console.log('search started');
-        searchType=$('input[name="radio_customer_search"]:checked').val();
-        keyword=$('#input_customer_search').val();
-        data={};
-        if(searchType==1){
-            if(keyword.length<5){
+    resetBill: function () {
+        this.resetInput();
+        this.resetCustomer();
+        this.billitems = [];
+        this.ele().html("");
+        billpanel.resetCustomer();
+        $("#payment").modal("hide");
+    },
+    customerSearch: function () {
+        console.log("search started");
+        searchType = $('input[name="radio_customer_search"]:checked').val();
+        keyword = $("#input_customer_search").val();
+        data = {};
+        if (searchType == 1) {
+            if (keyword.length < 5) {
                 return;
             }
-            data={"phone":keyword};
-        }else{
-            if(keyword.length<2){
+            data = { phone: keyword };
+        } else {
+            if (keyword.length < 2) {
                 return;
             }
-            data={"name":keyword};
-
+            data = { name: keyword };
         }
-        axios.post(customerSearchURL,data)
-        .then((res)=>{
-            console.log(res);
-            html="";
-            if(res.data.length>0){
-
-                res.data.forEach(customer => {
-                    html="<div ";
-                    debugger;
-                    for (const key in customer) {
-                        html+="data-"+key+"='"+customer[key]+"' ";
-                       
-                    }
-                    debugger;
-                    html+=" class='customer-single' onclick='billpanel.selectCustomer(this)'><b class='name'>"+customer.name+"</b><br>"+
-                    "<b class='phone'>"+customer.phone+"</b><br>"+
-                    "</div>";
-                });
-            }else{
-                html="<div class='customer-single'>No Customer Found</div>"
-            }
-            console.log(html);
-            $('#customer_list').html(html);
-        })
-        .catch((err)=>{});
+        axios
+            .post(customerSearchURL, data)
+            .then((res) => {
+                console.log(res);
+                html = "";
+                if (res.data.length > 0) {
+                    res.data.forEach((customer) => {
+                        html = "<div ";
+                        debugger;
+                        for (const key in customer) {
+                            html += "data-" + key + "='" + customer[key] + "' ";
+                        }
+                        debugger;
+                        html +=
+                            " class='customer-single' onclick='billpanel.selectCustomer(this)'><b class='name'>" +
+                            customer.name +
+                            "</b><br>" +
+                            "<b class='phone'>" +
+                            customer.phone +
+                            "</b><br>" +
+                            "</div>";
+                    });
+                } else {
+                    html =
+                        "<div class='customer-single'>No Customer Found</div>";
+                }
+                console.log(html);
+                $("#customer_list").html(html);
+            })
+            .catch((err) => {});
     },
-    selectCustomer:function(ele){
-        this.customer=ele.dataset;
+    selectCustomer: function (ele) {
+        this.customer = ele.dataset;
         console.log(this.customer);
-        this.customerSelected=true;
-        $('#customer-input-panel').removeClass('d-none');
-        $('#cutomer-search-panel').addClass('d-none');
-        $('#customer-name').val(this.customer.name);
-        $('#customer-phone').val(this.customer.phone);
-        $('#customer-address').val(this.customer.address);
+        this.customerSelected = true;
+        $("#customer-input-panel").removeClass("d-none");
+        $("#cutomer-search-panel").addClass("d-none");
+        $("#customer-name").val(this.customer.name);
+        $("#customer-phone").val(this.customer.phone);
+        $("#customer-address").val(this.customer.address);
     },
-    resetCustomer:function(){
-        this.customer=null;
-        console.log(this.customer);
-        this.customerSelected=false;
-        $('#customer-input-panel').removeClass('d-none');
-        $('#cutomer-search-panel').addClass('d-none');
-        $('#customer-name').val('');
-        $('#customer-phone').val('');
-        $('#customer-address').val('');
-        $('#customer-panvat').val('');
+    resetCustomer: function () {
+        this.customer = null;
+        this.customerSelected = false;
+        $("#customer-input-panel").removeClass("d-none");
+        $("#cutomer-search-panel").addClass("d-none");
+        $("#customer-name").val("");
+        $("#customer-phone").val("");
+        $("#customer-address").val("");
+        $("#customer-panvat").val("");
     },
-    closeCusSearch:function(){
-        $('#customer-input-panel').removeClass('d-none');
-        $('#cutomer-search-panel').addClass('d-none');
+    closeCusSearch: function () {
+        $("#customer-input-panel").removeClass("d-none");
+        $("#cutomer-search-panel").addClass("d-none");
     },
-    saveCustomer:function(e,ele){
+    saveCustomer: function (e, ele) {
         e.preventDefault();
-        if(!lock){
-            lock=true;
-            showProgress('Adding Customer');
-            var data=new FormData(ele);
-            axios.post(addCustomer,data)
-            .then((res)=>{
-                hideProgress();
-                this.customer=res.data;
-                console.log(this.customer);
-                this.customerSelected=true;
-                $('#customer-input-panel').removeClass('d-none');
-                $('#cutomer-search-panel').addClass('d-none');
-                $('#customer-name').val(this.customer.name);
-                $('#customer-phone').val(this.customer.phone);
-                $('#customer-address').val(this.customer.address);
-                lock=false;
-                $('#addCustomerModal').modal('hide');
-                ele.reset();
-            })
-            .catch((err)=>{
-                hideProgress();
-                lock=false;
-            })
+        if (!lock) {
+            lock = true;
+            showProgress("Adding Customer");
+            var data = new FormData(ele);
+            axios
+                .post(addCustomer, data)
+                .then((res) => {
+                    hideProgress();
+                    this.customer = res.data;
+                    console.log(this.customer);
+                    this.customerSelected = true;
+                    $("#customer-input-panel").removeClass("d-none");
+                    $("#cutomer-search-panel").addClass("d-none");
+                    $("#customer-name").val(this.customer.name);
+                    $("#customer-phone").val(this.customer.phone);
+                    $("#customer-address").val(this.customer.address);
+                    lock = false;
+                    $("#addCustomerModal").modal("hide");
+                    ele.reset();
+                })
+                .catch((err) => {
+                    hideProgress();
+                    lock = false;
+                });
         }
     },
-    initSaveBill:function(_print){
-        if(this.billitems.length<=0){
-            alert('No Items added to bill.');
+    initSaveBill: function (_print) {
+        if (this.billitems.length <= 0) {
+            alert("No Items added to bill.");
             return;
         }
-        if(this.total.due>0){
-            if(this.customer==null){
-                alert('Please Select A customer For Due Bill.');
+        if (this.total.due > 0) {
+            if (this.customer == null) {
+                alert("Please Select A customer For Due Bill.");
                 return;
             }
         }
-        this.print=_print;
-        
-        if(this.total.paid>0){
-            $('#payment').modal('show');
-        }else{
-            saveBill();
+        this.print = _print;
+
+        if (savePayment == 1) {
+            if (this.total.paid > 0) {
+                $("#payment").modal("show");
+            } else {
+                billpanel.saveBill();
+            }
+        } else {
+            billpanel.saveBill();
         }
     },
-    saveBill:function(){
-        
-        axios.post(addBillURL,{
-            "customer":this.customer,
-            "billitems":this.billitems,
-            "total":this.total,
-            "panvat":$('#customer-panvat').val(),
-            "payment_type":$("input[name='payment-method']:checked").val(),
-            "bank":$('#bank').val(),
-            "gateway":$('#gateway').val(),
-            "bank_name":$('#bank-name').val(),
-            "cardno":$('#cardno').val(),
-            "txnno":$('#txnno').val(),
-            "chequeno":$('#chequeno').val(),
-
-        })
-        .then((res)=>{
-            console.log(res);
-        })
-        .catch((err)=>{
-            console.log(err);
-        });
-    }
+    saveBill: function () {
+        data = {
+            customer: this.customer,
+            billitems: this.billitems,
+            total: this.total,
+            panvat: $("#customer-panvat").val(),
+            payment_type: $("input[name='payment-type']:checked").val(),
+            bank: $("#bank").val(),
+            gateway: $("#gateway").val(),
+            bank_name: $("#bank-name").val(),
+            cardno: $("#cardno").val(),
+            txnno: $("#txnno").val(),
+            chequeno: $("#chequeno").val(),
+        };
+        console.log(data);
+        if (data.payment_type == 1) {
+            if (
+                (data.cardno == null || data.cardno == "") &&
+                cardnoRequired == 1
+            ) {
+                alert("Please Enter Card No");
+                return;
+            }
+        }
+        if (data.payment_type == 2) {
+            if (
+                (data.bank_name == null || data.bank_name == "") &&
+                cardnoRequired == 1
+            ) {
+                alert("Please Enter Bank name");
+                return;
+            }
+            if (
+                (data.chequeno == null || data.chequeno == "") &&
+                cardnoRequired == 1
+            ) {
+                alert("Please Enter Cheque No");
+                return;
+            }
+        }
+        showProgress("Saving Bill");
+        axios
+            .post(addBillURL, data)
+            .then((res) => {
+                console.log(res);
+                //billpanel.resetBill();
+                if (this.print) {
+                    billpanel.printProcedure(res.data);
+                } else {
+                    hideProgress();
+                }
+            })
+            .catch((err) => {
+                console.log(err);
+                hideProgress();
+            });
+    },
+    printProcedure: function (data) {
+        printSetting.print(data);
+    },
 };
 
+var printSetting = {
+    set: false,
+    type: 0,
+    data: null,
+    queue: false,
+    reconnectServer:function(){
+        state=$.connection.hub.state;
+        if(state==undefined){
+            state=4;
+        }
+        if(state==4){
+            printSetting.restart();
+        }
+    },
+    setStatus: function () {
+        state=$.connection.hub.state;
+        if(state==undefined){
+            state=4;
+        }
+        $("#print-server-status").attr("class", "badge " + stateClass[state]);
+        $('#print-server-status').text('Printer '+stateText[state]);
+    },
+    setType: function () {
+        this.type = $("input[name='print-type']:checked").val();
+    },
+    restart: function () {
+        if (this.set) {
+            $.connection.hub.start().done(function () {
+                if (printSetting.queue) {
+                    printSetting.print(printSetting.data);
+                }
+            });
+        } else {
+            $.getScript("http://localhost:4200/signalr/hubs")
+                .done(function (res, stat) {
+                    console.log(res, stat, "restart status");
+                    printSetting.set = true;
+                    $.connection.hub.url = "http://localhost:4200/signalr";
+                    $.connection.hub.error(function (error) {
+                        console.log("SignalR error: " + error);
+                    });
+                    $.connection.hub.stateChanged(function (e) {
+                        console.log(e);
+                    });
+                    var chat = $.connection.billHub;
+                    printSetting.restart();
+                })
+                .fail(function (jqxhr, settings, exception) {
+                    if (printSetting.queue) {
+                        $("#print-type-0")[0].checked = true;
+                        printSetting.type = 0;
+                        url = printBillURL.replace("__xx__", printSetting.data.id);
+                        // window.open(url);
+                        newTab(url);
+                        hideProgress();
+                        printSetting.queue=false;
+                    }
+                });
+        }
+    },
+    print: function (_data) {
+        this.queue = true;
+        this.data = _data;
+        if (this.type == 0) {
+            url = printBillURL.replace("__xx__", this.data.id);
+            // alert(url, this.data.id);
+            // window.open(url);
+            newTab(url);
+            hideProgress();
+        } else {
+            if ($.connection.hub.state == states.connected) {
+                showProgress("Printing");
+
+                chat.server
+                    .print(this.data)
+                    .then((res) => {
+                        hideProgress();
+                        console.log(res);
+                        this.queue = false;
+                    })
+                    .catch((err) => {
+                        console.log(err);
+                        hideProgress();
+                        this.queue = false;
+                    });
+            } else {
+                this.restart();
+            }
+        }
+    },
+    init: function () {
+        this.type = $("input[name='print-type']:checked").val();
+
+        if (chat != undefined) {
+            $.connection.hub.stateChanged(function (e) {
+                console.log(e);
+                printSetting.setStatus();
+            });
+            $.connection.hub.start().fail(function () {
+                console.log("Could not Connect!");
+            });
+        } else {
+            this.setStatus();
+        }
+    },
+};
 $(function () {
     billpanel.init();
+    // Declare a proxy to reference the hub.
+    printSetting.init();
 });
