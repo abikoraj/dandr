@@ -1,6 +1,8 @@
 @extends('pos.layout.index')
 @section('title')
-    {{env('APP_NAME','laravel')}} - {{$counter->name}}
+<span class="text-white">
+  {{env('APP_NAME','laravel')}} - {{$counter->name}}
+</span>
 @endsection
 @section('content')
 <div class="row m-0 h-100 ">

@@ -670,3 +670,7 @@ function newTab(url){
 	$('#xxx_52').attr('href',url);
 	$('#xxx_52')[0].click();
 }
+
+function cancelSubmit(e){
+	e.preventDefault();
+}

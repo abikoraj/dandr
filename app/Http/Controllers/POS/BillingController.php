@@ -113,7 +113,17 @@ class BillingController extends Controller
     public function print(PosBill $bill){
         $bill->billitems;
         $bill->payment;
-        $bill->user=Auth::user();
+        $user=Auth::user();
+        $bill->printed_by=$user->name;
+        $bill->copy+=1;
+        $bill->save();
+        $bill->user=$user;
         return view('admin.print.bill',compact('bill'));
+    }
+    public function printed(Request $request){
+        $bill=PosBill::find($request->id);
+        $bill->printed_by=Auth::user()->name;
+        $bill->copy+=1;
+        $bill->save();
     }
 }

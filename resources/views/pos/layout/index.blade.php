@@ -34,6 +34,7 @@
         const addCustomer = '{{ route('pos.customers-add') }}';
         const addBillURL = '{{ route('pos.billing.add') }}';
         const printBillURL = '{{ route('pos.billing.print',['bill'=>'__xx__']) }}';
+        const printedBillURL = '{{ route('pos.billing.printed') }}';
         const cardnoRequired={{env('cardnoRequired',0)}};
         const savePayment={{env('savePayment',0)}};
     </script>

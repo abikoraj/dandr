@@ -327,6 +327,7 @@ var billpanel = {
         this.billitems = [];
         this.ele().html("");
         billpanel.resetCustomer();
+        $('#payment-form')[0].reset();
         $("#payment").modal("hide");
     },
     customerSearch: function () {
@@ -496,7 +497,7 @@ var billpanel = {
             .post(addBillURL, data)
             .then((res) => {
                 console.log(res);
-                //billpanel.resetBill();
+                billpanel.resetBill();
                 if (this.print) {
                     billpanel.printProcedure(res.data);
                 } else {
@@ -518,6 +519,9 @@ var printSetting = {
     type: 0,
     data: null,
     queue: false,
+    sendPrintNotification:function(){
+        axios.post(printedBillURL,{"id":this.data.id});
+    },
     reconnectServer:function(){
         state=$.connection.hub.state;
         if(state==undefined){
@@ -574,14 +578,15 @@ var printSetting = {
         }
     },
     print: function (_data) {
-        this.queue = true;
-        this.data = _data;
+        printSetting.queue = true;
+        printSetting.data = _data;
         if (this.type == 0) {
             url = printBillURL.replace("__xx__", this.data.id);
             // alert(url, this.data.id);
             // window.open(url);
             newTab(url);
             hideProgress();
+            printSetting.queue=false;
         } else {
             if ($.connection.hub.state == states.connected) {
                 showProgress("Printing");
@@ -589,14 +594,19 @@ var printSetting = {
                 chat.server
                     .print(this.data)
                     .then((res) => {
-                        hideProgress();
                         console.log(res);
                         this.queue = false;
+                        hideProgress();
+                        printSetting.sendPrintNotification();
+
                     })
                     .catch((err) => {
                         console.log(err);
+                        url = printBillURL.replace("__xx__", this.data.id);
+                        newTab(url);
                         hideProgress();
-                        this.queue = false;
+                        printSetting.queue=false;
+                        hideProgress();
                     });
             } else {
                 this.restart();
