@@ -24,6 +24,9 @@
             {{ env('companyBillTitle') }}
         </div>
         <div class="col-12 b-500 f-12 text-start">
+            Bill No: {{ $bill->bill_no }}
+        </div>
+        <div class="col-12 b-500 f-12 text-start">
             Purchaser's Name : {{ $bill->customer_name }}
         </div>
         <div class="col-6 b-500 f-12 text-start">
@@ -133,6 +136,11 @@
                 <div class="f-12 b-700">
                     OC,#{{$bill->counter_name}}
                 </div>
+                @if ($bill->copy>1)
+                <div class="f-12 b-700">
+                    Copy {{$bill->copy}} Of Original
+                </div>
+                @endif
                 <div class="line-1"></div>
                 <div class="f-12 b-700 text-center">
                     Goods sold will be exchanged within seven days. 

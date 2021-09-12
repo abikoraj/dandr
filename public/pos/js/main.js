@@ -52,13 +52,14 @@ const stateClass = [
     "",
     " bg-danger",
 ];
+var chat;
 $.connection.hub.url = "http://localhost:4200/signalr";
 try {
     $.connection.hub.error(function (error) {
         console.log("SignalR error: " + error);
     });
 
-    var chat = $.connection.billHub;
+    chat = $.connection.billHub;
 } catch (err) {
     console.log(err);
 }
@@ -561,7 +562,7 @@ var printSetting = {
                     $.connection.hub.stateChanged(function (e) {
                         console.log(e);
                     });
-                    var chat = $.connection.billHub;
+                    chat = $.connection.billHub;
                     printSetting.restart();
                 })
                 .fail(function (jqxhr, settings, exception) {

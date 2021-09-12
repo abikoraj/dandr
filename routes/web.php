@@ -5,6 +5,8 @@ use App\Http\Controllers\Admin\CounterController;
 use App\Http\Controllers\Admin\DistributerMilkController;
 use App\Http\Controllers\Admin\DistributerSnfFatController;
 use App\Http\Controllers\Admin\GatewayController;
+use App\Http\Controllers\Admin\OfferController;
+use App\Http\Controllers\Admin\PosBillingController;
 use App\Http\Controllers\POS\BillingController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Sahakari\HomeController;
@@ -391,11 +393,36 @@ Route::name('admin.')->group(function () {
         });
 
         ///XXX billing
+        Route::group(['prefix' => 'offers'], function () {
+            Route::name('offers.')->group(function () {
+                Route::match(['get', 'post'], '',[OfferController::class,'index'])->name('index');
+                Route::post( 'add',[OfferController::class,'add'])->name('add');
+                Route::post( 'update',[OfferController::class,'update'])->name('update');
+                Route::get( 'del/{offer}',[OfferController::class,'del'])->name('del');
+                Route::get( 'activate/{offer}',[OfferController::class,'activate'])->name('activate');
+                Route::get( 'detail/{offer}',[OfferController::class,'detail'])->name('detail');
+            });
+        });
+
+        ///XXX billing
         Route::group(['prefix' => 'billing'], function () {
             Route::name('billing.')->group(function () {
                 Route::get('', 'Billing\BillingController@index')->name('home');
                 Route::get('detail/{id}', 'Billing\BillingController@detail')->name('detail');
                 Route::post('save', 'Billing\BillingController@save')->name('save');
+            });
+        });
+
+        //XXX POS Billing
+        Route::prefix('pos-billing')->group(function () {
+            Route::name('pos.billing.')->group(function () {
+                Route::match(['GET','POST'], "",[PosBillingController::class,'index'])->name('index');
+                Route::match(['GET','POST'], "detail",[PosBillingController::class,'detail'])->name('detail');
+                Route::match(['GET','POST'], "print",[PosBillingController::class,'print'])->name('print');
+                Route::match(['GET','POST'], "print-info",[PosBillingController::class,'printInfo'])->name('print.info');
+                
+                Route::match(['GET','POST'], "return",[PosBillingController::class,'salesReturn'])->name('return');
+                Route::match(['GET','POST'], "cancel",[PosBillingController::class,'cancel'])->name('cancel');
             });
         });
 

@@ -63,13 +63,16 @@ $(".calender").each(function () {
     $(this).focus(function(){
         this.select();
     })
-    $(this).val(
-        NepaliFunctions.GetCurrentBsYear() +
-            "-" +
-            (month < 10 ? "0" + month : month) +
-            "-" +
-            (day < 10 ? "0" + day : day)
-    );
+    if(this.value=="" || this.value==undefined){
+
+        $(this).val(
+            NepaliFunctions.GetCurrentBsYear() +
+                "-" +
+                (month < 10 ? "0" + month : month) +
+                "-" +
+                (day < 10 ? "0" + day : day)
+        );
+    }
 });
 
 function loadDates(selector){
@@ -436,4 +439,9 @@ function setClickShortCut(list){
             $('#'+element2).trigger( "click" );
         });
     }
+}
+
+function newTab(url){
+	$('#xxx_52').attr('href',url);
+	$('#xxx_52')[0].click();
 }

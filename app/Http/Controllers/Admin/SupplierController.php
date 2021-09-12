@@ -212,7 +212,7 @@ class SupplierController extends Controller
         if ($request->user_id != -1) {
             $bills_query = $bills_query->where('user_id', $request->user_id);
         }
-        $bills = $bills_query->here('canceled', 0)->get();
+        $bills = $bills_query->where('canceled', 0)->get();
         // dd($bills,$bills_query->toSql(),$request->all(),$range);
         return view('admin.supplier.bill.list', compact('bills'));
     }

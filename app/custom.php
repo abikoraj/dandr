@@ -60,6 +60,13 @@ function userDir($id)
     $arr = str_split($data, 3);
     return implode('/', $arr);
 }
+function getOffers(){
+    return [
+        'Flat Discount',
+        'percentage',
+        'Buy And get Free'
+    ];
+}
 function numberTowords(float $amount)
 {
     $amount_after_decimal = round($amount - ($num = floor($amount)), 2) * 100;

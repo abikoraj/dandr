@@ -91,9 +91,17 @@
             </li>
             <li><a href="javascript:void(0);" class="waves-effect waves-block menu-toggle"><i class="zmdi zmdi-shopping-cart"></i><span>POS</span></a>
                 <ul class="ml-menu">
-                    <li><a href="{{ route('admin.counter.home') }}" class="waves-effect waves-block">Counters </a></li>
-                    <li><a href="{{ route('admin.counter.day.index') }}" class="waves-effect waves-block">Day Management </a></li>
                     <li><a href="{{ route('pos.index') }}" class="waves-effect waves-block">POS Interface</a></li>
+                    <li><a href="{{ route('admin.pos.billing.index') }}" class="waves-effect waves-block">Search Bills</a></li>
+                    <li><a href="{{ route('admin.pos.billing.print') }}" class="waves-effect waves-block">Reprint Bills</a></li>
+                    <li><a href="{{ route('admin.pos.billing.return') }}" class="waves-effect waves-block">Sales Return</a></li>
+                </ul>
+            </li>
+            <li><a href="javascript:void(0);" class="waves-effect waves-block menu-toggle"><i class="zmdi zmdi-shopping-cart"></i><span>POS Setting</span></a>
+                <ul class="ml-menu">
+                    <li><a href="{{ route('admin.counter.day.index') }}" class="waves-effect waves-block">Day Management </a></li>
+                    <li><a href="{{ route('admin.counter.home') }}" class="waves-effect waves-block">Counters </a></li>
+                    <li><a href="{{ route('admin.offers.index') }}" class="waves-effect waves-block">Offers </a></li>
                 </ul>
             </li>
             <li><a href="javascript:void(0);" class="waves-effect waves-block menu-toggle"><i class="zmdi zmdi-shopping-cart"></i><span>Payment Setting</span></a>

@@ -5,13 +5,17 @@
             Report Duration
         </label>
         <select name="type" id="type" onchange="manageDisplay(this)" class="form-control show-tick ms ">
-            <option value="-1"></option>
+            <option value="-1">All</option>
             <option value="0">Session</option>
             <option value="1">Daily</option>
             <option value="2">Weekly</option>
             <option value="3">Monthly</option>
             <option value="4">Yearly</option>
             <option value="5">Custom</option>
+            @if (env('usepos',0)==1)
+                
+                <option value="6">Fiscal Year</option>
+            @endif
         </select>
 
     </div>
@@ -47,7 +51,22 @@
         <input type="text" id="date1" class="form-control calender">
     </div>
     <div class="col-md-3 ct ct-5 d-none">
-        <label for="Date1">Date2</label>
+        <label for="date2">Date2</label>
         <input type="text" id="date2" class="form-control calender">
     </div>
+    @if (env('usepos',0)==1)
+    @php
+        $ps=App\Models\PosSetting::first();
+        
+    @endphp
+    <div class="col-md-3 ct ct-6 d-none">
+        <label for="fy">Fiscal Year {{$ps->date}}</label>
+
+        <select name="fiscalyear" id="fiscalyear" class="form-control show-tick ms ">
+            @foreach (App\Models\FiscalYear::all() as $fy)
+                <option value="{{$fy->id}}" {{$ps!=null?($fy->isCurrent($ps->date)?"selected":""):""}}>{{$fy->name}}</option>
+            @endforeach
+        </select>
+    </div>
+    @endif
 </div>
