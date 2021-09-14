@@ -54,6 +54,17 @@ class ItemController extends Controller
         return response()->json($items);
     }
 
+    public function product(Request $request){
+        $items=Item::where('name','like',$request->keyword.'%')->where('disonly',1)->select('id','dis_price','title','dis_number','sell_price','number')->take(100)->get();
+        return response()->json($items);
+    }
+
+    public function productBarcode(Request $request){
+        $items=Item::where('dis_number','like',$request->keyword.'%')->where('disonly',1)->select('id','dis_price','title','dis_number','sell_price','number')->take(100)->get();
+        return response()->json($items);
+    }
+    
+
     public function save(Request $request){
         $item = new Item();
         $item->title = $request->name;

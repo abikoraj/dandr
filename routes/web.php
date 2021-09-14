@@ -4,6 +4,7 @@ use App\Http\Controllers\Admin\BankController;
 use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\CounterController;
 use App\Http\Controllers\Admin\DistributerMilkController;
+use App\Http\Controllers\Admin\DistributersellController;
 use App\Http\Controllers\Admin\DistributerSnfFatController;
 use App\Http\Controllers\Admin\GatewayController;
 use App\Http\Controllers\Admin\ItemController;
@@ -160,10 +161,10 @@ Route::name('admin.')->group(function () {
 
             // XXX distributer sell
 
-            Route::get('sells', 'Admin\DistributersellController@index')->name('sell');
-            Route::post('sell-add', 'Admin\DistributersellController@addDistributersell')->name('sell.add');
-            Route::post('sell-list', 'Admin\DistributersellController@listDistributersell')->name('sell.list');
-            Route::post('sell-del', 'Admin\DistributersellController@deleteDistributersell')->name('sell.del')->middleware('authority');
+            Route::get('sells', [DistributersellController::class,'index'])->name('sell');
+            Route::post('sell-add', [DistributersellController::class,'addDistributersell'])->name('sell.add');
+            Route::post('sell-list', [DistributersellController::class,'listDistributersell'])->name('sell.list');
+            Route::post('sell-del', [DistributersellController::class,'deleteDistributersell'])->name('sell.del')->middleware('authority');
 
             //XXX Distributor Payments
             Route::get('payment', 'Admin\DistributorPaymentController@index')->name('payemnt');
@@ -200,6 +201,8 @@ Route::name('admin.')->group(function () {
             // XXX items
             Route::match(['GET','POST'],'', [ItemController::class,'index'])->name('index');
             Route::match(['GET','POST'],'barcode', [ItemController::class,'barcode'])->name('barcode');
+            Route::match(['GET','POST'],'product', [ItemController::class,'product'])->name('product');
+            Route::match(['GET','POST'],'product-barcode', [ItemController::class,'productBarcode'])->name('product-barcode');
             Route::post('edit', [ItemController::class,'edit'])->name('edit');
             Route::post('add', [ItemController::class,'save'])->name('save');
             Route::match(['GET','POST'],'item-center-stock/{id}', [ItemController::class,'centerStock'])->name('center-stock');
