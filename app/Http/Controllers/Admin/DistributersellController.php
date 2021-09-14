@@ -16,7 +16,8 @@ class DistributersellController extends Controller
 {
     public function index()
     {
-        return view('admin.distributer.sell.index');
+        $large=env('large',false);
+        return view('admin.distributer.sell.index',compact('large'));
     }
 
     public function addDistributersell(Request $request)

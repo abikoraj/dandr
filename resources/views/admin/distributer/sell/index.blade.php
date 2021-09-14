@@ -143,6 +143,9 @@
 @section('js')
 <script src="{{ asset('backend/plugins/select2/select2.min.js') }}"></script>
 <script src="{{ asset('backend/js/pages/forms/advanced-form-elements.js') }}"></script>
+    @if($large)
+        @include('admin.search.item')
+    @endif
 <script>
     // $( "#x" ).prop( "disabled", true );
     initTableSearch('sId', 'sellDisDataBody', ['name']);
