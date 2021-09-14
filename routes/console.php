@@ -124,7 +124,7 @@ Artisan::command('password', function(){
 });
 
 Artisan::command('load-items',function(){
-    $data=include(__DIR__."\..\data\drugs.php");
+    $data=include(__DIR__."/../data/drugs.php");
     $units=['Sack','kg','litre','Pcs'];
     for ($j=1; $j <= 15; $j++) { 
        
