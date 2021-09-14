@@ -35,6 +35,7 @@
         $('#isid').search({
             rendercustom:true,
             renderele:"#itemData",
+            url:'{{route('admin.item.index')}}'
         });
     </script>
 @endsection
