@@ -1,16 +1,20 @@
 <?php
 
 use App\Http\Controllers\Admin\BankController;
+use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\CounterController;
 use App\Http\Controllers\Admin\DistributerMilkController;
 use App\Http\Controllers\Admin\DistributerSnfFatController;
 use App\Http\Controllers\Admin\GatewayController;
+use App\Http\Controllers\Admin\ItemController;
 use App\Http\Controllers\Admin\OfferController;
 use App\Http\Controllers\Admin\PosBillingController;
+use App\Http\Controllers\Admin\SellitemController;
 use App\Http\Controllers\POS\BillingController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Sahakari\HomeController;
 use App\Http\Controllers\Sahakari\Member\MemberController;
+use App\Models\Item;
 use App\Models\Sahakari\HomeCntroller;
 
 /*
@@ -183,26 +187,35 @@ Route::name('admin.')->group(function () {
             });
             
         });
+        Route::prefix('categories')->name('category.')->group(function () {
+            // XXX items
+            Route::match(['GET','POST'],'', [CategoryController::class,'index'])->name('index');
+            Route::post('edit', [CategoryController::class,'edit'])->name('edit');
+            Route::post('add', [CategoryController::class,'save'])->name('save');
+            Route::get('delete/{cat}', [CategoryController::class,'delete'])->name('delete')->middleware('authority');
+
+        });
 
         Route::prefix('items')->name('item.')->group(function () {
             // XXX items
-            Route::get('', 'Admin\ItemController@index')->name('index');
-            Route::post('edit', 'Admin\ItemController@edit')->name('edit');
-            Route::post('add', 'Admin\ItemController@save')->name('save');
-            Route::match(['GET','POST'],'item-center-stock/{id}', 'Admin\ItemController@centerStock')->name('center-stock');
-            Route::get('item-delete/{id}', 'Admin\ItemController@delete')->name('delete')->middleware('authority');
-            Route::post('item-update', 'Admin\ItemController@update')->name('update')->middleware('authority');
+            Route::match(['GET','POST'],'', [ItemController::class,'index'])->name('index');
+            Route::match(['GET','POST'],'barcode', [ItemController::class,'barcode'])->name('barcode');
+            Route::post('edit', [ItemController::class,'edit'])->name('edit');
+            Route::post('add', [ItemController::class,'save'])->name('save');
+            Route::match(['GET','POST'],'item-center-stock/{id}', [ItemController::class,'centerStock'])->name('center-stock');
+            Route::get('item-delete/{id}', [ItemController::class,'delete'])->name('delete')->middleware('authority');
+            Route::post('item-update', [ItemController::class,'update'])->name('update')->middleware('authority');
         });
 
         Route::prefix('sell-items')->name('sell.item.')->group(function () {
 
             // XXX sell items
-            Route::get('', 'Admin\SellitemController@index')->name('index');
-            Route::post('add', 'Admin\SellitemController@addSellItem')->name('add');
-            Route::post('list', 'Admin\SellitemController@sellItemList')->name('list');
-            Route::post('update', 'Admin\SellitemController@updateSellItem')->name('update');
-            Route::post('delete', 'Admin\SellitemController@deleteSellitem')->name('delete')->middleware('authority');
-            Route::post('delete-all', 'Admin\SellitemController@multidel')->name('del-all-selitem')->middleware('authority');
+            Route::get('', [SellitemController::class,'index'])->name('index');
+            Route::post('add', [SellitemController::class,'addSellItem'])->name('add');
+            Route::post('list', [SellitemController::class,'sellItemList'])->name('list');
+            Route::post('update', [SellitemController::class,'updateSellItem'])->name('update');
+            Route::post('delete', [SellitemController::class,'deleteSellitem'])->name('delete')->middleware('authority');
+            Route::post('delete-all', [SellitemController::class,'multidel'])->name('del-all-selitem')->middleware('authority');
         });
 
 
@@ -401,6 +414,7 @@ Route::name('admin.')->group(function () {
                 Route::get( 'del/{offer}',[OfferController::class,'del'])->name('del');
                 Route::get( 'activate/{offer}',[OfferController::class,'activate'])->name('activate');
                 Route::get( 'detail/{offer}',[OfferController::class,'detail'])->name('detail');
+                Route::match(['get', 'post'], 'items',[OfferController::class,'getItems'])->name('get-items');
             });
         });
 

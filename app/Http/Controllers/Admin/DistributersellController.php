@@ -72,9 +72,16 @@ class DistributersellController extends Controller
             $sell_item->name=$user->name;
             $sell_item->title=$item->title;
             $manager = new LedgerManage($user->id);
-            $manager->addLedger($item->title . ' ( Rs.' . $sell_item->rate . ' x ' . $sell_item->qty . ')', 1, $request->total, $date, '103', $sell_item->id);
-            if ($request->paid > 0) {
-                $manager->addLedger('Paid amount', 2, $request->paid, $date, '114', $sell_item->id);
+            if(env('acc_system','old')=='old'){
+                $manager->addLedger($item->title . ' ( Rs.' . $sell_item->rate . ' x ' . $sell_item->qty . ')', 1, $request->total, $date, '103', $sell_item->id);
+                if ($request->paid > 0) {
+                    $manager->addLedger('Paid amount', 2, $request->paid, $date, '114', $sell_item->id);
+                }
+            }else{
+                $manager->addLedger($item->title . ' ( Rs.' . $sell_item->rate . ' x ' . $sell_item->qty . ')', 2, $request->total, $date, '103', $sell_item->id);
+                if ($request->paid > 0) {
+                    $manager->addLedger('Paid amount', 1, $request->paid, $date, '114', $sell_item->id);
+                }
             }
             return view('admin.distributer.sell.single', ['sell' => $sell_item]);
         } else {

@@ -119,7 +119,7 @@
                         // console.log(response.data);
                         $('#employeeData').empty();
                         $('#employeeData').html(response.data);
-                        setDate("nepali-datepicker",true);
+                        setDate("nepali-datepicker",false);
                     })
                     .catch(function(response) {
                         //handle error

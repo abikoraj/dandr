@@ -61,7 +61,11 @@ class DistributorPaymentController extends Controller
         $payment->save();
 
         $ledger=new LedgerManage($distributor->user_id);
-        $ledger->addLedger("Payment by distributor",2,$request->amount,$date,'114',$payment->id);
+        if(env('acc_system','old')=='old'){
+            $ledger->addLedger("Payment by distributor",2,$request->amount,$date,'114',$payment->id);
+        }else{
+            $ledger->addLedger("Payment by distributor",1,$request->amount,$date,'114',$payment->id);
+        }
         // $bills=Distributorsell::where('distributer_id',$request->id)->where('deu','>',0)->get();
         $id=$request->id;
         return view('admin.distributer.payment.data',compact('distributor','id'));

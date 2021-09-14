@@ -56,7 +56,7 @@
                         <label for="unumber">Item Number
                             <span id="itemsearch"  data-toggle="modal" data-target="#itemmodal">( search (alt+s) )</span>
                         </label>
-                        <input type="text" id="item_id" name="number" placeholder="Item number" class="form-control checkitem next " data-rate="rate" data-next="rate" min="1">
+                        <input type="text" id="item_id" name="number" placeholder="Item number" class="form-control {{!$large?'checkitem':''}} next " data-rate="rate" data-next="rate" min="1" >
                     </div>
                 </div>
 
@@ -132,12 +132,18 @@
 @include('admin.sellitem.editmodal')
 @endsection
 @section('js')
+@if($large)
+    @include('admin.search.item')
+@endif
+
 <script src="{{ asset('backend/plugins/select2/select2.min.js') }}"></script>
 <script src="{{ asset('backend/js/pages/forms/advanced-form-elements.js') }}"></script>
 <script>
     // $( "#x" ).prop( "disabled", true );
     initTableSearch('sid', 'farmerData', ['name']);
-    initTableSearch('isid', 'itemData', ['number','name']);
+    @if(!$large)
+        initTableSearch('isid', 'itemData', ['number','name']);
+    @endif
     initTableSearch('sellItemId', 'sellDataBody', ['id', 'item_number']);
 
     function initEdit(e) {
@@ -295,11 +301,16 @@
     //XXX Select Item From Search
     function itemSelected(data) {
        
+        @if($large)
+            $('#item_id').closeSearch();
+        @endif
         $('#item_id').val(data.number);
         $('#rate').val(data.rate);
         $('#itemmodal').modal('hide');
-        $('#item_id').focus();
+        $('#rate').focus();
+        $('#rate').select();
         calTotal();
+
     }
 
     //XXX Load Selling Data For Current Data And Collecion Center
@@ -413,5 +424,25 @@
 
 
 
+</script>
+
+<script>
+    function renderBarcode(){
+        html="<table>";
+            this.data.forEach(item => {
+                html+= '<tr class="search-item" id="item-'+ dotSanitize(item.number) +'" data-rate="'+item.sell_price+'" data-number="'+item.number+'" data-name="'+item.title+'" onclick="itemSelected(this.dataset);">'+
+                    '<td class="p-1"><span style="cursor: pointer;">'+item.number+'</span></td>'+
+                '</tr>';
+                console.log(html, this.data);
+            });
+            html+="</table>"
+            return html;
+    }
+
+    $('#item_id').search({
+        url:'{{route('admin.item.barcode')}}',
+        renderfunc:"renderBarcode",
+        mod:"bar"
+    });
 </script>
 @endsection

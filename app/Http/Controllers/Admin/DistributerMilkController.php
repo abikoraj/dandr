@@ -90,7 +90,11 @@ class DistributerMilkController extends Controller
         $ledger=new LedgerManage($user->id);
         if($l==null){
             $date = str_replace('-', '', $request->date);
-            $l=$ledger->addLedger("Milk (".$report->milk."l X ".$report->rate.")",1,$report->total,$date,132,$report->id);
+            if(env('acc_system','old')=='old'){
+                $l=$ledger->addLedger("Milk (".$report->milk."l X ".$report->rate.")",1,$report->total,$date,132,$report->id);
+            }else{
+                $l=$ledger->addLedger("Milk (".$report->milk."l X ".$report->rate.")",2,$report->total,$date,132,$report->id);
+            }
         }else{
             $l->title="Milk (".$report->milk."l X ".$report->rate.")";
             $l->amount=$report->total;

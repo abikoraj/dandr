@@ -55,14 +55,22 @@
                                                     </span> 
                                                     <span  class=" btn-link p-0"
                                                     data-toggle="modal" data-target="#createItems">New Item+</span></label>
-                                                <select name="" id="ptr" class="form-control show-tick ms select2"
-                                                    data-placeholder="Select">
-                                                    <option></option>
-                                                    @foreach (\App\Models\Item::select('id','title','cost_price')->get() as $i)
-                                                        <option value="{{$i->id}}"> {{ $i->title }}
-                                                        </option>
-                                                    @endforeach
-                                                </select>
+                                                    @if (!env('large',false))
+                                                    <select name="" id="ptr" class="form-control show-tick ms select2"
+                                                        data-placeholder="Select">
+                                                        <option></option>
+                                                        @foreach (\App\Models\Item::select('id','title','cost_price')->get() as $i)
+                                                            <option value="{{$i->id}}"> {{ $i->title }}
+                                                            </option>
+                                                        @endforeach
+                                                    </select>
+                                                    @else
+                                                        <input name="" id="ptr" class="form-control " class="search-product">
+                                                        <div id="ptr-option">
+                                                            <div id="ptr-option-title"></div>
+                                                            <span class="btn btn-sm btn-danger" onclick="clear_item_selected(true)">&times;</span>
+                                                        </div>
+                                                    @endif
                                             </div>
                                         </div>
 
@@ -177,14 +185,20 @@
 </div>
 
 @section('js2')
+    @include('admin.search.item')
     <script>
-          function saveData(e) {
+            @if(env('large',false))
+                var item_id=-1;
+                item_title='';
+            @endif
+        function saveData(e) {
             e.preventDefault();
             if ($('#supplier').val() == '') {
                 alert('Please select supplier.');
                 $('#supplier').focus();
                 return false;
             } else {
+                showProgress('Adding Bill');
                 var bodyFormData = new FormData(document.getElementById('add-bill'));
                 axios({
                         method: 'post',
@@ -196,6 +210,7 @@
                     })
                     .then(function(response) {
                         console.log(response);
+                        hideProgress();
                         showNotification('bg-success', 'Supplier bill added successfully!');
                         $('#largeModal').modal('toggle');
                         $('#add-bill').trigger("reset")
@@ -215,6 +230,7 @@
                         suffle();
                     })
                     .catch(function(response) {
+                        hideProgress();
                         //handle error
                         console.log(response);
                     });
@@ -235,8 +251,16 @@
                 $("#ptr").focus();
                 return false;
             }
-            title=$( "#ptr option:selected" ).text();
-            id=$('#ptr').val();
+            @if(env('large',false))
+                id=item_id;
+                title=item_title;
+            @else
+                id=$('#ptr').val();
+                title=$( "#ptr option:selected" ).text();
+            @endif
+            if(id<0){
+                alert('Please Select a Item');
+            }
             // console.log(item);
             html = "<tr id='row-" + i + "'>";
             html += "<td>" + title + "<input type='hidden' name='ptr_" + i + "' value='" + title +
@@ -265,6 +289,9 @@
             itemKeys.push(i);
             i += 1;
             suffle();
+            @if(env('large',false))
+                clear_item_selected();
+            @endif
         }
 
         function suffle() {
@@ -344,5 +371,49 @@
                 $('#exp_date').attr('disabled', 'disabled');
             }
         });
+
+        function itemRender() {
+            console.log(this.data, 'renderdata');
+            html = '';
+            html += '<table class="w-100">'
+            this.data.items.forEach(item => {
+                html+="<tr class='search-item' onclick='item_selected(\""+item.title+"\","+item.id+")'><td>"+item.title+"</td></tr>"
+            });
+            html += "</table>"
+            return html;
+        }
+        function item_selected(_title,_id) {
+            item_title=_title;
+            item_id=_id;
+            $('#ptr').closeSearch();
+            $('#ptr').hide()
+            $('#ptr-option-title').html(item_title);
+            $('#ptr-option').show();
+            $('#rate').focus();
+            $('#rate').select();
+
+        }
+        function clear_item_selected(q=false){
+            title='';
+            id=-1;
+            $('#ptr').show()
+            $('#ptr-option-title').html('');
+            $('#ptr-option').hide();
+            $('#ptr').focus();
+            if(q){
+                $('#ptr').showSearch()
+
+            }
+        }
+
+        $('#ptr').search();
+        // $('#supplier').search({mod:"sup"});
+        $('#ptr-option').hide();
+
+        $('body').click(function(e){
+            const $target = $(event.target);
+            console.log('clicked',e,$target);
+        })
+        
     </script>
 @endsection

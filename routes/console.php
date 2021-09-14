@@ -4,6 +4,7 @@ use App\Models\Bank;
 use App\Models\Distributer;
 use App\Models\Distributorsell;
 use App\Models\FiscalYear;
+use App\Models\Item;
 use App\Models\Ledger;
 use App\Models\PaymentGateway;
 use App\Models\User;
@@ -122,5 +123,30 @@ Artisan::command('password', function(){
      User::where('role',1)->orWhere('role',2)->update(['password'=>bcrypt(12345)]);
 });
 
+Artisan::command('load-items',function(){
+    $data=include(__DIR__."\..\data\drugs.php");
+    $units=['Sack','kg','litre','Pcs'];
+    for ($j=1; $j <= 15; $j++) { 
+       
+        foreach ($data as $key => $name) {
+            $d=mt_rand(100,999);
+            $i=new Item();
+            $i->title=$name ." (mode.".$j.")";
+            $i->sell_price=mt_rand(10,10000);
+            $i->cost_price=truncate_decimals($i->sell_price*0.90);
+            $i->stock=mt_rand(1,500);
+            $i->number=$j.'.'.$d.'.'.$key;
+            $i->unit=$units[mt_rand(0,3)];
+            $i->posonly=mt_rand(0,1);
+            $i->disonly=mt_rand(0,1);
+            $i->farmeronly=mt_rand(0,1);
+            if($i->disonly==1){
+                $i->dis_number=$i->number;
+            }
+            $i->save();
+            echo $i->title ." Saved.\n";
+        }
+    }
+});
 
 

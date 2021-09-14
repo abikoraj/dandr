@@ -131,8 +131,13 @@ $(".next").keydown(function (event) {
         id = $(this).data("next");
         console.log("next id", id);
         $("#" + id).focus();
+        $("#" + id).select();
     }
 });
+
+function dotSanitize(txt=''){
+    return txt.replaceAll('.','_');
+}
 
 $(".next-switch").keydown(function (event) {
     var key = event.keyCode ? event.keyCode : event.which;
@@ -197,12 +202,14 @@ $("connectmax").change(function () {
 });
 
 $(".checkitem").focusout(function () {
-    id = $(this).val();
+    id = dotSanitize( $(this).val());
+
     console.log("running", id);
     if (id != "") {
         if (!exists("#item-" + id)) {
             alert("Farmer with farmer no-" + id + " doesnot exist;");
             $(this).focus();
+            $(this).val('');
             $(this).select();
         } else {
             rate_id = $(this).data("rate");

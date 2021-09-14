@@ -1,7 +1,6 @@
 <tr id="item-{{ $item->id }}" data-name="{{ $item->title }}">
     <td>{{$item->title}}</td>
     <td>{{$item->number}}</td>
-    <td>{{$item->cost_price}}</td>
     <td>{{$item->sell_price}}</td>
     <td>{{$item->stock}}</td>
     <td>{{$item->unit}}</td>

@@ -85,9 +85,6 @@
            
         </tr>
     @endforeach
-    @php
-        $remaning = $employee->salary + $track;
-    @endphp
     @if ($salaryLoaded)
         @php
             $remaning=$track;
@@ -95,17 +92,19 @@
     @else
 
         @if ($empSession == null)
-            
+            @php
+                $remaning =   $track - $employee->salary;
+                
+            @endphp
             <tr>
                 <td></td>
                 <td>
                     Salary For This Month
                 </td>
                 <td>
-
+                    {{ $employee->salary }}
                 </td>
                 <td>
-                    {{ $employee->salary }}
                 </td>
                 <td>
                     @if ($remaning == 0)
@@ -123,13 +122,13 @@
 <hr>
 
 
-@if ($remaning > 0)
+@if ($remaning < 0)
     <div class="p-2">
         <div class="row">
             <div class="col-md-4">
                 <label for="date">Date</label>
                 <input readonly type="text" name="date" id="nepali-datepicker" class="form-control"
-                    placeholder="Date" value="{{_nepalidate($lastdate)}}">
+                    placeholder="Date">
             </div>
             <div class="col-md-4">
                 <label for="total"> Monthly Salary </label>
@@ -138,7 +137,7 @@
             <div class="col-md-4">
                 <label for="pay">Pay Salary </label>
                 <input type="text" class="form-control" id="p_amt" name="salary" min="0" step="0.001"
-                    value="{{ $remaning }}">
+                    value="{{ (-1*$remaning) }}">
             </div>
             <div class="col-md-9 mt-1">
                 <label for="detail">Payment Detail</label>
@@ -150,11 +149,10 @@
             </div>
         </div>
     </div>
-    @if (!$salaryLoaded)
+
     <div class="p-2">
         <hr>
         <button class="btn btn-primary w-25" onclick="closeMonth()">Close Month</button>
     </div>
-    @endif
 @endif
 

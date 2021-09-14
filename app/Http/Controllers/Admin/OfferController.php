@@ -7,6 +7,7 @@ use App\Models\Item;
 use App\Models\Offer;
 use App\Models\Payment;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class OfferController extends Controller
 {
@@ -62,7 +63,11 @@ class OfferController extends Controller
     }
     public function detail(Offer $offer)
     {
-        return view('admin.offer.detail.index',compact('offer'));
+        $items=[];
+        if(!env('large',false)){
+            $items=Item::select(DB::raw( 'id ,title,number,(select count(*) as c from offer_items where item_id=items.id) as cc'))->get()->where('cc',0);
+        }
+        return view('admin.offer.detail.index',compact('offer','items'));
     }
 
     public function getItems(Request $request){
@@ -86,7 +91,10 @@ class OfferController extends Controller
             }
         }
 
-        $items_arr=$items->select('id','title','number')->get();
+        $items_arr=$items->select(DB::raw( 'id ,title,number,(select count(*) as c from offer_items where item_id=items.id) as cc'))->get()->where('cc',0);
+        // $items_arr=$items->select('id','title','number')->get();
+        dd($items_arr);
+
         return view('admin.offer.detail.list',['items'=>$items_arr]);
         
     }

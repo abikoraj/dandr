@@ -187,7 +187,11 @@ class EmployeeController extends Controller
         $advance->save();
 
         $ledger = new LedgerManage($employee->user_id);
-        $ledger->addLedger('Advance Given-(' . $request->title . ')', 1, $request->amount, $date, '112', $advance->id);
+        if(env('acc_system','old')=='old'){
+            $ledger->addLedger('Advance Given-(' . $request->title . ')', 1, $request->amount, $date, '112', $advance->id);
+        }else{
+            $ledger->addLedger('Advance Given-(' . $request->title . ')', 2, $request->amount, $date, '112', $advance->id);
+        }
         return view('admin.emp.advance.single', compact('advance'));
     }
 
@@ -200,8 +204,14 @@ class EmployeeController extends Controller
         $advance->amount = $request->amount;
         $advance->save();
         $ledger = new LedgerManage($advance->employee->user_id);
-        $ledger->addLedger('Advance Canceled', 2, $tempamount, $date, '113', $advance->id);
-        $ledger->addLedger('Advance Updated-(' . $request->title . ')', 1, $request->amount, $date, '112', $advance->id);
+        if(env('acc_system','old')=='old'){
+            $ledger->addLedger('Advance Canceled', 2, $tempamount, $date, '113', $advance->id);
+            $ledger->addLedger('Advance Updated-(' . $request->title . ')', 1, $request->amount, $date, '112', $advance->id);
+        }else{
+            $ledger->addLedger('Advance Canceled', 1, $tempamount, $date, '113', $advance->id);
+            $ledger->addLedger('Advance Updated-(' . $request->title . ')', 2, $request->amount, $date, '112', $advance->id);
+
+        }
         return response()->json(['status' => 'success']);
     }
 
@@ -212,7 +222,12 @@ class EmployeeController extends Controller
         $tempamount = $advance->amount;
         $advance->delete();
         $ledger = new LedgerManage($advance->employee->user_id);
-        $ledger->addLedger('Advance Canceled', 2, $tempamount, $date, '113', $advance->id);
+        if(env('acc_system','old')=='old'){
+            $ledger->addLedger('Advance Canceled', 2, $tempamount, $date, '113', $advance->id);
+        }else{
+            $ledger->addLedger('Advance Canceled', 1, $tempamount, $date, '113', $advance->id);
+
+        }
         return response()->json(['status' => 'success']);
     }
 
@@ -254,8 +269,15 @@ class EmployeeController extends Controller
             array_push($arr, $l);
         }
         $track=$base;
+        $lastdate = NepaliDate::getDateMonthLast($request->year, $request->month);
 
-        return view('admin.emp.salarypay.data_new', compact('track','arr', 'user', 'employee', 'empSession', 'prev','salaryLoaded'));
+        if(env('acc_system','old')=='old'){
+            return view('admin.emp.salarypay.data_new', compact('track','arr', 'user', 'employee', 'empSession', 'prev','salaryLoaded','lastdate'));
+        }else{
+            return view('admin.emp.salarypay.data_new_new', compact('track','arr', 'user', 'employee', 'empSession', 'prev','salaryLoaded','lastdate'));
+        }
+
+  
     }
 
     public function storeSalary(Request $request)
@@ -265,14 +287,19 @@ class EmployeeController extends Controller
         $employee = Employee::where('id', $request->emp_id)->first();
         $np = new NepaliDate($date);
         $range = NepaliDate::getDateMonth($request->year, $request->month);
-        $salaryLoaded = Ledger::where('date', '>=', $range[1])->where('date', '<=', $range[2])->where('user_id', $employee->user_id)->count()>0;
+        $salaryLoaded = Ledger::where('date', '>=', $range[1])->where('date', '<=', $range[2])->where('user_id', $employee->user_id)->where('identifire',129)->count()>0;
         if (!($employee->sessionClosed($np->year, $np->month))) {
             return response('previous Month Not Closed', 500);
         } else {
             $ledger = new LedgerManage($employee->user_id);
 
             if(!$salaryLoaded){
-                $ledger->addLedger('salary For (' . $request->year . "-" . ($request->month < 10 ? "0" . $request->month : $request->month) . ")", 2, $employee->salary, $date, 129);
+                if(env('acc_system','old')=='old'){
+                    $ledger->addLedger('salary For (' . $request->year . "-" . ($request->month < 10 ? "0" . $request->month : $request->month) . ")", 2, $employee->salary, $date, 129);
+                }else{
+                    $ledger->addLedger('salary For (' . $request->year . "-" . ($request->month < 10 ? "0" . $request->month : $request->month) . ")", 1, $employee->salary, $date, 129);
+                }
+
             }
             $salaryPay = new SalaryPayment();
             $salaryPay->date = $date;
@@ -282,7 +309,12 @@ class EmployeeController extends Controller
             $salaryPay->payment_detail = $request->desc;
             $salaryPay->user_id = $employee->user_id;
             $salaryPay->save();
-            $ledger->addLedger('Salary Paid for ' . $request->year . "-" . ($request->month < 10 ? "0" . $request->month : $request->month), 1, $request->pay, $date, '124', $salaryPay->id);
+            if(env('acc_system','old')=='old'){
+
+                $ledger->addLedger('Salary Paid for ' . $request->year . "-" . ($request->month < 10 ? "0" . $request->month : $request->month), 1, $request->pay, $date, '124', $salaryPay->id);
+            }else{
+                $ledger->addLedger('Salary Paid for ' . $request->year . "-" . ($request->month < 10 ? "0" . $request->month : $request->month), 2, $request->pay, $date, '124', $salaryPay->id);
+            }
             echo 'ok';
         }
     }
@@ -340,33 +372,33 @@ class EmployeeController extends Controller
 
         if ($employee->sessionClosed($request->year, $request->month)) {
             $range = NepaliDate::getDateMonth($request->year, $request->month);
-            //track month blance wwith respect to salary
-            $cr = Ledger::where('date', '>=', $range[1])->where('date', '<=', $range[2])->where('user_id', $employee->user_id)->where('type', 1)->sum('amount');
-            $dr = Ledger::where('date', '>=', $range[1])->where('date', '<=', $range[2])->where('user_id', $employee->user_id)->where('type', 2)->sum('amount');
-            $track = $dr - $cr;
-            $remaning = $track + $employee->salary;
-
             $l = [];
             //input salary into ledger
             $lm = new LedgerManage($employee->user_id);
             $lastdate = NepaliDate::getDateMonthLast($request->year, $request->month);
-            $l[0] = $lm->addLedger('salary For (' . $request->year . "-" . ($request->month < 10 ? "0" . $request->month : $request->month) . ")", 2, $employee->salary, $lastdate, 129);
+            if(env('acc_system','old')=='old'){
+
+                $l[0] = $lm->addLedger('salary For (' . $request->year . "-" . ($request->month < 10 ? "0" . $request->month : $request->month) . ")", 2, $employee->salary, $lastdate, 129);
+            }else{
+                $l[0] = $lm->addLedger('salary For (' . $request->year . "-" . ($request->month < 10 ? "0" . $request->month : $request->month) . ")", 1, $employee->salary, $lastdate, 129);
+            }
 
 
             //move remaning balance to another month
-            if ($remaning != 0) {
-                $_remaning = $remaning < 0 ? (-1 * $remaning) : $remaning;
-                $l[1] = $lm->addLedger('Closing Balance', $remaning < 0 ? 2 : 1, $_remaning, $lastdate, 130);
-                $nextMonthRange = NepaliDate::nextMonthStatic($request->year, $request->month);
-                $firstDate = NepaliDate::getDateMonthFirst($nextMonthRange[0], $nextMonthRange[1]);
-                $l[2] = $lm->addLedger('Opening Balance', $remaning < 0 ? 1 : 2, $_remaning, $firstDate, 113);
-            }
+            // if ($remaning != 0) {
+            //     $_remaning = $remaning < 0 ? (-1 * $remaning) : $remaning;
+            //     $l[1] = $lm->addLedger('Closing Balance', $remaning < 0 ? 2 : 1, $_remaning, $lastdate, 130);
+            //     $nextMonthRange = NepaliDate::nextMonthStatic($request->year, $request->month);
+            //     $firstDate = NepaliDate::getDateMonthFirst($nextMonthRange[0], $nextMonthRange[1]);
+            //     $l[2] = $lm->addLedger('Opening Balance', $remaning < 0 ? 1 : 2, $_remaning, $firstDate, 113);
+            // }
             $sessionClose = new EmployeeSession();
             $sessionClose->user_id = $employee->user_id;
             $sessionClose->month = $request->month;
             $sessionClose->year = $request->year;
             $sessionClose->save();
-            return response()->json([$remaning, $sessionClose, $l, $lastdate, $firstDate, $nextMonthRange, $range]);
+            // return response()->json([$remaning, $sessionClose, $l, $lastdate, $firstDate, $nextMonthRange, $range]);
+            return response('ok');
         } else {
             return response('previous Month Not Closed', 500);
         }

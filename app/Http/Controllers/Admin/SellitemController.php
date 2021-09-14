@@ -15,19 +15,27 @@ use Illuminate\Http\Request;
 class SellitemController extends Controller
 {
     public function index(){
-        return view('admin.sellitem.index');
+        $large=env('large',false);
+        return view('admin.sellitem.index',compact('large'));
     }
 
     public function addSellItem(Request $request){
         $date = str_replace('-','',$request->date);
+        $large=env('large',false);
+        
         $user = User::join('farmers','users.id','=','farmers.user_id')->where('users.no',$request->user_id)->where('farmers.center_id',$request->center_id)->select('users.*','farmers.center_id')->first();
+        if($user==null){
+            return response('No User Found With User No '.$request->user_id,404);
+        }
+        $item = Item::where('number',$request->number)->first();
+        if($item==null){
+            return response('No Item Found With Item No '.$request->user_id,404);
+        }
         // dd($user->id);
         $d=new NepaliDate($date);
         if(!$d->isPrevClosed($user->id)){
             return response('Previous session is not closed yet',500);
         }
-
-        $item = Item::where('number',$request->number)->first();
         $canadd = false;
         if ($item->trackstock == 1) {
             if(env('multi_stock',false)){

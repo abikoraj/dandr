@@ -37,7 +37,11 @@ class AdvanceController extends Controller
         $adv->date = $date;
         $adv->save();
         $ledger = new LedgerManage($user->id);
-        $ledger->addLedger('Advance to Farmer',1,$request->amount,$date,'104',$adv->id);
+        if(env('acc_system','old')=='old'){
+            $ledger->addLedger('Advance to Farmer',1,$request->amount,$date,'104',$adv->id);
+        }else{
+            $ledger->addLedger('Advance to Farmer',2,$request->amount,$date,'104',$adv->id);
+        }
         return view('admin.farmer.advance.single',compact('adv'));
     }
 

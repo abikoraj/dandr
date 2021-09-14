@@ -1,7 +1,6 @@
 
 @foreach($emps as $k => $emp)
 <tr id="employee-{{$emp->user->id}}" data-name="{{ $emp->user->name }}" class="searchable">
-    <td>{{ $k+1 }}</td>
     <td>{{ $emp->user->name }}</td>
     <td>{{ $emp->user->phone }}</td>
     <td>{{ $emp->user->address }}</td>
