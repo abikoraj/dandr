@@ -425,24 +425,25 @@
 
 
 </script>
+@if ($large)
+    <script>
+        function renderBarcode(){
+            html="<table>";
+                this.data.forEach(item => {
+                    html+= '<tr class="search-item" id="item-'+ dotSanitize(item.number) +'" data-rate="'+item.sell_price+'" data-number="'+item.number+'" data-name="'+item.title+'" onclick="itemSelected(this.dataset);">'+
+                        '<td class="p-1"><span style="cursor: pointer;">'+item.number+'</span></td>'+
+                    '</tr>';
+                    console.log(html, this.data);
+                });
+                html+="</table>"
+                return html;
+        }
 
-<script>
-    function renderBarcode(){
-        html="<table>";
-            this.data.forEach(item => {
-                html+= '<tr class="search-item" id="item-'+ dotSanitize(item.number) +'" data-rate="'+item.sell_price+'" data-number="'+item.number+'" data-name="'+item.title+'" onclick="itemSelected(this.dataset);">'+
-                    '<td class="p-1"><span style="cursor: pointer;">'+item.number+'</span></td>'+
-                '</tr>';
-                console.log(html, this.data);
-            });
-            html+="</table>"
-            return html;
-    }
-
-    $('#item_id').search({
-        url:'{{route('admin.item.barcode')}}',
-        renderfunc:"renderBarcode",
-        mod:"bar"
-    });
-</script>
+        $('#item_id').search({
+            url:'{{route('admin.item.barcode')}}',
+            renderfunc:"renderBarcode",
+            mod:"bar"
+        });
+    </script>
+@endif
 @endsection

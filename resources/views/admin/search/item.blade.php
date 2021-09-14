@@ -80,7 +80,7 @@
                     console.log(_keyword.length, ele.dataset.searchid);
                     const __r_id = ele.dataset.searchid;
                     const _r_id = __r_id + '_overlay';
-                    debugger;
+                    // debugger;
                     if (_keyword.length > 2) {
                         if(!search_setting.rendercustom){
 

@@ -156,11 +156,16 @@
     //XXX Select Item From Search
     function itemSelected(data) {
        
+        @if($large)
+            $('#product_id').closeSearch();
+        @endif
        $('#product_id').val(data.number);
        $('#rate').val(data.rate);
        $('#itemmodal').modal('hide');
-       $('#product_id').focus();
+       $('#rate').focus();
+       $('#rate').select();
        calTotal();
+       
    }
     sellock=false;
     function saveData() {
@@ -318,22 +323,45 @@
             }
         }
     });
-    $('#product_id').focusout(function(){
-        if($(this).val()!=""){
-            if(!exists('#item-'+$(this).val())){
-                alert('Product Not Found');
-                $(this).focus();
-                $(this).select();
-                $(this).val("");
+    @if(!$large)
+        $('#product_id').focusout(function(){
+            if($(this).val()!=""){
+                if(!exists('#item-'+$(this).val())){
+                    alert('Product Not Found');
+                    $(this).focus();
+                    $(this).select();
+                    $(this).val("");
+                }
+                $('#rate').val($('#item-'+$(this).val()).data('rate')).change();
+                calTotal();
             }
-            $('#rate').val($('#item-'+$(this).val()).data('rate')).change();
-            calTotal();
-        }
-    });
+        });
+    @endif
 
     $('#nepali-datepicker').bind('changed', function() {
         loaddata();
     });
 
 </script>
+@if ($large)
+    
+    <script>
+        function renderBarcode(){
+            html="<table>";
+                this.data.forEach($i => {
+                    html+= '<tr class="search-item" id="item-'+ ($i.dis_number??$i.number) +'" data-rate="'+($i.dis_price??$i.sell_price)+'" data-number="'+($i.dis_number??$i.number) +'" data-name="'+ $i.title +'" onclick="itemSelected(this.dataset);">'+
+                                '<td class="p-1"><span style="cursor: pointer;">'+ ($i.dis_number??$i.number) +'</span></td>'+
+                            '</tr>';
+                });
+                html+="</table>"
+                return html;
+        }
+
+        $('#product_id').search({
+            url:'{{route('admin.item.product-barcode')}}',
+            renderfunc:"renderBarcode",
+            mod:"bar"
+        });
+    </script>
+@endif
 @endsection

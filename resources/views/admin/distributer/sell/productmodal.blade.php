@@ -42,8 +42,8 @@ aria-hidden="true">
             html="";
 
             this.data.forEach($i => {
-                html+= '<tr id="item-'+ $i.dis_number??$i.number +'" data-rate="'+$i.dis_price??$i.sell_price+'" data-number="'+$i.dis_number??$i.number +'" data-name="'+ $i.title +'" onclick="itemSelected(this.dataset);">'+
-                            '<td class="p-1"><span style="cursor: pointer;">'+ $i.dis_number??$i.number +'</span></td>'+
+                html+= '<tr id="item-'+ ($i.dis_number??$i.number) +'" data-rate="'+($i.dis_price??$i.sell_price)+'" data-number="'+($i.dis_number??$i.number) +'" data-name="'+ $i.title +'" onclick="itemSelected(this.dataset);">'+
+                            '<td class="p-1"><span style="cursor: pointer;">'+ ($i.dis_number??$i.number) +'</span></td>'+
                            ' <td class="p-1"><span style="cursor: pointer;">'+ $i.title +'</span></td>'+
                         '</tr>';
             });
