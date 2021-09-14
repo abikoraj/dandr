@@ -51,7 +51,7 @@ aria-hidden="true">
             return html;
         }
         $('#isid').search({
-            renderfunc:"productRender"
+            renderfunc:"productRender",
             rendercustom:true,
             renderele:"#products",
             url:'{{route('admin.item.product')}}'
