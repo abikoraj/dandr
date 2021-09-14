@@ -55,7 +55,7 @@ class ItemController extends Controller
     }
 
     public function product(Request $request){
-        $items=Item::where('name','like',$request->keyword.'%')->where('disonly',1)->select('id','dis_price','title','dis_number','sell_price','number')->take(100)->get();
+        $items=Item::where('title','like',$request->keyword.'%')->where('disonly',1)->select('id','dis_price','title','dis_number','sell_price','number')->take(100)->get();
         return response()->json($items);
     }
 
