@@ -50,17 +50,17 @@ class ItemController extends Controller
     }
 
     public function barcode(Request $request){
-        $items=Item::where('number','like',$request->keyword.'%')->select('id','sell_price','title','number')->take(100)->get();
+        $items=Item::where('number','like',$request->keyword.'%')->select('id','sell_price','title','number')->take(24)->get();
         return response()->json($items);
     }
 
     public function product(Request $request){
-        $items=Item::where('title','like',$request->keyword.'%')->where('disonly',1)->select('id','dis_price','title','dis_number','sell_price','number')->take(100)->get();
+        $items=Item::where('title','like',$request->keyword.'%')->where('disonly',1)->select('id','dis_price','title','dis_number','sell_price','number')->take(24)->get();
         return response()->json($items);
     }
 
     public function productBarcode(Request $request){
-        $items=Item::where('dis_number','like',$request->keyword.'%')->where('disonly',1)->select('id','dis_price','title','dis_number','sell_price','number')->take(100)->get();
+        $items=Item::where('dis_number','like',$request->keyword.'%')->where('disonly',1)->select('id','dis_price','title','dis_number','sell_price','number')->take(24)->get();
         return response()->json($items);
     }
     

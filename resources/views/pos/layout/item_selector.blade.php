@@ -3,7 +3,8 @@
       <div class="col-md-12">
           <div class="form-group">
             <label for="item-name" class="mb-1 text-white">Name</label>
-            <select id="item-name"  class="form-control" onchange="billpanel.setRate();"></select>
+              <input type="text" id="item-name" class="form-control">
+            {{-- <select id="item-name"  class="form-control" onchange="billpanel.setRate();"></select> --}}
           </div>
       </div>
       <div class="col-md-6">

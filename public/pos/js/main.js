@@ -1,7 +1,9 @@
 $("#barcode").keydown(function (e) {
     if (e.which == 13) {
+        const _r_id = this.dataset.searchid;
+        let _index = $("#" + _r_id).data("index");
         barcode = this.value;
-        if (barcode.length > 0) {
+        if (barcode.length > 0 && _index<0) {
             billpanel.addItem(barcode);
         }
     }
@@ -41,8 +43,8 @@ const states = {
 const stateText = [
     " connecting",
     " connected",
-   " reconnecting",
-   "",
+    " reconnecting",
+    "",
     " disconnected",
 ];
 const stateClass = [
@@ -53,6 +55,7 @@ const stateClass = [
     " bg-danger",
 ];
 var chat;
+showProgress("Loading Data");
 $.connection.hub.url = "http://localhost:4200/signalr";
 try {
     $.connection.hub.error(function (error) {
@@ -64,12 +67,14 @@ try {
     console.log(err);
 }
 var billpanel = {
+    raw: null,
     customer: null,
     customerSelected: false,
     products: [],
     index: 0,
     billitems: [],
     print: false,
+    selectedItem:null,
     total: {
         total: 0,
         discount: 0,
@@ -138,6 +143,8 @@ var billpanel = {
             .get(itemsURL)
             .then((res) => {
                 items = res.data;
+                billpanel.raw = res.data;
+
                 for (let index = 0; index < items.length; index++) {
                     const item = items[index];
                     barcode = format(index.toString(), 5);
@@ -148,23 +155,17 @@ var billpanel = {
                     };
                 }
                 this.products = p;
-
-                html = "<option></option>";
-
-                Object.keys(p).forEach((key) => {
-                    element = p[key];
-                    html +=
-                        "<option value='" +
-                        key +
-                        "' data-rate='" +
-                        element.rate +
-                        "'>" +
-                        element.name +
-                        "</option>";
+                $("#barcode").search({
+                    list: billpanel.raw,
+                    mod: "barcode",
+                    renderfunc: "renderBarcode",
                 });
-
-                $("#item-name").html(html);
-                $("#item-name").select2();
+                $("#item-name").search({
+                    list: billpanel.raw,
+                    mod: "item",
+                    renderfunc: "renderItem",
+                    filterfunc:'filterItem'
+                });
                 hideProgress();
             })
             .catch((err) => {
@@ -272,11 +273,12 @@ var billpanel = {
         }
         console.log(item);
         $("#barcode").val("");
+        $("#barcode").closeSearch();
         $("#barcode").focus();
     },
     addItemSelect: function () {
-        barcode = $("#item-name").val();
-        console.log(barcode);
+        
+        
         qty = parseFloat($("#item-qty").val());
         if (isNaN(qty)) {
             $.notify("Please Enter Qty", {
@@ -291,8 +293,8 @@ var billpanel = {
                 return;
             }
         }
-        item = this.products[barcode];
-        if (item == undefined) {
+        item = this.selectedItem;
+        if (item == undefined || item==null) {
             $.notify("Please Select A Item", {
                 className: "error",
             });
@@ -311,10 +313,11 @@ var billpanel = {
                 this.billitems[key].amount += qty;
                 this.updateBillItem(this.billitems[key]);
             }
-            $("#item-name").val(null).trigger("change");
+            $("#item-name").val('').trigger("change");
             $("#item-rate").val("");
             $("#item-qty").val("");
             console.log(this.billitems);
+            this.selectedItem=null;
         }
     },
     cancelBill: function () {
@@ -328,7 +331,7 @@ var billpanel = {
         this.billitems = [];
         this.ele().html("");
         billpanel.resetCustomer();
-        $('#payment-form')[0].reset();
+        $("#payment-form")[0].reset();
         $("#payment").modal("hide");
     },
     customerSearch: function () {
@@ -520,25 +523,25 @@ var printSetting = {
     type: 0,
     data: null,
     queue: false,
-    sendPrintNotification:function(){
-        axios.post(printedBillURL,{"id":this.data.id});
+    sendPrintNotification: function () {
+        axios.post(printedBillURL, { id: this.data.id });
     },
-    reconnectServer:function(){
-        state=$.connection.hub.state;
-        if(state==undefined){
-            state=4;
+    reconnectServer: function () {
+        state = $.connection.hub.state;
+        if (state == undefined) {
+            state = 4;
         }
-        if(state==4){
+        if (state == 4) {
             printSetting.restart();
         }
     },
     setStatus: function () {
-        state=$.connection.hub.state;
-        if(state==undefined){
-            state=4;
+        state = $.connection.hub.state;
+        if (state == undefined) {
+            state = 4;
         }
         $("#print-server-status").attr("class", "badge " + stateClass[state]);
-        $('#print-server-status').text('Printer '+stateText[state]);
+        $("#print-server-status").text("Printer " + stateText[state]);
     },
     setType: function () {
         this.type = $("input[name='print-type']:checked").val();
@@ -569,11 +572,14 @@ var printSetting = {
                     if (printSetting.queue) {
                         $("#print-type-0")[0].checked = true;
                         printSetting.type = 0;
-                        url = printBillURL.replace("__xx__", printSetting.data.id);
+                        url = printBillURL.replace(
+                            "__xx__",
+                            printSetting.data.id
+                        );
                         // window.open(url);
                         newTab(url);
                         hideProgress();
-                        printSetting.queue=false;
+                        printSetting.queue = false;
                     }
                 });
         }
@@ -587,7 +593,7 @@ var printSetting = {
             // window.open(url);
             newTab(url);
             hideProgress();
-            printSetting.queue=false;
+            printSetting.queue = false;
         } else {
             if ($.connection.hub.state == states.connected) {
                 showProgress("Printing");
@@ -599,14 +605,13 @@ var printSetting = {
                         this.queue = false;
                         hideProgress();
                         printSetting.sendPrintNotification();
-
                     })
                     .catch((err) => {
                         console.log(err);
                         url = printBillURL.replace("__xx__", this.data.id);
                         newTab(url);
                         hideProgress();
-                        printSetting.queue=false;
+                        printSetting.queue = false;
                         hideProgress();
                     });
             } else {

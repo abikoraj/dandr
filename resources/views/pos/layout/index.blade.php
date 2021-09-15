@@ -49,6 +49,7 @@
 
     <script src="{{ asset('pos/js/names.js') }}"></script>
     <script src="{{ asset('pos/js/funcstions.js') }}"></script>
+    @yield('prejs')
     <script src="{{ asset('pos/js/main.js') }}"></script>
     {{-- <script>
         $(function() {
