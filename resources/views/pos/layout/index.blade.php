@@ -50,7 +50,8 @@
     <script src="{{ asset('pos/js/names.js') }}"></script>
     <script src="{{ asset('pos/js/funcstions.js') }}"></script>
     @yield('prejs')
-    <script src="{{ asset('pos/js/main.js') }}"></script>
+    {{-- <script src="{{ asset('pos/js/main.js') }}"></script> --}}
+    @include('pos.layout.mainjs')
     {{-- <script>
         $(function() {
             $.connection.hub.url = "http://localhost:4200/signalr";
