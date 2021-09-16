@@ -78,7 +78,7 @@ class OfferController extends Controller
             $items=$items->where('no',$request->barcode);
         }
         if($request->filled('keyword')){
-            $items=$items->where('title','like','%'.$request->keyword.'%');
+            $items=$items->where('title','like',$request->keyword.'%');
         }
 
         if($request->filled('step')){
@@ -93,7 +93,7 @@ class OfferController extends Controller
 
         $items_arr=$items->select(DB::raw( 'id ,title,number,(select count(*) as c from offer_items where item_id=items.id) as cc'))->get()->where('cc',0);
         // $items_arr=$items->select('id','title','number')->get();
-        dd($items_arr);
+        // dd($items_arr);
 
         return view('admin.offer.detail.list',['items'=>$items_arr]);
         

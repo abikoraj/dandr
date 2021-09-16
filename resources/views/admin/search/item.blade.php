@@ -13,19 +13,21 @@
     .search-result .search-item {
         cursor: pointer;
     }
+
     .search-result .search-item.active {
         background: blue;
-        color:white;
+        color: white;
     }
 
     .search-result .search-item:hover {
         cursor: pointer;
         background: rgba(0, 0, 0, 0.05);
     }
+
     .search-result .search-item.active:hover {
         cursor: pointer;
         background: rgba(0, 0, 255, 0.733);
-        color:white;
+        color: white;
     }
 
     .search-close {
@@ -38,11 +40,11 @@
 
 </span>
 <script>
-    var skipContainers=[
+    var skipContainers = [
 
     ];
 
-    var currentContainer='';
+    var currentContainer = '';
     (function($) {
 
         $.fn.search = function(options) {
@@ -71,8 +73,8 @@
                     '</div>' +
                     '<div class="xxx_tp1" data-index="0" id="' + result_id + '" ></div></div>');
                 search_id += 1;
-                $('#'+result_id + '_overlay').click(function(){
-                    currentContainer='#'+result_id + '_overlay';
+                $('#' + result_id + '_overlay').click(function() {
+                    currentContainer = '#' + result_id + '_overlay';
                     console.log(currentContainer);
                 })
                 $(ele).on('propertychange input', function(e) {
@@ -82,7 +84,7 @@
                     const _r_id = __r_id + '_overlay';
                     // debugger;
                     if (_keyword.length > 2) {
-                        if(!search_setting.rendercustom){
+                        if (!search_setting.rendercustom) {
 
                             const el = ele.getBoundingClientRect();
                             const t = $(ele).offset().top - $(window).scrollTop();
@@ -145,45 +147,45 @@
 
                     }
                 });
-                $(ele).focusin(function (e) { 
+                $(ele).focusin(function(e) {
                     const _keyword = $(ele).val();
-                    if(_keyword.length>2){
+                    if (_keyword.length > 2) {
                         $(ele).showSearch();
                     }
-                    
+
                 });
-                $(ele).focusout(function (e) { 
-                    console.log(e,$(e.relatedTarget).hasClass('xxx_tp1'));
-                    if(e.relatedTarget!=null  ){
-                        
+                $(ele).focusout(function(e) {
+                    console.log(e, $(e.relatedTarget).hasClass('xxx_tp1'));
+                    if (e.relatedTarget != null) {
+
                         $(ele).closeSearch();
                     }
                 });
-                if(!search_setting.rendercustom){
+                if (!search_setting.rendercustom) {
                     $(ele).on('keydown', function(e) {
                         const _r_id = ele.dataset.searchid;
                         const table = $('#' + _r_id + '>table')[0];
                         let _index = $('#' + _r_id).data('index');
-                        $('#' + _r_id+">table>tbody>tr").removeClass('active');
-                        const _total = $('#' + _r_id+">table>tbody>tr").length;
-                        let _ok=false;
+                        $('#' + _r_id + ">table>tbody>tr").removeClass('active');
+                        const _total = $('#' + _r_id + ">table>tbody>tr").length;
+                        let _ok = false;
                         e = e || window.event;
 
                         if (e.keyCode == '38') {
-                            _index-=1;
-                            if(_index<0){
-                                _index=0;
+                            _index -= 1;
+                            if (_index < 0) {
+                                _index = 0;
                             }
-                            _ok=true;
+                            _ok = true;
                         } else if (e.keyCode == '40') {
                             _index += 1;
                             console.log(_index);
-                            if(_index>=_total){
-                                _index=_total-1;
+                            if (_index >= _total) {
+                                _index = _total - 1;
                             }
                             console.log(_index);
-                            _ok=true;
-                            
+                            _ok = true;
+
                         } else if (e.keyCode == '13') {
                             // left arrow
                             e.preventDefault();
@@ -192,14 +194,15 @@
                         } else if (e.keyCode == '39') {
                             // right arrow
                         }
-                        if(_ok){
+                        if (_ok) {
 
                             console.log('#' + _r_id + '>table', table, _total);
-    
+
                             $('#' + _r_id + '>table>tbody>tr:eq(' + _index + ')').addClass(
-                            'active');
-                            $('#' + _r_id + '>table>tbody>tr:eq(' + _index + ')')[0].scrollIntoView();
-                            
+                                'active');
+                            $('#' + _r_id + '>table>tbody>tr:eq(' + _index + ')')[0]
+                                .scrollIntoView();
+
                             $('#' + _r_id).data('index', _index);
                         }
                     });
@@ -245,19 +248,20 @@
         };
     }(jQuery));
 
-    
-    $(document).mouseup(function(e){
+
+    $(document).mouseup(function(e) {
         var container = $(currentContainer);
 
         // If the target of the click isn't the search input
-        if($(e.target).data('searchid')==undefined){
+        if ($(e.target).data('searchid') == undefined) {
 
             // If the target of the click isn't the container
-            if(!container.is(e.target) && container.has(e.target).length === 0){
+            if (!container.is(e.target) && container.has(e.target).length === 0) {
                 container.hide();
             }
         }
     });
+
     function get(ele) {
         const el = ele.getBoundingClientRect();
         const t = $(ele).offset().top - $(window).scrollTop();

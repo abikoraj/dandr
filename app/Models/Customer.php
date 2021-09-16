@@ -16,9 +16,10 @@ class Customer extends Model
     public function basicInfo(){
         return json_encode((object)[
             "id"=>$this->id,
-            "name"=>$this->user->name,
-            "address"=>$this->user->address,
-            "phone"=>$this->user->phone,
+            "name"=>$this->name,
+            "address"=>$this->address,
+            "phone"=>$this->phone,
+            "panvat"=>$this->panvat,
         ]);
     }
 }

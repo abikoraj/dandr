@@ -199,13 +199,13 @@ class POSController extends Controller
     }
 
     public function searchCustomer(Request $request){
-        $items=Customer::join('users','users.id','=','customers.user_id')->select('customers.id','users.name','users.address','customers.user_id','users.phone');
+        $items=Customer::join('users','users.id','=','customers.user_id')->select('customers.id','users.name','users.address','customers.user_id','users.phone','customers.panvat',);
         if($request->filled('name')){
             $items=$items->where('users.name','like',$request->name."%");
         }
 
         if($request->filled('phone')){
-            $items=$items->where('users.phone',$request->phone);
+            $items=$items->where('users.phone','like',$request->phone."%");
         }
         // dd($items);
         $allItems=$items->get();

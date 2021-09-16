@@ -48,8 +48,8 @@ class LedgerManage
     * "122" = "paid amount while billing"
     * "123" = "purchase in billing items"
     * "129" = "Employee Salary For Month"
-    * "130" = "Employee closing Balance"
-    // * "131" = "Employee opening Balance"
+    * "132" = "Employee closing Balance"
+    * "133" = "Employee opening Balance"
 
 
 
@@ -62,6 +62,7 @@ class LedgerManage
     **customer section
     * "130" = "Sold to customer"
     * "131" = "customer Payment"
+    * "134" = "customer opening Balance"
     */
     public function addLedger($particular, $type, $amount, $date, $identifier, $foreign_id = null)
     {

@@ -2,6 +2,9 @@
 
 namespace App\Models;
 
+use App\NepaliDate;
+use App\NepaliDateHelper;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -14,6 +17,17 @@ class PosSetting extends Model
         'open' => 'boolean',
     ];
 
+    public static function getDate():int{
+        $setting=PosSetting::first();
+        if($setting==null){
+            $date=Carbon::now();
+            $d=new NepaliDateHelper();
+            $nepDate=$d->eng_to_nep($date->year,$date->month,$date->day);
+            return $nepDate['year']*10000+$nepDate['month']*100+$nepDate['day'];
+        }
+        return $setting->date;
+
+    }
     public function requests(){
         $setting=PosSetting::first();
         if($setting==null){

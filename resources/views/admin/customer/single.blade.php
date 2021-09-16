@@ -3,21 +3,18 @@
         {{$customer->id}}
     </td>
     <td>
-        {{$customer->user->name}}
+        {{$customer->name}}
     </td>
     <td>
-        {{$customer->user->phone}}
+        {{$customer->phone}}
     </td>
     <td>
-        {{$customer->user->address}}
+        {{$customer->address}}
     </td>
     <td>
-        @if ($customer->user->amount>0)
-            {{ $customer->user->amount}} {{$customer->user->amounttype==1?"CR":"DR"}}
-        @else
-            --
-        @endif
+        {{$customer->panvat??'--'}}
     </td>
+  
     <td>
         <button class="btn btn-sm btn-primary" data-info="{{$customer->basicInfo()}}" onclick="initEdit(this)">Edit</button>
         <a  target="_blank" href="{{ route("admin.customer.detail",['id'=>$customer->user_id]) }}" class="btn btn-sm btn-secondary">Detail</a>

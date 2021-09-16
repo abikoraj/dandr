@@ -390,6 +390,7 @@ var billpanel = {
         $("#customer-name").val(this.customer.name);
         $("#customer-phone").val(this.customer.phone);
         $("#customer-address").val(this.customer.address);
+        $("#customer-panvat").val(this.customer.panvat);
     },
     resetCustomer: function () {
         this.customer = null;

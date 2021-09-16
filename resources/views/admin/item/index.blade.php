@@ -1,33 +1,7 @@
 @extends('admin.layouts.app')
 @section('title', 'Items')
 @section('head-title', 'Items')
-@section('css')
-    <style>
-        #pagination {
-            position: fixed;
-            bottom: 10px;
-            right: 50px;
-            left: 250px;
-            background: white;
-            box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.25);
-            padding: 5px;
-        }
 
-        .pagination-input {
-            padding: 8px;
-            border-radius: 5px;
-            width: 70px;
-        }
-        #result{
-            position: fixed;
-            top:0;
-            background: red;
-            z-index: 4;
-            width:500px;
-        }
-
-    </style>
-@endsection
 @section('toobar')
     <button type="button" class="btn btn-primary waves-effect m-r-20" data-toggle="modal" data-target="#largeModal">Create
         New Item</button>
@@ -93,6 +67,7 @@
         @endif
 
         lock = false;
+        @if($large)
 
         function loadData(loadData) {
             if (!lock) {
@@ -116,6 +91,7 @@
                     });
             }
         }
+        @endif
 
         
         function saveData(e) {
@@ -201,6 +177,7 @@
             }
         }
 
+        @if($large)
         //reset 
         function  reset() {
             $('#sid').val('');
@@ -310,8 +287,14 @@
 
             }
         }
+        $('#sid').keydown(function (e) { 
+            if(e.which==13 && keydown.length>2){
+                loadData();
+            }
+        });
 
         loadData();
+        @endif
         // render=render.replaceAll('xxx_tr','tr');
     </script>
 @endsection

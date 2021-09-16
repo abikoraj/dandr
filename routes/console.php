@@ -1,6 +1,7 @@
 <?php
 
 use App\Models\Bank;
+use App\Models\Customer;
 use App\Models\Distributer;
 use App\Models\Distributorsell;
 use App\Models\FiscalYear;
@@ -148,5 +149,24 @@ Artisan::command('load-items',function(){
         }
     }
 });
-
+Artisan::command('load-customers',function(){
+    $faker = Faker\Factory::create();
+    for ($i=0; $i < 10000; $i++) { 
+    
+        $user = new User();
+        $user->phone = $faker->phoneNumber;
+        $user->name = $faker->name;
+        $user->address = $faker->address;
+        // $user->amount = $request->amount??0;
+        // $user->amounttype = $request->amounttype??0;
+        $user->role = 2;
+        $user->password = bcrypt($user->phone);
+        $user->save();
+        $customer = new Customer();
+        $customer->user_id=$user->id;
+        $customer->panvat=mt_rand(1000000,9999999);
+        $customer->save();
+        echo "saved - ".$user->name ."\n";
+    }
+});
 

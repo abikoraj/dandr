@@ -3,6 +3,7 @@
 use App\Http\Controllers\Admin\BankController;
 use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\CounterController;
+use App\Http\Controllers\Admin\CustomerController;
 use App\Http\Controllers\Admin\DistributerMilkController;
 use App\Http\Controllers\Admin\DistributersellController;
 use App\Http\Controllers\Admin\DistributerSnfFatController;
@@ -371,17 +372,17 @@ Route::name('admin.')->group(function () {
         //XXX Customer
         Route::group(['prefix' => 'customer'], function () {
             Route::name('customer.')->group(function () {
-                Route::get('', 'Admin\CustomerController@index')->name('home');
-                Route::post('add', 'Admin\CustomerController@add')->name('add');
-                Route::post('update', 'Admin\CustomerController@update')->name('update')->middleware('authority');
-                Route::post('del', 'Admin\CustomerController@del')->name('del')->middleware('authority');
+                Route::match(['GET','POST'],'', [CustomerController::class,'index'])->name('home');
+                Route::post('add', [CustomerController::class,'add'])->name('add');
+                Route::post('update', [CustomerController::class,'update'])->name('update')->middleware('authority');
+                Route::post('del', [CustomerController::class,'del'])->name('del')->middleware('authority');
 
                 //detail
-                Route::match(['get', 'post'], 'detail/{id}','Admin\CustomerController@detail')->name('detail');
+                Route::match(['get', 'post'], 'detail/{id}',[CustomerController::class,'detail'])->name('detail');
 
                 Route::name('payment.')->prefix('payment')->group(function(){
-                    Route::match(['get', 'post'],  '','Admin\CustomerController@payment')->name('index');
-                    Route::match(['get', 'post'],  'add','Admin\CustomerController@addPayment')->name('add');
+                    Route::match(['get', 'post'],  '',[CustomerController::class,'payment'])->name('index');
+                    Route::match(['get', 'post'],  'add',[CustomerController::class,'addPayment'])->name('add');
                 });
             });
         });

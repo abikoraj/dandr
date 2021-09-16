@@ -28,7 +28,13 @@
                             <div class="col-lg-12">
                                 <label for="name">Customer Address</label>
                                 <div class="form-group">
-                                    <input type="text" id="eaddress" name="address" class="form-control " data-next="rate" placeholder="Enter customer address" required>
+                                    <input type="text" id="eaddress" name="address" class="form-control " data-next="panvat" placeholder="Enter customer address" required>
+                                </div>
+                            </div>
+                            <div class="col-lg-6">
+                                <label for="name">Customer PAN/VAT</label>
+                                <div class="form-group">
+                                    <input type="text" id="epanvat" name="panvat" class="form-control " data-next="rate" placeholder="Enter customer PAN/VAT" required>
                                 </div>
                             </div>
                          
@@ -49,12 +55,13 @@
 
     <script>
         function initEdit(ele){
-            data=JSON.parse( ele.dataset.info);
+            data=JSON.parse(decodeURIComponent( ele.dataset.info));
             console.log(data);
             $('#eid').val(data.id);
             $('#ename').val(data.name);
             $('#ephone').val(data.phone);
             $('#eaddress').val(data.address);
+            $('#epanvat').val(data.panvat);
             $('#editModal').modal('show');
         }
         function updateData(e) {

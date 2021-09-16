@@ -27,17 +27,23 @@
                             <div class="col-lg-12">
                                 <label for="name">Customer Address</label>
                                 <div class="form-group">
-                                    <input type="text" id="address" name="address" class="form-control " data-next="rate" placeholder="Enter customer address" required>
+                                    <input type="text" id="address" name="address" class="form-control " data-next="panvat" placeholder="Enter customer address" required>
+                                </div>
+                            </div>
+                            <div class="col-lg-6">
+                                <label for="name">Customer PAN/VAT</label>
+                                <div class="form-group">
+                                    <input type="text" id="panvat" name="panvat" class="form-control " data-next="amount" placeholder="Enter customer PAN/VAT" required>
                                 </div>
                             </div>
                             
-                            <div class="col-lg-6">
+                            <div class="col-lg-3">
                                 <label for="amount">Opening Balance</label>
                                 <div class="form-group">
                                     <input type="number" id="amount" name="amount" min="0" step="0.01" class="form-control next" data-next="address" placeholder="Enter Current Balance" required>
                                 </div>
                             </div>
-                            <div class="col-lg-6">
+                            <div class="col-lg-3">
                                 <label for="amounttype">Balance Type</label>
                                 <div class="form-group">
                                     <select name="amounttype" id="amounttype" class="form-control show-tick ms">

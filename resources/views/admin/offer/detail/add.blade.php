@@ -4,13 +4,13 @@
             @if (env('large', false))
                 <div class="row">
                     <div class="col-5 pr-1">
-                        <input type="text" class="form-control" id="keyword" placeholder="Search Items">
+                        <input type="text" oninput="loadItems()" class="form-control" id="keyword" placeholder="Search Items">
                     </div>
                     <div class="col-5 px-1">
                         <input type="text" class="form-control" id="category" placeholder="Search Category">
                     </div>
                     <div class="col-2 pl-1">
-                        <button class="btn btn-primary">Load</button>
+                        <button class="btn btn-primary" onclick="loadItems();">Load</button>
                     </div>
                 </div>
             @endif
@@ -23,9 +23,12 @@
                         </th>
                         <td></td>
                     </tr>
-                    @foreach ($items as $item)
-                        @include('admin.offer.detail.singleitem',['item'=>$item])
-                    @endforeach
+                    <tbody id="item-list">
+
+                        @foreach ($items as $item)
+                            @include('admin.offer.detail.singleitem',['item'=>$item])
+                        @endforeach
+                    </tbody>
                 </table>
             </div>
         </div>
@@ -81,9 +84,11 @@
 </div>
 @section('js2')
     <script>
-        item1 = -1;
-        item2 = -1;
-        type = {{ $offer->type }};
+        var item1 = -1;
+        var item2 = -1;
+        var type = {{ $offer->type }};
+        var step=0;
+        
         function select(id,name){
             $('#item-name').val(name);
             $('#item-id').val(id);
@@ -91,5 +96,15 @@
         }
         $('#offer-item').hide();
 
+        function loadItems(){
+            const _keyword=$('#keyword').val();
+            if(_keyword.length>2){
+
+                axios.post('{{route('admin.offers.get-items')}}',{"step":step,"keyword":_keyword})
+                .then((res)=>{
+                    $('#item-list').html(res.data);
+                })
+            }
+        }
     </script>
 @endsection
