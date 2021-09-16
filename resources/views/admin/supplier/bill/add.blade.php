@@ -87,7 +87,7 @@
                                             <div class="from-group">
                                                 <label for="qty"> Quantity </label>
                                                 <input type="number" onkeyup="singleItemTotal();"
-                                                    class="form-control next" data-next="total" id="qty" value="1"
+                                                    class="form-control next" data-next="additem" id="qty" value="1"
                                                      step="0.001">
                                             </div>
                                         </div>
@@ -276,7 +276,7 @@
                     "' value='1'/><input type='hidden' name='exp_date_" + i + "' id='exp_date_" + i +
                     "' value='"+$('#exp_date').val() +"'/></td>";
             }else{
-
+                html+="<td>---</td>"
             }
             html += "<td> <span class='btn btn-danger btn-sm' onclick='RemoveItem(" + i + ");'>Remove</span></td>";
             html += "</tr>";
@@ -358,9 +358,13 @@
                 });
         }
 
-        $('#total').bind('keydown', function(e) {
+        $('#qty').bind('keydown', function(e) {
             if(e.which==13){
-                addItems();
+                if(document.getElementById('has_expairy').checked){
+                    $('#exp_date').focus();
+                }else{
+                    addItems();
+                }
             }
         });
 
@@ -406,7 +410,9 @@
             }
         }
 
-        $('#ptr').search();
+        $('#ptr').search({
+            url:'{{route('admin.item.index')}}'
+        });
         // $('#supplier').search({mod:"sup"});
         $('#ptr-option').hide();
 

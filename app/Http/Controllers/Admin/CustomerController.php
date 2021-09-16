@@ -27,8 +27,8 @@ class CustomerController extends Controller
             $data=[];
             $data['page']=$step;
             if($request->filled('name')){
-                $query=$query->where('users.name','like',$request->name.'%');
-                $query1=$query1->where('users.name','like',$request->name.'%');
+                $query=$query->where('users.name','like','%'.$request->name.'%');
+                $query1=$query1->where('users.name','like','%'.$request->name.'%');
                 $data['name']=$request->name;
             }
 

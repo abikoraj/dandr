@@ -42,7 +42,7 @@
                 <input type="text" class="form-control"  id="search-phone" placeholder="Search using Phone" oninput="phone=this.value;">
             </div>
             <div class="col-md-3">
-                <button class="btn btn-primary w-100" onclick="loadData()">Search</button>
+                <button class="btn btn-primary w-100" onclick="step=0;loadData()">Search</button>
             </div>
             <div class="col-md-3">
                 <button class="btn btn-danger w-100" onclick="reset()">Reset</button>
@@ -270,6 +270,7 @@
         $('#search-name').keydown(function (e) { 
             
             if(e.which==13 && _name.length>2){
+                step=0;
                 loadData();
             }
         });
@@ -277,6 +278,7 @@
         $('#search-phone').keydown(function (e) { 
             
             if(e.which==13 && phone.length>4){
+                step=0;
                 loadData();
             }
         });
