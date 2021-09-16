@@ -57,7 +57,8 @@
                 filterfunc: "itemFilter",
                 rendercustom: false,
                 renderele: "#ren",
-                mod: "item"
+                mod: "item",
+                renderfirst:false
             }, options);
             return this.each(function(index, ele) {
                 console.log(ele);
@@ -75,13 +76,32 @@
                     currentContainer = '#' + result_id + '_overlay';
                     console.log(currentContainer);
                 })
+                try {
+                    if(search_setting.renderfirst){
+                            let _list = [];
+                            let _index = 0;
+                            const fn1 = window[search_setting.filterfunc];
+                            if (typeof fn1 === "function") {
+                                _list = fn1.call(search_setting.list,'');
+                            }
+                            const fn = window[search_setting.renderfunc];
+                            if (typeof fn === "function") {
+                                const _d = fn.call(_list);
+                                $(search_setting.renderele).html(_d);
+                            }
+                    }
+                    
+                } catch (error) {
+                    console.log(error);
+                }
                 $(ele).on('propertychange input', function(e) {
                     const _keyword = $(ele).val();
                     console.log(_keyword.length, ele.dataset.searchid);
                     const __r_id = ele.dataset.searchid;
                     const _r_id = __r_id + '_overlay';
                     // debugger;
-                    if (_keyword.length > 2) {
+                    const _reqlen=search_setting.renderfirst?0:2;
+                    if (_keyword.length > _reqlen) {
                         if (!search_setting.rendercustom) {
 
                             const el = ele.getBoundingClientRect();

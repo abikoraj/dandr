@@ -373,6 +373,7 @@ Route::name('admin.')->group(function () {
         Route::group(['prefix' => 'customer'], function () {
             Route::name('customer.')->group(function () {
                 Route::match(['GET','POST'],'', [CustomerController::class,'index'])->name('home');
+                Route::match(['GET','POST'],'all', [CustomerController::class,'all'])->name('all');
                 Route::post('add', [CustomerController::class,'add'])->name('add');
                 Route::post('update', [CustomerController::class,'update'])->name('update')->middleware('authority');
                 Route::post('del', [CustomerController::class,'del'])->name('del')->middleware('authority');

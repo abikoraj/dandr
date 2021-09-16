@@ -1,7 +1,7 @@
 @extends('admin.layouts.app')
 @section('title', 'Customers')
 @section('head-title', 'Customers')
-@section('css')
+{{-- @section('css')
     <style>
         #pagination {
             position: fixed;
@@ -27,7 +27,7 @@
         }
 
     </style>
-@endsection
+@endsection --}}
 @section('toobar')
     <button type="button" class="btn btn-primary waves-effect m-r-20" data-toggle="modal" data-target="#addModal">New
         Customer</button>

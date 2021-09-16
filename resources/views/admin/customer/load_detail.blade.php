@@ -5,54 +5,6 @@
 
 </style>
 <div class="row">
-    {{-- <div class="col-md-12 mt-3">
-        <div style="border: 1px solid rgb(136, 126, 126); padding:1rem;">
-            <strong>Sold Items</strong>
-            <hr>
-            <table class="table table-bordered table-striped table-hover js-basic-example dataTable">
-                <tr>
-                    <th>Date</th>
-                    <th>Rate</th>
-                    <th>Quantity</th>
-                    <th>Total</th>
-                    <th>Paid</th>
-                    <th>Due</th>
-                </tr>
-                   @php
-                       $total = 0;
-                       $paid = 0;
-                       $due = 0;
-                   @endphp
-                   @foreach ($sell as $item)
-                   <tr>
-                       <td>{{ _nepalidate($item->date)}}</td>
-                       <td>{{ $item->rate }}</td>
-                       <td>{{ $item->qty }}</td>
-                       <td>{{ $item->total }}</td>
-                       <td>{{ $item->paid }}</td>
-                       <td>{{ $item->deu }}</td>
-                   </tr>
-                       @php
-                           $total += $item->total;
-                           $paid += $item->paid;
-                           $due += $item->deu;
-                       @endphp
-                   @endforeach
-                    <tr>
-                        <td colspan="5" class="text-right">Grand Total</td>
-                        <td>{{ $total }}</td>
-                    </tr>
-                    <tr>
-                        <td colspan="5" class="text-right">Total Paid</td>
-                        <td> {{ $paid }}</td>
-                    </tr>
-                    <tr>
-                        <td colspan="5" class="text-right">Total Due</td>
-                        <td>{{ $due }}</td>
-                    </tr>
-            </table>
-        </div>
-    </div> --}}
 
     <div class="col-md-12 mt-3">
         <div style="border: 1px solid rgb(136, 126, 126); padding:1rem;">
@@ -114,6 +66,25 @@
                         <th>Balance (Rs.)</th>
                         <th></th>
                     </tr>
+                    @if ($prev!=0)
+                        <tr>
+                            <td>--</td>
+                            <td>
+                                Previous Balance
+                            </td>
+                            <td>
+                                {{$prev<0?(-1*$prev):''}}
+                            </td>
+                            <td>
+                                {{$prev>0?$prev:''}}
+
+                            </td>
+                            <td>
+                                {{$prev<0?'CR. '.(-1*$prev):''}}
+                                {{$prev>0?'DR. '.($prev):''}}
+                            </td>
+                        </tr>
+                    @endif
 
                     @foreach ($ledgers as $l)
                         <tr data-id="ledger{{$l->id}}">
