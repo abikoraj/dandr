@@ -36,7 +36,6 @@
             Sales Report
         </span>
     </div>
-    @if (env('tierlevel',1)==1)
     <div class="col-md-2 section href" data-target="{{route('admin.report.pos.sales')}}">
         <span class="icon">
             <i class="zmdi zmdi-money-box"></i>
@@ -46,7 +45,7 @@
            POS Sales Report
         </span>
     </div>
-    @endif
+    
 
     <div class="col-md-2 section href" data-target="{{route('admin.report.dis')}}">
         <span class="icon">
@@ -59,7 +58,7 @@
             Report
         </span>
     </div>
-    <div class="col-md-2 section href" data-target="{{route('admin.report.emp')}}">
+    {{-- <div class="col-md-2 section href" data-target="{{route('admin.report.emp')}}">
         <span class="icon">
             <i class="zmdi zmdi-truck"></i>
         </span>
@@ -67,8 +66,8 @@
         <span class="text">
             Employee <br> Report
         </span>
-    </div>
-    <div class="col-md-2 section href" data-target="{{route('admin.report.credit')}}">
+    </div> --}}
+    {{-- <div class="col-md-2 section href" data-target="{{route('admin.report.credit')}}">
         <span class="icon">
             <i class="zmdi zmdi-money-off"></i>
 
@@ -77,7 +76,7 @@
         <span class="text">
             Credit <br> Report
         </span>
-    </div>
+    </div> --}}
 
     <div class="col-md-2 section href" data-target="{{route('admin.report.expense')}}">
         <span class="icon">

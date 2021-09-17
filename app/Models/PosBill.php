@@ -9,7 +9,7 @@ class PosBill extends Model
 {
     use HasFactory;
     public function billItems(){
-        return $this->hasMany(PosBillItem::class);
+        return $this->hasMany(PosBillItem::class,'pos_bill_id','id');
     }
     public function payment(){
         return $this->hasOne(Payment::class,'foreign_key','id');

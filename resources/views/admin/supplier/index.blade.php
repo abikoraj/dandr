@@ -172,7 +172,7 @@
         var bodyFormData = new FormData(document.getElementById('editform'));
         axios({
                 method: 'post',
-                url: '{{route('admin.snf-fat.update')}}',
+                url: '{{route('admin.supplier.update')}}',
                 data: bodyFormData,
                 headers: {
                     'Content-Type': 'multipart/form-data'

@@ -12,10 +12,13 @@
         <tr>
             <th class="text-end px-2">Current Balance:</th>
             <td>
-                {{$user->amount}} 
-                @if ($user->amount>0)
-                    {{$user->amounttype==1?"CR":"DR"}}
+                @if ($balance!=0)
+                    {{$balance>0?'DR. '.$balance:''}}    
+                    {{$balance<0?'CR. '.(-1*$balance):''}}    
+                @else
+                    0
                 @endif
+                
             </td>
         </tr>
     </table>

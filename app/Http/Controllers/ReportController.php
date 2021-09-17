@@ -23,6 +23,7 @@ use App\Models\FarmerSession;
 use App\Models\EmployeeAdvance;
 use App\Models\EmployeeReport;
 use App\Models\Expense;
+use App\Models\PosBill;
 use App\NepaliDate;
 use Illuminate\Http\Request;
 
@@ -329,7 +330,7 @@ class ReportController extends Controller
             $week = $request->week;
             $type = $request->type;
             $range = [];
-            $bill = Bill::orderBy('id', 'desc');
+            $bill = PosBill::orderBy('id', 'desc');
 
             if ($type == 0) {
             } elseif ($type == 1) {
@@ -350,13 +351,36 @@ class ReportController extends Controller
                 $bill = $bill->where('date', '>=', $range[1])->where('date', '<=', $range[2]);
             }
 
-            $bill = $bill->select('id', 'date', 'name', 'grandtotal', 'net_total', 'dis')->orderBy('date', 'asc')->get();
-            $billitems = [];
-            foreach ($bill as $b) {
-                $item = BillItem::where('bill_id', $b->id)->get();
-                array_push($billitems, $item);
+            $bill1=clone $bill;
+            $bills1=$bill1->select('id')->toSql();
+            $query='select * from pos_bill_items where pos_bill_id in ('.$bills1.')';
+            // dd($query);
+            $bills = $bill->orderBy('date', 'asc')->get();
+            // $bills = $bill->select('id', 'bill_no','date', 'customer_name','total','discount','tax', 'grandtotal','paid','' 'due')->with('billItems')->orderBy('date', 'asc')->get();
+            $billitems=collect(DB::select($query,[$range[1],$range[2]]));
+            $ddd=$billitems->groupBy('item_id');
+            // dd($billitems,$range,$ddd);
+
+            $billItemDatas=[];
+          
+            foreach ($ddd as $key=>$b) {
+                $billItemData=[];
+                $billItemData['item_id']=$key;
+                $billItemData['value']=[];
+                $ssd=$b->groupBy('rate');
+                foreach ($ssd as $key1 => $b1) {
+                    $sd=[];
+                    $sd['rate']=$key1;
+                    $sd['qty']=$b1->sum('qty');
+                    $sd['discount']=$b1->sum('discount');
+                    $sd['tax']=$b1->sum('tax');
+                    $sd['total']=$b1->sum('total');
+                    $sd['bi']=$b1;
+                    array_push($billItemData['value'],$sd);
+                }
+                array_push($billItemDatas, $billItemData);
             }
-            // dd($billitems);
+            dd($billItemDatas);
 
             return view('admin.report.billingsale.data', compact('bill', 'billitems'));
         } else {
@@ -381,102 +405,93 @@ class ReportController extends Controller
             $range = [];
             $data = [];
             $date = -1;
-            $data = Distributorsell::join('distributers', 'distributorsells.distributer_id', '=', "distributers.id")
-                ->join('users', 'users.id', '=', 'distributers.user_id');
-
-            if ($type == 0) {
-                $range = NepaliDate::getDate($request->year, $request->month, $request->session);
-                $data = $data->where('distributorsells.date', '>=', $range[1])->where('distributorsells.date', '<=', $range[2]);
-            } elseif ($type == 1) {
-                $date = $date = str_replace('-', '', $request->date1);
-                $data = $data->where('distributorsells.date', '=', $date);
-            } elseif ($type == 2) {
-                $range = NepaliDate::getDateWeek($request->year, $request->month, $request->week);
-                $data = $data->where('distributorsells.date', '>=', $range[1])->where('distributorsells.date', '<=', $range[2]);
-            } elseif ($type == 3) {
-                $range = NepaliDate::getDateMonth($request->year, $request->month);
-                $data = $data->where('distributorsells.date', '>=', $range[1])->where('distributorsells.date', '<=', $range[2]);
-            } elseif ($type == 4) {
-                $range = NepaliDate::getDateYear($request->year);
-                $data = $data->where('distributorsells.date', '>=', $range[1])->where('distributorsells.date', '<=', $range[2]);
-            } elseif ($type == 5) {
-                $range[1] = str_replace('-', '', $request->date1);;
-                $range[2] = str_replace('-', '', $request->date2);;
-                $data = $data->where('distributorsells.date', '>=', $range[1])->where('distributorsells.date', '<=', $range[2]);
-            }
-
-            $datas = $data->select(DB::raw('distributers.id, sum(distributorsells.qty) as qty,users.id as users_id, users.name,sum(distributorsells.total) total,sum(distributorsells.paid) paid'))->groupBy('id', 'name', 'users_id')->get();
-            foreach ($datas as $d) {
-                $element = $d->toArray();
-                if ($date != -1) {
-                    $element['paid'] = $element['paid'] + DistributorPayment::where('date', '>=', $range[1])->where('date', '<=', $range[2])->where('user_id', $element['users_id'])->sum('amount');
-                } else {
-
-                    $element['paid'] = $element['paid'] + DistributorPayment::where('date', '>=', $date)->where('user_id', $element['users_id'])->sum('amount');
+            $distributers = Distributer::join('users', 'users.id', '=', 'distributers.user_id')->select(DB::raw('distributers.id,users.id as user_id, users.name'))->get();
+            foreach ($distributers as $key => $distributer) {
+                $data = Ledger::where('user_id', $distributer->user_id);
+                if ($type == 0) {
+                    $range = NepaliDate::getDate($request->year, $request->month, $request->session);
+                    $data = $data->where('date', '>=', $range[1])->where('date', '<=', $range[2]);
+                } elseif ($type == 1) {
+                    $date = $date = str_replace('-', '', $request->date1);
+                    $range[1] = $date;
+                    $data = $data->where('date', '=', $date);
+                } elseif ($type == 2) {
+                    $range = NepaliDate::getDateWeek($request->year, $request->month, $request->week);
+                    $data = $data->where('date', '>=', $range[1])->where('date', '<=', $range[2]);
+                } elseif ($type == 3) {
+                    $range = NepaliDate::getDateMonth($request->year, $request->month);
+                    $data = $data->where('date', '>=', $range[1])->where('date', '<=', $range[2]);
+                } elseif ($type == 4) {
+                    $range = NepaliDate::getDateYear($request->year);
+                    $data = $data->where('date', '>=', $range[1])->where('date', '<=', $range[2]);
+                } elseif ($type == 5) {
+                    $range[1] = str_replace('-', '', $request->date1);;
+                    $range[2] = str_replace('-', '', $request->date2);;
+                    $data = $data->where('date', '>=', $range[1])->where('date', '<=', $range[2]);
                 }
+                $element=$distributer->toArray();
+                $data1=clone $data;
+                $data2=clone $data;
+                $element['milk']=$data->where('identifire','132')->sum('amount');
+                $element['total']=$data1->where('identifire','103')->sum('amount');
+                $element['paid']=$data2->where('identifire','114')->sum('amount');
+                
                 $element['due'] = 0;
                 $element['advance'] = 0;
 
                 $element['prevadvance'] = 0;
                 $element['prevdue'] = 0;
 
-                $ledgers = Ledger::where('user_id', $d->users_id)
-                    ->where('date', '>=', $range[1])
-                    ->where('date', '<=', $range[2])->where('identifire', '<>', 115)->OrderBy('id', 'asc')->get();
 
-                $last = $ledgers->last();
-
-                $tt = true;
-                $first = $ledgers->first();
-
+                $opening = 0;
                 $balance = 0;
-                if ($last->cr > 0) {
-                    $element['due'] = $last->cr;
-                    $element['advance'] = 0;
-                } elseif ($last->dr > 0) {
-                    $element['advance'] = $last->dr;
-                    $element['due'] = 0;
-                }
-
-                if ($first->identifire == 119) {
-                    if ($first->type == 1) {
-                        $balance = (-1) * $first->amount;
-                    } else {
-                        $balance = $first->amount;
-                    }
+                $prev = 0;
+                
+                if (env('acc_system', 'old') == 'old') {
+                    $prev = Ledger::where('date', '<', $range[1])->where('user_id', $element['user_id'])->where('type', 2)->sum('amount') -
+                    Ledger::where('date', '<', $range[1])->where('user_id', $element['user_id'])->where('type', 1)->sum('amount');
                 } else {
-                    $i = 0;
-                    while ($tt) {
-                        $tt = Ledger::where('foreign_key', $first->foreign_key)->where('identifire', 115)->count() > 0;
-                        if ($tt) {
-                            $i += 1;
-                            $first = $ledgers[$i];
-                        }
-                    }
-
-                    if ($first->cr > 0) {
-                        $balance = (-1) * $first->cr;
-                    } elseif ($first->dr > 0) {
-                        $balance = $first->dr;
-                    }
-
-                    if ($first->type == 1) {
-                        $balance += $first->amount;
-                    } else {
-                        $balance -= $first->amount;
-                    }
+                    $prev = Ledger::where('date', '<', $range[1])->where('user_id', $element['user_id'])->where('type', 2)->sum('amount') -
+                    Ledger::where('date', '<', $range[1])->where('user_id', $element['user_id'])->where('type', 1)->sum('amount');
                 }
 
-                if ($balance > 0) {
-                    $element['prevadvance'] = $balance;
+                if (env('acc_system', 'old') == 'old') {
+                    $element['opening'] = Ledger::where('date', '>=', $range[1])
+                        ->where('user_id', $element['user_id'])
+                        ->where('type', 2)->where('identifire', 119)->sum('amount') -
+                        Ledger::where('date', '>=', $range[1])
+                        ->where('user_id', $element['user_id'])->where('type', 1)->where('identifire', 119)->sum('amount');
+                } else {
+                    $element['opening'] = Ledger::where('date', '>=', $range[1])
+                        ->where('user_id', $element['user_id'])
+                        ->where('type', 1)->where('identifire', 119)->sum('amount') -
+                        Ledger::where('date', '>=', $range[1])
+                        ->where('user_id', $element['user_id'])->where('type', 2)->where('identifire', 119)->sum('amount');
+                }
+
+                $prev +=  $element['opening'];
+                if ($prev > 0) {
+                    $element['prevadvance'] = $prev;
                     $element['prevdue'] = 0;
                 } else {
                     $element['prevadvance'] = 0;
-                    $element['prevdue'] = (-1) * $balance;
+                    $element['prevdue'] = (-1) * $prev;
+                }
+
+                $element['total']=$element['total']+$element['milk'];
+                $balance = $prev - $element['total'] + $element['paid'];
+
+                if ($balance > 0) {
+                    $element['advance'] = $balance;
+                    $element['due'] = 0;
+                } else {
+                    $element['advance'] = 0;
+                    $element['due'] = (-1) * $balance;
                 }
 
                 array_push($elements, $element);
             }
+
             // dd($elements);
             return view('admin.report.distributor.data', compact('elements'));
         } else {

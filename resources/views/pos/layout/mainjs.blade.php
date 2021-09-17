@@ -153,6 +153,8 @@ var billpanel = {
                         id: item.id,
                         name: item.name,
                         rate: item.rate,
+                        taxable: item.taxable,
+                        tax: item.tax,
                     };
                 }
                 this.products = p;
@@ -262,7 +264,12 @@ var billpanel = {
             billItem = this.billitems[key];
             if (billItem == undefined) {
                 this.billitems[key] = {
-                    item: item,
+                    item_id: item.id,
+                    item_name: item.name,
+                    item_rate:item.rate
+                    item_taxable:item.taxable
+                    item_taxrate:item.taxrate
+                    item_taxrate:item.taxrate,
                     amount: 1,
                 };
                 this.renderBillItem(item);

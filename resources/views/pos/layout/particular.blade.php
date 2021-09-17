@@ -6,6 +6,10 @@
           <th>Rate</th>
           <th>Qty</th>
           <th>Total</th>
+          <th>Discount</th>
+          <th>Taxable</th>
+          <th>Tax</th>
+          <th>Grand Total</th>
         </tr>
         <tbody id="bill-items">
         </tbody>

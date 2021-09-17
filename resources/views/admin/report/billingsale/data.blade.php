@@ -12,12 +12,16 @@
         <table class="table table-bordered mt-2">
             <thead>
                 <tr>
-                    <th>S.n</th>
+                    <th>Bill No</th>
                     <th>Date</th>
-                    <th>Particular</th>
-                    <th>Gross Total</th>
+                    <th>Customer </th>
+                    <th>Total</th>
                     <th>Discount</th>
-                    <th>Net Total</th>
+                    <th>Tax</th>
+                    <th>Gross Total</th>
+                    <th>Paid</th>
+                    <th>Due</th>
+                    <th>Return</th>
                 </tr>
             </thead>
             <tbody>

@@ -185,12 +185,14 @@
                             e = e || window.event;
     
                             if (e.keyCode == '38') {
+                                e.preventDefault();
                                 _index -= 1;
                                 if (_index < 0) {
                                     _index = 0;
                                 }
                                 _ok = true;
                             } else if (e.keyCode == '40') {
+                                e.preventDefault();
                                 _index += 1;
                                 console.log(_index);
                                 if (_index >= _total) {
@@ -249,6 +251,8 @@
                 const _r_id = ele.dataset.searchid + '_overlay';
                 $('#' + _r_id).css('display', "none");
                 $('#' + ele.dataset.searchid ).data('index', "-1");
+                $('#' + ele.dataset.searchid ).html('');
+                
 
             });
 

@@ -72,6 +72,7 @@ class DistributersellController extends Controller
             }
             $sell_item->name=$user->name;
             $sell_item->title=$item->title;
+            $sell_item->save();
             $manager = new LedgerManage($user->id);
             if(env('acc_system','old')=='old'){
                 $manager->addLedger($item->title . ' ( Rs.' . $sell_item->rate . ' x ' . $sell_item->qty . ')', 1, $request->total, $date, '103', $sell_item->id);
@@ -106,14 +107,12 @@ class DistributersellController extends Controller
         // $date = str_replace('-','',$request->date);
         $sell = Sellitem::find($request->id);
         $sell->delete();
-
-        $data = [];
-        $data[0] = Ledger::where('foreign_key', $request->id)->where('identifire', 103)->first();
+        $data = Ledger::where('foreign_key', $request->id)->where('identifire', 103)->first();
+        $data->delete();
         $ddd = Ledger::where('foreign_key', $request->id)->where('identifire', 114)->first();
         if ($ddd != null) {
-            $data[1] = $ddd;
+             $ddd->delete();
         }
-        LedgerManage::delLedger($data);
         return response('ok');
     }
 }

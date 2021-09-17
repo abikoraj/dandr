@@ -49,6 +49,10 @@ class ItemController extends Controller
         }
     }
 
+    public function all(){
+        $items=Item::select('id','title','number')->where('posonly',1)->get();
+        return response()->json($items);
+    }
     public function barcode(Request $request){
         $items=Item::where('number','like',$request->keyword.'%')->select('id','sell_price','title','number')->take(24)->get();
         return response()->json($items);
@@ -83,6 +87,9 @@ class ItemController extends Controller
         $item->disonly=$request->disonly??0;
         $item->posonly=$request->posonly??0;
         $item->farmeronly=$request->farmeronly??0;
+        
+        $item->taxable=$request->taxable??0;
+        $item->tax=$request->tax;
 
         $item->description=$request->description;
         $item->minqty=$request->minqty;
@@ -126,7 +133,9 @@ class ItemController extends Controller
         $item->posonly=$request->posonly??0;
         $item->farmeronly=$request->farmeronly??0;
 
-
+        $item->taxable=$request->taxable??0;
+        $item->tax=$request->tax;
+        
         $item->description=$request->description;
         $item->minqty=$request->minqty;
         $item->expirydays=$request->expirydays;

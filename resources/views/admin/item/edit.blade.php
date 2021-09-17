@@ -14,28 +14,28 @@
                     <div class="col-lg-6">
                         <label for="name">Item Number</label>
                         <div class="form-group">
-                            <input type="text" id="einum"  value="{{$item->number}}"  name="number" class="form-control next" data-next="ecprice" placeholder="Enter unique item number" required>
+                            <input type="text" id="einum"  name="number" value="{{$item->number}}"  name="text" class="form-control next" data-next="ecprice" placeholder="Enter unique item number" required>
                         </div>
                     </div>
 
                     <div class="col-lg-6">
                         <label for="cprice">Cost Price</label>
                         <div class="form-group">
-                            <input type="number" id="ecprice"  value="{{$item->cost_price}}" name="cost_price" min="0" class="form-control next" data-next="esprice" placeholder="Enter cost price" required>
+                            <input type="number" id="ecprice" step="0.01"  value="{{$item->cost_price}}" name="cost_price" min="0" class="form-control next" data-next="esprice" placeholder="Enter cost price" required>
                         </div>
                     </div>
 
                     <div class="col-lg-6">
                         <label for="sprice">Sell Price</label>
                         <div class="form-group">
-                            <input type="number" id="esprice" value="{{$item->sell_price}}"  name="sell_price" min="0" class="form-control next" data-next="estock" placeholder="Enter sell price" required>
+                            <input type="number" id="esprice"  step="0.01"   value="{{$item->sell_price}}"  name="sell_price" min="0" class="form-control next" data-next="estock" placeholder="Enter sell price" required>
                         </div>
                     </div>
 
                     <div class="col-lg-4">
                         <label for="stock">Stock</label>
                         <div class="form-group">
-                            <input type="number" id="estock" name="stock" value="{{$item->stock}}" min="0" class="form-control next" data-next="eunit" placeholder="Enter stock" required>
+                            <input type="number" id="estock"  step="0.01"   name="stock" value="{{$item->stock}}" min="0" class="form-control next" data-next="eunit" placeholder="Enter stock" required>
                         </div>
                     </div>
 
@@ -75,7 +75,17 @@
                         <input type="checkbox" name="farmeronly" id="efarmeronly" value="1" {{$item->farmeronly==1?"checked":""}}>
                         <label for="farmeronly">Sell Farmer</label>
                     </div>
-                    <div class="col-lg-6"></div>
+                    <div class="col-lg-3">
+                        <input type="checkbox" name="taxable" id="etaxable" value="1" {{$item->taxable==1?"checked":""}}>
+                        <label for="taxable">Taxable</label>
+                    </div>
+                    <div class="col-lg-12"></div>
+                    <div class="col-lg-3">
+                        <label for="tax">Tax/VAT</label>
+                        <div class="form-group">
+                            <input type="number" id="etax" name="tax" step="0.001" min="0" value="13" class="form-control" value="{{$item->tax}}" >
+                        </div>
+                    </div>
                     <div class="col-lg-3">
                         <label for="expirydays">Expiary Days</label>
                         <div class="form-group">

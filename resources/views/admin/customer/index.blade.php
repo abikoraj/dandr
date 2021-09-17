@@ -177,7 +177,7 @@
                 rendered = rendered.replaceAll('xxx_name', data.name);
                 rendered = rendered.replaceAll('xxx_phone', data.phone);
                 rendered = rendered.replaceAll('xxx_address', data.address);
-                rendered = rendered.replaceAll('xxx_panvat', data.panvat);
+                rendered = rendered.replaceAll('xxx_panvat', data.panvat??'');
                 rendered = rendered.replaceAll('XXX_user_id', data.user_id);
                 rendered = rendered.replaceAll('XXX_basicInfo', encodeURIComponent(JSON.stringify(data)));
                 // rendered = rendered.replaceAll('xxx_reward_percentage', data.reward_percentage);

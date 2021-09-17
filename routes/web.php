@@ -12,7 +12,9 @@ use App\Http\Controllers\Admin\ItemController;
 use App\Http\Controllers\Admin\OfferController;
 use App\Http\Controllers\Admin\PosBillingController;
 use App\Http\Controllers\Admin\SellitemController;
+use App\Http\Controllers\Admin\SupplierController;
 use App\Http\Controllers\POS\BillingController;
+use App\Http\Controllers\ReportController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Sahakari\HomeController;
 use App\Http\Controllers\Sahakari\Member\MemberController;
@@ -189,18 +191,19 @@ Route::name('admin.')->group(function () {
             });
             
         });
+        // XXX categories
         Route::prefix('categories')->name('category.')->group(function () {
-            // XXX items
             Route::match(['GET','POST'],'', [CategoryController::class,'index'])->name('index');
             Route::post('edit', [CategoryController::class,'edit'])->name('edit');
             Route::post('add', [CategoryController::class,'save'])->name('save');
             Route::get('delete/{cat}', [CategoryController::class,'delete'])->name('delete')->middleware('authority');
 
         });
-
+        
+        // XXX items
         Route::prefix('items')->name('item.')->group(function () {
-            // XXX items
             Route::match(['GET','POST'],'', [ItemController::class,'index'])->name('index');
+            Route::match(['GET','POST'],'all', [ItemController::class,'all'])->name('all');
             Route::match(['GET','POST'],'barcode', [ItemController::class,'barcode'])->name('barcode');
             Route::match(['GET','POST'],'product', [ItemController::class,'product'])->name('product');
             Route::match(['GET','POST'],'product-barcode', [ItemController::class,'productBarcode'])->name('product-barcode');
@@ -243,32 +246,32 @@ Route::name('admin.')->group(function () {
 
         Route::prefix('suppliers')->name('supplier.')->group(function () {
             // XXX suppliers
-            Route::get('', 'Admin\SupplierController@index')->name('index');
-            Route::post('add', 'Admin\SupplierController@add')->name('add');
-            Route::get('list', 'Admin\SupplierController@list')->name('list');
-            Route::post('delete', 'Admin\SupplierController@delete')->name('delete')->middleware('authority');
-            Route::post('update', 'Admin\SupplierController@update')->name('update');
+            Route::get('',[SupplierController::class,'index'])->name('index');
+            Route::post('add',[SupplierController::class,'add'])->name('add');
+            Route::get('list',[SupplierController::class,'list'])->name('list');
+            Route::post('delete',[SupplierController::class,'delete'])->name('delete')->middleware('authority');
+            Route::post('update',[SupplierController::class,'update'])->name('update');
             //XXX supplier details
-            Route::get('detail/{id}', 'Admin\SupplierController@detail')->name('detail');
-            Route::post('load-detail', 'Admin\SupplierController@loadDetail')->name('load-detail');
-            Route::get('payment', 'Admin\SupplierController@payment')->name('pay');
-            Route::post('due', 'Admin\SupplierController@due')->name('due');
-            Route::post('due-pay', 'Admin\SupplierController@duePay')->name('due.pay');
+            Route::get('detail/{id}',[SupplierController::class,'detail'])->name('detail');
+            Route::post('load-detail',[SupplierController::class,'loadDetail'])->name('load-detail');
+            Route::get('payment',[SupplierController::class,'payment'])->name('pay');
+            Route::post('due',[SupplierController::class,'due'])->name('due');
+            Route::post('due-pay',[SupplierController::class,'duePay'])->name('due.pay');
 
             // XXX supplier bills
-            Route::get('bills', 'Admin\SupplierController@indexBill')->name('bill');
-            Route::match(['GET','POST'],'bill-add', 'Admin\SupplierController@addBill')->name('bill.add');
-            Route::post('bill-list', 'Admin\SupplierController@listBill')->name('bill.list');
-            Route::post('bill-update', 'Admin\SupplierController@updateBill')->name('bill.update');
-            Route::get('bill-delete', 'Admin\SupplierController@deleteBill')->name('bill.delete')->middleware('authority');
-            Route::post('bill-item', 'Admin\SupplierController@billItems')->name('bill.item.list');
-            Route::get('bill-detail/{bill}', 'Admin\SupplierController@billDetail')->name('bill.item.detail');
-            Route::post('bill-cancel', 'Admin\SupplierController@cancelBill')->name('bill.item.cancel');
+            Route::get('bills',[SupplierController::class,'indexBill'])->name('bill');
+            Route::match(['GET','POST'],'bill-add',[SupplierController::class,'addBill'])->name('bill.add');
+            Route::post('bill-list',[SupplierController::class,'listBill'])->name('bill.list');
+            Route::post('bill-update',[SupplierController::class,'updateBill'])->name('bill.update');
+            Route::get('bill-delete',[SupplierController::class,'deleteBill'])->name('bill.delete')->middleware('authority');
+            Route::post('bill-item',[SupplierController::class,'billItems'])->name('bill.item.list');
+            Route::get('bill-detail/{bill}',[SupplierController::class,'billDetail'])->name('bill.item.detail');
+            Route::post('bill-cancel',[SupplierController::class,'cancelBill'])->name('bill.item.cancel');
 
             // XXX supplier previous
-            Route::get('previous-balance', 'Admin\SupplierController@previousBalance')->name('previous.balance');
-            Route::post('previous-balance-add', 'Admin\SupplierController@previousBalanceAdd')->name('previous.balance.add');
-            Route::post('previous-balance-load', 'Admin\SupplierController@previousBalanceLoad')->name('previous.balance.load');
+            Route::get('previous-balance',[SupplierController::class,'previousBalance'])->name('previous.balance');
+            Route::post('previous-balance-add',[SupplierController::class,'previousBalanceAdd'])->name('previous.balance.add');
+            Route::post('previous-balance-load',[SupplierController::class,'previousBalanceLoad'])->name('previous.balance.load');
         });
 
         Route::prefix('employees')->name('employee.')->group(function () {
@@ -393,20 +396,20 @@ Route::name('admin.')->group(function () {
         Route::group(['prefix' => 'report'], function () {
             Route::name('report.')->group(function () {
 
-                Route::get('', 'ReportController@index')->name('home');
+                Route::get('', [ReportController::class,'index'])->name('home');
 
-                Route::match(['GET', 'POST'], 'farmer', 'ReportController@farmer')->name('farmer');
-                Route::post('farmer/changeSession', 'ReportController@farmerSession')->name('farmer.session');
-                Route::post('farmer/single/changeSession', 'ReportController@farmerSingleSession')->name('farmer.single.session');
+                Route::match(['GET', 'POST'], 'farmer', [ReportController::class,'farmer'])->name('farmer');
+                Route::post('farmer/changeSession', [ReportController::class,'farmerSession'])->name('farmer.session');
+                Route::post('farmer/single/changeSession', [ReportController::class,'farmerSingleSession'])->name('farmer.single.session');
 
-                Route::match(['GET', 'POST'], 'milk', 'ReportController@milk')->name('milk');
-                Route::match(['GET', 'POST'], 'sales', 'ReportController@sales')->name('sales');
-                Route::match(['GET', 'POST'], 'pos', 'ReportController@posSales')->name('pos.sales');
-                Route::match(['GET', 'POST'], 'distributor', 'ReportController@distributor')->name('dis');
-                Route::match(['GET', 'POST'], 'employee', 'ReportController@employee')->name('emp');
-                Route::match(['GET', 'POST'], 'credit', 'ReportController@credit')->name('credit');
-                Route::post('employee/changeSession', 'ReportController@employeeSession')->name('emp.session');
-                Route::match(['GET', 'POST'], 'expenses', 'ReportController@expense')->name('expense');
+                Route::match(['GET', 'POST'], 'milk', [ReportController::class,'milk'])->name('milk');
+                Route::match(['GET', 'POST'], 'sales', [ReportController::class,'sales'])->name('sales');
+                Route::match(['GET', 'POST'], 'pos', [ReportController::class,'posSales'])->name('pos.sales');
+                Route::match(['GET', 'POST'], 'distributor', [ReportController::class,'distributor'])->name('dis');
+                Route::match(['GET', 'POST'], 'employee', [ReportController::class,'employee'])->name('emp');
+                Route::match(['GET', 'POST'], 'credit', [ReportController::class,'credit'])->name('credit');
+                Route::post('employee/changeSession', [ReportController::class,'employeeSession'])->name('emp.session');
+                Route::match(['GET', 'POST'], 'expenses', [ReportController::class,'expense'])->name('expense');
             });
         });
 

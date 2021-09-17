@@ -288,7 +288,7 @@
             }
         }
         $('#sid').keydown(function (e) { 
-            if(e.which==13 && keydown.length>2){
+            if(e.which==13 && keyword.length>2){
                 loadData();
             }
         });

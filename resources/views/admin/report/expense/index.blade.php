@@ -4,33 +4,14 @@
 <link rel="stylesheet" href="{{ asset('calender/nepali.datepicker.v3.2.min.css') }}" />
 @endsection
 @section('head-title')
-    <a href="{{route('report.home')}}">Report</a> / Expenses
+    <a href="{{route('admin.report.home')}}">Report</a> / Expenses
 
 @endsection
 @section('toobar')
 
 @endsection
 @section('content')
-{{-- <div class="row">
-    <div class="col-md-4">
-        <label for="date">Year</label>
-        <select name="year" id="year" class="form-control show-tick ms select2">
-        </select>
-    </div>
-    <div class="col-md-4">
-        <label for="date">Month</label>
-        <select name="month" id="month" class="form-control show-tick ms select2">
-        </select>
-    </div>
-    <div class="col-md-4">
-        <label for="date">Session</label>
-        <select name="session" id="session" class="form-control show-tick ms select2">
-            <option value="1">1</option>
-            <option value="2">2</option>
-        </select>
-    </div>
 
-</div> --}}
 <div class="row">
     <div class="col-md-3 ">
         <label for="type">
@@ -144,7 +125,7 @@
             'type':$('#type').val(),
             'category_id':$('#category_id').val(),
         };
-        axios.post("{{route('report.expense')}}",d)
+        axios.post("{{route('admin.report.expense')}}",d)
         .then(function(response){
             $('#allData').html(response.data);
 

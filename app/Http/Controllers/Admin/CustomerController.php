@@ -61,7 +61,7 @@ class CustomerController extends Controller
 
     public function all(){
         $customers = Customer::join('users', 'users.id', '=', 'customers.user_id')
-        ->select('users.name', 'customers.id', 'customers.user_id')->get();
+        ->select('users.name', 'customers.id', 'customers.user_id')->orderBy('users.name','asc')->get();
         return response()->json($customers);
     }
 
@@ -192,7 +192,7 @@ class CustomerController extends Controller
         if ($request->getMethod() == "POST") {
             $user = User::find($request->id);
             $balance = Ledger::where('user_id', $user->id)->where('type', 2)->sum('amount') - Ledger::where('user_id', $user->id)->where('type', 1)->sum('amount');
-            return view('admin.customer.payement.data', compact('user'));
+            return view('admin.customer.payement.data', compact('user','balance'));
         } else {
             if(!$large){
                 $customers=Customer::with('user')->get();

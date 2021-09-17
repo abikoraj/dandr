@@ -63,11 +63,12 @@ class OfferController extends Controller
     }
     public function detail(Offer $offer)
     {
+        $large=env('large',false);
         $items=[];
-        if(!env('large',false)){
+        if(!$large){
             $items=Item::select(DB::raw( 'id ,title,number,(select count(*) as c from offer_items where item_id=items.id) as cc'))->get()->where('cc',0);
         }
-        return view('admin.offer.detail.index',compact('offer','items'));
+        return view('admin.offer.detail.index',compact('offer','items','large'));
     }
 
     public function getItems(Request $request){

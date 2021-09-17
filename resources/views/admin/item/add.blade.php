@@ -85,7 +85,17 @@
                                 <input type="checkbox" name="farmeronly" id="farmeronly" value="1">
                                 <label for="farmeronly">Sell Farmer</label>
                             </div>
-                            <div class="col-lg-6"></div>
+                            <div class="col-lg-3">
+                                <input type="checkbox" name="taxable" id="taxable" value="1">
+                                <label for="taxable">Taxable</label>
+                            </div>
+                            <div class="col-lg-12"></div>
+                            <div class="col-lg-3">
+                                <label for="tax">Tax/VAT</label>
+                                <div class="form-group">
+                                    <input type="number" id="tax" name="tax" step="0.001" min="0" value="13" class="form-control" >
+                                </div>
+                            </div>
                             <div class="col-lg-3">
                                 <label for="expirydays">Expiary Days</label>
                                 <div class="form-group">
