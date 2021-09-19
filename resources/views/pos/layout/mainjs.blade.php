@@ -82,6 +82,7 @@ var billpanel = {
         taxable: 0,
         tax: 0,
         grandtotal: 0,
+        rounding: 0,
         paid: 0,
         due: 0,
         return: 0,
@@ -91,36 +92,52 @@ var billpanel = {
             this.total[key] = 0;
             this.setVal(key, 0);
         }
+        this.setVal('rounding', 0,2);
+
     },
-    setVal: function (name, value) {
-        $("#input-" + name).val(value);
+    setVal: function (name, value,type=1) {
+        if(type==1){
+            $("#input-" + name).val(value);
+
+        }else{
+            $("#input-" + name).html(value);
+
+        }
     },
     getVal: function (name) {
         return $("#input-" + name).val();
     },
     calculateTotal: function () {
-        tot = 0;
-        this.billitems.forEach((bi) => {
-            tot += bi.item.rate * bi.amount;
-        });
-
-        this.setVal("total", tot);
-        this.total.total = tot;
-        this.total.discount = parseFloat(this.getVal("discount"));
-        if (isNaN(this.total.discount)) {
-            this.total.discount = 0;
+        let _amount = 0;
+        let _discount = 0;
+        let _taxable = 0;
+        let _tax = 0;
+        let _total = 0;
+        for (let key in this.billitems) {
+            bi=this.billitems[key];
+            _amount += parseFloat(bi.amount);
+            _discount +=parseFloat( bi.discount);
+            _taxable+= parseFloat(bi.taxable);
+            _tax += parseFloat(bi.tax);
+            _total += parseFloat( bi.total);
         }
-        this.total.taxable = this.total.total - this.total.discount;
-        if (this.total.taxable < 0) {
-            this.total.taxable = 0;
-        }
-        this.setVal("taxable", this.total.taxable);
-        this.total.tax = parseFloat(this.getVal("tax"));
-        if (isNaN(this.total.tax)) {
-            this.total.tax = 0;
-        }
-        this.total.grandtotal = this.total.taxable + this.total.tax;
-        this.setVal("grandtotal", this.total.grandtotal);
+        let _temptotal=_total;
+        _total=Math.ceil(_total);
+        const _rounding=(_total-_temptotal).toFixed(2);
+        this.setVal("total", _amount);
+        this.setVal("discount", _discount);
+        this.setVal("taxable", _taxable);
+        this.setVal("tax", _tax);
+        this.setVal("grandtotal", _total);
+        this.setVal("rounding", _rounding,2);
+        
+        this.total.total = _amount;
+        this.total.taxable = _taxable;
+        this.total.discount = _discount;
+        this.total.tax = _tax;
+        this.total.rounding = _rounding;
+        this.total.grandtotal = _total;
+     
         this.total.paid = parseFloat(this.getVal("paid"));
         if (isNaN(this.total.paid)) {
             this.total.paid = 0;
@@ -186,21 +203,41 @@ var billpanel = {
         $("#item-qty").focus();
     },
     plus: function (key) {
-        console.log(key);
-        billItem = this.billitems[key];
-        if (billItem != undefined) {
-            this.billitems[key].amount += 1;
-        }
-        this.updateBillItem(this.billitems[key]);
+        this.billitems[key].qty += 1;
+                const _amount=this.billitems[key].item_rate*this.billitems[key].qty;
+                const _discount=0;
+                let _tax=0;
+                const _taxable=_amount-_discount;
+                if(this.billitems[key].item_taxable==1){
+                    _tax=((_taxable)*(this.billitems[key].item_tax)/100).toFixed(2);
+                }
+                const _total=(parseFloat(_tax)+_taxable).toFixed(2);
+                this.billitems[key].amount = _amount;
+                this.billitems[key].discount = _discount;
+                this.billitems[key].taxable = _taxable;
+                this.billitems[key].tax = _tax;
+                this.billitems[key].total = _total;
+    
+                this.renderBillItem(key);
     },
     minus: function (key) {
-        console.log(key);
-        billItem = this.billitems[key];
-        if (billItem != undefined) {
-            this.billitems[key].amount -= 1;
-        }
+        this.billitems[key].qty -= 1;
+                const _amount=this.billitems[key].item_rate*this.billitems[key].qty;
+                const _discount=0;
+                let _tax=0;
+                const _taxable=_amount-_discount;
+                if(this.billitems[key].item_taxable==1){
+                    _tax=((_taxable)*(this.billitems[key].item_tax)/100).toFixed(2);
+                }
+                const _total=(parseFloat(_tax)+_taxable).toFixed(2);
+                this.billitems[key].amount = _amount;
+                this.billitems[key].discount = _discount;
+                this.billitems[key].taxable = _taxable;
+                this.billitems[key].tax = _tax;
+                this.billitems[key].total = _total;
+    
         if (this.billitems[key].amount > 0) {
-            this.updateBillItem(this.billitems[key]);
+            this.renderBillItem(key);
         } else {
             this.removeBillItem(key);
         }
@@ -218,12 +255,11 @@ var billpanel = {
         $("#bill-item-total-" + key).html(billItem.amount * billItem.item.rate);
         this.calculateTotal();
     },
-    renderBillItem: function (item) {
-        key = item.id.toString();
-        billItem = this.billitems[key];
+    renderBillItem: function (key) {
+        item = this.billitems[key];
         html = "<tr class='bill-item' id='bill-item-" + key + "'>";
-        html += "<td>" + item.name + "</td>";
-        html += "<td>" + item.rate + "</td>";
+        html += "<td>" + item.item_name + "</td>";
+        html += "<td>" + item.item_rate + "</td>";
         html += "<td> <div  class='qty'>";
         html +=
             "<span class='btn-qty' onclick='billpanel.plus(\"" +
@@ -233,7 +269,7 @@ var billpanel = {
             "<span class='qty-value' id='bill-item-amount-" +
             key +
             "'>" +
-            billItem.amount +
+            item.qty +
             "</span>";
         html +=
             "<span class='btn-qty' onclick='billpanel.minus(\"" +
@@ -242,13 +278,42 @@ var billpanel = {
         html += "</div></td>";
 
         html +=
+            "<td id='bill-item-amount-" +
+            key +
+            "'>" +
+            item.amount +
+            "</td>";
+        html +=
+            "<td id='bill-item-discount-" +
+            key +
+            "'>" +
+            item.discount +
+            "</td>";
+        html +=
+            "<td id='bill-item-taxable-" +
+            key +
+            "'>" +
+            item.taxable +
+            "</td>";
+        html +=
+            "<td id='bill-item-tax-" +
+            key +
+            "'>" +
+            item.tax +
+            "</td>";
+        html +=
             "<td id='bill-item-total-" +
             key +
             "'>" +
-            item.rate * billItem.amount +
+            item.total +
             "</td>";
         html += "</tr>";
+        if($("#bill-item-" + key ).length>0){
+            $("#bill-item-" + key ).replaceWith(html);
+        }else{
+
         this.ele().append(html);
+        }
         this.calculateTotal();
     },
     addItem: function (barcode) {
@@ -260,22 +325,49 @@ var billpanel = {
             $("#barcode").focus();
             $("#barcode").select();
         } else {
-            key = item.id.toString();
+            const key = item.id.toString()+"-item";
             billItem = this.billitems[key];
             if (billItem == undefined) {
+
+                const _amount=item.rate*1;
+                const _discount=0;
+                const _taxable=_amount-_discount;
+                let _tax=0;
+                if(item.taxable==1){
+                    _tax=((_taxable)*(item.tax)/100).toFixed(2);
+                }
+                const _total=(parseFloat(_tax)+_taxable).toFixed(2);
                 this.billitems[key] = {
                     item_id: item.id,
                     item_name: item.name,
-                    item_rate:item.rate
-                    item_taxable:item.taxable
-                    item_taxrate:item.taxrate
-                    item_taxrate:item.taxrate,
-                    amount: 1,
+                    item_rate:item.rate,
+                    item_taxable:item.taxable,
+                    item_tax:item.tax,
+                    amount:_amount,
+                    discount:_discount,
+                    taxable:_taxable,
+                    tax:_tax,
+                    total:_total,
+                    qty: 1,
                 };
-                this.renderBillItem(item);
+                this.renderBillItem(key);
             } else {
-                this.billitems[key].amount += 1;
-                this.updateBillItem(this.billitems[key]);
+                this.billitems[key].qty += 1;
+                const _amount=this.billitems[key].item_rate*this.billitems[key].qty;
+                const _discount=0;
+                let _tax=0;
+                const _taxable=_amount-_discount;
+                if(this.billitems[key].item_taxable==1){
+                    _tax=((_taxable)*(this.billitems[key].item_tax)/100).toFixed(2);
+                }
+                const _total=(parseFloat(_tax)+_taxable).toFixed(2);
+                this.billitems[key].amount = _amount;
+                this.billitems[key].discount = _discount;
+                this.billitems[key].taxable = _taxable;
+                this.billitems[key].tax = _tax;
+                this.billitems[key].total = _total;
+    
+                this.renderBillItem(key);
             }
             console.log(this.billitems);
         }
@@ -287,14 +379,14 @@ var billpanel = {
     addItemSelect: function () {
         
         
-        qty = parseFloat($("#item-qty").val());
-        if (isNaN(qty)) {
+        const _qty = parseFloat($("#item-qty").val());
+        if (isNaN(_qty)) {
             $.notify("Please Enter Qty", {
                 className: "error",
             });
             return;
         } else {
-            if (qty <= 0) {
+            if (_qty <= 0) {
                 $.notify("Please Enter Qty", {
                     className: "error",
                 });
@@ -311,21 +403,54 @@ var billpanel = {
         } else {
             key = item.id.toString();
             billItem = this.billitems[key];
+            billItem = this.billitems[key];
             if (billItem == undefined) {
+
+                const _amount=item.rate*_qty;
+                const _discount=0;
+                const _taxable=_amount-_discount;
+                let _tax=0;
+                if(item.taxable==1){
+                    _tax=((_taxable)*(item.tax)/100).toFixed(2);
+                }
+                const _total=(parseFloat(_tax)+_taxable).toFixed(2);
                 this.billitems[key] = {
-                    item: item,
-                    amount: qty,
+                    item_id: item.id,
+                    item_name: item.name,
+                    item_rate:item.rate,
+                    item_taxable:item.taxable,
+                    item_tax:item.tax,
+                    amount:_amount,
+                    discount:_discount,
+                    taxable:_taxable,
+                    tax:_tax,
+                    total:_total,
+                    qty: _qty,
                 };
-                this.renderBillItem(item);
+                this.renderBillItem(key);
             } else {
-                this.billitems[key].amount += qty;
-                this.updateBillItem(this.billitems[key]);
+                this.billitems[key].qty += _qty;
+                const _amount=this.billitems[key].item_rate*this.billitems[key].qty;
+                const _discount=0;
+                let _tax=0;
+                const _taxable=_amount-_discount;
+                if(this.billitems[key].item_taxable==1){
+                    _tax=((_taxable)*(this.billitems[key].item_tax)/100).toFixed(2);
+                }
+                const _total=(parseFloat(_tax)+_taxable).toFixed(2);
+                this.billitems[key].amount = _amount;
+                this.billitems[key].discount = _discount;
+                this.billitems[key].taxable = _taxable;
+                this.billitems[key].tax = _tax;
+                this.billitems[key].total = _total;
+    
+                this.renderBillItem(key);
             }
             $("#item-name").val('').trigger("change");
             $("#item-rate").val("");
             $("#item-qty").val("");
-            console.log(this.billitems);
             this.selectedItem=null;
+            console.log(this.billitems);
         }
     },
     cancelBill: function () {
@@ -442,7 +567,7 @@ var billpanel = {
         }
     },
     initSaveBill: function (_print) {
-        if (this.billitems.length <= 0) {
+        if (Object.keys(this.billitems).length <= 0) {
             alert("No Items added to bill.");
             return;
         }
@@ -465,9 +590,15 @@ var billpanel = {
         }
     },
     saveBill: function () {
+        let bis=[];
+        for (const key in this.billitems) {
+            if (Object.hasOwnProperty.call(this.billitems, key)) {
+                bis.push(this.billitems[key]);
+            }
+        }
         data = {
             customer: this.customer,
-            billitems: this.billitems,
+            billitems: bis,
             total: this.total,
             panvat: $("#customer-panvat").val(),
             payment_type: $("input[name='payment-type']:checked").val(),

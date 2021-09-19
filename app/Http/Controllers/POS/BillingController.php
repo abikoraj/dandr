@@ -20,6 +20,7 @@ class BillingController extends Controller
 {
     public function add(Request $request)
     {
+        // dd($request->all());
         $cid = session('counter');
         $setting = PosSetting::first();
         $counter = Counter::find($cid);
@@ -55,11 +56,11 @@ class BillingController extends Controller
         } else {
             $bill->customer_name = "Walking Customer";
         }
-
         $bill->total = $request->total['total'];
         $bill->discount = $request->total['discount'];
         $bill->taxable = $request->total['taxable'];
         $bill->tax = $request->total['tax'];
+        $bill->rounding = $request->total['rounding'];
         $bill->grandtotal = $request->total['grandtotal'];
         $bill->paid = $request->total['paid'];
         $bill->due = $request->total['due'];
@@ -68,15 +69,21 @@ class BillingController extends Controller
         $bill->save();
         $bis = [];
         foreach ($request->billitems as $key => $_bi) {
+
             if ($_bi != null) {
                 $bi = new PosBillItem();
                 $bi->pos_bill_id = $bill->id;
-                $bi->qty = $_bi['amount'];
-                $item = Item::where('id', $_bi['item']['id'])->select('id', 'title', 'sell_price', 'stock', 'trackstock')->first();
-                $bi->rate = $item->sell_price;
-                $bi->name = $item->title;
-                $bi->item_id = $item->id;
-                $bi->total = $bi->qty * $bi->rate;
+                $bi->qty = $_bi['qty'];
+                $item = Item::where('id', $_bi['item_id'])->select('id', 'title', 'sell_price', 'stock', 'trackstock')->first();
+                $bi->rate = $_bi['item_rate'];
+                $bi->name = $_bi['item_name'];
+                $bi->item_id = $_bi['item_id'];
+                $bi->amount = $_bi['amount'];
+                $bi->discount = $_bi['discount'];
+                $bi->taxable = $_bi['taxable'];
+                $bi->tax = $_bi['tax'];
+                $bi->total = $_bi['total'];
+                $bi->use_tax=$_bi['item_taxable'];
                 if ($item->trackstock == 1) {
                     $item->stock -= $bi->qty;
                     $item->save();

@@ -45,10 +45,12 @@
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
     <script src="{{ asset('backend/js/axios.js') }}"></script>
     <script src="{{ asset('backend/js/signalr.js') }}"></script>
+    <script src="{{ asset('backend/js/jquery.hotkeys.js') }}"></script>
     <script src="http://localhost:4200/signalr/hubs"></script>
 
     <script src="{{ asset('pos/js/names.js') }}"></script>
     <script src="{{ asset('pos/js/funcstions.js') }}"></script>
+
     @yield('prejs')
     {{-- <script src="{{ asset('pos/js/main.js') }}"></script> --}}
     @include('pos.layout.mainjs')

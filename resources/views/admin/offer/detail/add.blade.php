@@ -35,25 +35,26 @@
     </div>
     <div class="col-md-6">
         <div class="card p-3 shadow" id="offer-item">
-            <form action="" class="offer-item-form">
+            <form action="" class="offer-item-form" onsubmit="return saveData(event,this);">
                 <div class="form-group">
                     <label for="item">{{$offer->type==2?"Buy ":" "}} Item</label>
                     <input type="text" class="form-control" id="item-name">
                     <input type="hidden" id="item-id" name="item_id">
                     <input type="hidden" id="free-item-id" name="free_item_id">
+                    <input type="hidden" id="type" name="type" value="{{$offer->type}}">
                 </div>
                 @if ($offer->type == 0)
                     <div id="type-0">
                         <div class="form-group">
                             <label for="discount">Discount Amount</label>
-                            <input type="number" class="form-control" id="discount" min="0" step="0.00" required>
+                            <input type="number" class="form-control" id="discount" name="discount" min="0" step="0.00" required>
                         </div>
                     </div>
                 @elseif($offer->type==1)
                 <div id="type-1">
                     <div class="form-group">
                         <label for="percentage">Discount Percentage</label>
-                        <input type="number" class="form-control" id="percentage" min="0" step="0.00" max="100" required>
+                        <input type="number" class="form-control" id="percentage" name="percentage" min="0" step="0.00" max="100" required>
                     </div>
                 </div>
                 @elseif($offer->type==2)
@@ -61,13 +62,13 @@
                     <div class="col-md-6">
                         <div class="form-group">
                             <label for="buy_amount">Buy Amount</label>
-                            <input type="number" class="form-control" id="buy_amount" min="0" step="0.00" max="100" required>
+                            <input type="number" class="form-control" id="buy_amount" name="buy_amount" min="0" step="0.00" max="100" required>
                         </div>
                     </div>
                     <div class="col-md-6">
                         <div class="form-group">
                             <label for="free_amount">Free Amount</label>
-                            <input type="number" class="form-control" id="free_amount" min="0" step="0.00" max="100" required>
+                            <input type="number" class="form-control" id="free_amount" name="free_amount" min="0" step="0.00" max="100" required>
                         </div>
                     </div>
 
@@ -105,7 +106,11 @@
                             <input type="number" class="form-control" id="max" min="0" step="0.00" value="0" required>
                         </div>
                     </div>
+                    <div class="col-md-6">
+                        <button class="btn btn-primary w-100">Save </button>
+                    </div>
                 </div>
+
             </form>
         </div>
     </div>
@@ -133,6 +138,10 @@
         }
         $('#offer-item').hide();
 
+        function saveData(e,ele){
+            e.preventDefault();
+            console.log(e,ele);
+        }
         function loadItems(){
             const _keyword=$('#keyword').val();
             if(_keyword.length>2){
@@ -174,7 +183,7 @@
                 return html;
             }
             function renderFreeItem(){
-                html='<table ';
+                html='<table> ';
            
                 this.forEach((item) => {
                     html+='<tr class="search-item" onclick="selectFree('+item.id+',\''+item.title+'\')">'+

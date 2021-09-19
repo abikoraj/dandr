@@ -24,7 +24,6 @@ class POSController extends Controller
         }else{
             if(!$setting->open){
                 return redirect()->route('pos.day');
-
             }
         }
         $id=session('counter');
@@ -186,7 +185,7 @@ class POSController extends Controller
 
     public function items(){
         $items=Item::where('posonly',1)->select(
-            DB::raw('id,title as name,number as barcode,sell_price as rate')
+            DB::raw('id,title as name,number as barcode,sell_price as rate,tax,taxable')
         )->get();
         // dd($items);
         return response()->json($items);

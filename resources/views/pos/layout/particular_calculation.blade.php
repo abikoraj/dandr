@@ -19,7 +19,14 @@
                   <input id="input-grandtotal" value="0" readonly>
                 </div>
             </div>
-        </div>
+          </div>
+          <div class="text-center text-white">
+            <strong>
+              Rounding
+              <br>
+              <span id="input-rounding">0</span>
+            </strong>
+          </div>
       </div>
       <div class="col-6 col-md-5 p-0 ">
         <div class="h-100 input-group">

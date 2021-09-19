@@ -99,4 +99,8 @@ class OfferController extends Controller
         return view('admin.offer.detail.list',['items'=>$items_arr]);
         
     }
+
+    public function addOfferItem(Request $request){
+        
+    }
 }
