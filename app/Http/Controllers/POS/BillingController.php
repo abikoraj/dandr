@@ -23,9 +23,17 @@ class BillingController extends Controller
         // dd($request->all());
         $cid = session('counter');
         $setting = PosSetting::first();
-        $counter = Counter::find($cid);
         if ($setting == null) {
             return response("Day Not Opened, Please Contact Administrator.", 500);
+        }else{
+            if($setting->open!=1){
+                return response("Day Not Opened, Please Contact Administrator.", 500);
+            }
+        }
+        $counter = Counter::find($cid);
+        $status=$counter->currentStatus();
+        if($status->status!=2){
+            response('Cannot Save Bill, Counter Not Running',500);
         }
         $fy = $setting->fiscalYear();
         if ($fy->null) {
@@ -47,6 +55,7 @@ class BillingController extends Controller
         $bill->counter_id = $cid;
         $bill->counter_name = $counter->name;
         $bill->fiscal_year_id = $fy->id;
+        
         if ($request->filled('customer')) {
             $bill->customer_name = $request->customer['name'];
             $bill->customer_address = $request->customer['address'];
@@ -111,6 +120,8 @@ class BillingController extends Controller
             $payment->save();
         }
 
+        $status->current+=($bill->paid-$bill->return);
+        $status->save();
         if ($request->filled('customer')) {
             $user_id=Customer::where('id',$bill->customer_id )->select('user_id')->first()->user_id;
             $ledger = new LedgerManage($user_id);

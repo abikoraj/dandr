@@ -13,6 +13,7 @@ use App\Http\Controllers\Admin\OfferController;
 use App\Http\Controllers\Admin\PosBillingController;
 use App\Http\Controllers\Admin\SellitemController;
 use App\Http\Controllers\Admin\SupplierController;
+use App\Http\Controllers\HomeController as ControllersHomeController;
 use App\Http\Controllers\POS\BillingController;
 use App\Http\Controllers\ReportController;
 use Illuminate\Support\Facades\Route;
@@ -33,7 +34,7 @@ use App\Models\Sahakari\HomeCntroller;
 */
 
 
-Route::get('/', 'HomeController@home');
+Route::get('/', [ControllersHomeController::class,'home']);
 Route::get('/test/{id}', 'TestController@index')->name('test');
 Route::get('/test-all/{id}', 'TestController@all')->name('test-all');
 Route::get('/test-distributor', 'TestController@distributor')->name('test-distributor');
@@ -527,6 +528,7 @@ Route::name('pos.')->prefix('pos')->group(function(){
         Route::match(['GET', 'POST'], 'counter-another', 'POS\POSController@counterAnother')->name('counter.another');
         Route::get('counter/status', 'POS\POSController@counterStatus')->name('counterStatus');
         Route::get('items', 'POS\POSController@items')->name('items');
+        Route::get('counter/current', 'POS\POSController@counterCurrent')->name('counter-current');
         
         Route::get('customers', 'POS\POSController@customers')->name('customers');
         Route::post('customers-add', 'POS\POSController@customersAdd')->name('customers-add');

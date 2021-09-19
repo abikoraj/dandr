@@ -28,6 +28,8 @@ $("#input_customer_search").keydown(function (e) {
 function customerSearchInit() {
     $("#customer-input-panel").addClass("d-none");
     $("#cutomer-search-panel").removeClass("d-none");
+    $('#input_customer_search').focus();
+    $('#input_customer_search').select();
 }
 function addItem(barcode) {
     console.log(barcode);
@@ -523,6 +525,7 @@ var billpanel = {
         $("#customer-name").val(this.customer.name);
         $("#customer-phone").val(this.customer.phone);
         $("#customer-address").val(this.customer.address);
+        $("#customer-panvat").val(this.customer.panvat);
     },
     resetCustomer: function () {
         this.customer = null;
@@ -778,6 +781,101 @@ $(function () {
     billpanel.init();
     // Declare a proxy to reference the hub.
     printSetting.init();
+
+    $('body, input').bind('keydown', 'f1', function(e){
+            e.preventDefault();
+            $('#barcode').focus();
+            $('#barcode').select();
+        });
+        $('body, input').bind('keydown', 'f2', function(e){
+            e.preventDefault();
+            $('#input-paid').focus();
+            $('#input-paid').select();
+        });
+        $('body, input').bind('keydown', 'f3', function(e){
+            e.preventDefault();
+            console.log($('#item-name')[0]);
+            $('#item-name').focus();
+            $('#item-name').select();
+        });
+        $('body, input').bind('keydown', 'f3', function(e){
+            e.preventDefault();
+            console.log($('#item-name')[0]);
+            $('#item-name').focus();
+            $('#item-name').select();
+        });
+        $('body, input').bind('keydown', 'alt+s', function(e){
+            e.preventDefault();
+            customerSearchInit();
+            
+        });
+        $('body, input').bind('keydown', 'alt+a', function(e){
+            e.preventDefault();
+            $('#addCustomerModal').modal('show');
+            $('#name').focus();
+        });
+        $('body, input').bind('keydown', 'alt+n', function(e){
+            e.preventDefault();
+            $('input[name="radio_customer_search"][value="2"]')[0].checked=true;
+        });
+
+        $('body, input').bind('keydown', 'alt+p', function(e){
+            e.preventDefault();
+            $('input[name="radio_customer_search"][value="1"]')[0].checked=true;
+        });
+
+
+        $('body, input').bind('keydown', 'f4', function(e){
+            e.preventDefault();
+            console.log($('#item-name')[0]);
+            $('#item-name').focus();
+            $('#item-name').select();
+        });
+        
+        $('body, input').bind('keydown', 'ctrl+s', function(e){
+            e.preventDefault();
+            if($('#payment')[0].style.display=='none' || $('#payment')[0].style.display==''){
+                billpanel.initSaveBill();
+            }else{
+                billpanel.saveBill();
+            }
+        });
+
+        $('body, input').bind('keydown', 'ctrl+p', function(e){
+            e.preventDefault();
+            billpanel.initSaveBill(true);
+        });
+
+        $('#item-qty').bind('keydown', 'return', function(e){
+            e.preventDefault();
+            billpanel.addItemSelect();
+        });
+
+        //payment shourcut
+        $('body, input').bind('keydown', 'alt+1', function(e){
+            e.preventDefault();
+            $('#payment-type-1')[0].checked=true;
+            $('#payment-type-1').focus();
+        });
+        $('body, input').bind('keydown', 'alt+2', function(e){
+            e.preventDefault();
+            $('#payment-type-2')[0].checked=true;
+            $('#payment-type-2').focus();
+            
+        });
+        $('body, input').bind('keydown', 'alt+3', function(e){
+            e.preventDefault();
+            $('#payment-type-3')[0].checked=true;
+            $('#payment-type-3').focus();
+            
+        });
+        $('body, input').bind('keydown', 'alt+4', function(e){
+            e.preventDefault();
+            $('#payment-type-4')[0].checked=true;
+            $('#payment-type-4').focus();
+            
+        });
+
 });
 
 </script>

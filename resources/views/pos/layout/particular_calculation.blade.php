@@ -31,22 +31,22 @@
       <div class="col-6 col-md-5 p-0 ">
         <div class="h-100 input-group">
           <table >
-            <tr><td><label >Paid</label></td><td><input type="number"  id="input-paid" value="0" oninput="billpanel.calculateTotal();" class="f-sel"></td></tr>
+            <tr><td><label >Paid (f2) </label></td><td><input type="number"  id="input-paid" value="0" oninput="billpanel.calculateTotal();" class="f-sel"></td></tr>
             <tr><td><label >Due</label></td><td><input type="number" readonly id="input-due" value="0"></td></tr>
             <tr><td><label >Return</label></td><td><input type="number" readonly id="input-return" value="0"></td></tr>
           </table>
           <div class="row m-0">
             <div class="col-md-6 p-0">
-              <button class="btn-bill w-100" onclick="billpanel.initSaveBill(false)">Save</button>
+              <button class="btn-bill w-100" id="btn-bill-save" onclick="billpanel.initSaveBill(false)" >Save (ctrl+s)</button>
             </div>
             <div class="col-md-6 p-0">
-              <button class="btn-bill w-100" onclick="billpanel.initSaveBill(true)">Save and Print</button>
+              <button class="btn-bill w-100" id="btn-bill-save-print"  onclick="billpanel.initSaveBill(true)">Save and Print (ctrl+p)</button>
             </div>
             <div class="col-md-6 p-0">
-              <button class="btn-bill w-100">Hold Bill</button>
+              <button class="btn-bill w-100" id="btn-bill-hold" >Hold Bill (ctrl+h)</button>
             </div>
             <div class="col-md-6 p-0">
-              <button class="btn-bill w-100" onclick="billpanel.cancelBill()">Cancel Bill</button>
+              <button class="btn-bill w-100" id="btn-bill-cancel"  onclick="billpanel.cancelBill()" >Cancel Bill (ctrl+c)</button>
             </div>
           </div>
         </div>

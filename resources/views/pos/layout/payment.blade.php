@@ -57,8 +57,8 @@
             </form>
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cancel</button>
-          <button type="button" class="btn btn-primary" onclick="billpanel.saveBill()">Save Bill</button>
+          <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cancel (esc)</button>
+          <button type="button" class="btn btn-primary" onclick="billpanel.saveBill()">Save Bill (ctrl+s)</button>
         </div>
       </div>
     </div>

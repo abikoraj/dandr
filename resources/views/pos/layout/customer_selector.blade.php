@@ -4,8 +4,8 @@
             <div class="form-group d-flex justify-content-between align-item-center">
                 <span>
 
-                    <input type="radio" name="radio_customer_search"  value="1"> <label for="" class="text-white me-3">Phone</label>  
-                    <input type="radio" name="radio_customer_search" checked value="2"> <label for="" class="text-white">Name</label>
+                    <input type="radio" name="radio_customer_search"  value="1"> <label for="" class="text-white me-3">Phone (alt+p)</label>  
+                    <input type="radio" name="radio_customer_search" checked value="2"> <label for="" class="text-white">Name (alt+n)</label>
                 </span>
                 <span>
                     <button class="btn btn-danger" onclick="billpanel.closeCusSearch()">Close</button>
@@ -29,8 +29,8 @@
     <h4 class="text-white d-flex justify-content-between">
         <span>Customer</span>
         <span>
-            <button class="btn btn-primary" onclick="customerSearchInit()">Search</button>
-            <button class="btn btn-primary" onclick="$('#addCustomerModal').modal('show');">Add Customer</button>
+            <button class="btn btn-primary" onclick="customerSearchInit()">Search (alt+s)</button>
+            <button class="btn btn-primary" onclick="$('#addCustomerModal').modal('show');">Add Customer(alt+a)</button>
         </span>
     </h4>
     <hr>

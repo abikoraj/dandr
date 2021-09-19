@@ -21,30 +21,38 @@
             {{-- helloooo --}}
 
             <li class="active open"><a href="{{ route('admin.dashboard')}}"><i class="zmdi zmdi-home"></i><span>Dashboard</span></a></li>
-            <li><a href="javascript:void(0);" class="waves-effect waves-block menu-toggle"><i class="zmdi zmdi-apps"></i><span>Farmer</span></a>
-                <ul class="ml-menu">
-                    <li><a href="{{ route('admin.farmer.list') }}" class="waves-effect waves-block">Farmer List</a></li>
-                    <li><a href="{{ route('admin.farmer.advance') }}" class="waves-effect waves-block">Advance</a></li>
-                    <li><a href="{{ route('admin.farmer.due') }}" class="waves-effect waves-block">Farmer Payment</a></li>
-                    <li><a href="{{ route('admin.farmer.due.add.list') }}" class="waves-effect waves-block">Account Opening</a></li>
-                    <li><a href="{{ route('admin.farmer.milk.payment.index') }}" class="waves-effect waves-block">Milk Payment</a></li>
-                    <li><a href="{{ route('admin.sell.item.index') }}" class="waves-effect waves-block">Farmer Sell</a></li>
-                </ul>
-            </li>
+            @if (env('use_farmer',false))
+                
+                <li><a href="javascript:void(0);" class="waves-effect waves-block menu-toggle"><i class="zmdi zmdi-apps"></i><span>Farmer</span></a>
+                    <ul class="ml-menu">
+                        <li><a href="{{ route('admin.farmer.list') }}" class="waves-effect waves-block">Farmer List</a></li>
+                        <li><a href="{{ route('admin.farmer.advance') }}" class="waves-effect waves-block">Advance</a></li>
+                        <li><a href="{{ route('admin.farmer.due') }}" class="waves-effect waves-block">Farmer Payment</a></li>
+                        <li><a href="{{ route('admin.farmer.due.add.list') }}" class="waves-effect waves-block">Account Opening</a></li>
+                        <li><a href="{{ route('admin.farmer.milk.payment.index') }}" class="waves-effect waves-block">Milk Payment</a></li>
+                        <li><a href="{{ route('admin.sell.item.index') }}" class="waves-effect waves-block">Farmer Sell</a></li>
+                    </ul>
+                </li>
+            @endif
 
-            <li><a href="javascript:void(0);" class="waves-effect waves-block menu-toggle"><i class="zmdi zmdi-shopping-cart"></i><span>Milk Collection</span></a>
-                <ul class="ml-menu">
-                    <li><a href="{{ route('admin.center.index') }}" class="waves-effect waves-block">Manage Collection Center</a></li>
-                    <li><a href="{{ route('admin.milk.index') }}" class="waves-effect waves-block"> Milk Collection</a></li>
-                    <li><a href="{{ route('admin.snf-fat.index') }}" class="waves-effect waves-block">Add Fat & Snf</a></li>
-                </ul>
-            </li>
+            @if (env('use_milk',false))
+                
+                <li><a href="javascript:void(0);" class="waves-effect waves-block menu-toggle"><i class="zmdi zmdi-shopping-cart"></i><span>Milk Collection</span></a>
+                    <ul class="ml-menu">
+                        <li><a href="{{ route('admin.center.index') }}" class="waves-effect waves-block">Manage Collection Center</a></li>
+                        <li><a href="{{ route('admin.milk.index') }}" class="waves-effect waves-block"> Milk Collection</a></li>
+                        <li><a href="{{ route('admin.snf-fat.index') }}" class="waves-effect waves-block">Add Fat & Snf</a></li>
+                    </ul>
+                </li>
+            @endif
+
             <li><a href="javascript:void(0);" class="waves-effect waves-block menu-toggle"><i class="zmdi zmdi-shopping-cart"></i><span>Items</span></a>
                 <ul class="ml-menu">
                     <li><a href="{{ route('admin.item.index') }}" class="waves-effect waves-block">Items</a></li>
                 </ul>
             </li>
             {{-- @if (env('tier',1)==1) --}}
+            @if (env('use_distributer',false))
             <li><a href="javascript:void(0);" class="waves-effect waves-block menu-toggle"><i class="zmdi zmdi-shopping-cart"></i><span>Distributers</span></a>
                 <ul class="ml-menu">
                     <li><a href="{{ route('admin.distributer.index') }}" class="waves-effect waves-block">Distributer List</a></li>
@@ -60,6 +68,7 @@
                     @endif
                 </ul>
             </li>
+            @endif
             <li><a href="javascript:void(0);" class="waves-effect waves-block menu-toggle"><i class="zmdi zmdi-shopping-cart"></i><span>Manage Expense</span></a>
                 <ul class="ml-menu">
                     <li><a href="{{ route('admin.expense.category') }}" class="waves-effect waves-block"><span>Expense Categories</span></a></li>
@@ -89,6 +98,7 @@
                     <li><a href="{{ route('admin.customer.payment.index') }}" class="waves-effect waves-block">Payment</a></li>
                 </ul>
             </li>
+            @if (env('use_pos',false))
             <li><a href="javascript:void(0);" class="waves-effect waves-block menu-toggle"><i class="zmdi zmdi-shopping-cart"></i><span>POS</span></a>
                 <ul class="ml-menu">
                     <li><a href="{{ route('pos.index') }}" class="waves-effect waves-block">POS Interface</a></li>
@@ -110,6 +120,7 @@
                     <li><a href="{{ route('admin.gateway.index') }}" class="waves-effect waves-block">Payment Gateways</a></li>
                 </ul>
             </li>
+            @endif
 
             <li><a href="{{route('admin.report.home')}}" class="waves-effect waves-block"><i class="zmdi zmdi-shopping-cart"></i><span>Reports</span></a></li>
 

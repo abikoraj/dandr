@@ -10,6 +10,7 @@
     </span>
     <span>
       <span class="link">Hold List</span>
+      <span class="link" onclick="initDayClose();">Day Close</span>
       @if (Route::is('pos.index'))
           <span>
             @include("pos.layout.print")

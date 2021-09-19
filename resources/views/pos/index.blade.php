@@ -9,7 +9,7 @@
         <div class="col-md-8">
             <div id="panel1">
                 <div id="barcode-container">
-                    <input type="text" placeholder="Enter Item Code OR Scan BarCode" id="barcode">
+                    <input type="text" placeholder="Enter Item Code OR Scan BarCode (f1)" id="barcode">
                     <img src="images/barcode.svg" alt="" srcset="">
                     <img src="images/search.svg" alt="" srcset="">
                 </div>
@@ -26,6 +26,7 @@
             @include('pos.layout.payment')
         </div>
     </div>
+    @include('pos.layout.dayclose')
 @endsection
 @section('prejs')
     <script>
@@ -85,6 +86,7 @@
 
         function filterItem(_keyword) {
             console.log(this,_keyword);
+            billpanel.selectedItem=null;
             let _list=[];
             let _index=0;
             for (let index = 0; index < this.length; index++) {
@@ -99,7 +101,10 @@
                 }
             }
             return _list;
+
         }
     </script>
     @include('admin.search.list')
+    @include('pos.layout.shortcutjs')
+    @include('pos.layout.dayclosejs')
 @endsection

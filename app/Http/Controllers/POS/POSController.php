@@ -151,15 +151,20 @@ class POSController extends Controller
             $counters=Counter::all();
             $data=[];
             foreach ($counters as $key => $counter) {
-                if($counter->last==null){
-                    array_push($data,$counter);
-                }else{
-                    $now=Carbon::now();
-                    // dd($now);
-                    $diff=$counter->last->diffInSeconds($now);
-                    // dd($diff);
-                    if($diff>30){
-                        array_push($data,$counter);
+                $status=$counter->currentStatus();
+                if($status!=null ){
+                    if($status==1){
+                        if($counter->last==null){
+                            array_push($data,$counter);
+                        }else{
+                            $now=Carbon::now();
+                            // dd($now);
+                            $diff=$counter->last->diffInSeconds($now);
+                            // dd($diff);
+                            if($diff>300){
+                                array_push($data,$counter);
+                            }
+                        }
                     }
                 }
             }
@@ -181,6 +186,17 @@ class POSController extends Controller
     public function counterAnother(Request $request){
         $request->session()->forget(['counter', 'xid']);
         return redirect()->route('pos.index');
+    }
+
+    public function counterCurrent(Request $request){
+        $id=session('counter');
+        $xid=session('xid');
+        if($id==null || $xid==null){
+            return response('counter not found',404);
+        }
+        $counter=Counter::find($id);
+        $status=$counter->currentStatus();
+        return response()->json($status);
     }
 
     public function items(){
