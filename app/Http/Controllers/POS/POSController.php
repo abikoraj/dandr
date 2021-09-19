@@ -151,20 +151,15 @@ class POSController extends Controller
             $counters=Counter::all();
             $data=[];
             foreach ($counters as $key => $counter) {
-                $status=$counter->currentStatus();
-                if($status!=null ){
-                    if($status==1){
-                        if($counter->last==null){
-                            array_push($data,$counter);
-                        }else{
-                            $now=Carbon::now();
-                            // dd($now);
-                            $diff=$counter->last->diffInSeconds($now);
-                            // dd($diff);
-                            if($diff>300){
-                                array_push($data,$counter);
-                            }
-                        }
+                if($counter->last==null){
+                    array_push($data,$counter);
+                }else{
+                    $now=Carbon::now();
+                    // dd($now);
+                    $diff=$counter->last->diffInSeconds($now);
+                    // dd($diff);
+                    if($diff>300){
+                        array_push($data,$counter);
                     }
                 }
             }
