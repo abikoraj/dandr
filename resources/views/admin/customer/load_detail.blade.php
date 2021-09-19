@@ -102,8 +102,7 @@
                                 @endif
                             </td>
                             <td>
-                                {{ (($l->dr == null)|| ($l->dr<=0))?"":"Dr. ".rupee((float)$l->dr) }}
-                                {{(($l->cr == null)|| ($l->cr<=0))?"":"Cr. ".rupee((float)$l->cr )}}
+                                {{$l->amt>0?"Dr. "$l->amt : "Cr. ".(-1*$l->amt)}}
                             </td>
                             <td>
                                 {{-- @if ( $l->identifire==119)

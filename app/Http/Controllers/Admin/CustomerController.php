@@ -177,7 +177,18 @@ class CustomerController extends Controller
             } else {
                 $prev = Ledger::where('date', '<', $range[1])->where('user_id', $user->id)->where('type', 2)->sum('amount') - Ledger::where('date', '<', $range[1])->where('user_id', $user->id)->where('type', 1)->sum('amount');
             }
-            $ledgers = $ledger->orderBy('id', 'asc')->get();
+            $base=$prev;
+            $ledger_data = $ledger->orderBy('date', 'asc')->orderBy('id','asc')->get();
+            $ledgers=[];
+            foreach($ledger_data as $ledger){
+                if($ledger->type==1){
+                    $base-=$ledger->amount;
+                }else{
+                    $base+=$ledger->amount;
+                }
+                $ledger->amt=$base;
+                array_push($ledgers,$ledger);
+            }
 
             return view('admin.customer.load_detail', compact('ledgers', 'type', 'user', 'title', 'prev'));
         } else {
