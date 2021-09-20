@@ -9,9 +9,11 @@
                         <div class="col-md-6 p-1">
                             <button class="btn btn-primary w-100">Update</button>
                         </div>
-                        <div class="col-md-6 p-1">
-                            <button class="btn btn-danger w-100">Delete</button>
-                        </div>
+                        @if (!$counter->hasBill())
+                            <div class="col-md-6 p-1">
+                                <button class="btn btn-danger w-100">Delete</button>
+                            </div>
+                        @endif
                     </div>
                 </form>
            @else
@@ -29,6 +31,6 @@
            </div>
            @endif
         </div>
-       
+
     </div>
 </div>

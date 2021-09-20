@@ -15,6 +15,7 @@ use App\Http\Controllers\Admin\SellitemController;
 use App\Http\Controllers\Admin\SupplierController;
 use App\Http\Controllers\HomeController as ControllersHomeController;
 use App\Http\Controllers\POS\BillingController;
+use App\Http\Controllers\POS\POSController;
 use App\Http\Controllers\ReportController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Sahakari\HomeController;
@@ -48,7 +49,7 @@ Route::get('/pass', function () {
     $data= sprintf("%'.09d",$id);
     $arr=str_split($data,3);
     echo implode('/',$arr);
-    
+
 });
 
 
@@ -90,8 +91,8 @@ Route::name('admin.')->group(function () {
             Route::post('due-load', 'Admin\FarmerController@dueLoad')->name('due.load');
             Route::post('pay-save', 'Admin\FarmerController@paymentSave')->name('pay.save');
 
-            //XXX farmer Account opening 
-            
+            //XXX farmer Account opening
+
             Route::match(['GET', 'POST'], 'add-due-list', 'Admin\FarmerController@addDueList')->name('due.add.list');
             Route::match(['GET', 'POST'], 'add-due', 'Admin\FarmerController@addDue')->name('due.add');
 
@@ -190,7 +191,7 @@ Route::name('admin.')->group(function () {
                 Route::match(['get', 'post'], 'update',[DistributerSnfFatController::class,'update'])->name('update');
                 Route::match(['get', 'post'], 'delete',[DistributerSnfFatController::class,'delete'])->name('delete');
             });
-            
+
         });
         // XXX categories
         Route::prefix('categories')->name('category.')->group(function () {
@@ -200,7 +201,7 @@ Route::name('admin.')->group(function () {
             Route::get('delete/{cat}', [CategoryController::class,'delete'])->name('delete')->middleware('authority');
 
         });
-        
+
         // XXX items
         Route::prefix('items')->name('item.')->group(function () {
             Route::match(['GET','POST'],'', [ItemController::class,'index'])->name('index');
@@ -443,7 +444,7 @@ Route::name('admin.')->group(function () {
                 Route::match(['GET','POST'], "detail",[PosBillingController::class,'detail'])->name('detail');
                 Route::match(['GET','POST'], "print",[PosBillingController::class,'print'])->name('print');
                 Route::match(['GET','POST'], "print-info",[PosBillingController::class,'printInfo'])->name('print.info');
-                
+
                 Route::match(['GET','POST'], "return",[PosBillingController::class,'salesReturn'])->name('return');
                 Route::match(['GET','POST'], "cancel",[PosBillingController::class,'cancel'])->name('cancel');
             });
@@ -452,18 +453,19 @@ Route::name('admin.')->group(function () {
         //XXX Counter
         Route::group(['prefix' => 'counter'], function () {
             Route::name('counter.')->group(function () {
-                Route::get('', 'Admin\CounterController@index')->name('home');
+                Route::get('', [CounterController::class,'index'])->name('home');
                 Route::get('stat/{counter}', [CounterController::class,'getStatus'])->name('status.get');
-                Route::post('update/{id}', 'Admin\CounterController@update')->name('update');
-                Route::post('add', 'Admin\CounterController@add')->name('add');
-                Route::post('delete/{id}', 'Admin\CounterController@delete')->name('delete');
-                Route::match(['get', 'post'], 'status/{id}','Admin\CounterController@status')->name('status');
+                Route::post('update/{id}', [CounterController::class,'update'])->name('update');
+                Route::post('add', [CounterController::class,'add'])->name('add');
+                Route::post('delete/{id}', [CounterController::class,'delete'])->name('delete');
+                Route::match(['get', 'post'], 'status/{id}',[CounterController::class,'status'])->name('status');
 
                 Route::group(['prefix' => 'day'], function () {
                     Route::name('day.')->group(function () {
-                        Route::get('', 'Admin\CounterController@day')->name('index');
-                        Route::post('open', 'Admin\CounterController@dayOpen')->name('open');
-                        Route::post('approve', 'Admin\CounterController@dayApprove')->name('approve');
+                        Route::get('', [CounterController::class,'day'])->name('index');
+                        Route::post('open', [CounterController::class,'dayOpen'])->name('open');
+                        Route::post('approve', [CounterController::class,'dayApprove'])->name('approve');
+                        Route::get('reopen', [CounterController::class,'dayReopen'])->name('reopen');
                     });
                 });
 
@@ -519,20 +521,22 @@ Route::name('admin.')->group(function () {
 
 
 Route::name('pos.')->prefix('pos')->group(function(){
-    
+
     Route::middleware(['pos'])->group(function () {
         Route::view('day', 'pos.counter.day')->name('day');
-        Route::match(['GET', 'POST'], 'bill', 'POS\POSController@index')->name('index');
-        Route::match(['GET', 'POST'], 'counter', 'POS\POSController@counter')->name('counter');
-        Route::match(['GET', 'POST'], 'counter-open', 'POS\POSController@counterOpen')->name('counter.open');
-        Route::match(['GET', 'POST'], 'counter-another', 'POS\POSController@counterAnother')->name('counter.another');
-        Route::get('counter/status', 'POS\POSController@counterStatus')->name('counterStatus');
-        Route::get('items', 'POS\POSController@items')->name('items');
-        Route::get('counter/current', 'POS\POSController@counterCurrent')->name('counter-current');
-        
-        Route::get('customers', 'POS\POSController@customers')->name('customers');
-        Route::post('customers-add', 'POS\POSController@customersAdd')->name('customers-add');
-        Route::post('customer-search', 'POS\POSController@searchCustomer')->name('customers-search');
+        Route::match(['GET', 'POST'], 'bill', [POSController::class,'index'])->name('index');
+        Route::match(['GET', 'POST'], 'counter', [POSController::class,'counter'])->name('counter');
+        Route::match(['GET', 'POST'], 'counter-open', [POSController::class,'counterOpen'])->name('counter.open');
+        Route::match(['GET', 'POST'], 'counter-another', [POSController::class,'counterAnother'])->name('counter.another');
+        Route::get('counter/status', [POSController::class,'counterStatus'])->name('counterStatus');
+        Route::get('items', [POSController::class,'items'])->name('items');
+        Route::post('items/single', [POSController::class,'itemSingle'])->name('items-single');
+        Route::get('counter/current', [POSController::class,'counterCurrent'])->name('counter-current');
+        Route::post('counter/close', [POSController::class,'counterClose'])->name('counter-close');
+
+        Route::get('customers', [POSController::class,'customers'])->name('customers');
+        Route::post('customers-add', [POSController::class,'customersAdd'])->name('customers-add');
+        Route::post('customer-search', [POSController::class,'searchCustomer'])->name('customers-search');
         Route::name('billing.')->prefix('billing')->group(function(){
             Route::post('add', [BillingController::class,'add'])->name('add');
             Route::post('printed', [BillingController::class,'printed'])->name('printed');

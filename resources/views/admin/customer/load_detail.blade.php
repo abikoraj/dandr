@@ -102,7 +102,7 @@
                                 @endif
                             </td>
                             <td>
-                                {{$l->amt>0?"Dr. "$l->amt : "Cr. ".(-1*$l->amt)}}
+                                {{$l->amt>0?"Dr. ".$l->amt : "Cr. ".(-1*$l->amt)}}
                             </td>
                             <td>
                                 {{-- @if ( $l->identifire==119)

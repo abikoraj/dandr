@@ -5,15 +5,17 @@
               <table >
                 <tr><td><label >Total</label></td><td><input type="number" readonly id="input-total" value="0"></td></tr>
                 <tr><td><label >Discount</label></td><td><input type="number" id="input-discount" oninput="billpanel.calculateTotal();" class="f-sel" value="0"></td></tr>
-                <tr><td><label >Taxable</label></td><td><input type="number" readonly id="input-taxable" value="0"></td></tr>
-                <tr><td><label >Tax</label></td><td><input type="number" id='input-tax' oninput="billpanel.calculateTotal();" value="0" class="f-sel"></td></tr>
+                @if (env('companyUseTax',false))
+                    <tr><td><label >Taxable</label></td><td><input type="number" readonly id="input-taxable" value="0"></td></tr>
+                    <tr><td><label >Tax</label></td><td><input type="number" id='input-tax' oninput="billpanel.calculateTotal();" value="0" class="f-sel"></td></tr>
+                @endif
               </table>
           </div>
       </div>
       <div class="col-6 col-md-2 p-0 ">
         <div id="total-container">
             <div id="total">
-                <div class="text-center">   
+                <div class="text-center">
                   <label id="total-label">Grand Total</label>
                   <br>
                   <input id="input-grandtotal" value="0" readonly>
@@ -50,7 +52,7 @@
             </div>
           </div>
         </div>
-       
+
 
       </div>
     </div>

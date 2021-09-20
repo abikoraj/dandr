@@ -22,7 +22,7 @@
                     <div class="col-md-4">Rs. 5</div><div class="col-md-8"><input id="closing-amount-5" type="number" min="0" class="form-control" oninput="calculateClosingAmount()" required></div>
                     <div class="col-md-4">Rs. 2</div><div class="col-md-8"><input id="closing-amount-2" type="number" min="0" class="form-control" oninput="calculateClosingAmount()" required></div>
                     <div class="col-md-4">Rs. 1</div><div class="col-md-8"><input id="closing-amount-1" type="number" min="0" class="form-control" oninput="calculateClosingAmount()" required></div>
-                
+
                 </div>
             </form>
             <hr>
@@ -33,7 +33,7 @@
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cancel (esc)</button>
-          <button type="button" class="btn btn-primary" onclick="billpanel.closeCounter()">Close Counter </button>
+          <button type="button" class="btn btn-primary" onclick="closeCounter()">Close Counter </button>
         </div>
       </div>
     </div>

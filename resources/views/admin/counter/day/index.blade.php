@@ -43,7 +43,7 @@
     </div>
     <hr>
     @if ($setting!=null)
-        @if ($setting->open)
+        @if ($setting->open && env('use_opening',false))
             <table class="table table-bordered">
                 <tr >
                     <th>Counter</th>

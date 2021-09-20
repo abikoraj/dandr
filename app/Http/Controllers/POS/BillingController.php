@@ -55,7 +55,7 @@ class BillingController extends Controller
         $bill->counter_id = $cid;
         $bill->counter_name = $counter->name;
         $bill->fiscal_year_id = $fy->id;
-        
+
         if ($request->filled('customer')) {
             $bill->customer_name = $request->customer['name'];
             $bill->customer_address = $request->customer['address'];
@@ -126,16 +126,16 @@ class BillingController extends Controller
             $user_id=Customer::where('id',$bill->customer_id )->select('user_id')->first()->user_id;
             $ledger = new LedgerManage($user_id);
             $paidamount=($bill->grandtotal<$bill->paid)?$bill->grandtotal:$bill->paid;
-            
+
             if(env('acc_system','old')=='old'){
                 $ledger->addLedger('Bill No '.$bill->bill_no, 1,    $bill->grandtotal,  $bill->date, 130, $bill->id);
                 if ($paidamount > 0) {
-                    $ledger->addLedger('Payment For'.$bill->bill_no, 2, $paidamount,  $bill->date, 131, $bill->id);
+                    $ledger->addLedger('Payment For  Bill No '.$bill->bill_no, 2, $paidamount,  $bill->date, 131, $bill->id);
                 }
             }else{
                 $ledger->addLedger('Bill No '.$bill->bill_no, 2,    $bill->grandtotal,  $bill->date, 130, $bill->id);
                 if ($paidamount > 0) {
-                    $ledger->addLedger('Payment For'.$bill->bill_no, 1, $paidamount,  $bill->date, 131, $bill->id);
+                    $ledger->addLedger('Payment For Bill No '.$bill->bill_no, 1, $paidamount,  $bill->date, 131, $bill->id);
                 }
             }
         }

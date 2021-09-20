@@ -12,8 +12,8 @@
             <option value="3">Monthly</option>
             <option value="4">Yearly</option>
             <option value="5">Custom</option>
-            @if (env('usepos',0)==1)
-                
+            @if (env('use_pos',false))
+
                 <option value="6">Fiscal Year</option>
             @endif
         </select>
@@ -54,10 +54,10 @@
         <label for="date2">Date2</label>
         <input type="text" id="date2" class="form-control calender">
     </div>
-    @if (env('usepos',0)==1)
+    @if (env('use_pos',false))
     @php
         $ps=App\Models\PosSetting::first();
-        
+
     @endphp
     <div class="col-md-3 ct ct-6 d-none">
         <label for="fy">Fiscal Year {{$ps->date}}</label>

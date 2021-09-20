@@ -37,6 +37,8 @@
         const printedBillURL = '{{ route('pos.billing.printed') }}';
         const cardnoRequired={{env('cardnoRequired',0)}};
         const savePayment={{env('savePayment',0)}};
+        const companyUseTax={{env('companyUseTax',false)?'true':'false'}};
+        const posCache={{env('pos_cache',false)?'true':'false'}};
     </script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous">
@@ -46,14 +48,12 @@
     <script src="{{ asset('backend/js/axios.js') }}"></script>
     <script src="{{ asset('backend/js/signalr.js') }}"></script>
     <script src="{{ asset('backend/js/jquery.hotkeys.js') }}"></script>
-    <script src="http://localhost:4200/signalr/hubs"></script>
-
     <script src="{{ asset('pos/js/names.js') }}"></script>
     <script src="{{ asset('pos/js/funcstions.js') }}"></script>
 
     @yield('prejs')
+
     {{-- <script src="{{ asset('pos/js/main.js') }}"></script> --}}
-    @include('pos.layout.mainjs')
     {{-- <script>
         $(function() {
             $.connection.hub.url = "http://localhost:4200/signalr";
@@ -62,7 +62,7 @@
             var chat = $.connection.myHub;
             chat.client.addMessage = function(name, message) {
                 console.log(name, message);
-            }; 
+            };
             $.connection.hub.start().done(function() {
               console.log('signalr started');
               chat.server.send('asd', 'adsd0');

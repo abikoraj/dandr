@@ -24,9 +24,15 @@ class Counter extends Model
         return CounterStatus::where('date',$setting->date)->where('counter_id',$this->id)->first();
     }
 
+    public function hasBill(){
+        return PosBill::where('counter_id',$this->id)->count()>0;
+    }
     public function hasStatus(){
         $setting=PosSetting::first();
         if($setting==null){
+            return false;
+        }
+        if($setting->open==0){
             return false;
         }
         return CounterStatus::where('date',$setting->date)->where('counter_id',$this->id)->count()>0;

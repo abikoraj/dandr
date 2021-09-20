@@ -132,14 +132,14 @@ var billpanel = {
         this.setVal("tax", _tax);
         this.setVal("grandtotal", _total);
         this.setVal("rounding", _rounding,2);
-        
+
         this.total.total = _amount;
         this.total.taxable = _taxable;
         this.total.discount = _discount;
         this.total.tax = _tax;
         this.total.rounding = _rounding;
         this.total.grandtotal = _total;
-     
+
         this.total.paid = parseFloat(this.getVal("paid"));
         if (isNaN(this.total.paid)) {
             this.total.paid = 0;
@@ -219,7 +219,7 @@ var billpanel = {
                 this.billitems[key].taxable = _taxable;
                 this.billitems[key].tax = _tax;
                 this.billitems[key].total = _total;
-    
+
                 this.renderBillItem(key);
     },
     minus: function (key) {
@@ -237,7 +237,7 @@ var billpanel = {
                 this.billitems[key].taxable = _taxable;
                 this.billitems[key].tax = _tax;
                 this.billitems[key].total = _total;
-    
+
         if (this.billitems[key].amount > 0) {
             this.renderBillItem(key);
         } else {
@@ -291,18 +291,21 @@ var billpanel = {
             "'>" +
             item.discount +
             "</td>";
-        html +=
-            "<td id='bill-item-taxable-" +
-            key +
-            "'>" +
-            item.taxable +
-            "</td>";
-        html +=
-            "<td id='bill-item-tax-" +
-            key +
-            "'>" +
-            item.tax +
-            "</td>";
+            if(companyUseTax){
+
+            html +=
+                "<td id='bill-item-taxable-" +
+                key +
+                "'>" +
+                item.taxable +
+                "</td>";
+            html +=
+                "<td id='bill-item-tax-" +
+                key +
+                "'>" +
+                item.tax +
+                "</td>";
+            }
         html +=
             "<td id='bill-item-total-" +
             key +
@@ -319,68 +322,136 @@ var billpanel = {
         this.calculateTotal();
     },
     addItem: function (barcode) {
-        item = this.products[barcode];
-        if (item == undefined) {
-            $.notify("Not Item found With Barcode " + barcode, {
-                className: "error",
-            });
-            $("#barcode").focus();
-            $("#barcode").select();
-        } else {
-            const key = item.id.toString()+"-item";
-            billItem = this.billitems[key];
-            if (billItem == undefined) {
+        if(posCache){
 
-                const _amount=item.rate*1;
-                const _discount=0;
-                const _taxable=_amount-_discount;
-                let _tax=0;
-                if(item.taxable==1){
-                    _tax=((_taxable)*(item.tax)/100).toFixed(2);
-                }
-                const _total=(parseFloat(_tax)+_taxable).toFixed(2);
-                this.billitems[key] = {
-                    item_id: item.id,
-                    item_name: item.name,
-                    item_rate:item.rate,
-                    item_taxable:item.taxable,
-                    item_tax:item.tax,
-                    amount:_amount,
-                    discount:_discount,
-                    taxable:_taxable,
-                    tax:_tax,
-                    total:_total,
-                    qty: 1,
-                };
-                this.renderBillItem(key);
+            item = this.products[barcode];
+            if (item == undefined) {
+                $.notify("Not Item found With Barcode " + barcode, {
+                    className: "error",
+                });
+                $("#barcode").focus();
+                $("#barcode").select();
             } else {
-                this.billitems[key].qty += 1;
-                const _amount=this.billitems[key].item_rate*this.billitems[key].qty;
-                const _discount=0;
-                let _tax=0;
-                const _taxable=_amount-_discount;
-                if(this.billitems[key].item_taxable==1){
-                    _tax=((_taxable)*(this.billitems[key].item_tax)/100).toFixed(2);
+                const key = item.id.toString()+"-item";
+                billItem = this.billitems[key];
+                if (billItem == undefined) {
+
+                    const _amount=item.rate*1;
+                    const _discount=0;
+                    const _taxable=_amount-_discount;
+                    let _tax=0;
+                    if(item.taxable==1 && companyUseTax){
+                        _tax=((_taxable)*(item.tax)/100).toFixed(2);
+                    }
+                    const _total=(parseFloat(_tax)+_taxable).toFixed(2);
+                    this.billitems[key] = {
+                        item_id: item.id,
+                        item_name: item.name,
+                        item_rate:item.rate,
+                        item_taxable:item.taxable,
+                        item_tax:item.tax,
+                        amount:_amount,
+                        discount:_discount,
+                        taxable:_taxable,
+                        tax:_tax,
+                        total:_total,
+                        qty: 1,
+                    };
+                    this.renderBillItem(key);
+                } else {
+                    this.billitems[key].qty += 1;
+                    const _amount=this.billitems[key].item_rate*this.billitems[key].qty;
+                    const _discount=0;
+                    let _tax=0;
+                    const _taxable=_amount-_discount;
+                    if(this.billitems[key].item_taxable==1 && companyUseTax){
+                        _tax=((_taxable)*(this.billitems[key].item_tax)/100).toFixed(2);
+                    }
+                    const _total=(parseFloat(_tax)+_taxable).toFixed(2);
+                    this.billitems[key].amount = _amount;
+                    this.billitems[key].discount = _discount;
+                    this.billitems[key].taxable = _taxable;
+                    this.billitems[key].tax = _tax;
+                    this.billitems[key].total = _total;
+
+                    this.renderBillItem(key);
                 }
-                const _total=(parseFloat(_tax)+_taxable).toFixed(2);
-                this.billitems[key].amount = _amount;
-                this.billitems[key].discount = _discount;
-                this.billitems[key].taxable = _taxable;
-                this.billitems[key].tax = _tax;
-                this.billitems[key].total = _total;
-    
-                this.renderBillItem(key);
+                console.log(this.billitems);
             }
-            console.log(this.billitems);
+            console.log(item);
+            $("#barcode").val("");
+            $("#barcode").closeSearch();
+            $("#barcode").focus();
+        }else{
+            axios.post('{{route('pos.items-single')}}',{"barcode":barcode})
+            .then((res)=>{
+               const item=res.data;
+                if (item == undefined) {
+                    $.notify("Not Item found With Barcode " + barcode, {
+                        className: "error",
+                    });
+                    $("#barcode").focus();
+                    $("#barcode").select();
+                } else {
+                    const key = item.id.toString()+"-item";
+                    billItem = this.billitems[key];
+                    if (billItem == undefined) {
+
+                        const _amount=item.rate*1;
+                        const _discount=0;
+                        const _taxable=_amount-_discount;
+                        let _tax=0;
+                        if(item.taxable==1 && companyUseTax){
+                            _tax=((_taxable)*(item.tax)/100).toFixed(2);
+                        }
+                        const _total=(parseFloat(_tax)+_taxable).toFixed(2);
+                        this.billitems[key] = {
+                            item_id: item.id,
+                            item_name: item.name,
+                            item_rate:item.rate,
+                            item_taxable:item.taxable,
+                            item_tax:item.tax,
+                            amount:_amount,
+                            discount:_discount,
+                            taxable:_taxable,
+                            tax:_tax,
+                            total:_total,
+                            qty: 1,
+                        };
+                        this.renderBillItem(key);
+                    } else {
+                        this.billitems[key].qty += 1;
+                        const _amount=this.billitems[key].item_rate*this.billitems[key].qty;
+                        const _discount=0;
+                        let _tax=0;
+                        const _taxable=_amount-_discount;
+                        if(this.billitems[key].item_taxable==1 && companyUseTax){
+                            _tax=((_taxable)*(this.billitems[key].item_tax)/100).toFixed(2);
+                        }
+                        const _total=(parseFloat(_tax)+_taxable).toFixed(2);
+                        this.billitems[key].amount = _amount;
+                        this.billitems[key].discount = _discount;
+                        this.billitems[key].taxable = _taxable;
+                        this.billitems[key].tax = _tax;
+                        this.billitems[key].total = _total;
+
+                        this.renderBillItem(key);
+                    }
+                    console.log(this.billitems);
+                }
+                console.log(item);
+                $("#barcode").val("");
+                $("#barcode").closeSearch();
+                $("#barcode").focus();
+                })
+            .catch((err)=>{
+                console.log(err);
+            })
         }
-        console.log(item);
-        $("#barcode").val("");
-        $("#barcode").closeSearch();
-        $("#barcode").focus();
     },
     addItemSelect: function () {
-        
-        
+
+
         const _qty = parseFloat($("#item-qty").val());
         if (isNaN(_qty)) {
             $.notify("Please Enter Qty", {
@@ -412,7 +483,7 @@ var billpanel = {
                 const _discount=0;
                 const _taxable=_amount-_discount;
                 let _tax=0;
-                if(item.taxable==1){
+                if(item.taxable==1 && companyUseTax){
                     _tax=((_taxable)*(item.tax)/100).toFixed(2);
                 }
                 const _total=(parseFloat(_tax)+_taxable).toFixed(2);
@@ -436,7 +507,7 @@ var billpanel = {
                 const _discount=0;
                 let _tax=0;
                 const _taxable=_amount-_discount;
-                if(this.billitems[key].item_taxable==1){
+                if(this.billitems[key].item_taxable==1 && companyUseTax){
                     _tax=((_taxable)*(this.billitems[key].item_tax)/100).toFixed(2);
                 }
                 const _total=(parseFloat(_tax)+_taxable).toFixed(2);
@@ -445,7 +516,7 @@ var billpanel = {
                 this.billitems[key].taxable = _taxable;
                 this.billitems[key].tax = _tax;
                 this.billitems[key].total = _total;
-    
+
                 this.renderBillItem(key);
             }
             $("#item-name").val('').trigger("change");
@@ -807,7 +878,7 @@ $(function () {
         $('body, input').bind('keydown', 'alt+s', function(e){
             e.preventDefault();
             customerSearchInit();
-            
+
         });
         $('body, input').bind('keydown', 'alt+a', function(e){
             e.preventDefault();
@@ -831,7 +902,7 @@ $(function () {
             $('#item-name').focus();
             $('#item-name').select();
         });
-        
+
         $('body, input').bind('keydown', 'ctrl+s', function(e){
             e.preventDefault();
             if($('#payment')[0].style.display=='none' || $('#payment')[0].style.display==''){
@@ -861,19 +932,19 @@ $(function () {
             e.preventDefault();
             $('#payment-type-2')[0].checked=true;
             $('#payment-type-2').focus();
-            
+
         });
         $('body, input').bind('keydown', 'alt+3', function(e){
             e.preventDefault();
             $('#payment-type-3')[0].checked=true;
             $('#payment-type-3').focus();
-            
+
         });
         $('body, input').bind('keydown', 'alt+4', function(e){
             e.preventDefault();
             $('#payment-type-4')[0].checked=true;
             $('#payment-type-4').focus();
-            
+
         });
 
 });

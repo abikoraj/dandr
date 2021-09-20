@@ -29,6 +29,7 @@
     @include('pos.layout.dayclose')
 @endsection
 @section('prejs')
+    <script src="http://localhost:4200/signalr/hubs"></script>
     <script>
         function addToBarcode(barcode) {
             $('#barcode').val(barcode);
@@ -107,4 +108,6 @@
     @include('admin.search.list')
     @include('pos.layout.shortcutjs')
     @include('pos.layout.dayclosejs')
+    @include('pos.layout.mainjs')
+
 @endsection

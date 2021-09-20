@@ -103,7 +103,7 @@
                 "id": id
             });
         }
-        
+
         function loadDetail(id,billno){
             win.showPost("Bill Detail - " + billno, '{{ route('admin.pos.billing.detail') }}', {
                 "id": id

@@ -17,6 +17,7 @@
                     <th>Customer </th>
                     <th>Total</th>
                     <th>Discount</th>
+                    <th>Taxable</th>
                     <th>Tax</th>
                     <th>Gross Total</th>
                     <th>Paid</th>
@@ -25,14 +26,19 @@
                 </tr>
             </thead>
             <tbody>
-                @foreach ($bill as $k=>$b)
+                @foreach ($bills as $k=>$b)
                 <tr>
-                    <td>{{ $k+1 }}</td>
+                    <td>{{ $b->bill_no }}</td>
                     <td>{{ _nepalidate($b->date) }}</td>
-                    <td>{{ $b->name }}</td>
-                    <td>{{ $b->grandtotal }}</td>
-                    <td>{{ $b->dis }}</td>
-                    <td>{{ $b->net_total }}</td>
+                    <td>{{ $b->customer_name }}</td>
+                    <td>{{ (float) $b->total }}</td>
+                    <td>{{ (float) $b->discount }}</td>
+                    <td>{{ (float) $b->taxable }}</td>
+                    <td>{{ (float) $b->tax }}</td>
+                    <td>{{ (float) $b->grandtotal }}</td>
+                    <td>{{ (float) $b->paid }}</td>
+                    <td>{{ (float) $b->due }}</td>
+                    <td>{{ (float) $b->return }}</td>
                 </tr>
                 @endforeach
             </tbody>
@@ -45,19 +51,62 @@
                     <th>Name</th>
                     <th>Qty</th>
                     <th>Rate</th>
+                    <th>Amount</th>
+                    <th>Discount</th>
+                    <th>Taxable</th>
+                    <th>Tax</th>
                     <th>Total</th>
                 </tr>
             </thead>
+
             <tbody>
-                @foreach ($billitems as $item)
-                    @foreach ($item as $i)
+
+                @foreach ($billItemDatas as $_i)
+                    @php
+                        $i=(object)$_i;
+                    @endphp
+                    @if (count($i->value)==1)
+                        @php
+                            $i_qty=(object)($i->value[0]);
+                        @endphp
                         <tr>
-                            <td>{{ $i->name }}</td>
-                            <td>{{ $i->qty }}</td>
-                            <td>{{ $i->rate }}</td>
-                            <td>{{ $i->total }}</td>
+                            <td>{{ $i->item_name }}</td>
+                            <td>
+                                {{$i_qty->qty}}
+                            </td>
+
+                            <td>{{ $i_qty->rate }}</td>
+                            <td>{{ $i_qty->amount }}</td>
+                            <td>{{ $i_qty->discount }}</td>
+                            <td>{{ $i_qty->taxable }}</td>
+                            <td>{{ $i_qty->tax }}</td>
+                            <td>{{ $i_qty->total }}</td>
                         </tr>
+                    @else
+                    <tr>
+                        <td>{{$i->item_name}}</td>
+                        <td colspan="7"></td>
+                    </tr>
+                    @foreach ($i->value as $_i_qty)
+                    @php
+                        $i_qty=(object)$_i_qty;
+                    @endphp
+                    <tr>
+                        <td>-</td>
+                        <td>
+                            {{$i_qty->qty}}
+                        </td>
+
+                        <td>{{ $i_qty->rate }}</td>
+                        <td>{{ $i_qty->amount }}</td>
+                        <td>{{ $i_qty->discount }}</td>
+                        <td>{{ $i_qty->taxable }}</td>
+                        <td>{{ $i_qty->tax }}</td>
+                        <td>{{ $i_qty->total }}</td>
+                    </tr>
                     @endforeach
+                    @endif
+
                 @endforeach
             </tbody>
         </table>

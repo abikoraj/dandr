@@ -33,7 +33,7 @@
             Purchaser's Phone : {{ $bill->customer_phone }}
         </div>
         <div class="col-6 b-500 f-12 text-end">
-            Purchaser's Vat : {{ $bill->customer_pan }}
+            Purchaser's Vat/PAN : {{ $bill->customer_pan }}
         </div>
     </div>
     <table class="print-table f-12 text-start">
@@ -52,6 +52,21 @@
             </th>
             <th>
                 Total
+            </th>
+            <th>
+                Discount
+            </th>
+            @if (env('companyUseTax',false))
+
+            <th>
+                Taxable
+            </th>
+            <th>
+                Tax
+            </th>
+            @endif
+            <th>
+                Grand Total
             </th>
         </tr>
         @php
@@ -72,56 +87,74 @@
                     {{ (float) $item->rate }}
                 </td>
                 <td>
+                    {{ (float) $item->amount }}
+                </td>
+                <td>
+                    {{ (float) $item->discount }}
+                </td>
+                @if (env('companyUseTax',false))
+
+                <td>
+                    {{ (float) $item->taxable }}
+                </td>
+                <td>
+                    {{ (float) $item->tax }}
+                </td>
+                @endif
+                <td>
                     {{ (float) $item->total }}
                 </td>
             </tr>
         @endforeach
+        @php
+            $colspan=env('companyUseTax',false)?8:6;
+        @endphp
         <tr class="no-border">
-            <th colspan="4" class="text-end">Total:</th>
+            <th colspan="{{$colspan}}" class="text-end">Total:</th>
             <td>{{ (float) $bill->total }}</td>
         </tr>
         <tr class="no-border">
-            <th colspan="4" class="text-end">Discount:</th>
+            <th colspan="{{$colspan}}" class="text-end">Discount:</th>
             <td>{{ (float) $bill->discount }}</td>
         </tr>
         @if (env('companyUseTax', false))
 
             <tr class="no-border">
-                <th colspan="4" class="text-end">Taxable:</th>
+                <th colspan="{{$colspan}}" class="text-end">Taxable:</th>
                 <td>{{ (float) $bill->taxable }}</td>
             </tr>
             <tr class="no-border">
-                <th colspan="4" class="text-end">Tax:</th>
+                <th colspan="{{$colspan}}" class="text-end">Tax:</th>
                 <td>{{ (float) $bill->tax }}</td>
             </tr>
         @endif
         <tr class="no-border">
-            <th colspan="4" class="text-end">GrandTotal:</th>
+            <th colspan="{{$colspan}}" class="text-end">GrandTotal:</th>
             <td>{{ (float) $bill->grandtotal }}</td>
         </tr>
         @if ($bill->paid > 0)
 
             <tr class="no-border">
-                <th colspan="4" class="text-end">Paid:</th>
+                <th colspan="{{$colspan}}" class="text-end">Paid:</th>
                 <td>{{ (float) $bill->paid }}</td>
             </tr>
         @endif
         @if ($bill->due > 0)
 
             <tr class="no-border">
-                <th colspan="4" class="text-end">Due:</th>
+                <th colspan="{{$colspan}}" class="text-end">Due:</th>
                 <td>{{ (float) $bill->due }}</td>
             </tr>
         @endif
         @if ($bill->return > 0)
 
             <tr class="no-border">
-                <th colspan="4" class="text-end">Return:</th>
+                <th colspan="{{$colspan}}" class="text-end">Return:</th>
                 <td>{{ (float) $bill->return }}</td>
             </tr>
         @endif
         <tr class="no-border">
-            <td colspan="5">
+            <td colspan="{{$colspan+1}}">
                 <div class="line-1"></div>
                 <div class="f-12 b-700">
                     {{numberTowords($bill->grandtotal)}} Only|-
@@ -143,7 +176,7 @@
                 @endif
                 <div class="line-1"></div>
                 <div class="f-12 b-700 text-center">
-                    Goods sold will be exchanged within seven days. 
+                    Goods sold will be exchanged within seven days.
                     <br>
                     Thank you, Please Visit Us Again!!
                 </div>
@@ -171,7 +204,7 @@
             return v;
         }
         document.getElementById('time').innerText=getTime();
-        setInterval(function(){ 
+        setInterval(function(){
             document.getElementById('time').innerText=getTime();
          }, 2000);
          document.onload=function(){

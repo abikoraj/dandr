@@ -24,10 +24,13 @@ use App\Models\EmployeeAdvance;
 use App\Models\EmployeeReport;
 use App\Models\Expense;
 use App\Models\PosBill;
+use App\Models\PosBillItem;
 use App\NepaliDate;
 use Illuminate\Http\Request;
 
 use Illuminate\Support\Facades\DB as DB;
+
+use function PHPSTORM_META\type;
 
 class ReportController extends Controller
 {
@@ -330,59 +333,64 @@ class ReportController extends Controller
             $week = $request->week;
             $type = $request->type;
             $range = [];
-            $bill = PosBill::orderBy('id', 'desc');
+            $bill = PosBill::orderBy('id', 'asc');
+            $bill_items = PosBillItem::join('pos_bills','pos_bills.id','=','pos_bill_items.pos_bill_id');
 
             if ($type == 0) {
             } elseif ($type == 1) {
                 $date = $date = str_replace('-', '', $request->date1);
                 $bill = $bill->where('date', $date);
+                $bill_items = $bill_items->where('pos_bills.date', $date);
             } elseif ($type == 2) {
                 $range = NepaliDate::getDateWeek($request->year, $request->month, $request->week);
                 $bill = $bill->where('date', '>=', $range[1])->where('date', '<=', $range[2]);
+                $bill_items = $bill_items->where('pos_bills.date', '>=', $range[1])->where('pos_bills.date', '<=', $range[2]);
             } elseif ($type == 3) {
                 $range = NepaliDate::getDateMonth($request->year, $request->month);
                 $bill = $bill->where('date', '>=', $range[1])->where('date', '<=', $range[2]);
+                $bill_items = $bill_items->where('pos_bills.date', '>=', $range[1])->where('pos_bills.date', '<=', $range[2]);
             } elseif ($type == 4) {
                 $range = NepaliDate::getDateYear($request->year);
                 $bill = $bill->where('date', '>=', $range[1])->where('date', '<=', $range[2]);
+                $bill_items = $bill_items->where('pos_bills.date', '>=', $range[1])->where('pos_bills.date', '<=', $range[2]);
             } elseif ($type == 5) {
                 $range[1] = str_replace('-', '', $request->date1);
                 $range[2] = str_replace('-', '', $request->date2);
                 $bill = $bill->where('date', '>=', $range[1])->where('date', '<=', $range[2]);
+                $bill_items = $bill_items->where('pos_bills.date', '>=', $range[1])->where('pos_bills.date', '<=', $range[2]);
             }
 
-            $bill1=clone $bill;
-            $bills1=$bill1->select('id')->toSql();
-            $query='select * from pos_bill_items where pos_bill_id in ('.$bills1.')';
-            // dd($query);
             $bills = $bill->orderBy('date', 'asc')->get();
-            // $bills = $bill->select('id', 'bill_no','date', 'customer_name','total','discount','tax', 'grandtotal','paid','' 'due')->with('billItems')->orderBy('date', 'asc')->get();
-            $billitems=collect(DB::select($query,[$range[1],$range[2]]));
-            $ddd=$billitems->groupBy('item_id');
-            // dd($billitems,$range,$ddd);
+            $billitems = $bill_items->orderBy('pos_bills.date', 'asc')->select(
+                DB::raw('pos_bill_items.*,pos_bills.bill_no')
+            )->get();
 
+            $ddd=$billitems->groupBy('item_id');
             $billItemDatas=[];
-          
+
             foreach ($ddd as $key=>$b) {
                 $billItemData=[];
                 $billItemData['item_id']=$key;
+                $billItemData['item_name']=$b->first()->name;
                 $billItemData['value']=[];
                 $ssd=$b->groupBy('rate');
                 foreach ($ssd as $key1 => $b1) {
                     $sd=[];
                     $sd['rate']=$key1;
                     $sd['qty']=$b1->sum('qty');
+                    $sd['amount']=$b1->sum('amount');
                     $sd['discount']=$b1->sum('discount');
+                    $sd['taxable']=$b1->sum('taxable');
                     $sd['tax']=$b1->sum('tax');
                     $sd['total']=$b1->sum('total');
-                    $sd['bi']=$b1;
+                    // $sd['bi']=$b1;
                     array_push($billItemData['value'],$sd);
                 }
                 array_push($billItemDatas, $billItemData);
             }
-            dd($billItemDatas);
+            // dd($billItemDatas);
 
-            return view('admin.report.billingsale.data', compact('bill', 'billitems'));
+            return view('admin.report.billingsale.data', compact('bills', 'billItemDatas'));
         } else {
             return view('admin.report.billingsale.index');
         }
@@ -435,7 +443,7 @@ class ReportController extends Controller
                 $element['milk']=$data->where('identifire','132')->sum('amount');
                 $element['total']=$data1->where('identifire','103')->sum('amount');
                 $element['paid']=$data2->where('identifire','114')->sum('amount');
-                
+
                 $element['due'] = 0;
                 $element['advance'] = 0;
 
@@ -446,7 +454,7 @@ class ReportController extends Controller
                 $opening = 0;
                 $balance = 0;
                 $prev = 0;
-                
+
                 if (env('acc_system', 'old') == 'old') {
                     $prev = Ledger::where('date', '<', $range[1])->where('user_id', $element['user_id'])->where('type', 2)->sum('amount') -
                     Ledger::where('date', '<', $range[1])->where('user_id', $element['user_id'])->where('type', 1)->sum('amount');

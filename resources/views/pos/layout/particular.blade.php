@@ -7,8 +7,10 @@
           <th>Qty</th>
           <th>Total</th>
           <th>Discount</th>
-          <th>Taxable</th>
-          <th>Tax</th>
+          @if (env('companyUseTax',false))
+            <th>Taxable</th>
+            <th>Tax</th>
+          @endif
           <th>Grand Total</th>
         </tr>
         <tbody id="bill-items">

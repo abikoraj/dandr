@@ -1,5 +1,5 @@
 <script>
-    
+
     function initDayClose(){
         axios.get('{{route('pos.counter-current')}}')
         .then((res)=>{
@@ -12,7 +12,7 @@
         })
     }
     function  calculateClosingAmount() {
-       
+
         $('#closing-amount').html('Rs. '+calculateClosingTotal());
 
     }
@@ -31,5 +31,23 @@
             }
         });
         return closingAmount;
+    }
+
+    function closeCounter(){
+        const total=calculateClosingTotal();
+        showProgress("Closing Counter");
+        axios.post('{{route('pos.counter-close')}}',{
+            closing:total
+        })
+        .then((res)=>{
+            if(res.data.status){
+                window.location.href='{{route('pos.counter')}}';
+            }
+        })
+        .catch((err)=>{
+            console.log(err.response.data);
+            alert(err.response.data);
+            hideProgress();
+        })
     }
 </script>
