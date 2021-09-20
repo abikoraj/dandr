@@ -9,11 +9,11 @@
           @yield('title')
     </span>
     <span>
-        @if (Route::is('pos.index'))
-        <span class="link">Hold List</span>
+        @yield('holdbtn')
         @if (env('use_opening',false))
-            <span class="link" onclick="initDayClose();">Day Close</span>
+        <span class="link" onclick="initDayClose();">Day Close</span>
         @endif
+        @if (Route::is('pos.index'))
           <span>
             @include("pos.layout.print")
           </span>

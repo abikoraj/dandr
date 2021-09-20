@@ -12,7 +12,7 @@
 
     <div class="row">
         <div class="col-6 b-700 f-12 text-start">
-            Vat No: {{ env('companyVATPAN') }}
+           {{env('companyUseTax',false)?'VAT':'PAN'}} No: {{ env('companyVATPAN') }}
         </div>
         <div class="col-6 b-700 f-12 text-end">
             Reg No : {{ env('companyRegNO') }}
@@ -50,17 +50,17 @@
             <th>
                 Rate
             </th>
-            <th>
+            {{-- <th>
                 Total
-            </th>
+            </th> --}}
             <th>
                 Discount
             </th>
             @if (env('companyUseTax',false))
 
-            <th>
+            {{-- <th>
                 Taxable
-            </th>
+            </th> --}}
             <th>
                 Tax
             </th>
@@ -86,17 +86,17 @@
                 <td>
                     {{ (float) $item->rate }}
                 </td>
-                <td>
+                {{-- <td>
                     {{ (float) $item->amount }}
-                </td>
+                </td> --}}
                 <td>
                     {{ (float) $item->discount }}
                 </td>
                 @if (env('companyUseTax',false))
 
-                <td>
+                {{-- <td>
                     {{ (float) $item->taxable }}
-                </td>
+                </td> --}}
                 <td>
                     {{ (float) $item->tax }}
                 </td>
@@ -107,7 +107,7 @@
             </tr>
         @endforeach
         @php
-            $colspan=env('companyUseTax',false)?8:6;
+            $colspan=env('companyUseTax',false)?6:5;
         @endphp
         <tr class="no-border">
             <th colspan="{{$colspan}}" class="text-end">Total:</th>

@@ -24,6 +24,7 @@
             @include('pos.layout.item_selector')
             @include('pos.layout.customer_selector')
             @include('pos.layout.payment')
+            @include('pos.layout.holdbill')
         </div>
     </div>
     @include('pos.layout.dayclose')

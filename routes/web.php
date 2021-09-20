@@ -539,6 +539,8 @@ Route::name('pos.')->prefix('pos')->group(function(){
         Route::post('customer-search', [POSController::class,'searchCustomer'])->name('customers-search');
         Route::name('billing.')->prefix('billing')->group(function(){
             Route::post('add', [BillingController::class,'add'])->name('add');
+            Route::post('hold', [BillingController::class,'hold'])->name('hold');
+            Route::get('hold-list', [BillingController::class,'holdList'])->name('hold-list');
             Route::post('printed', [BillingController::class,'printed'])->name('printed');
             Route::get('print/{bill}', [BillingController::class,'print'])->name('print');
         });

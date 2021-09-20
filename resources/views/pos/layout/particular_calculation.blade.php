@@ -45,7 +45,7 @@
               <button class="btn-bill w-100" id="btn-bill-save-print"  onclick="billpanel.initSaveBill(true)">Save and Print (ctrl+p)</button>
             </div>
             <div class="col-md-6 p-0">
-              <button class="btn-bill w-100" id="btn-bill-hold" >Hold Bill (ctrl+h)</button>
+              <button class="btn-bill w-100" id="btn-bill-hold" onclick="holdBillPanel.init();">Hold Bill (ctrl+h)</button>
             </div>
             <div class="col-md-6 p-0">
               <button class="btn-bill w-100" id="btn-bill-cancel"  onclick="billpanel.cancelBill()" >Cancel Bill (ctrl+c)</button>

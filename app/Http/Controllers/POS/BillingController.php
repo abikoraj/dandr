@@ -11,6 +11,7 @@ use App\Models\Item;
 use App\Models\Payment;
 use App\Models\PosBill;
 use App\Models\PosBillItem;
+use App\Models\PosHoldBill;
 use App\Models\PosSetting;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -145,6 +146,23 @@ class BillingController extends Controller
         $b->payment;
         $b->user = $user;
         return response()->json($b);
+    }
+
+    public function hold(Request $request){
+        $bill=new PosHoldBill();
+        $bill->data=$request->data;
+        $bill->customer_name=$request->customer_name;
+        $bill->counter_id=  session('counter');
+        $bill->save();
+        return response('ok');
+
+    }
+
+    public function holdList(Request $request){
+        return response()->json(
+            PosHoldBill::where('used',0)->get()
+        );
+
     }
 
     public function print(PosBill $bill)

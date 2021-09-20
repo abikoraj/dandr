@@ -9,16 +9,16 @@
             <form id="payment-form" onsubmit="return cancelSubmit(event)">
               <div>
                 <span class="me-2">
-                    <input name="payment-type" id="payment-type-1" type="radio" value="0" class="me-1 payment-type" checked> Cash |
+                    <input name="payment-type" id="payment-type-1" type="radio" value="0" class="me-1 payment-type" checked> Cash (alt+1) |
                 </span>
                 <span class="me-2">
-                    <input name="payment-type" id="payment-type-2" type="radio" value="1" class="me-1 payment-type" > Card |
+                    <input name="payment-type" id="payment-type-2" type="radio" value="1" class="me-1 payment-type" > Card (alt+2) |
                 </span>
                 <span class="me-2">
-                    <input name="payment-type" id="payment-type-3" type="radio" value="2" class="me-1 payment-type" > Cheque |
+                    <input name="payment-type" id="payment-type-3" type="radio" value="2" class="me-1 payment-type" > Cheque (alt+3) |
                 </span>
                 <span class="me-2">
-                    <input name="payment-type" id="payment-type-4" type="radio" value="3" class="me-1 payment-type" > Online |
+                    <input name="payment-type" id="payment-type-4" type="radio" value="3" class="me-1 payment-type" > Online (alt+4) |
                 </span>
               </div>
               <hr>
@@ -66,10 +66,13 @@
 
   @section('js1')
       <script>
+        function managePaymentType(value){
+            console.log(this.value);
+            $('.payment-input').addClass('d-none');
+            $('.payment-input-'+value).removeClass('d-none');
+          }
         $('.payment-type').change(function(){
-          console.log(this.value);
-          $('.payment-input').addClass('d-none');
-          $('.payment-input-'+this.value).removeClass('d-none');
+            managePaymentType(this.value);
         });
         $('.payment-input').addClass('d-none');
 

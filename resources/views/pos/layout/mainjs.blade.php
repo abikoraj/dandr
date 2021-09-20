@@ -538,6 +538,7 @@ var billpanel = {
         this.ele().html("");
         billpanel.resetCustomer();
         $("#payment-form")[0].reset();
+        managePaymentType(0);
         $("#payment").modal("hide");
     },
     customerSearch: function () {
@@ -917,6 +918,16 @@ $(function () {
             billpanel.initSaveBill(true);
         });
 
+        $('body, input').bind('keydown', 'ctrl+c', function(e){
+            e.preventDefault();
+            billpanel.cancelBill();
+        });
+
+        $('body, input').bind('keydown', 'ctrl+h', function(e){
+            e.preventDefault();
+            holdBillPanel.init();
+        });
+
         $('#item-qty').bind('keydown', 'return', function(e){
             e.preventDefault();
             billpanel.addItemSelect();
@@ -927,23 +938,30 @@ $(function () {
             e.preventDefault();
             $('#payment-type-1')[0].checked=true;
             $('#payment-type-1').focus();
+            managePaymentType(0);
+
         });
         $('body, input').bind('keydown', 'alt+2', function(e){
             e.preventDefault();
             $('#payment-type-2')[0].checked=true;
             $('#payment-type-2').focus();
+            managePaymentType(1);
+
 
         });
         $('body, input').bind('keydown', 'alt+3', function(e){
             e.preventDefault();
             $('#payment-type-3')[0].checked=true;
             $('#payment-type-3').focus();
+            managePaymentType(2);
+
 
         });
         $('body, input').bind('keydown', 'alt+4', function(e){
             e.preventDefault();
             $('#payment-type-4')[0].checked=true;
             $('#payment-type-4').focus();
+            managePaymentType(3);
 
         });
 
