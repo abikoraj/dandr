@@ -44,11 +44,11 @@
     </div>
     <hr>
     <div id="pagination" class="row justify-content-center">
-        clas
+
     </div>
-    <div id="result">
+    {{-- <div id="result">
         lorem
-    </div>
+    </div> --}}
     @include('admin.item.add')
     @include('admin.item.singlejs')
     {{-- @include('admin.item.edit') --}}
@@ -61,7 +61,7 @@
             keyword='';
             $count='';
             total=0;
-        
+
         @else
             initTableSearch('sid', 'itemData', ['name']);
         @endif
@@ -93,7 +93,7 @@
         }
         @endif
 
-        
+
         function saveData(e) {
             e.preventDefault();
             if (!lock) {
@@ -178,7 +178,7 @@
         }
 
         @if($large)
-        //reset 
+        //reset
         function  reset() {
             $('#sid').val('');
             keyword='';
@@ -287,7 +287,7 @@
 
             }
         }
-        $('#sid').keydown(function (e) { 
+        $('#sid').keydown(function (e) {
             if(e.which==13 && keyword.length>2){
                 loadData();
             }
