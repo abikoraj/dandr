@@ -9,25 +9,29 @@
 @endsection
 @section('content')
 <div class="row">
-    <div class="col-md-2 section href" data-target="{{route('admin.report.farmer')}}">
-        <span class="icon">
-            <i class="zmdi zmdi-accounts"></i>
-        </span>
-        <span class="divider"></span>
-        <span class="text">
-            Farmer Report
-        </span>
-    </div>
-    <div class="col-md-2 section href" data-target="{{route('admin.report.milk')}}">
-        <span class="icon">
-            <i class="zmdi zmdi-view-agenda"></i>
-        </span>
-        <span class="divider"></span>
-        <span class="text">
-            Milk Report
-        </span>
-    </div>
-    <div class="col-md-2 section href" data-target="{{route('admin.report.sales')}}">
+    @if (env('use_farmer',false))
+        <div class="col-md-2 section href" data-target="{{route('admin.report.farmer')}}">
+            <span class="icon">
+                <i class="zmdi zmdi-accounts"></i>
+            </span>
+            <span class="divider"></span>
+            <span class="text">
+                Farmer Report
+            </span>
+        </div>
+    @endif
+    @if (env('use_farmer',false))
+        <div class="col-md-2 section href" data-target="{{route('admin.report.milk')}}">
+            <span class="icon">
+                <i class="zmdi zmdi-view-agenda"></i>
+            </span>
+            <span class="divider"></span>
+            <span class="text">
+                Milk Report
+            </span>
+        </div>
+    @endif
+    {{-- <div class="col-md-2 section href" data-target="{{route('admin.report.sales')}}">
         <span class="icon">
             <i class="zmdi zmdi-money-box"></i>
         </span>
@@ -35,7 +39,7 @@
         <span class="text">
             Sales Report
         </span>
-    </div>
+    </div> --}}
     <div class="col-md-2 section href" data-target="{{route('admin.report.pos.sales')}}">
         <span class="icon">
             <i class="zmdi zmdi-money-box"></i>
@@ -45,8 +49,8 @@
            POS Sales Report
         </span>
     </div>
-    
 
+    @if(env('use_distributer',false))
     <div class="col-md-2 section href" data-target="{{route('admin.report.dis')}}">
         <span class="icon">
             <i class="zmdi zmdi-truck"></i>
@@ -58,6 +62,7 @@
             Report
         </span>
     </div>
+    @endif
     {{-- <div class="col-md-2 section href" data-target="{{route('admin.report.emp')}}">
         <span class="icon">
             <i class="zmdi zmdi-truck"></i>
