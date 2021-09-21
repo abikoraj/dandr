@@ -43,7 +43,7 @@
             </strong>
             <span>
                 <input id="holdbill-search" oninput="holdBillPanel.search(this.value)" type="search" placeholder="Search Customer Name">
-                <button class="btn" onclick="holdBillPanel.refresh()">&#x21bb;</button>
+                <button class="btn" onclick="holdBillPanel.loadData()">&#x21bb;</button>
                 <button class="btn" onclick="holdBillPanel.hide()">&times;</button>
             </span>
         </div>
@@ -120,7 +120,7 @@
                 if(customer_name==null || customer_name==''){
                     alert('bill Holding Canceled By User');
                 }else{
-                    loadData();
+                    this.loadData();
                 }
             }
 
