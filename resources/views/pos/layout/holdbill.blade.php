@@ -43,7 +43,7 @@
             </strong>
             <span>
                 <input id="holdbill-search" oninput="holdBillPanel.search(this.value)" type="search" placeholder="Search Customer Name">
-                <button class="btn" onclick="holdBillPanel.loadData()">&#x21bb;</button>
+                <button class="btn" onclick="holdBillPanel.show()">&#x21bb;</button>
                 <button class="btn" onclick="holdBillPanel.hide()">&times;</button>
             </span>
         </div>
@@ -87,8 +87,8 @@
                 }
             }
         },
-        loadData:function(){
-            showProgress('Saving Bill Hold');
+        saveData:function(customer_name){
+                    showProgress('Saving Bill Hold');
                     const obj=Object.assign({},billpanel.billitems);
                     const data=JSON.stringify(obj);
                     holdBillLock=true;
@@ -108,6 +108,9 @@
 
                     });
         },
+        loadData:function(){
+
+        },
         init:function(){
             if(holdBillLock){
                 return;
@@ -120,7 +123,7 @@
                 if(customer_name==null || customer_name==''){
                     alert('bill Holding Canceled By User');
                 }else{
-                    this.loadData();
+                    this.saveData(customer_name);
                 }
             }
 
@@ -132,8 +135,6 @@
             }
 
             showProgress('Loading Holded Items');
-            const obj=Object.assign({},billpanel.billitems);
-            const data=JSON.stringify(obj);
             holdBillLock=true;
             axios.get('{{route('pos.billing.hold-list')}}')
             .then((res)=>{
