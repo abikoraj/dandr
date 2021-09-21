@@ -58,7 +58,6 @@ const stateClass = [
     " bg-danger",
 ];
 var chat;
-showProgress("Loading Data");
 $.connection.hub.url = "http://localhost:4200/signalr";
 try {
     $.connection.hub.error(function (error) {
@@ -70,6 +69,7 @@ try {
     console.log(err);
 }
 var billpanel = {
+    holdBillId:null,
     raw: null,
     customer: null,
     customerSelected: false,
@@ -522,6 +522,7 @@ var billpanel = {
             $("#item-name").val('').trigger("change");
             $("#item-rate").val("");
             $("#item-qty").val("");
+            $("#item-name").focus().select();
             this.selectedItem=null;
             console.log(this.billitems);
         }
@@ -534,6 +535,7 @@ var billpanel = {
     resetBill: function () {
         this.resetInput();
         this.resetCustomer();
+        this.holdBillId=null;
         this.billitems = [];
         this.ele().html("");
         billpanel.resetCustomer();
@@ -565,11 +567,10 @@ var billpanel = {
                 if (res.data.length > 0) {
                     res.data.forEach((customer) => {
                         html = "<div ";
-                        debugger;
                         for (const key in customer) {
                             html += "data-" + key + "='" + customer[key] + "' ";
                         }
-                        debugger;
+
                         html +=
                             " class='customer-single' onclick='billpanel.selectCustomer(this)'><b class='name'>" +
                             customer.name +
@@ -596,8 +597,8 @@ var billpanel = {
         $("#cutomer-search-panel").addClass("d-none");
         $("#customer-name").val(this.customer.name);
         $("#customer-phone").val(this.customer.phone);
-        $("#customer-address").val(this.customer.address);
-        $("#customer-panvat").val(this.customer.panvat);
+        $("#customer-address").val(this.customer.address??"");
+        $("#customer-panvat").val(this.customer.panvat=='null'?"":this.customer.panvat);
     },
     resetCustomer: function () {
         this.customer = null;
@@ -683,6 +684,7 @@ var billpanel = {
             cardno: $("#cardno").val(),
             txnno: $("#txnno").val(),
             chequeno: $("#chequeno").val(),
+            holdBillId:this.holdBillId,
         };
         console.log(data);
         if (data.payment_type == 1) {

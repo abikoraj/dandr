@@ -140,6 +140,11 @@ class BillingController extends Controller
                 }
             }
         }
+        if($request->filled('holdBillId')){
+            PosHoldBill::where('id',$request->holdBillId)->update(
+                ['used'=>1]
+            );
+        }
 
         $b = PosBill::find($bill->id);
         $b->billitems;
@@ -159,8 +164,11 @@ class BillingController extends Controller
     }
 
     public function holdList(Request $request){
+        $data= PosHoldBill::join('counters','counters.id','=','pos_hold_bills.counter_id')
+        ->select('pos_hold_bills.*','counters.name')
+        ->where('pos_hold_bills.used',0)->get();
         return response()->json(
-            PosHoldBill::where('used',0)->get()
+            $data
         );
 
     }

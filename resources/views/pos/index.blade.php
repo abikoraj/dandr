@@ -30,6 +30,9 @@
     @include('pos.layout.dayclose')
 @endsection
 @section('prejs')
+    <script>
+        showProgress("Loading Data");
+    </script>
     <script src="http://localhost:4200/signalr/hubs"></script>
     <script>
         function addToBarcode(barcode) {

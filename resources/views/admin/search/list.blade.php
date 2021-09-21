@@ -53,6 +53,7 @@
             // debugger;
             var search_setting = $.extend({
                 list: [],
+                min:0,
                 renderfunc: "itemRender",
                 filterfunc: "itemFilter",
                 rendercustom: false,
@@ -90,7 +91,7 @@
                                 $(search_setting.renderele).html(_d);
                             }
                     }
-                    
+
                 } catch (error) {
                     console.log(error);
                 }
@@ -100,7 +101,7 @@
                     const __r_id = ele.dataset.searchid;
                     const _r_id = __r_id + '_overlay';
                     // debugger;
-                    const _reqlen=search_setting.renderfirst?0:2;
+                    const _reqlen=search_setting.renderfirst?0:search_setting.min;
                     if (_keyword.length > _reqlen) {
                         if (!search_setting.rendercustom) {
 
@@ -127,7 +128,7 @@
 
                             for (let index = 0; index < search_setting.list.length; index++) {
                                 const element = search_setting.list[index];
-    
+
                                 if (element.barcode.startsWith(_keyword)) {
                                     _list.push(element.barcode);
                                     if (_index >= 100) {
@@ -158,7 +159,7 @@
                 });
                 $(ele).focusin(function(e) {
                     const _keyword = $(ele).val();
-                    if (_keyword.length > 2) {
+                    if (_keyword.length > search_setting.min) {
                         $(ele).showSearch();
                     }
 
@@ -183,7 +184,7 @@
                             const _total = $('#' + _r_id + ">table>tbody>tr").length;
                             let _ok = false;
                             e = e || window.event;
-    
+
                             if (e.keyCode == '38') {
                                 e.preventDefault();
                                 _index -= 1;
@@ -200,7 +201,7 @@
                                 }
                                 console.log(_index);
                                 _ok = true;
-    
+
                             } else if (e.keyCode == '13') {
                                 // left arrow
                                 e.preventDefault();
@@ -210,14 +211,14 @@
                                 // right arrow
                             }
                             if (_ok) {
-    
+
                                 console.log('#' + _r_id + '>table', table, _total);
-    
+
                                 $('#' + _r_id + '>table>tbody>tr:eq(' + _index + ')').addClass(
                                     'active');
                                 $('#' + _r_id + '>table>tbody>tr:eq(' + _index + ')')[0]
                                     .scrollIntoView();
-    
+
                                 $('#' + _r_id).data('index', _index);
                             }
                         }
@@ -252,7 +253,7 @@
                 $('#' + _r_id).css('display', "none");
                 $('#' + ele.dataset.searchid ).data('index', "-1");
                 $('#' + ele.dataset.searchid ).html('');
-                
+
 
             });
 

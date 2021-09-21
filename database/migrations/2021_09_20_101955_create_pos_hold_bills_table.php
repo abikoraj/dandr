@@ -18,7 +18,8 @@ class CreatePosHoldBillsTable extends Migration
             $table->text('data');
             $table->boolean('used')->default(false);
             $table->unsignedBigInteger('counter_id')->nullable();
-            $table->text('customer_name')->nullable();
+            $table->string('counter_name',100)->nullable();
+            $table->string('customer_name',100)->nullable();
             $table->timestamps();
         });
     }
