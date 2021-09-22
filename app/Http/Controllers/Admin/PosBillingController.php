@@ -61,7 +61,7 @@ class PosBillingController extends Controller
                 $bills_query = $bills_query->where('date', '>=', $range[1])->where('date', '<=', $range[2]);
                 $title = "<span class='mx-2'>from:" . _nepalidate($range[1]) . "</span>";
                 $title .= "<span class='mx-2'>To:" . _nepalidate($range[2]). "</span>";
-            } 
+            }
             if ($request->customer_id != -1) {
                 $bills_query = $bills_query->where('customer_id', $request->customer_id);
             }
@@ -85,7 +85,7 @@ class PosBillingController extends Controller
         return view('admin.pos.detail',compact('bill'));
     }
 
-    //XXX Reprint 
+    //XXX Reprint
     public function print(Request $request){
         if($request->getMethod()=="POST"){
 
@@ -100,11 +100,11 @@ class PosBillingController extends Controller
         $b->billitems;
         $b->payment;
         $b->user=Auth::user();
-        
+
         return response()->json($b);
     }
 
-     //XXX Sales Return 
+     //XXX Sales Return
      public function salesReturn(Request $request){
         if($request->getMethod()=="POST"){
             $b=PosBill::find($request->id);
@@ -116,6 +116,11 @@ class PosBillingController extends Controller
             return view('admin.pos.return.index');
 
         }
+    }
+
+    public function salesReturnSingle(PosBill $bill){
+        $bill->billitems;
+        return view('admin.pos.return.single',compact('bill'));
     }
 
 }

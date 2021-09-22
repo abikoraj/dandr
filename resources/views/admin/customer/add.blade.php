@@ -33,10 +33,10 @@
                             <div class="col-lg-6">
                                 <label for="name">Customer PAN/VAT</label>
                                 <div class="form-group">
-                                    <input type="text" id="panvat" name="panvat" class="form-control " data-next="amount" placeholder="Enter customer PAN/VAT" required>
+                                    <input type="text" id="panvat" name="panvat" class="form-control " data-next="amount" placeholder="Enter customer PAN/VAT" >
                                 </div>
                             </div>
-                            
+
                             <div class="col-lg-3">
                                 <label for="amount">Opening Balance</label>
                                 <div class="form-group">
@@ -78,7 +78,7 @@
 </div>
 
 @section('js1')
-    
+
 
     <script>
         function saveData(e) {

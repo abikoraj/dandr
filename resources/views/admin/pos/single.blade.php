@@ -27,9 +27,9 @@
         </span>
         @endif
         @if ($return==1)
-        <span class="btn btn-primary" onclick="initReturn({{$bill->id}},{{$bill->bill_no}});">
+        <a class="btn btn-primary" target="_blank" href="{{route('admin.pos.billing.return-single',['bill'=>$bill->id])}}">
             Return
-        </span>
+        </a>
         @endif
     </td>
 </tr>

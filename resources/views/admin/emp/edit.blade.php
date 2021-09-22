@@ -42,7 +42,7 @@
                             <div class="col-lg-12">
                                 <label for="name">Bank/Account Number</label>
                                 <div class="form-group">
-                                    <input type="text" id="eacc" name="acc" class="form-control" placeholder="Enter Bank Detail" required>
+                                    <input type="text" id="eacc" name="acc" class="form-control" placeholder="Enter Bank Detail" >
                                 </div>
                             </div>
                         </div>

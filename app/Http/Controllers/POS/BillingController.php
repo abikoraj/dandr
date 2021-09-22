@@ -92,6 +92,7 @@ class BillingController extends Controller
                 $bi->discount = $_bi['discount'];
                 $bi->taxable = $_bi['taxable'];
                 $bi->tax = $_bi['tax'];
+                $bi->tax_per = $_bi['item_tax'];
                 $bi->total = $_bi['total'];
                 $bi->use_tax=$_bi['item_taxable'];
                 if ($item->trackstock == 1) {

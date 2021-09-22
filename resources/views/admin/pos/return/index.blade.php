@@ -133,5 +133,39 @@
             printSetting.init();
         };
 
+        function returnChangeQty(ele){
+            const data=JSON.parse(ele.dataset.billitem);
+            console.log(data);
+            if(data.qty<ele.value){
+                ele.value=parseFloat( data.qty);
+            }else if(ele.value<0){
+                ele.value=0;
+            }
+            // calculateTotal();
+        }
+
+        function calculateTotal(){
+            let _removeList=[];
+            $('.return-qty').each(function(){
+
+                const data=JSON.parse(this.dataset.billitem);
+                const _qty=this.value;
+                const _amount=data.rate*_qty;
+                const _discount=0;
+                let _tax=0;
+                const _taxable=_amount-_discount;
+                if(data.use_tax==1 ){
+                    _tax=((_taxable)*(data.tax_per)/100).toFixed(2);
+                }
+                const _total=(parseFloat(_tax)+_taxable).toFixed(2);
+                $('#billitem-'+data.id+'-amount').html(_amount);
+                $('#billitem-'+data.id+'-discount').html(_discount);
+                $('#billitem-'+data.id+'-taxable').html(_taxable);
+                $('#billitem-'+data.id+'-tax').html(_tax);
+                $('#billitem-'+data.id+'-total').html(_total);
+                console.log(this.dataset.billitem,this.value,"bill items");
+            });
+        }
+
     </script>
 @endsection

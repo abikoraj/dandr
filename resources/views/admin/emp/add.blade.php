@@ -37,6 +37,12 @@
                                     <input type="number" id="salary" name="salary" class="form-control next" data-next="acc" placeholder="Enter employee salary" required>
                                 </div>
                             </div>
+                            <div class="col-lg-12">
+                                <label for="name">Bank/Account Number</label>
+                                <div class="form-group">
+                                    <input type="text" id="acc" name="acc" class="form-control" placeholder="Enter Bank Detail" >
+                                </div>
+                            </div>
                         </div>
                 </div>
             </div>

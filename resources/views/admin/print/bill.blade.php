@@ -207,8 +207,7 @@
         setInterval(function(){
             document.getElementById('time').innerText=getTime();
          }, 2000);
-         document.onload=function(){
-            window.print();
-         };
+
+        window.print();
     </script>
 @endsection

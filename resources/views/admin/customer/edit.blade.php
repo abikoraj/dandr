@@ -34,10 +34,10 @@
                             <div class="col-lg-6">
                                 <label for="name">Customer PAN/VAT</label>
                                 <div class="form-group">
-                                    <input type="text" id="epanvat" name="panvat" class="form-control " data-next="rate" placeholder="Enter customer PAN/VAT" required>
+                                    <input type="text" id="epanvat" name="panvat" class="form-control " data-next="rate" placeholder="Enter customer PAN/VAT" >
                                 </div>
                             </div>
-                         
+
                         </div>
                 </div>
             </div>
@@ -51,7 +51,7 @@
 </div>
 
 @section('js2')
-    
+
 
     <script>
         function initEdit(ele){

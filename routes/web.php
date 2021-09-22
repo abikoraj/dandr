@@ -446,6 +446,7 @@ Route::name('admin.')->group(function () {
                 Route::match(['GET','POST'], "print-info",[PosBillingController::class,'printInfo'])->name('print.info');
 
                 Route::match(['GET','POST'], "return",[PosBillingController::class,'salesReturn'])->name('return');
+                Route::match(['GET','POST'], "return-single/{bill}",[PosBillingController::class,'salesReturnSingle'])->name('return-single');
                 Route::match(['GET','POST'], "cancel",[PosBillingController::class,'cancel'])->name('cancel');
             });
         });
