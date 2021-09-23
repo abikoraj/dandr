@@ -13,6 +13,10 @@ Sales Return - Billno : {{$bill->bill_no}}
 @endsection
 @section('content')
     <h4 class="text-center">CREDIT NOTE</h4>
+    <div class="text-right">
+        <span class="btn btn-success" onclick="all();">Return all</span>
+    </div>
+    <hr>
     <form  id="returnbill" onsubmit="return SubmitData(event,this)">
         @csrf
         @include('admin.pos.return.init')
@@ -93,9 +97,11 @@ Sales Return - Billno : {{$bill->bill_no}}
         }
 
         function all(){
+            console.log('all');
             $('.return-qty').each(function(){
                 this.value=JSON.parse(this.dataset.billitem).qty;
-            }
+
+            });
             calculateTotal();
         }
 

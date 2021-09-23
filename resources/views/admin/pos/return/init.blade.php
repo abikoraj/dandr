@@ -28,10 +28,7 @@
         </div>
     </div>
     <hr>
-    <div class="text-right">
-        <button class="btn btn-success">Return all</button>
-    </div>
-    <hr>
+
     <table class="table table-bordered f-12 text-start">
         <tr class="">
             <th>

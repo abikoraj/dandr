@@ -27,7 +27,7 @@
             Bill No: {{ $bill->bill_no }}
         </div>
         <div class="col-6 b-500 f-12 text-end">
-            Issued Date: {{ $bill->date }}
+            Issued Date: {{_nepalidate( $bill->date )}}
         </div>
         <div class="col-12 b-500 f-12 text-start">
             Purchaser's Name : {{ $bill->customer_name }}
