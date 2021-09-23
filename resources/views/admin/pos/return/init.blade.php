@@ -1,4 +1,5 @@
 <div class="p-5">
+    <input type="hidden" name="id" value="{{$bill->id}}">
     <div class="row">
         <div class="col-6">
             <label for="">Bill No</label> :
@@ -12,18 +13,25 @@
             <hr>
         </div>
         <div class="col-6 b-500 f-12 text-start">
-            <label for="">Purchaser's Name :</label> {{ $bill->customer_name }}
+            <label for="">Purchaser's Name :</label>
+            <input type="text" class="form-control" value=" {{ $bill->customer_name }}" name="customer_name" required>
+
         </div>
         <div class="col-6 b-500 f-12 text-right">
-            <label for="">Purchaser's Address :</label> {{ $bill->customer_address }}
+            <label for="">Purchaser's Address :</label> <input type="text" class="form-control" value=" {{ $bill->customer_address }}" name="customer_address">
         </div>
         <div class="col-6 b-500 f-12 text-start">
-            <label for="">Purchaser's Phone :</label> {{ $bill->customer_phone }}
+            <label for="">Purchaser's Phone :</label><input type="text" class="form-control" value=" {{ $bill->customer_phone }}" name="customer_phone">
         </div>
         <div class="col-6 b-500 f-12 text-right">
-            <label for="">Purchaser's Vat :</label> {{ $bill->customer_pan }}
+            <label for="">Purchaser's Vat :</label> <input type="text" class="form-control" value=" {{ $bill->customer_pan }}" name="customer_pan">
         </div>
     </div>
+    <hr>
+    <div class="text-right">
+        <button class="btn btn-success">Return all</button>
+    </div>
+    <hr>
     <table class="table table-bordered f-12 text-start">
         <tr class="">
             <th>
@@ -33,13 +41,13 @@
                 Item
             </th>
             <th>
-                Qty
+                Rate
+            </th>
+            <th>
+                Sell Qty
             </th>
             <th>
                 Return Qty
-            </th>
-            <th>
-                Rate
             </th>
             <th>
                 Total
@@ -72,31 +80,32 @@
                     {{ $item->name }}
                 </td>
                 <td>
+                    {{ (float) $item->rate }}
+                </td>
+                <td>
                     {{$item->qty}}
                 </td>
                 <td>
-                    <input oninput="returnChangeQty(this)" min="0" max="{{$item->qty}}" data-billitem="{{$item->toJson()}}" type="number"  type="text" class="form-control return-qty" id="return-qty" value="0">
-                </td>
-                <td>
-                    {{ (float) $item->rate }}
+                    <input type="hidden" name="bill_items[]" value="{{$item->id}}">
+                    <input oninput="calculateTotal()" name="bill_item_{{$item->id}}" oninput="returnChangeQty(this)" min="0" max="{{$item->qty}}" data-billitem="{{$item->toJson()}}" type="number"  type="text" class="form-control return-qty" id="return-qty" value="0">
                 </td>
                 <td id="billitem-{{$item->id}}-amount">
-                    {{ (float) $item->amount }}
+                    0
                 </td>
                 <td id="billitem-{{$item->id}}-discount">
-                    {{ (float) $item->discount }}
+                   0
                 </td>
                 @if (env('companyUseTax',false))
 
                 <td id="billitem-{{$item->id}}-taxable">
-                    {{ (float) $item->taxable }}
+                    0
                 </td>
                 <td id="billitem-{{$item->id}}-tax">
-                    {{ (float) $item->tax }}
+                    0
                 </td>
                 @endif
                 <td id="billitem-{{$item->id}}-total">
-                    {{ (float) $item->total }}
+                    0
                 </td>
             </tr>
         @endforeach
@@ -149,4 +158,7 @@
  --}}
 
     </table>
+    <div class="text-right py-2">
+        <button class="btn btn-primary">Generate Sales Return</button>
+    </div>
 </div>

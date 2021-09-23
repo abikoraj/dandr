@@ -23,8 +23,11 @@
         <div class=" col-12 text-center b-700 f-14">
             {{ env('companyBillTitle') }}
         </div>
-        <div class="col-12 b-500 f-12 text-start">
+        <div class="col-6 b-500 f-12 text-start">
             Bill No: {{ $bill->bill_no }}
+        </div>
+        <div class="col-6 b-500 f-12 text-end">
+            Issued Date: {{ $bill->date }}
         </div>
         <div class="col-12 b-500 f-12 text-start">
             Purchaser's Name : {{ $bill->customer_name }}

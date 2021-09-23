@@ -151,7 +151,7 @@
                 const data=JSON.parse(this.dataset.billitem);
                 const _qty=this.value;
                 const _amount=data.rate*_qty;
-                const _discount=0;
+                const _discount=(data.discount/data.qty)*_qty;
                 let _tax=0;
                 const _taxable=_amount-_discount;
                 if(data.use_tax==1 ){
