@@ -51,7 +51,7 @@
             </tbody>
         </table>
     </div>
-    <a href="" id="xxx_52" class="d-none" target="_blank">click</a>
+
 
 @endsection
 @section('js')

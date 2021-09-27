@@ -1,4 +1,7 @@
 @extends('admin.layouts.app')
+@section('css')
+    <link rel="stylesheet" href="{{asset('print/main.css')}}">
+@endsection
 @section('title')
 Sales Return - Billno : {{$bill->bill_no}}
 @endsection
@@ -12,19 +15,28 @@ Sales Return - Billno : {{$bill->bill_no}}
 
 @endsection
 @section('content')
-    <h4 class="text-center">CREDIT NOTE</h4>
-    <div class="text-right">
-        <span class="btn btn-success" onclick="all();">Return all</span>
-    </div>
-    <hr>
+
+<div id="returnbill-wrapper" class="shadow">
+    <h4 class="text-center mt-2">CREDIT NOTE</h4>
     <form  id="returnbill" onsubmit="return SubmitData(event,this)">
-        @csrf
-        @include('admin.pos.return.init')
-    </form>
-
-    <div id="data" class="p-5">
-
+            @csrf
+            @include('admin.pos.return.init')
+        </form>
     </div>
+
+    <div id="data-wrapper" class="shadow">
+        <div id="print" class="text-right d-none px-5">
+            <hr>
+            <span style="background: #0D6A9C;padding:8px 12px;">
+
+                @include('pos.layout.print')
+            </span>
+        </div>
+        <div id="data" class="p-5 d-none">
+
+        </div>
+    </div>
+
 @endsection
 @section('js')
 <script src="{{asset('backend/js/signalr.js')}}"></script>
@@ -32,16 +44,16 @@ Sales Return - Billno : {{$bill->bill_no}}
 <script src="{{ asset('backend/js/pages/forms/advanced-form-elements.js') }}"></script>
 <script src="{{asset('backend/js/print.js')}}"></script>
     <script>
-        const printBillURL = '{{ route('pos.billing.print',['bill'=>'__xx__']) }}';
-        const printedBillURL = '{{ route('pos.billing.printed') }}';
+        const printCreditNoteURL = '{{ route('admin.pos.billing.return.print',['note'=>'__xx__']) }}';
+        // const printedBillURL = '{{ route('pos.billing.printed') }}';
 
 
 
 
-        function initPrint(id,billno){
-            showProgress('Printing');
+        function initPrint(id){
+            showProgress('Printing Credit Note : '+id);
             if(printSetting.type==0){
-                url = printBillURL.replace("__xx__", id);
+                url = printCreditNoteURL.replace("__xx__", id);
                 newTab(url);
                 hideProgress();
                 printSetting.queue = false;
@@ -74,11 +86,11 @@ Sales Return - Billno : {{$bill->bill_no}}
         }
 
         function SubmitData(e,ele){
-            let _ok=false;
+            let _ok=true;
             e.preventDefault();
             $('.return-qty').each(function(){
                 if(this.value>0){
-                    _ok=true;
+                    _ok=false;
                 }
             });
             if(_ok){
@@ -88,6 +100,10 @@ Sales Return - Billno : {{$bill->bill_no}}
             const data=new FormData(ele);
             axios.post('{{route('admin.pos.billing.return.init')}}',data).then((res)=>{
                 $('#data').html(res.data);
+                $('#data').html(res.data);
+                $('#returnbill-wrapper').remove();
+                $('#data-wrapper>div').removeClass('d-none');
+
             })
             .catch((err)=>{
                 $('#data').html(err.response.message);
@@ -96,7 +112,7 @@ Sales Return - Billno : {{$bill->bill_no}}
             console.log(data);
         }
 
-        function all(){
+        function returnAll(){
             console.log('all');
             $('.return-qty').each(function(){
                 this.value=JSON.parse(this.dataset.billitem).qty;
@@ -130,4 +146,31 @@ Sales Return - Billno : {{$bill->bill_no}}
         }
 
     </script>
+     <script>
+        function getTime(){
+            var currentTime = new Date();
+            var hours = currentTime.getHours();
+            var minutes = currentTime.getMinutes();
+            var seconds = currentTime.getSeconds();
+            if (minutes < 10){
+                minutes = "0" + minutes;
+            }
+            if (seconds < 10){
+                seconds = "0" + seconds;
+            }
+            var v = hours + ":" + minutes + ":" + seconds + " ";
+            if(hours > 11){
+                v+="PM";
+            } else {
+                v+="AM"
+            }
+            return v;
+            document.getElementById('time').innerText=v;
+            setTimeout(function(){
+                getTime();
+            }, 1000);
+        }
+
+    </script>
+
 @endsection

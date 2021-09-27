@@ -30,7 +30,7 @@ var printSetting = {
     reconnectServer: function () {
         state=4;
         try {
-            
+
             state = $.connection.hub.state;
             if (state == undefined) {
                 state = 4;
@@ -45,7 +45,7 @@ var printSetting = {
     setStatus: function () {
         state=4;
         try {
-            
+
             state = $.connection.hub.state;
             if (state == undefined) {
                 state = 4;
@@ -78,7 +78,7 @@ var printSetting = {
                     $.connection.hub.stateChanged(function (e) {
                         console.log(e);
                         printSetting.setStatus();
-                        
+
                     });
                     chat = $.connection.billHub;
                     printSetting.setStatus();
@@ -86,7 +86,7 @@ var printSetting = {
                 })
                 .fail(function (jqxhr, settings, exception) {
                     if (printSetting.queue) {
-                        $("#print-type-0")[0].checked = true;
+                        document.getElementById("print-type-0").checked = true;
                         printSetting.type = 0;
                         set = false;
                         printSetting.setStatus();
@@ -130,6 +130,7 @@ var printSetting = {
         }
     },
     init: function () {
+        $('body').append('<a href="" id="xxx_52" class="d-none" target="_blank">click</a>');
         this.type = $("input[name='print-type']:checked").val();
 
         if (chat != undefined) {
@@ -159,7 +160,7 @@ var printSetting = {
                     });
                 })
                 .fail(function (jqxhr, settings, exception) {
-                    $("#print-type-0")[0].checked = true;
+                    document.getElementById("print-type-0").checked = true;
                     printSetting.type = 0;
                     printSetting.setStatus();
 

@@ -19,7 +19,7 @@ class CreateCreditNoteItemsTable extends Migration
             $table->foreign('item_id')->references('id')->on('items');
             $table->unsignedBigInteger('credit_note_id');
             $table->foreign('credit_note_id')->references('id')->on('credit_notes');
-            
+
             $table->string('name',100)->nullable();
             $table->decimal('rate',12,2)->default(0);
             $table->decimal('discount',12,2)->default(0);

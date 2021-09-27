@@ -25,6 +25,7 @@ use App\Models\EmployeeReport;
 use App\Models\Expense;
 use App\Models\PosBill;
 use App\Models\PosBillItem;
+use App\Models\User;
 use App\NepaliDate;
 use Illuminate\Http\Request;
 
@@ -601,6 +602,160 @@ class ReportController extends Controller
             return view('admin.report.expense.data', compact('data'));
         } else {
             return view('admin.report.expense.index');
+        }
+    }
+
+    public function bonus(Request $request){
+        if($request->getMethod()=="POST"){
+            $farmers = Farmer::join('users', 'users.id', '=', 'farmers.user_id')->where('farmers.center_id', $request->center_id)->select('users.id', 'users.name', 'users.no', 'farmers.center_id')->orderBy('users.no', 'asc')->get();
+
+            $year1=$request->year1;
+            $year2=$request->year2;
+            $month1=$request->month1;
+            $month2=$request->month2;
+            $f_data=[];
+            $timer=1;
+
+            foreach ($farmers as $key => $farmer) {
+                $timer=1;
+                $semi=true;
+                $_year1=$year1;
+                $_year2=$year2;
+                $_month1=$month1;
+                $_month2=$month2;
+                $data=[];
+                $session=1;
+                $sum=0;
+                while ($semi) {
+                    $_bonus=FarmerReport::where([
+                        ['year',$_year1],
+                        ['month',$_month1],
+                        ['session',$session],
+                        ['user_id',$farmer->id]
+                        ])->sum('bonus');
+                    array_push($data,[$_year1,$_month1,$session,$_bonus]);
+                    $sum+=$_bonus;
+                    $session+=1;
+                    $timer+=1;
+                    if($session>2){
+                        $_month1+=1;
+                        $session=1;
+                    }
+                    if($_month1>12){
+                        $_year1+=1;
+                        $_month1=1;
+                    }
+                    $semi=(($_year1*10000)+($_month1)*100)<=(($_year2*10000)+($_month2)*100);
+                }
+                $farmer->data=$data;
+                $farmer->sum=$sum;
+                array_push($f_data,$farmer);
+            }
+            // dd($f_data);
+            return view('admin.report.bonus.data',['farmers'=>$f_data,'detailed'=>$request->detailed,'times'=>$timer]);
+
+
+        }else{
+            return view('admin.report.bonus.index');
+        }
+    }
+
+    public function bonus1(Request $request){
+        if($request->getMethod()=="POST"){
+            $farmers = Farmer::join('users', 'users.id', '=', 'farmers.user_id')->where('farmers.center_id', $request->center_id)->select('users.id', 'users.name', 'users.no', 'farmers.center_id')->orderBy('users.no', 'asc')->get();
+
+            $year1=$request->year1;
+            $year2=$request->year2;
+            $month1=$request->month1;
+            $month2=$request->month2;
+            $f_data=[];
+            $timer=1;
+
+            foreach ($farmers as $key => $farmer) {
+                $timer=1;
+                $semi=true;
+                $_year1=$year1;
+                $_year2=$year2;
+                $_month1=$month1;
+                $_month2=$month2;
+                $data=[];
+                $session=1;
+                $sum=0;
+                while ($semi) {
+                    $range=$range = NepaliDate::getDate($_year1,$_month1,$session);
+                    $_bonus=$this->getBonus($farmer->id,$range);
+                    // array_push($data,[$_year1,$_month1,$session,$_bonus]);
+                    $sum+=$_bonus;
+                    $session+=1;
+                    $timer+=1;
+                    if($session>2){
+                        $_month1+=1;
+                        $session=1;
+                    }
+                    if($_month1>12){
+                        $_year1+=1;
+                        $_month1=1;
+                    }
+                    $semi=(($_year1*10000)+($_month1)*100)<=(($_year2*10000)+($_month2)*100);
+                }
+                // $farmer->data=$data;
+                $farmer->sum=$sum;
+                array_push($f_data,$farmer);
+            }
+            // dd($f_data);
+            return view('admin.report.bonus.data',['farmers'=>$f_data,'detailed'=>$request->detailed,'times'=>$timer]);
+
+
+        }else{
+            return view('admin.report.bonus.index');
+        }
+    }
+
+    public function getBonus($user_id, $range){
+        $farmer1 = User::find($user_id);
+
+
+        $snfAvg = truncate_decimals(Snffat::where('user_id', $user_id)->where('date', '>=', $range[1])->where('date', '<=', $range[2])->avg('snf'), 2);
+        $fatAvg = truncate_decimals(Snffat::where('user_id', $user_id)->where('date', '>=', $range[1])->where('date', '<=', $range[2])->avg('fat'), 2);
+
+        $center = Center::where('id', $farmer1->farmer()->center_id)->first();
+
+        $fatAmount = ($fatAvg * $center->fat_rate);
+        $snfAmount = ($snfAvg * $center->snf_rate);
+
+        $farmer1->snf = $snfAvg;
+        $farmer1->fat = $fatAvg;
+        if ($farmer1->farmer()->userate == 1) {
+
+            $farmer1->rate = $farmer1->farmer()->rate;
+        } else {
+
+            $farmer1->rate = truncate_decimals($fatAmount + $snfAmount);
+        }
+
+        $farmer1->milk = Milkdata::where('user_id', $user_id)->where('date', '>=', $range[1])->where('date', '<=', $range[2])->sum('e_amount') + Milkdata::where('user_id', $user_id)->where('date', '>=', $range[1])->where('date', '<=', $range[2])->sum('m_amount');
+
+        $farmer1->totalamount = truncate_decimals(($farmer1->rate * $farmer1->milk), 2);
+
+        $farmer1->tc = 0;
+        $farmer1->cc = 0;
+
+
+        if ($farmer1->farmer()->usetc == 1 && $farmer1->totalamount > 0) {
+            $farmer1->tc = truncate_decimals((($center->tc * ($snfAvg + $fatAvg) / 100) * $farmer1->milk), 2);
+        }
+        if ($farmer1->farmer()->usecc == 1 && $farmer1->totalamount > 0) {
+            $farmer1->cc = truncate_decimals($center->cc * $farmer1->milk, 2);
+        }
+
+
+        $farmer1->grandtotal = (int)($farmer1->totalamount + $farmer1->tc + $farmer1->cc);
+        $farmer1->bonus = 0;
+        if (env('hasextra', 0) == 1) {
+            $farmer1->bonus = (int)($farmer1->grandtotal * $center->bonus / 100);
+            return $farmer1->bonus;
+        }else{
+            return 0;
         }
     }
 }

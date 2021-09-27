@@ -412,6 +412,7 @@ Route::name('admin.')->group(function () {
                 Route::match(['GET', 'POST'], 'credit', [ReportController::class,'credit'])->name('credit');
                 Route::post('employee/changeSession', [ReportController::class,'employeeSession'])->name('emp.session');
                 Route::match(['GET', 'POST'], 'expenses', [ReportController::class,'expense'])->name('expense');
+                Route::match(['GET', 'POST'], 'bonus', [ReportController::class,'bonus'])->name('bonus');
             });
         });
 
@@ -449,6 +450,7 @@ Route::name('admin.')->group(function () {
                 Route::match(['GET','POST'], "return-single/{bill}",[PosBillingController::class,'salesReturnSingle'])->name('return-single');
                 Route::match(['GET','POST'], "cancel",[PosBillingController::class,'cancel'])->name('cancel');
                 Route::match(['GET','POST'], "return/init",[PosBillingController::class,'initSalesReturn'])->name('return.init');
+                Route::match(['GET','POST'], "return/print/{note}",[PosBillingController::class,'printSalesReturn'])->name('return.print');
             });
         });
 

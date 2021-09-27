@@ -66,7 +66,7 @@
                                 </div>
                             </div>
                             <div class="body">
-                                
+
                                 @yield('content')
                             </div>
                         </div>
@@ -129,6 +129,7 @@
     </div>
 
     @include('admin.layouts.working')
+
     <script src="{{ asset('calender/nepali.datepicker.v3.2.min.js') }}"></script>
     <!-- <script src="{{ asset('backend/js/pages/index.js') }}"></script> -->
     <script src="{{ asset('backend/js/axios.js') }}"></script>

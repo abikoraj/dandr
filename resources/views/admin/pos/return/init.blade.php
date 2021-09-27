@@ -28,7 +28,10 @@
         </div>
     </div>
     <hr>
-
+    <div class="text-right">
+        <span class="btn btn-success" onclick="returnAll();">Return all</span>
+    </div>
+    <hr>
     <table class="table table-bordered f-12 text-start">
         <tr class="">
             <th>
@@ -156,6 +159,9 @@
 
     </table>
     <div class="text-right py-2">
+        <span style="padding: 8px;">
+            <input type="radio" id="print-directly" > Print Directly
+        </span>
         <button class="btn btn-primary">Generate Sales Return</button>
     </div>
 </div>

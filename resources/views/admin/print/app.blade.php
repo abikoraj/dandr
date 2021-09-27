@@ -10,5 +10,9 @@
 </head>
 <body>
     @yield('content')
+
+    <script>
+        window.print();
+    </script>
 </body>
 </html>

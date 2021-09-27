@@ -8,6 +8,8 @@ use Illuminate\Database\Eloquent\Model;
 class CreditNote extends Model
 {
     use HasFactory;
-
+    public function noteItems(){
+        return $this->hasMany(CreditNoteItem::class);
+    }
 
 }

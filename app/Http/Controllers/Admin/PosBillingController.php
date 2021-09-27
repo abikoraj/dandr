@@ -139,7 +139,26 @@ class PosBillingController extends Controller
                 return response("Day Not Opened, Please Contact Administrator.", 500);
             }
         }
-        $fy = $setting->fiscalYear();
+
+        $note=null;
+        if(env('cancelonreturn',false)){
+           $note= $this->retrunWithCancel($request,$setting->fiscalYear(),$setting->date);
+
+        }else{
+           $note=$this->generateCreditNote($request,$setting->fiscalYear(),$setting->date);
+        }
+
+
+        return view('admin.pos.return.creditnote',compact('note'));
+    }
+
+    private function retrunWithCancel(Request $request,$fy,$date){
+
+    }
+
+
+
+    private function generateCreditNote(Request $request,$fy,$date){
         $amount=0;
         $discount=0;
         $taxable=0;
@@ -147,7 +166,7 @@ class PosBillingController extends Controller
         $total=0;
         $bill = PosBill::find($request->id);
         $note = new CreditNote();
-        $note->date = $setting->date;
+        $note->date = $date;
         $note->ref_id = $bill->id;
         $note->fiscal_year_id = $fy->id;
         $note->bill_no = $bill->bill_no;
@@ -160,10 +179,8 @@ class PosBillingController extends Controller
         $note->taxable=$taxable;
         $note->tax=$tax;
         $note->grandtotal=$total;
+        $note->paid=0;
         $note->save();
-
-
-
         $noteitems=[];
         foreach ($bill->billitems as $key => $billitem) {
             if ($request->filled('bill_item_' . $billitem->id)) {
@@ -174,6 +191,8 @@ class PosBillingController extends Controller
                     $noteitem=new CreditNoteItem();
                     $noteitem->credit_note_id=$note->id;
                     $noteitem->amount=$rate*$qty;
+                    $noteitem->rate=$rate;
+                    $noteitem->qty=$qty;
                     $noteitem->discount=$dis_per*$qty;
                     $noteitem->taxable=$noteitem->amount-$noteitem->discount;
                     if($billitem->use_tax==1){
@@ -203,7 +222,12 @@ class PosBillingController extends Controller
         $note->tax=$tax;
         $note->grandtotal=$total;
         $note->save();
+        $note->noteItems=$noteitems;
+        return $note;
+    }
 
-        dd($note,$noteitems);
+    public function printSalesReturn(CreditNote $note,Request $request){
+        $note->noteItems;
+        return view('admin.print.creditnote',compact('note'));
     }
 }
