@@ -27,7 +27,7 @@
                             </div>
 
                             <div class="col-lg-6">
-                                <label for="cprice">Cost Price</label>
+                                <label for="cprice">Sale Price</label>
                                 <div class="form-group">
                                     <input type="number" id="cprice" name="cost_price" min="0" class="form-control next" data-next="sprice" placeholder="Enter cost price" required>
                                 </div>
@@ -60,7 +60,7 @@
                                     <input type="number" id="reward" name="reward" step="0.001" min="0" value="0" class="form-control" placeholder="Enter item reward percentage" >
                                 </div>
                             </div>
-                            
+
                             <div class="col-lg-3">
                                 <input type="checkbox" name="trackstock" id="trackstock" value="1">
                                 <label for="trackstock">Track Stock</label>
@@ -102,7 +102,7 @@
                                     <input type="number" id="expirydays" name="expirydays" step="0.001" min="0" value="0" class="form-control" >
                                 </div>
                             </div>
-                           
+
                             <div class="col-lg-3">
                                 <label for="minqty">Min Online Qty</label>
                                 <div class="form-group">

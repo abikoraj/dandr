@@ -75,6 +75,9 @@ class PosBillingController extends Controller
             $print = $request->print ?? 0;
             $return = $request->return ?? 0;
             $cancel = $request->cancel ?? 0;
+            if(!$request->filled('bill_no')){
+                $bills_query=$bills_query->whereRaw('(select count(*) from credit_notes where credit_notes.ref_id=pos_bills.id )=0');
+            }
             $bills = $bills_query->where('is_canceled', 0)->select('date', 'customer_name', 'id', 'bill_no', 'grandtotal')->get();
             // dd($bills);
             return view('admin.pos.list', compact('bills', 'print', 'return', 'cancel'));
@@ -107,6 +110,14 @@ class PosBillingController extends Controller
         $b->user = Auth::user();
 
         return response()->json($b);
+    }
+
+    public function creditNoteInfo(Request $request)
+    {
+        $note= CreditNote::find($request->id);
+        $note->noteItems;
+        $note->user = Auth::user();
+        return response()->json($note);
     }
 
     //XXX Sales Return
@@ -221,6 +232,7 @@ class PosBillingController extends Controller
         $note->taxable=$taxable;
         $note->tax=$tax;
         $note->grandtotal=$total;
+        $note->user_id=Auth::user()->id;
         $note->save();
         $note->noteItems=$noteitems;
         return $note;

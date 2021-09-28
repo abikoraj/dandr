@@ -129,6 +129,39 @@ var printSetting = {
             }
         }
     },
+    printCreditReturn: function (_data) {
+        printSetting.queue = true;
+        printSetting.data = _data;
+        if (this.type == 0) {
+            url = printCreditNoteURL.replace("__xx__", this.data.id);
+
+            newTab(url);
+            hideProgress();
+            printSetting.queue = false;
+        } else {
+            if ($.connection.hub.state == states.connected) {
+                showProgress("Printing");
+                console.log('printing');
+                chat.server.printCreditNote(printSetting.data)
+                    .then((res) => {
+                        console.log(res);
+                        printSetting.queue = false;
+                        hideProgress();
+                        // printSetting.sendPrintNotification();
+                    })
+                    .catch((err) => {
+                        console.log(err);
+                        url = printCreditNoteURL.replace("__xx__", this.data.id);
+                        newTab(url);
+                        hideProgress();
+                        printSetting.queue = false;
+                        hideProgress();
+                    });
+            } else {
+                this.restart();
+            }
+        }
+    },
     init: function () {
         $('body').append('<a href="" id="xxx_52" class="d-none" target="_blank">click</a>');
         this.type = $("input[name='print-type']:checked").val();

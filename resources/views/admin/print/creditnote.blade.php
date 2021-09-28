@@ -56,23 +56,9 @@
         <th>
             Rate
         </th>
-        {{-- <th>
-            Total
-        </th> --}}
-        <th>
-            Discount
-        </th>
-        @if (env('companyUseTax',false))
 
-        {{-- <th>
-            Taxable
-        </th> --}}
         <th>
-            Tax
-        </th>
-        @endif
-        <th>
-            Grand Total
+            Total
         </th>
     </tr>
     @php
@@ -92,28 +78,14 @@
             <td>
                 {{ (float) $item->rate }}
             </td>
-            {{-- <td>
+            <td>
                 {{ (float) $item->amount }}
-            </td> --}}
-            <td>
-                {{ (float) $item->discount }}
             </td>
-            @if (env('companyUseTax',false))
 
-            {{-- <td>
-                {{ (float) $item->taxable }}
-            </td> --}}
-            <td>
-                {{ (float) $item->tax }}
-            </td>
-            @endif
-            <td>
-                {{ (float) $item->total }}
-            </td>
         </tr>
     @endforeach
     @php
-        $colspan=env('companyUseTax',false)?6:5;
+        $colspan=4;
     @endphp
     <tr class="no-border">
         <th colspan="{{$colspan}}" class="text-end">Total:</th>

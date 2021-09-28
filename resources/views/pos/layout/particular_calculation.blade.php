@@ -33,9 +33,9 @@
       <div class="col-6 col-md-5 p-0 ">
         <div class="h-100 input-group">
           <table >
-            <tr><td><label >Paid (f2) </label></td><td><input type="number"  id="input-paid" value="0" oninput="billpanel.calculateTotal();" class="f-sel"></td></tr>
-            <tr><td><label >Due</label></td><td><input type="number" readonly id="input-due" value="0"></td></tr>
-            <tr><td><label >Return</label></td><td><input type="number" readonly id="input-return" value="0"></td></tr>
+            <tr><td><label >Paid (f2) </label></td><td><input type="number"  id="input-paid" value="0" oninput="billpanel.calculateTotal();" class="f-sel" min="0"></td></tr>
+            <tr><td><label >Due</label></td><td><input type="number" readonly id="input-due" value="0" min="0"></td></tr>
+            <tr><td><label >Return</label></td><td><input type="number" readonly id="input-return" value="0" min="0"></td></tr>
           </table>
           <div class="row m-0">
             <div class="col-md-6 p-0">

@@ -19,7 +19,7 @@
                     </div>
 
                     <div class="col-lg-6">
-                        <label for="cprice">Cost Price</label>
+                        <label for="cprice">Sale Price</label>
                         <div class="form-group">
                             <input type="number" id="ecprice" step="0.01"  value="{{$item->cost_price}}" name="cost_price" min="0" class="form-control next" data-next="esprice" placeholder="Enter cost price" required>
                         </div>
@@ -92,7 +92,7 @@
                             <input type="number" id="eexpirydays" name="expirydays" step="0.001" min="0" class="form-control" value="{{$item->expirydays}}">
                         </div>
                     </div>
-                
+
                     <div class="col-lg-3">
                         <label for="minqty">Min Online Qty</label>
                         <div class="form-group">

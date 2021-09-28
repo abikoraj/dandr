@@ -47,9 +47,6 @@ Sales Return - Billno : {{$bill->bill_no}}
         const printCreditNoteURL = '{{ route('admin.pos.billing.return.print',['note'=>'__xx__']) }}';
         // const printedBillURL = '{{ route('pos.billing.printed') }}';
 
-
-
-
         function initPrint(id){
             showProgress('Printing Credit Note : '+id);
             if(printSetting.type==0){
@@ -58,9 +55,9 @@ Sales Return - Billno : {{$bill->bill_no}}
                 hideProgress();
                 printSetting.queue = false;
             }else{
-                axios.post('{{route('admin.pos.billing.print.info')}}',{"id":id})
+                axios.post('{{route('admin.pos.billing.creditnote.info')}}',{"id":id})
                 .then((res)=>{
-                    printSetting.print(res.data);
+                    printSetting.printCreditReturn(res.data);
                 })
                 .catch((err)=>{
                     hideProgress();
