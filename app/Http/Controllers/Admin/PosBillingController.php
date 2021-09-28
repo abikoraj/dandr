@@ -136,8 +136,17 @@ class PosBillingController extends Controller
 
     public function salesReturnSingle(PosBill $bill)
     {
-        $bill->billitems;
-        return view('admin.pos.return.single', compact('bill'));
+        $note=CreditNote::where('ref_id',$bill->id)->first();
+        $hasNote=$note!=null;
+        if($hasNote){
+            $note->noteItems;
+            return view('admin.pos.return.single', compact('note','hasNote'));
+
+        }else{
+
+            $bill->billitems;
+            return view('admin.pos.return.single', compact('bill','hasNote'));
+        }
     }
 
     public function initSalesReturn(Request $request)

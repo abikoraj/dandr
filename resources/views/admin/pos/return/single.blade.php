@@ -3,11 +3,26 @@
     <link rel="stylesheet" href="{{asset('print/main.css')}}">
 @endsection
 @section('title')
-Sales Return - Billno : {{$bill->bill_no}}
+@if (!$hasNote)
+
+    Sales Return - Billno : {{$bill->bill_no}}
+@else
+    Sales Return - Billno : {{$note->bill_no}}
+
+
+@endif
 @endsection
 
 @section('head-title')
-<a href="{{route('admin.pos.billing.return')}}">Sales Return</a> / Billno : {{$bill->bill_no}}
+<a href="{{route('admin.pos.billing.return')}}">Sales Return</a> /
+@if (!$hasNote)
+
+     Billno : {{$bill->bill_no}}
+@else
+     Billno : {{$note->bill_no}}
+
+
+@endif
 
 @endsection
 @section('toobar')
@@ -16,26 +31,42 @@ Sales Return - Billno : {{$bill->bill_no}}
 @endsection
 @section('content')
 
-<div id="returnbill-wrapper" class="shadow">
-    <h4 class="text-center mt-2">CREDIT NOTE</h4>
-    <form  id="returnbill" onsubmit="return SubmitData(event,this)">
-            @csrf
-            @include('admin.pos.return.init')
-        </form>
-    </div>
-
-    <div id="data-wrapper" class="shadow">
-        <div id="print" class="text-right d-none px-5">
-            <hr>
-            <span style="background: #0D6A9C;padding:8px 12px;">
-
-                @include('pos.layout.print')
-            </span>
+    @if (!$hasNote)
+        <div id="returnbill-wrapper" class="shadow">
+            <h4 class="text-center mt-2">CREDIT NOTE</h4>
+            <form  id="returnbill" onsubmit="return SubmitData(event,this)">
+                @csrf
+                @include('admin.pos.return.init')
+            </form>
         </div>
-        <div id="data" class="p-5 d-none">
+        <div id="data-wrapper" class="shadow">
+            <div id="print" class="text-right d-none px-5">
+                <hr>
+                <span style="background: #0D6A9C;padding:8px 12px;">
 
+                    @include('pos.layout.print')
+                </span>
+            </div>
+            <div id="data" class="p-5 d-none">
+
+            </div>
         </div>
-    </div>
+    @else
+        <div id="data-wrapper" class="shadow">
+            <div id="print" class="text-right px-5">
+                <hr>
+                <span style="background: #0D6A9C;padding:8px 12px;">
+
+                    @include('pos.layout.print')
+                </span>
+            </div>
+            <div id="data" class="p-5 ">
+                @include('admin.pos.return.creditnote')
+
+            </div>
+        </div>
+    @endif
+
 
 @endsection
 @section('js')
