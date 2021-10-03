@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\CreditNote;
 use App\Models\CreditNoteItem;
 use App\Models\FiscalYear;
+use App\Models\Item;
 use App\Models\PosBill;
 use App\Models\PosSetting;
 use App\NepaliDate;
@@ -224,6 +225,12 @@ class PosBillingController extends Controller
                     $noteitem->item_id=$billitem->item_id;
                     $noteitem->name=$billitem->name;
                     $noteitem->save();
+
+                    $item=Item::where('id',$noteitem->item_id)->select('id','stock','trackstock')->first();
+                    if($item->trackstock==1){
+                        $item->stock+=$noteitem->qty;
+                        $item->save();
+                    }
 
                     $amount+=$noteitem->amount;
                     $discount+=$noteitem->discount;

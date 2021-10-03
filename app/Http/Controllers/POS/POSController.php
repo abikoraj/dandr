@@ -190,6 +190,7 @@ class POSController extends Controller
             return view('pos.counter.index', compact('data'));
         }
     }
+
     public function counterStatus(Request $request)
     {
         $id = session('counter');
