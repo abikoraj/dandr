@@ -33,9 +33,9 @@
                                 <th>Taxable</th>
                                 <th>Tax</th>
                                 <th>Gross Total</th>
-                                <th>Paid</th>
+                                {{-- <th>Paid</th>
                                 <th>Due</th>
-                                <th>Return</th>
+                                <th>Return</th> --}}
                             </tr>
                         </thead>
                         <tbody>
@@ -49,11 +49,32 @@
                                 <td>{{ (float) $b->taxable }}</td>
                                 <td>{{ (float) $b->tax }}</td>
                                 <td>{{ (float) $b->grandtotal }}</td>
-                                <td>{{ (float) $b->paid }}</td>
+                                {{-- <td>{{ (float) $b->paid }}</td>
                                 <td>{{ (float) $b->due }}</td>
-                                <td>{{ (float) $b->return }}</td>
+                                <td>{{ (float) $b->return }}</td> --}}
                             </tr>
                             @endforeach
+                            <tr style="font-weight: 600">
+                                <td colspan="3" class="text-right">Total</td>
+                                <td>
+                                    {{coll_sum($bills,'total')}}
+                                </td>
+                                <td>
+                                    {{coll_sum($bills,'discount')}}
+                                </td>
+                                <td>
+                                    {{coll_sum($bills,'taxable')}}
+                                </td>
+                                <td>
+                                    {{coll_sum($bills,'tax')}}
+                                </td>
+                                <td>
+                                    {{coll_sum($bills,'grandtotal')}}
+                                </td>
+                                {{-- <td>
+                                    {{coll_sum($bills,'paid')}}
+                                </td> --}}
+                            </tr>
                         </tbody>
                     </table>
 
@@ -73,7 +94,14 @@
                         </thead>
 
                         <tbody>
+                            @php
 
+                                $amount=0;
+                                $discount=0;
+                                $taxable=0;
+                                $tax=0;
+                                $total=0;
+                            @endphp
                             @foreach ($billItemDatas as $_i)
                                 @php
                                     $i=(object)$_i;
@@ -81,6 +109,11 @@
                                 @if (count($i->value)==1)
                                     @php
                                         $i_qty=(object)($i->value[0]);
+                                        $amount+=$i_qty->amount;
+                                        $discount+=$i_qty->discount;
+                                        $taxable+=$i_qty->taxable;
+                                        $tax+=$i_qty->tax;
+                                        $total+=$i_qty->total;
                                     @endphp
                                     <tr>
                                         <td>{{ $i->item_name }}</td>
@@ -103,6 +136,11 @@
                                 @foreach ($i->value as $_i_qty)
                                 @php
                                     $i_qty=(object)$_i_qty;
+                                    $amount+=$i_qty->amount;
+                                    $discount+=$i_qty->discount;
+                                    $taxable+=$i_qty->taxable;
+                                    $tax+=$i_qty->tax;
+                                    $total+=$i_qty->total;
                                 @endphp
                                 <tr>
                                     <td>-</td>
@@ -119,8 +157,27 @@
                                 </tr>
                                 @endforeach
                                 @endif
-
-                            @endforeach
+                                @endforeach
+                                <tr>
+                                    <th colspan="3" class="text-right">
+                                        Total
+                                    </th>
+                                    <th>
+                                        {{$amount}}
+                                    </th>
+                                    <th>
+                                        {{$discount}}
+                                    </th>
+                                    <th>
+                                        {{$taxable}}
+                                    </th>
+                                    <th>
+                                        {{$tax}}
+                                    </th>
+                                    <th>
+                                        {{$total}}
+                                    </th>
+                                </tr>
                         </tbody>
                     </table>
 
