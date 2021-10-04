@@ -11,7 +11,7 @@
         </li>
     </ul>
     <div class="tab-content" id="_myTabContent p-2">
-        <div class="tab-pane fade show active shadow" id="sales-1" role="tabpanel" aria-labelledby="home-tab">
+        <div class="tab-pane fade show active shadow p-2" id="sales-1" role="tabpanel" aria-labelledby="home-tab">
             <ul class="nav nav-tabs" id="myTab" role="tablist">
                 <li class="nav-item">
                   <a class="nav-link active" id="home-tab" data-toggle="tab" href="#data-1" role="tab" aria-controls="home" aria-selected="true">Bills Wise</a>
@@ -184,7 +184,7 @@
                 </div>
             </div>
         </div>
-        <div class="tab-pane fade shadow " id="sales-return-1" role="tabpanel" aria-labelledby="home-tab">
+        <div class="tab-pane fade shadow p-2" id="sales-return-1" role="tabpanel" aria-labelledby="home-tab">
             <table class="table table-bordered mt-2">
                 <thead>
                     <tr>
