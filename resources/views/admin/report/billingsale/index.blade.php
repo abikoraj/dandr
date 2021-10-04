@@ -2,7 +2,6 @@
 @section('title','Sales Report')
 @section('css')
 <link rel="stylesheet" href="{{ asset('backend/plugins/select2/select2.css') }}" />
-<link rel="stylesheet" href="{{ asset('calender/nepali.datepicker.v3.2.min.css') }}" />
 @endsection
 @section('head-title')
     <a href="{{route('admin.report.home')}}">Report</a> / Sales
@@ -12,13 +11,14 @@
 
 @endsection
 @section('content')
-<div class="row">
+{{-- <div class="row">
     <div class="col-md-3 ">
         <label for="type">
             Report Duration
         </label>
         <select name="type" id="type" onchange="manageDisplay(this)" class="form-control show-tick ms select2">
             <option value="-1"></option>
+            <option value="6">FiscalYear</option>
             <option value="0">Session</option>
             <option value="1">Daily</option>
             <option value="2">Weekly</option>
@@ -63,8 +63,15 @@
         <label for="Date1">Date2</label>
         <input type="text" id="date2" class="form-control calender">
     </div>
+    <div class="col-md-3 ct ct-6 d-none">
+        <label for="fy">Fiscal Year</label>
+        <select name="fy" id="fy" class="form-control ms show-tick">
 
-</div>
+        </select>
+    </div>
+</div> --}}
+
+@include('admin.layouts.daterange')
 <div class="row">
     <div class="col-md-6">
         <span class="btn btn-primary" onclick="loadData()"> Load Report</span>
@@ -78,24 +85,10 @@
 @endsection
 @section('js')
 <script src="{{ asset('backend/plugins/select2/select2.min.js') }}"></script>
-<script src="{{ asset('calender/nepali.datepicker.v3.2.min.js') }}"></script>
 <script type="text/JavaScript" src="https://cdnjs.cloudflare.com/ajax/libs/jQuery.print/1.6.0/jQuery.print.js"></script>
 
 <script>
-    var month = Array.from(NepaliFunctions.GetBsMonths());
-    var i =1;
-    month.forEach(element => {
-        $('#month').append('<option value="'+i+'">'+element+'</option>');
-        i++;
-    });
 
-    var start_y = 2070;
-    var now_yr = NepaliFunctions.GetCurrentBsYear();
-    var now_yr1 = now_yr;
-    for (let index = start_y; index < now_yr; index++) {
-        $('#year').append('<option value="'+now_yr1+'">'+now_yr1+'</option>');
-        now_yr1--;
-    }
 
     function loadData(){
 
@@ -113,13 +106,15 @@
             'date1':$('#date1').val(),
             'date2': $('#date2').val(),
             'type':$('#type').val(),
+            'fiscalYear':$('#fiscalyear').val(),
         };
         axios.post("{{route('admin.report.pos.sales')}}",d)
         .then(function(response){
             $('#allData').html(response.data);
+            loadSalesChart();
         })
         .catch(function(error){
-            alert('some error occured');
+            console.log('some error occured',error);
         });
     }
 
@@ -163,4 +158,6 @@
     }
 
 </script>
+@include('admin.layouts.reportchart_pos')
+
 @endsection

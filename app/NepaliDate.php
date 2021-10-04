@@ -271,7 +271,7 @@ class NepaliDate
                     if ($diarr[1] > 12 || $diarr[1] < 1) {
                         $hasErr = true;
                     } else {
-    
+
                         if ($diarr[2] > NepaliDate::getMonthDays((int)$diarr[0], (int) $diarr[1]) || $diarr[2] < 1) {
                             $hasErr = true;
                         }
@@ -281,7 +281,52 @@ class NepaliDate
         } catch (\Throwable $th) {
             $hasErr=true;
         }
-      
+
         return $hasErr;
+    }
+
+    public function get_nepali_month($m)
+    {
+        $n_month = false;
+        switch ($m) {
+            case 1:
+                $n_month = 'बैशाख';
+                break;
+            case 2:
+                $n_month = 'जेष्ठ';
+                break;
+            case 3:
+                $n_month = 'असार';
+                break;
+            case 4:
+                $n_month = 'श्रावण';
+                break;
+            case 5:
+                $n_month = 'भाद्र';
+                break;
+            case 6:
+                $n_month = 'आश्विन';
+                break;
+            case 7:
+                $n_month = 'कार्तिक';
+                break;
+            case 8:
+                $n_month = 'मंसिर';
+                break;
+            case 9:
+                $n_month = 'पुष';
+                break;
+            case 10:
+                $n_month = 'माघ';
+                break;
+            case 11:
+                $n_month = 'फाल्गुन';
+                break;
+            case 12:
+                $n_month = 'चैत्र';
+                break;
+        }
+
+        return $n_month;
     }
 }

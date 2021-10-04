@@ -7,6 +7,7 @@ use App\Models\Advance;
 use App\Models\Bill;
 use App\Models\BillItem;
 use App\Models\Center;
+use App\Models\CreditNote;
 use App\Models\DistributorPayment;
 use App\Models\Distributer;
 use App\Models\Distributorsell;
@@ -23,6 +24,7 @@ use App\Models\FarmerSession;
 use App\Models\EmployeeAdvance;
 use App\Models\EmployeeReport;
 use App\Models\Expense;
+use App\Models\FiscalYear;
 use App\Models\PosBill;
 use App\Models\PosBillItem;
 use App\Models\User;
@@ -336,28 +338,44 @@ class ReportController extends Controller
             $range = [];
             $bill = PosBill::orderBy('id', 'asc');
             $bill_items = PosBillItem::join('pos_bills','pos_bills.id','=','pos_bill_items.pos_bill_id');
-
+            $salesReturn_query=CreditNote::orderBy('id', 'asc');
             if ($type == 0) {
+                $range = NepaliDate::getDate($request->year, $request->month,$request->session);
+                $bill = $bill->where('date', '>=', $range[1])->where('date', '<=', $range[2]);
+                $salesReturn_query = $salesReturn_query->where('date', '>=', $range[1])->where('date', '<=', $range[2]);
+                $bill_items = $bill_items->where('pos_bills.date', '>=', $range[1])->where('pos_bills.date', '<=', $range[2]);
             } elseif ($type == 1) {
                 $date = $date = str_replace('-', '', $request->date1);
                 $bill = $bill->where('date', $date);
+                $salesReturn_query = $salesReturn_query->where('date', $date);
                 $bill_items = $bill_items->where('pos_bills.date', $date);
             } elseif ($type == 2) {
                 $range = NepaliDate::getDateWeek($request->year, $request->month, $request->week);
                 $bill = $bill->where('date', '>=', $range[1])->where('date', '<=', $range[2]);
+                $salesReturn_query = $salesReturn_query->where('date', '>=', $range[1])->where('date', '<=', $range[2]);
                 $bill_items = $bill_items->where('pos_bills.date', '>=', $range[1])->where('pos_bills.date', '<=', $range[2]);
             } elseif ($type == 3) {
                 $range = NepaliDate::getDateMonth($request->year, $request->month);
                 $bill = $bill->where('date', '>=', $range[1])->where('date', '<=', $range[2]);
+                $salesReturn_query = $salesReturn_query->where('date', '>=', $range[1])->where('date', '<=', $range[2]);
                 $bill_items = $bill_items->where('pos_bills.date', '>=', $range[1])->where('pos_bills.date', '<=', $range[2]);
             } elseif ($type == 4) {
                 $range = NepaliDate::getDateYear($request->year);
                 $bill = $bill->where('date', '>=', $range[1])->where('date', '<=', $range[2]);
+                $salesReturn_query = $salesReturn_query->where('date', '>=', $range[1])->where('date', '<=', $range[2]);
                 $bill_items = $bill_items->where('pos_bills.date', '>=', $range[1])->where('pos_bills.date', '<=', $range[2]);
             } elseif ($type == 5) {
                 $range[1] = str_replace('-', '', $request->date1);
                 $range[2] = str_replace('-', '', $request->date2);
                 $bill = $bill->where('date', '>=', $range[1])->where('date', '<=', $range[2]);
+                $salesReturn_query = $salesReturn_query->where('date', '>=', $range[1])->where('date', '<=', $range[2]);
+                $bill_items = $bill_items->where('pos_bills.date', '>=', $range[1])->where('pos_bills.date', '<=', $range[2]);
+            } elseif ($type == 6) {
+                $fiscalYear=FiscalYear::find($request->fiscalYear);
+                $range[1]=$fiscalYear->startdate;
+                $range[2]=$fiscalYear->enddate;
+                $bill = $bill->where('date', '>=', $range[1])->where('date', '<=', $range[2]);
+                $salesReturn_query = $salesReturn_query->where('date', '>=', $range[1])->where('date', '<=', $range[2]);
                 $bill_items = $bill_items->where('pos_bills.date', '>=', $range[1])->where('pos_bills.date', '<=', $range[2]);
             }
 
@@ -366,6 +384,7 @@ class ReportController extends Controller
                 DB::raw('pos_bill_items.*,pos_bills.bill_no')
             )->get();
 
+            $saleReturn=$salesReturn_query->select('id','bill_no','date','total')->get();
             $ddd=$billitems->groupBy('item_id');
             $billItemDatas=[];
 
@@ -390,8 +409,9 @@ class ReportController extends Controller
                 array_push($billItemDatas, $billItemData);
             }
             // dd($billItemDatas);
-
-            return view('admin.report.billingsale.data', compact('bills', 'billItemDatas'));
+            $groupData = json_encode(ReportManager::makeGroup($type,$request),JSON_NUMERIC_CHECK );
+            // dd($groupData);
+            return view('admin.report.billingsale.data', compact('bills', 'billItemDatas','type','groupData','saleReturn'));
         } else {
             return view('admin.report.billingsale.index');
         }
