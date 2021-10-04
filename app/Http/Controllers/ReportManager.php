@@ -99,10 +99,10 @@ class ReportManager
                 $endDate = $fiscalYear->enddate;
             }
 
-            $pos_bills=PosBill::select(DB::raw('sum(grandtotal) as total,cast(substring(cast(date as varchar(8)),5,2) as integer) as month '))
+            $pos_bills=PosBill::select(DB::raw('sum(grandtotal) as total,cast(substring(cast(date as char(8)),5,2) as integer) as month '))
             ->where('date', '>=', $initialDate)->where('date', '<=', $endDate)
             ->groupBy('month')->get();
-            $sales_returns=CreditNote::select(DB::raw('sum(total) as total,cast(substring(cast(date as varchar(8)),5,2) as integer) as month '))
+            $sales_returns=CreditNote::select(DB::raw('sum(total) as total,cast(substring(cast(date as char(8)),5,2) as integer) as month '))
             ->where('date', '>=', $initialDate)->where('date', '<=', $endDate)
             ->groupBy('month')->get();
 
