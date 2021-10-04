@@ -182,6 +182,12 @@ var billpanel = {
                     mod: "barcode",
                     renderfunc: "renderBarcode",
                 });
+                $("#item-barcode").search({
+                    list: billpanel.raw,
+                    mod: "item_barcode",
+                    filterfunc:'filterItemBarcode',
+                    renderfunc: "renderBarcodeItem",
+                });
                 $("#item-name").search({
                     list: billpanel.raw,
                     mod: "item",
@@ -208,12 +214,14 @@ var billpanel = {
         this.billitems[key].qty += 1;
                 const _amount=this.billitems[key].item_rate*this.billitems[key].qty;
                 const _discount=0;
+                const tot=_amount-_discount;
                 let _tax=0;
-                const _taxable=_amount-_discount;
+                let _taxable=0;
                 if(this.billitems[key].item_taxable==1){
+                    _taxable=tot;
                     _tax=((_taxable)*(this.billitems[key].item_tax)/100).toFixed(2);
                 }
-                const _total=(parseFloat(_tax)+_taxable).toFixed(2);
+                const _total=(parseFloat(_tax)+tot).toFixed(2);
                 this.billitems[key].amount = _amount;
                 this.billitems[key].discount = _discount;
                 this.billitems[key].taxable = _taxable;
@@ -226,12 +234,14 @@ var billpanel = {
         this.billitems[key].qty -= 1;
                 const _amount=this.billitems[key].item_rate*this.billitems[key].qty;
                 const _discount=0;
+                const tot=_amount-_discount;
                 let _tax=0;
-                const _taxable=_amount-_discount;
+                let _taxable=0;
                 if(this.billitems[key].item_taxable==1){
+                    _taxable=tot;
                     _tax=((_taxable)*(this.billitems[key].item_tax)/100).toFixed(2);
                 }
-                const _total=(parseFloat(_tax)+_taxable).toFixed(2);
+                const _total=(parseFloat(_tax)+tot).toFixed(2);
                 this.billitems[key].amount = _amount;
                 this.billitems[key].discount = _discount;
                 this.billitems[key].taxable = _taxable;
@@ -338,12 +348,16 @@ var billpanel = {
 
                     const _amount=item.rate*1;
                     const _discount=0;
-                    const _taxable=_amount-_discount;
+                    const tot=_amount-_discount;
+
+                    let _taxable=0;
                     let _tax=0;
+
                     if(item.taxable==1 && companyUseTax){
+                        _taxable=_amount-_discount;
                         _tax=((_taxable)*(item.tax)/100).toFixed(2);
                     }
-                    const _total=(parseFloat(_tax)+_taxable).toFixed(2);
+                    const _total=(parseFloat(_tax)+tot).toFixed(2);
                     this.billitems[key] = {
                         item_id: item.id,
                         item_name: item.name,
@@ -362,12 +376,14 @@ var billpanel = {
                     this.billitems[key].qty += 1;
                     const _amount=this.billitems[key].item_rate*this.billitems[key].qty;
                     const _discount=0;
+                    const tot=_amount-_discount;
                     let _tax=0;
-                    const _taxable=_amount-_discount;
+                    let _taxable=0;
                     if(this.billitems[key].item_taxable==1 && companyUseTax){
+                        _taxable=_amount-_discount;
                         _tax=((_taxable)*(this.billitems[key].item_tax)/100).toFixed(2);
                     }
-                    const _total=(parseFloat(_tax)+_taxable).toFixed(2);
+                    const _total=(parseFloat(_tax)+tot).toFixed(2);
                     this.billitems[key].amount = _amount;
                     this.billitems[key].discount = _discount;
                     this.billitems[key].taxable = _taxable;
@@ -399,12 +415,14 @@ var billpanel = {
 
                         const _amount=item.rate*1;
                         const _discount=0;
-                        const _taxable=_amount-_discount;
+                        const tot=_amount-_discount;
+                        let _taxable=0;
                         let _tax=0;
                         if(item.taxable==1 && companyUseTax){
+                            _taxable=_amount-_discount;
                             _tax=((_taxable)*(item.tax)/100).toFixed(2);
                         }
-                        const _total=(parseFloat(_tax)+_taxable).toFixed(2);
+                        const _total=(parseFloat(_tax)+tot).toFixed(2);
                         this.billitems[key] = {
                             item_id: item.id,
                             item_name: item.name,
@@ -423,12 +441,14 @@ var billpanel = {
                         this.billitems[key].qty += 1;
                         const _amount=this.billitems[key].item_rate*this.billitems[key].qty;
                         const _discount=0;
+                        const tot=_amount-_discount;
                         let _tax=0;
-                        const _taxable=_amount-_discount;
+                        let _taxable=0;
                         if(this.billitems[key].item_taxable==1 && companyUseTax){
+                            _taxable=_amount-_discount;
                             _tax=((_taxable)*(this.billitems[key].item_tax)/100).toFixed(2);
                         }
-                        const _total=(parseFloat(_tax)+_taxable).toFixed(2);
+                        const _total=(parseFloat(_tax)+tot).toFixed(2);
                         this.billitems[key].amount = _amount;
                         this.billitems[key].discount = _discount;
                         this.billitems[key].taxable = _taxable;
@@ -481,12 +501,14 @@ var billpanel = {
 
                 const _amount=item.rate*_qty;
                 const _discount=0;
-                const _taxable=_amount-_discount;
+                const tot=_amount-_discount;
+                let _taxable=0;
                 let _tax=0;
                 if(item.taxable==1 && companyUseTax){
+                    _taxable=tot;
                     _tax=((_taxable)*(item.tax)/100).toFixed(2);
                 }
-                const _total=(parseFloat(_tax)+_taxable).toFixed(2);
+                const _total=(parseFloat(_tax)+tot).toFixed(2);
                 this.billitems[key] = {
                     item_id: item.id,
                     item_name: item.name,
@@ -505,12 +527,14 @@ var billpanel = {
                 this.billitems[key].qty += _qty;
                 const _amount=this.billitems[key].item_rate*this.billitems[key].qty;
                 const _discount=0;
+                const tot=_amount-_discount;
                 let _tax=0;
-                const _taxable=_amount-_discount;
+                let _taxable=0;
                 if(this.billitems[key].item_taxable==1 && companyUseTax){
+                    _taxable=tot;
                     _tax=((_taxable)*(this.billitems[key].item_tax)/100).toFixed(2);
                 }
-                const _total=(parseFloat(_tax)+_taxable).toFixed(2);
+                const _total=(parseFloat(_tax)+tot).toFixed(2);
                 this.billitems[key].amount = _amount;
                 this.billitems[key].discount = _discount;
                 this.billitems[key].taxable = _taxable;
@@ -521,8 +545,9 @@ var billpanel = {
             }
             $("#item-name").val('').trigger("change");
             $("#item-rate").val("");
+            $("#item-barcode").val('');
             $("#item-qty").val("");
-            $("#item-name").focus().select();
+            $("#item-barcode").focus().select();
             this.selectedItem=null;
             console.log(this.billitems);
         }
@@ -868,16 +893,11 @@ $(function () {
         });
         $('body, input').bind('keydown', 'f3', function(e){
             e.preventDefault();
-            console.log($('#item-name')[0]);
-            $('#item-name').focus();
-            $('#item-name').select();
+            console.log($('#item-barcode')[0]);
+            $('#item-barcode').focus();
+            $('#item-barcode').select();
         });
-        $('body, input').bind('keydown', 'f3', function(e){
-            e.preventDefault();
-            console.log($('#item-name')[0]);
-            $('#item-name').focus();
-            $('#item-name').select();
-        });
+
         $('body, input').bind('keydown', 'alt+s', function(e){
             e.preventDefault();
             customerSearchInit();

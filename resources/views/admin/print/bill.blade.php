@@ -96,7 +96,7 @@
         </tr>
         @endif
         @if (env('companyUseTax', false))
-            @if($bill->discount>0 )
+            @if($bill->taxable>0 )
             <tr class="no-border">
                 <th colspan="{{$colspan}}" class="text-end">Taxable:</th>
                 <td>Rs. {{ (float) $bill->taxable }}</td>

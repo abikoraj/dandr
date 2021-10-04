@@ -35,6 +35,7 @@
     </script>
     <script src="http://localhost:4200/signalr/hubs"></script>
     <script>
+        //barcode
         function addToBarcode(barcode) {
             $('#barcode').val(barcode);
             $('#barcode').clearSearch();
@@ -59,15 +60,56 @@
             return html;
         }
 
-        function addToItem(item) {
-          console.log(item,'add to item');
-          $('#item-name').val(item.name);
-          $('#item-rate').val(item.rate);
-          $('#item-name').clearSearch();
-          billpanel.selectedItem=item;
-          $('#item-qty').focus().select();
+        //item Barcode
+        function addToBarcodeItem(barcode){
+            $('#item-barcode').val(barcode);
+            $('#item-barcode').clearSearch();
         }
 
+
+        function renderBarcodeItem(){
+            html = "<table>";
+            console.log(this);
+            this.forEach((item) => {
+
+                html +=
+                    '<tr class="search-item" '+' " id="item-' +
+                    dotSanitize(item.barcode) +
+                    '" data-item=\''+JSON.stringify(item)+'\' onclick="addToItem(JSON.parse(this.dataset.item));">' +
+                    '<td class="p-1"><span style="cursor: pointer;">' +
+                    item.barcode +
+                    "</span></td>" +
+                    "</tr>";
+
+            });
+            html += "</table>";
+            return html;
+        }
+
+        function filterItemBarcode(_keyword) {
+            console.log(this,_keyword);
+            billpanel.selectedItem=null;
+            let _list=[];
+            let _index=0;
+            for (let index = 0; index < this.length; index++) {
+                const element = this[index];
+
+                if (element.barcode.toLowerCase().startsWith(_keyword.toLowerCase())) {
+                    _list.push(element);
+                    if (_index >= 100) {
+                        break;
+                    }
+                    _index += 1;
+                }
+            }
+            return _list;
+
+        }
+
+
+
+
+        //item name
         function renderItem() {
 
             html = "<table>";
@@ -108,6 +150,17 @@
             return _list;
 
         }
+
+        function addToItem(item) {
+          console.log(item,'add to item');
+          $('#item-name').val(item.name);
+          $('#item-rate').val(item.rate);
+          $('#item-barcode').val(item.barcode);
+          $('#item-name').clearSearch();
+          billpanel.selectedItem=item;
+          $('#item-qty').focus().select();
+        }
+
     </script>
     @include('admin.search.list')
     @include('pos.layout.shortcutjs')
