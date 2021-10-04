@@ -195,6 +195,7 @@ class PosBillingController extends Controller
         $note->customer_address = $request->customer_address;
         $note->customer_phone = $request->customer_phone;
         $note->customer_pan = $request->customer_pan;
+        $note->remarks = $request->remarks;
         $note->total=$amount;
         $note->discount=$discount;
         $note->taxable=$taxable;
@@ -215,13 +216,17 @@ class PosBillingController extends Controller
                     $noteitem->rate=$rate;
                     $noteitem->qty=$qty;
                     $noteitem->discount=$dis_per*$qty;
-                    $noteitem->taxable=$noteitem->amount-$noteitem->discount;
+
+                    $tot=$noteitem->amount-$noteitem->discount;
+
                     if($billitem->use_tax==1){
+                        $noteitem->taxable=$noteitem->amount-$noteitem->discount;
                         $noteitem->tax=truncate_decimals((($noteitem->taxable * $billitem->tax_per)/100),2);
                     }else{
                         $noteitem->tax=0;
+                        $noteitem->taxable=0;
                     }
-                    $noteitem->total=$noteitem->taxable+$noteitem->tax;
+                    $noteitem->total=$tot+$noteitem->tax;
                     $noteitem->item_id=$billitem->item_id;
                     $noteitem->name=$billitem->name;
                     $noteitem->save();

@@ -12,7 +12,7 @@
         <div class="col-6 b-700 f-12 text-start">
            {{env('companyUseTax',false)?'VAT':'PAN'}} No: {{ env('companyVATPAN') }}
         </div>
-        <div class="col-6 b-700 f-12 text-end">
+        <div class="col-6 b-700 f-12 text-right">
             Reg No : {{ env('companyRegNO') }}
         </div>
         <div class="col-12">
@@ -27,7 +27,7 @@
         <div class="col-6 b-500 f-12 text-start">
             Bill No: {{ $note->bill_no }}
         </div>
-        <div class="col-6 b-500 f-12 text-end">
+        <div class="col-6 b-500 f-12 text-right">
             Issued Date: {{_nepalidate( $note->date )}}
         </div>
         <div class="col-12 b-500 f-12 text-start">
@@ -36,7 +36,7 @@
         <div class="col-6 b-500 f-12 text-start">
             Purchaser's Phone : {{ $note->customer_phone }}
         </div>
-        <div class="col-6 b-500 f-12 text-end">
+        <div class="col-6 b-500 f-12 text-right">
             Purchaser's Vat/PAN : {{ $note->customer_pan }}
         </div>
     </div>
@@ -54,17 +54,17 @@
             <th>
                 Rate
             </th>
-            {{-- <th>
+            <th>
                 Total
-            </th> --}}
+            </th>
             <th>
                 Discount
             </th>
             @if (env('companyUseTax',false))
 
-            {{-- <th>
+            <th>
                 Taxable
-            </th> --}}
+            </th>
             <th>
                 Tax
             </th>
@@ -90,17 +90,17 @@
                 <td>
                     {{ (float) $item->rate }}
                 </td>
-                {{-- <td>
+                <td>
                     {{ (float) $item->amount }}
-                </td> --}}
+                </td>
                 <td>
                     {{ (float) $item->discount }}
                 </td>
                 @if (env('companyUseTax',false))
 
-                {{-- <td>
+                <td>
                     {{ (float) $item->taxable }}
-                </td> --}}
+                </td>
                 <td>
                     {{ (float) $item->tax }}
                 </td>
@@ -111,33 +111,33 @@
             </tr>
         @endforeach
         @php
-            $colspan=env('companyUseTax',false)?6:5;
+            $colspan=env('companyUseTax',false)?8:7;
         @endphp
         <tr class="no-border">
-            <th colspan="{{$colspan}}" class="text-end">Total:</th>
+            <th colspan="{{$colspan}}" class="text-right">Total:</th>
             <td>Rs. {{ (float) $note->total }}</td>
         </tr>
         @if($note->discount>0 )
 
         <tr class="no-border">
-            <th colspan="{{$colspan}}" class="text-end">Discount:</th>
+            <th colspan="{{$colspan}}" class="text-right">Discount:</th>
             <td>Rs. {{ (float) $note->discount }}</td>
         </tr>
         @endif
         @if (env('companyUseTax', false))
-            @if($note->discount>0 )
+            @if($note->taxable>0 )
             <tr class="no-border">
-                <th colspan="{{$colspan}}" class="text-end">Taxable:</th>
+                <th colspan="{{$colspan}}" class="text-right">Taxable:</th>
                 <td>Rs. {{ (float) $note->taxable }}</td>
             </tr>
             @endif
             <tr class="no-border">
-                <th colspan="{{$colspan}}" class="text-end">Tax:</th>
+                <th colspan="{{$colspan}}" class="text-right">Tax:</th>
                 <td>Rs. {{ (float) $note->tax }}</td>
             </tr>
         @endif
         <tr class="no-border">
-            <th colspan="{{$colspan}}" class="text-end">GrandTotal:</th>
+            <th colspan="{{$colspan}}" class="text-right">GrandTotal:</th>
             <td>Rs. {{ (float) $note->grandtotal }}</td>
         </tr>
 

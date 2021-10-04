@@ -158,6 +158,12 @@
  --}}
 
     </table>
+    <div class="py-2">
+        <div class="form-group">
+            <label for="">Remarks</label>
+            <textarea name="remarks" id="remarks" class="form-control" placeholder="Enter Remarks"></textarea>
+        </div>
+    </div>
     <div class="text-right py-2">
         <span style="padding: 8px;">
             <input type="radio" id="print-directly" > Print Directly
