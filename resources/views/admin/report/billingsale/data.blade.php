@@ -185,7 +185,61 @@
             </div>
         </div>
         <div class="tab-pane fade shadow " id="sales-return-1" role="tabpanel" aria-labelledby="home-tab">
-
+            <table class="table table-bordered mt-2">
+                <thead>
+                    <tr>
+                        <th>Bill No</th>
+                        <th>Date</th>
+                        <th>Customer </th>
+                        <th>Total</th>
+                        <th>Discount</th>
+                        <th>Taxable</th>
+                        <th>Tax</th>
+                        <th>Gross Total</th>
+                        {{-- <th>Paid</th>
+                        <th>Due</th>
+                        <th>Return</th> --}}
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach ($saleReturn as $k=>$s)
+                    <tr>
+                        <td>{{ $s->bill_no }}</td>
+                        <td>{{ _nepalidate($s->date) }}</td>
+                        <td>{{ $s->customer_name }}</td>
+                        <td>{{ (float) $s->total }}</td>
+                        <td>{{ (float) $s->discount }}</td>
+                        <td>{{ (float) $s->taxable }}</td>
+                        <td>{{ (float) $s->tax }}</td>
+                        <td>{{ (float) $s->grandtotal }}</td>
+                        {{-- <td>{{ (float) $b->paid }}</td>
+                        <td>{{ (float) $b->due }}</td>
+                        <td>{{ (float) $b->return }}</td> --}}
+                    </tr>
+                    @endforeach
+                    <tr style="font-weight: 600">
+                        <td colspan="3" class="text-right">Total</td>
+                        <td>
+                            {{coll_sum($saleReturn,'total')}}
+                        </td>
+                        <td>
+                            {{coll_sum($saleReturn,'discount')}}
+                        </td>
+                        <td>
+                            {{coll_sum($saleReturn,'taxable')}}
+                        </td>
+                        <td>
+                            {{coll_sum($saleReturn,'tax')}}
+                        </td>
+                        <td>
+                            {{coll_sum($saleReturn,'grandtotal')}}
+                        </td>
+                        {{-- <td>
+                            {{coll_sum($bills,'paid')}}
+                        </td> --}}
+                    </tr>
+                </tbody>
+            </table>
         </div>
 
     </div>
