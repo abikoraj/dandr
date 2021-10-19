@@ -168,8 +168,6 @@ class PosBillingController extends Controller
         }else{
            $note=$this->generateCreditNote($request,$setting->fiscalYear(),$setting->date);
         }
-
-
         return view('admin.pos.return.creditnote',compact('note'));
     }
 

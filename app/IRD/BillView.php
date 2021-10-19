@@ -10,12 +10,9 @@ class BillReturnViewModel
     public  $buyer_pan;
     public  $fiscal_year;
     public  $buyer_name;
-    public  $ref_invoice_number;
-    public  $credit_note_number;
-    public  $credit_note_date;
-    public  $reason_for_return;
+    public  $invoice_number;
+    public  $invoice_date;
     public  $total_sales;
-    //Nullable
     public  $taxable_sales_vat;
     public  $vat;
     public  $excisable_amount;
@@ -27,5 +24,5 @@ class BillReturnViewModel
     public  $export_sales;
     public  $tax_exempted_sales;
     public bool $isrealtime;
-    public $datetimeClient;
+    public  $datetimeClient;
 }
