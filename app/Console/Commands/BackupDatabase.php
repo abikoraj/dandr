@@ -40,7 +40,7 @@ class BackupDatabase extends Command
      */
     public function handle()
     {
-        $file = 'database-' . Carbon::now()->format('Y-m-d-h-i-s');
+        $file = 'backup-' . Carbon::now()->format('Y-m-d-h-i-s');
         $path = public_path('backup');
         File::ensureDirectoryExists($path);
 

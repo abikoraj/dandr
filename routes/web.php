@@ -13,6 +13,7 @@ use App\Http\Controllers\Admin\OfferController;
 use App\Http\Controllers\Admin\PosBillingController;
 use App\Http\Controllers\Admin\SellitemController;
 use App\Http\Controllers\Admin\SupplierController;
+use App\Http\Controllers\BackupController;
 use App\Http\Controllers\HomeController as ControllersHomeController;
 use App\Http\Controllers\POS\BillingController;
 use App\Http\Controllers\POS\POSController;
@@ -346,6 +347,15 @@ Route::name('admin.')->group(function () {
         });
 
 
+        //XXX backup
+        Route::group(['prefix' => 'backup'], function () {
+            Route::name('backup.')->group(function () {
+                Route::get('', [BackupController::class,'index'])->name('index');
+                Route::get('create', [BackupController::class,'create'])->name('create');
+                Route::post('del', [BackupController::class,'del'])->name('del');
+                Route::post('upload', [BackupController::class,'del'])->name('del');
+            });
+        });
 
 
 

@@ -109,4 +109,8 @@ function numberTowords(float $amount)
 function coll_sum($collection,$column){
     return $collection->sum($column);
 }
+
+function backup_path(): string{
+  return  public_path('backup');
+}
 // function
