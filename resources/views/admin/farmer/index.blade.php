@@ -5,7 +5,9 @@
 <link rel="stylesheet" href="{{ asset('backend/plugins/select2/select2.css') }}" />
 @endsection
 @section('toobar')
-<button type="button" class="btn btn-primary waves-effect m-r-20" data-toggle="modal" data-target="#largeModal">Create Farmer (alt+n)</button>
+@if (auth_has_per('01.02'))
+    <button type="button" class="btn btn-primary waves-effect m-r-20" data-toggle="modal" data-target="#largeModal">Create Farmer (alt+n)</button>
+@endif
 @endsection
 @section('content')
 <div class="row">
@@ -44,9 +46,8 @@
         </tbody>
     </table>
 </div>
-
-@include('admin.farmer.add')
-@include('admin.farmer.edit')
+@includeWhen(auth_has_per('01.01'),'admin.farmer.add')
+@includeWhen(auth_has_per('01.03'),'admin.farmer.edit')
 
 
 
@@ -54,7 +55,7 @@
 @section('js')
 <script src="{{ asset('backend/plugins/select2/select2.min.js') }}"></script>
 <script>
-  
+
     function initEdit(ele) {
         var farmer = JSON.parse(ele.dataset.farmer);
         console.log(farmer);
@@ -145,7 +146,7 @@
             });
     }
 
-  
+
     // delete
     function removeData(id) {
         var dataid = id;

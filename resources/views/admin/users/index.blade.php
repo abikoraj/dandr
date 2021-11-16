@@ -31,6 +31,7 @@
     <table id="newstable1" class="table table-bordered table-striped table-hover js-basic-example dataTable">
         <thead>
             <tr>
+                <th>Type</th>
                 <th>User Name</th>
                 <th>Login User Number</th>
                 <th>Address</th>
@@ -40,23 +41,46 @@
         <tbody>
             @foreach (\App\Models\User::where('role',0)->get() as $user)
                 <tr>
-                    <form action="{{ route('user.update',$user->id) }}" method="POST">
+                    <form action="{{ route('admin.user.update',$user->id) }}" method="POST">
                         @csrf
+                        <td>admn</td>
                         <td><input type="text" name="name" value="{{ $user->name }}" class="form-control"> </td>
                         <td><input type="text" name="phone" value="{{ $user->phone }}" class="form-control" readonly></td>
                         <td><input type="text" name="address" value="{{ $user->address }}" class="form-control"></td>
                         <td>
                             @if ($user->phone != env("authphone",''))
                                 <button class="badge badge-primary"> Update </button> |
-                                <a href="{{ route('user.delete',$user->id) }}" onclick="return confirm('Are you sure?');" class="badge badge-danger">Delete</a> |
-                                <a href="{{ route('user.non.super.admin.change.password',$user->id) }}" class="btn btn-primary btn-sm">Change Password</a>
+                                <a href="{{ route('admin.user.delete',$user->id) }}" onclick="return confirm('Are you sure?');" class="badge badge-danger">Delete</a> |
+                                <a href="{{ route('admin.user.non.super.admin.change.password',$user->id) }}" class="btn btn-primary btn-sm">Change Password</a>
+                                <a href="{{ route('admin.user.per',['user'=>$user->id]) }}" class="btn btn-primary btn-sm" target="blank">Permissions</a>
                             @else
                                 <button type="button" class="btn btn-primary btn-sm waves-effect m-r-20"  data-toggle="modal" onclick="getUserId({{$user->id}});" data-target="#ChangePass">Change Password</button>
                             @endif
+
                         </td>
                     </form>
                 </tr>
             @endforeach
+            @foreach ($emp_users as $user)
+            <tr>
+                <form action="{{ route('admin.user.update',$user->id) }}" method="POST">
+                    @csrf
+                    <td>emp</td>
+                    <td><input type="text" name="name" value="{{ $user->name }}" class="form-control"> </td>
+                    <td><input type="text" name="phone" value="{{ $user->phone }}" class="form-control" readonly></td>
+                    <td><input type="text" name="address" value="{{ $user->address }}" class="form-control"></td>
+                    <td>
+                        @if ($user->phone != env("authphone",''))
+                        <a href="{{ route('admin.user.non.super.admin.change.password',$user->id) }}" class="btn btn-primary btn-sm">Change Password</a>
+                        <a href="{{ route('admin.user.per',['user'=>$user->id]) }}" class="btn btn-primary btn-sm" target="blank">Permissions</a>
+
+                        @else
+                            <button type="button" class="btn btn-primary btn-sm waves-effect m-r-20"  data-toggle="modal" onclick="getUserId({{$user->id}});" data-target="#ChangePass" >Change Password</button>
+                        @endif
+                    </td>
+                </form>
+            </tr>
+        @endforeach
         </tbody>
     </table>
 </div>
@@ -72,7 +96,7 @@
             <hr>
             <div class="card">
                 <div class="body">
-                    <form id="form_validation" action="{{ route('user.add') }}" onsubmit="return checkPass(event);">
+                    <form id="form_validation" action="{{ route('admin.user.add') }}" onsubmit="return checkPass(event);">
                         @csrf
                         <div class="row">
                             <div class="col-lg-6">
@@ -135,7 +159,7 @@
             <hr>
             <div class="card">
                 <div class="body">
-                   <form id="validation" action="{{ route('user.change.password') }}" method="POST" onsubmit="return changePassConfirm(event);">
+                   <form id="validation" action="{{ route('admin.user.change.password') }}" method="POST" onsubmit="return changePassConfirm(event);">
                         @csrf
                         <div class="row">
                             <div class="col-lg-12">

@@ -4,15 +4,19 @@ use App\Http\Controllers\Admin\BankController;
 use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\CounterController;
 use App\Http\Controllers\Admin\CustomerController;
+use App\Http\Controllers\Admin\DistributerController;
 use App\Http\Controllers\Admin\DistributerMilkController;
 use App\Http\Controllers\Admin\DistributersellController;
 use App\Http\Controllers\Admin\DistributerSnfFatController;
+use App\Http\Controllers\Admin\DistributorPaymentController;
+use App\Http\Controllers\Admin\EmployeeController;
 use App\Http\Controllers\Admin\GatewayController;
 use App\Http\Controllers\Admin\ItemController;
 use App\Http\Controllers\Admin\OfferController;
 use App\Http\Controllers\Admin\PosBillingController;
 use App\Http\Controllers\Admin\SellitemController;
 use App\Http\Controllers\Admin\SupplierController;
+use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\BackupController;
 use App\Http\Controllers\HomeController as ControllersHomeController;
 use App\Http\Controllers\POS\BillingController;
@@ -42,6 +46,7 @@ Route::get('/test-all/{id}', 'TestController@all')->name('test-all');
 Route::get('/test-distributor', 'TestController@distributor')->name('test-distributor');
 Route::get('/test-distributor-date', 'TestController@distributorByDate')->name('test-distributor');
 
+Route::view('/403', 'access.403')->name('403');
 
 Route::get('/pass', function () {
     // $pass = bcrypt('admin');
@@ -75,36 +80,36 @@ Route::name('admin.')->group(function () {
 
         Route::prefix('farmers')->name('farmer.')->group(function () {
             // XXX farmer routes
-            Route::get('', 'Admin\FarmerController@index')->name('list');
+            Route::get('', 'Admin\FarmerController@index')->name('list')->middleware('permmission:01.01');
             Route::post('list-by-center', 'Admin\FarmerController@listFarmerByCenter')->name('list-bycenter');
             Route::post('minlist-by-center', 'Admin\FarmerController@minlistFarmerByCenter')->name('minlist-bycenter');
 
 
-            Route::post('add', 'Admin\FarmerController@addFarmer')->name('add');
+            Route::post('add', 'Admin\FarmerController@addFarmer')->name('add')->middleware('permmission:01.02');
             Route::get('detail/{id}', 'Admin\FarmerController@farmerDetail')->name('detail');
 
-            Route::post('update', 'Admin\FarmerController@updateFarmer')->name('update')->middleware('authority');
-            Route::get('delete/{id}', 'Admin\FarmerController@deleteFarmer')->name('delete')->middleware('authority');
+            Route::post('update', 'Admin\FarmerController@updateFarmer')->name('update')->middleware('permmission:01.03');
+            Route::get('delete/{id}', 'Admin\FarmerController@deleteFarmer')->name('delete')->middleware('permmission:01.04');
             Route::post('load-session-data', 'Admin\FarmerController@loadSessionData')->name('load-session-data');
 
             // XXX farmer due payments
-            Route::get('due', 'Admin\FarmerController@due')->name('due');
-            Route::post('due-load', 'Admin\FarmerController@dueLoad')->name('due.load');
-            Route::post('pay-save', 'Admin\FarmerController@paymentSave')->name('pay.save');
+            Route::get('due', 'Admin\FarmerController@due')->name('due')->middleware('permmission:01.05');
+            Route::post('due-load', 'Admin\FarmerController@dueLoad')->name('due.load')->middleware('permmission:01.05');
+            Route::post('pay-save', 'Admin\FarmerController@paymentSave')->name('pay.save')->middleware('permmission:01.05');
 
             //XXX farmer Account opening
 
-            Route::match(['GET', 'POST'], 'add-due-list', 'Admin\FarmerController@addDueList')->name('due.add.list');
-            Route::match(['GET', 'POST'], 'add-due', 'Admin\FarmerController@addDue')->name('due.add');
+            Route::match(['GET', 'POST'], 'add-due-list', 'Admin\FarmerController@addDueList')->name('due.add.list')->middleware('permmission:01.06');
+            Route::match(['GET', 'POST'], 'add-due', 'Admin\FarmerController@addDue')->name('due.add')->middleware('permmission:01.06');
 
             // XXX  farmer advance
-            Route::get('advances', 'Admin\AdvanceController@index')->name('advance');
-            Route::post('advance-add', 'Admin\AdvanceController@add')->name('advance.add');
-            Route::post('advance-list', 'Admin\AdvanceController@list')->name('advance.list');
+            Route::get('advances', 'Admin\AdvanceController@index')->name('advance')->middleware('permmission:01.10');
+            Route::post('advance-add', 'Admin\AdvanceController@add')->name('advance.add')->middleware('permmission:01.10');
+            Route::post('advance-list', 'Admin\AdvanceController@list')->name('advance.list')->middleware('permmission:01.10');
             // Route::post('advance-update', 'Admin\AdvanceController@update')->name('advance.update')->middleware('authority');
-            Route::post('advance-delete', 'Admin\AdvanceController@delete')->name('advance.delete')->middleware('authority');
-            Route::post('advance-update', 'Admin\AdvanceController@update')->name('advance.update')->middleware('authority');
-            Route::post('advance-list-by-date', 'Admin\AdvanceController@listByDate')->name('advance.list-by-date');
+            Route::post('advance-delete', 'Admin\AdvanceController@delete')->name('advance.delete')->middleware('permmission:01.10');
+            Route::post('advance-update', 'Admin\AdvanceController@update')->name('advance.update')->middleware('permmission:01.10');
+            Route::post('advance-list-by-date', 'Admin\AdvanceController@listByDate')->name('advance.list-by-date')->middleware('permmission:01.10');
             // XXX Milk payment
             Route::group(['prefix' => 'milk-payment'], function () {
                 Route::name('milk.payment.')->group(function () {
@@ -121,47 +126,47 @@ Route::name('admin.')->group(function () {
         Route::prefix('snf-fat')->name('snf-fat.')->group(function () {
 
             // XXX snf and fats
-            Route::get('', 'Admin\SnffatController@index')->name('index');
-            Route::post('load-data', 'Admin\SnffatController@snffatDataLoad')->name('load-data');
-            Route::post('snf-fats-save', 'Admin\SnffatController@saveSnffatData')->name('store');
-            Route::post('snf-fats-update', 'Admin\SnffatController@update')->name('update')->middleware('authority');
-            Route::post('snf-fats-delete', 'Admin\SnffatController@delete')->name('delete')->middleware('authority');
+            Route::get('', 'Admin\SnffatController@index')->name('index')->middleware('permmission:02.04');
+            Route::post('load-data', 'Admin\SnffatController@snffatDataLoad')->name('load-data')->middleware('permmission:02.04');
+            Route::post('snf-fats-save', 'Admin\SnffatController@saveSnffatData')->name('store')->middleware('permmission:02.04');
+            Route::post('snf-fats-update', 'Admin\SnffatController@update')->name('update')->middleware('permmission:02.05');
+            Route::post('snf-fats-delete', 'Admin\SnffatController@delete')->name('delete')->middleware('permmission:02.06');
         });
 
         Route::prefix('milk-data')->name('milk.')->group(function () {
             // XXX milk data
-            Route::get('', 'Admin\MilkController@index')->name('index');
-            Route::post('save/{type}', 'Admin\MilkController@saveMilkData')->name('store');
-            Route::post('load', 'Admin\MilkController@milkDataLoad')->name('load');
+            Route::get('', 'Admin\MilkController@index')->name('index')->middleware('permmission:02.01');
+            Route::post('save/{type}', 'Admin\MilkController@saveMilkData')->name('store')->middleware('permmission:02.01');
+            Route::post('load', 'Admin\MilkController@milkDataLoad')->name('load')->middleware('permmission:02.01');
 
-            Route::post('update', 'Admin\MilkController@update')->name('update')->middleware('authority');
-            Route::post('delete', 'Admin\MilkController@delete')->name('delete')->middleware('authority');
+            Route::post('update', 'Admin\MilkController@update')->name('update')->middleware('permmission:02.02');
+            Route::post('delete', 'Admin\MilkController@delete')->name('delete')->middleware('permmission:02.03');
 
             Route::post('farmer-data-load', 'Admin\MilkController@loadFarmerData')->name('load.farmer.data');
         });
 
         Route::prefix('distributers')->name('distributer.')->group(function () {
             // XXX distributer
-            Route::get('', 'Admin\DistributerController@index')->name('index');
-            Route::post('add', 'Admin\DistributerController@add')->name('add');
-            Route::get('list', 'Admin\DistributerController@list')->name('list');
-            Route::post('update', 'Admin\DistributerController@update')->name('update');
-            Route::post('delete', 'Admin\DistributerController@delete')->name('delete')->middleware('authority');
+            Route::get('', [DistributerController::class, 'index'])->name('index');
+            Route::post('add', [DistributerController::class, 'add'])->name('add');
+            Route::get('list', [DistributerController::class, 'list'])->name('list');
+            Route::post('update', [DistributerController::class, 'update'])->name('update');
+            Route::post('delete', [DistributerController::class, 'delete'])->name('delete')->middleware('authority');
 
-            Route::get('detail/{id}', 'Admin\DistributerController@distributerDetail')->name('detail');
-            Route::post('detail', 'Admin\DistributerController@distributerDetailLoad')->name('detail.load');
+            Route::get('detail/{id}', [DistributerController::class, 'distributerDetail'])->name('detail');
+            Route::post('detail', [DistributerController::class, 'distributerDetailLoad'])->name('detail.load');
 
 
-            Route::get('opening', 'Admin\DistributerController@opening')->name('detail.opening');
-            Route::post('opening/list', 'Admin\DistributerController@loadLedger')->name('detail.opening.list');
-            Route::post('ledger', 'Admin\DistributerController@ledger')->name('detail.ledger');
-            Route::post('ledger/update', 'Admin\DistributerController@updateLedger')->name('detail.ledger.update')->middleware('authority');
+            Route::get('opening', [DistributerController::class, 'opening'])->name('detail.opening');
+            Route::post('opening/list', [DistributerController::class, 'loadLedger'])->name('detail.opening.list');
+            Route::post('ledger', [DistributerController::class, 'ledger'])->name('detail.ledger');
+            Route::post('ledger/update', [DistributerController::class, 'updateLedger'])->name('detail.ledger.update')->middleware('authority');
 
             // distributer request
-            Route::get('request', 'Admin\DistributerController@distributerRequest')->name('request');
-            Route::get('change/status/{id}', 'Admin\DistributerController@distributerRequestChangeStatus')->name('request.change.status');
+            Route::get('request', [DistributerController::class, 'distributerRequest'])->name('request');
+            Route::get('change/status/{id}', [DistributerController::class, 'distributerRequestChangeStatus'])->name('request.change.status');
 
-            Route::match(['GET','POST'],'credit-list', 'Admin\DistributerController@creditList')->name('credit.list');
+            Route::match(['GET','POST'],'credit-list', [DistributerController::class, 'creditList'])->name('credit.list');
 
 
 
@@ -173,9 +178,9 @@ Route::name('admin.')->group(function () {
             Route::post('sell-del', [DistributersellController::class,'deleteDistributersell'])->name('sell.del')->middleware('authority');
 
             //XXX Distributor Payments
-            Route::get('payment', 'Admin\DistributorPaymentController@index')->name('payemnt');
-            Route::post('due-list', 'Admin\DistributorPaymentController@due')->name('due');
-            Route::post('due-pay', 'Admin\DistributorPaymentController@pay')->name('pay');
+            Route::get('payment', [DistributorPaymentController::class, 'index'])->name('payemnt');
+            Route::post('due-list', [DistributorPaymentController::class, 'due'])->name('due');
+            Route::post('due-pay', [DistributorPaymentController::class, 'pay'])->name('pay');
 
             //XXXX Distributer Milk Data
             Route::prefix('milk-data')->name('MilkData.')->group(function () {
@@ -205,16 +210,16 @@ Route::name('admin.')->group(function () {
 
         // XXX items
         Route::prefix('items')->name('item.')->group(function () {
-            Route::match(['GET','POST'],'', [ItemController::class,'index'])->name('index');
+            Route::match(['GET','POST'],'', [ItemController::class,'index'])->name('index')->middleware('permmission:03.04');
             Route::match(['GET','POST'],'all', [ItemController::class,'all'])->name('all');
             Route::match(['GET','POST'],'barcode', [ItemController::class,'barcode'])->name('barcode');
             Route::match(['GET','POST'],'product', [ItemController::class,'product'])->name('product');
             Route::match(['GET','POST'],'product-barcode', [ItemController::class,'productBarcode'])->name('product-barcode');
-            Route::post('edit', [ItemController::class,'edit'])->name('edit');
-            Route::post('add', [ItemController::class,'save'])->name('save');
-            Route::match(['GET','POST'],'item-center-stock/{id}', [ItemController::class,'centerStock'])->name('center-stock');
-            Route::get('item-delete/{id}', [ItemController::class,'delete'])->name('delete')->middleware('authority');
-            Route::post('item-update', [ItemController::class,'update'])->name('update')->middleware('authority');
+            Route::post('edit', [ItemController::class,'edit'])->name('edit')->middleware('permmission:03.02');
+            Route::post('add', [ItemController::class,'save'])->name('save')->middleware('permmission:03.01');
+            Route::match(['GET','POST'],'item-center-stock/{id}', [ItemController::class,'centerStock'])->name('center-stock')->middleware('permmission:03.05');
+            Route::get('item-delete/{id}', [ItemController::class,'delete'])->name('delete')->middleware('authority')->middleware('permmission:03.03');
+            Route::post('item-update', [ItemController::class,'update'])->name('update')->middleware('authority')->middleware('permmission:03.02');
         });
 
         Route::prefix('sell-items')->name('sell.item.')->group(function () {
@@ -279,25 +284,25 @@ Route::name('admin.')->group(function () {
 
         Route::prefix('employees')->name('employee.')->group(function () {
             // XXX XXX employees
-            Route::get('', 'Admin\EmployeeController@index')->name('index');
-            Route::post('add', 'Admin\EmployeeController@add')->name('add');
-            Route::post('update', 'Admin\EmployeeController@update')->name('update')->middleware('authority');
-            Route::get('list', 'Admin\EmployeeController@list')->name('list');
-            Route::post('delete', 'Admin\EmployeeController@delete')->name('delete')->middleware('authority');
-            Route::get('detail/{id}', 'Admin\EmployeeController@detail')->name('detail');
-            Route::post('load/emp/data', 'Admin\EmployeeController@loadData')->name('load.data');
+            Route::get('', [EmployeeController::class,'index'])->name('index');
+            Route::post('add', [EmployeeController::class,'add'])->name('add');
+            Route::post('update', [EmployeeController::class,'update'])->name('update')->middleware('authority');
+            Route::get('list', [EmployeeController::class,'list'])->name('list');
+            Route::post('delete', [EmployeeController::class,'delete'])->name('delete')->middleware('authority');
+            Route::get('detail/{id}', [EmployeeController::class,'detail'])->name('detail');
+            Route::post('load/emp/data', [EmployeeController::class,'loadData'])->name('load.data');
             //XXX Employee Advance Management
-            Route::get('advance', 'Admin\EmployeeController@advance')->name('advance');
-            Route::post('addadvance', 'Admin\EmployeeController@addAdvance')->name('advance.add');
-            Route::post('getadvance', 'Admin\EmployeeController@getAdvance')->name('advance.list');
-            Route::post('deladvance', 'Admin\EmployeeController@delAdvance')->name('advance.del')->middleware('authority');;
-            Route::post('updateadvance', 'Admin\EmployeeController@updateAdvance')->name('advance.update')->middleware('authority');
-            Route::post('advance/transfer', 'Admin\EmployeeController@amountTransfer')->name('amount.transfer');
+            Route::get('advance', [EmployeeController::class,'advance'])->name('advance');
+            Route::post('addadvance', [EmployeeController::class,'addAdvance'])->name('advance.add');
+            Route::post('getadvance', [EmployeeController::class,'getAdvance'])->name('advance.list');
+            Route::post('deladvance', [EmployeeController::class,'delAdvance'])->name('advance.del')->middleware('authority');;
+            Route::post('updateadvance', [EmployeeController::class,'updateAdvance'])->name('advance.update')->middleware('authority');
+            Route::post('advance/transfer', [EmployeeController::class,'amountTransfer'])->name('amount.transfer');
             //XXX Employee Account Opening
-            Route::match(['get', 'post'],'account', 'Admin\EmployeeController@accountIndex')->name('account.index');
-            Route::match(['get', 'post'],'account-add', 'Admin\EmployeeController@accountAdd')->name('account.add');
+            Route::match(['get', 'post'],'account', [EmployeeController::class,'accountIndex'])->name('account.index');
+            Route::match(['get', 'post'],'account-add', [EmployeeController::class,'accountAdd'])->name('account.add');
             //XXX Employee Month Closing
-            Route::post('account-closing', 'Admin\EmployeeController@closeSession')->name('account.close');
+            Route::post('account-closing', [EmployeeController::class,'closeSession'])->name('account.close');
 
         });
 
@@ -520,12 +525,13 @@ Route::name('admin.')->group(function () {
 
         Route::group(['prefix' => 'user'], function () {
             Route::name('user.')->group(function () {
-                Route::match(['GET', 'POST'], '', 'Admin\UserController@index')->name('users');
-                Route::match(['GET', 'POST'], 'add', 'Admin\UserController@userAdd')->name('add');
-                Route::match(['GET', 'POST'], 'delete/{id}', 'Admin\UserController@delete')->name('delete');
-                Route::match(['GET', 'POST'], 'update/{update}', 'Admin\UserController@update')->name('update')->middleware('authority');
-                Route::match(['GET', 'POST'], 'change/password', 'Admin\UserController@changePassword')->name('change.password');
-                Route::match(['GET', 'POST'], 'non-super-admin/change/password/{id}', 'Admin\UserController@nonSuperadminChangePassword')->name('non.super.admin.change.password');
+                Route::match(['GET', 'POST'], '', [ UserController::class,'index'])->name('users');
+                Route::match(['GET', 'POST'], 'add', [ UserController::class,'userAdd'])->name('add');
+                Route::match(['GET', 'POST'], 'delete/{id}', [ UserController::class,'delete'])->name('delete');
+                Route::match(['GET', 'POST'], 'per/{user}', [ UserController::class,'per'])->name('per');
+                Route::match(['GET', 'POST'], 'update/{update}', [ UserController::class,'update'])->name('update')->middleware('authority');
+                Route::match(['GET', 'POST'], 'change/password', [ UserController::class,'changePassword'])->name('change.password');
+                Route::match(['GET', 'POST'], 'non-super-admin/change/password/{id}', [ UserController::class,'nonSuperadminChangePassword'])->name('non.super.admin.change.password');
             });
         });
 

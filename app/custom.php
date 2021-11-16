@@ -1,9 +1,15 @@
 <?php
+
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Config;
+
 define('farmer', 1);
 define('distributer', 2);
 define('employee', 3);
 define('supplier', 4);
 define('customer', 5);
+
+$xxx_per="data";
 
 function _nepalidate($date)
 {
@@ -112,5 +118,33 @@ function coll_sum($collection,$column){
 
 function backup_path(): string{
   return  public_path('backup');
+}
+
+function has_per($per,$list): bool{
+    return $list->where('code',$per)->count()>0;
+}
+
+function auth_has_per($per){
+    try {
+        $user=Auth::user();
+        if($user->phone == env('authphone', "9852059171")){
+            return true;
+        }else{
+            return Config::get('per.per')->where('enable',1)->where('code',$per)->count()>0;
+        }
+        //code...
+    } catch (\Throwable $th) {
+        //throw $th;
+        return false;
+    }
+
+}
+
+function xxx_per_func() {
+    Config::set('per.per', ['database']);
+}
+
+function roleToWord($key){
+    return str_replace('_',' ',$key);
 }
 // function

@@ -24,6 +24,8 @@ class User extends Authenticatable
         'password',
     ];
 
+
+
     /**
      * The attributes that should be hidden for arrays.
      *
@@ -44,12 +46,16 @@ class User extends Authenticatable
     ];
 
 
+    public function permissions(){
+        return $this->hasMany(UserPermission::class);
+    }
+
     /**
      * role=11;FloorManager
      * role=12;Pos User
      */
     public function getRole(){
-        if($this->role == 0){
+        if($this->role == 0 || $this->role==4){
             return 'admin';
         }elseif($this->role == 1){
             return "farmer";
@@ -59,8 +65,6 @@ class User extends Authenticatable
             return "supplier";
         }elseif($this->role == 5){
             return "customer";
-        }else{
-            return "employee";
         }
     }
 

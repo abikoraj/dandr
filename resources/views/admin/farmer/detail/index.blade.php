@@ -63,12 +63,17 @@
                                 <td>{{ $milk->m_amount }}</td>
                                 <td>{{ $milk->e_amount }}</td>
                                 <td class="d-print-none">
-                                    <button class="btn btn-primary btn-sm" data-milk="{{$milk->toJson()}}" onclick="showMilkUpdate(this)">
-                                        Edit
-                                    </button>
+                                    @if (auth_has_per('02.02'))
+                                        <button class="btn btn-primary btn-sm" data-milk="{{$milk->toJson()}}" onclick="showMilkUpdate(this)">
+                                            Edit
+                                        </button>
+                                    @endif
+                                    @if (auth_has_per('02.03'))
+
                                     <button class="btn btn-danger btn-sm" data-milk="{{$milk->toJson()}}" onclick="delMilkData(this);">
                                         delete
                                     </button>
+                                    @endif
                                 </td>
                             </tr>
                             @php
@@ -121,12 +126,18 @@
                                     <td>{{ $sf->snf }}</td>
                                     <td>{{ $sf->fat }}</td>
                                     <td class="d-print-none">
+                                    @if (auth_has_per('02.05'))
+
                                         <button class="btn btn-primary btn-sm" data-snffat="{{$sf->toJson()}}" onclick="showSnfFatUpdate(this)">
                                             Edit
                                         </button>
+                                    @endif
+                                    @if (auth_has_per('02.06'))
+
                                         <button class="btn btn-danger btn-sm" data-snffat="{{$sf->toJson()}}" onclick="delSnfFat(this);">
                                             delete
                                         </button>
+                                    @endif
                                     </td>
                                 </tr>
 

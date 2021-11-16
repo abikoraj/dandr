@@ -21,7 +21,7 @@ class DistributorPaymentController extends Controller
         $distributor=Distributer::find($request->id);
         $id=$request->id;
         $distributor->balance=Ledger::where('user_id',$distributor->user_id)->where('type',2)->sum('amount') - Ledger::where('user_id',$distributor->user_id)->where('type',1)->sum('amount');
- 
+
         return view('admin.distributer.payment.data',compact('distributor','id'));
     }
 

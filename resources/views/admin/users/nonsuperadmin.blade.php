@@ -4,7 +4,7 @@
 
 @section('content')
 
-<div class="table-responsive">
+<div >
     @if ($errors->any())
         <div class="alert alert-danger">
             <ul>
@@ -25,23 +25,23 @@
             {{ session()->get('message_danger') }}
         </div>
     @endif
-<form action="{{ route('user.non.super.admin.change.password',$user->id) }}" method="POST" onsubmit="return checkConfirm(event);">
+<form action="{{ route('admin.user.non.super.admin.change.password',$user->id) }}" method="POST" onsubmit="return checkConfirm(event);">
     @csrf
     <div class="row">
-        <div class="col-lg-10">
+        <div class="col-lg-6 col-12">
             <label for="cprice">New Password</label>
             <div class="form-group">
                 <input type="password" name="n_password" id="npass" class="form-control"  placeholder="Enter Password" required>
             </div>
         </div>
 
-        <div class="col-lg-10">
+        <div class="col-lg-6 col-12">
             <label for="cprice">Confirm Password</label>
             <div class="form-group">
                 <input type="password" id="cpass" class="form-control"  placeholder="Enter Password" required>
             </div>
         </div>
-        <div class="col-md-4">
+        <div class="col-md-4 col-12">
             <button class="btn btn-primary">Save Change</button>
         </div>
     </div>

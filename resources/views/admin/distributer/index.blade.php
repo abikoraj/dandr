@@ -2,7 +2,9 @@
 @section('title','Distributers')
 @section('head-title','Distributers')
 @section('toobar')
+@if (auth_has_per('04.02'))
 <button type="button" class="btn btn-primary waves-effect m-r-20" data-toggle="modal" data-target="#largeModal">Create Distributer</button>
+@endif
 @endsection
 @section('content')
 <div class="pt-2 pb-2">
@@ -27,13 +29,16 @@
     </table>
 </div>
 
-<!-- modal -->
+@if (auth_has_per('04.02'))
 
+<!-- add modal -->
 @include('admin.distributer.add')
+@endif
+@if (auth_has_per('04.03'))
 
 <!-- edit modal -->
-
 @include('admin.distributer.edit')
+@endif
 
 
 @endsection
@@ -45,8 +50,8 @@
         $('#ename').val(distributer.name);
         $('#ephone').val(distributer.phone);
         $('#eaddress').val(distributer.address);
-        $('#ecredit_days').val(ele.dataset.days);
-        $('#ecredit_limit').val(ele.dataset.limit);
+        $('#ecredit_days').val(distributer.credit_days);
+        $('#ecredit_limit').val(distributer.credit_limit);
         $('#eaddress').val(distributer.address);
         $('#esnf_rate').val(distributer.snf_rate);
         $('#efat_rate').val(distributer.fat_rate);

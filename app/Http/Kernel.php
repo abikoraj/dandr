@@ -65,5 +65,6 @@ class Kernel extends HttpKernel
         'role' =>\App\Http\Middleware\RoleManager::class,
         'authority' =>\App\Http\Middleware\Authority::class,
         'pos' =>\App\Http\Middleware\POS::class,
+        'permmission' =>\App\Http\Middleware\Permission::class,
     ];
 }

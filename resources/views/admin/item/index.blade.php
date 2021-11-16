@@ -3,8 +3,10 @@
 @section('head-title', 'Items')
 
 @section('toobar')
+@if (auth_has_per('03.01'))
     <button type="button" class="btn btn-primary waves-effect m-r-20" data-toggle="modal" data-target="#largeModal">Create
         New Item</button>
+@endif
 @endsection
 @section('content')
     <div class="pt-2 pb-2">
@@ -49,7 +51,10 @@
     {{-- <div id="result">
         lorem
     </div> --}}
-    @include('admin.item.add')
+    @if (auth_has_per('03.01'))
+        @include('admin.item.add')
+    @endif
+
     @include('admin.item.singlejs')
     {{-- @include('admin.item.edit') --}}
 @endsection
@@ -125,11 +130,14 @@
             }
         }
 
+        @if (auth_has_per('03.02'))
+
         function initEdit(id) {
             win.showPost("Edit Item", "{{ route('admin.item.edit') }}", {
                 "id": id
             });
         }
+        @endif
 
         function editData(e) {
 

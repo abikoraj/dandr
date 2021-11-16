@@ -22,12 +22,14 @@ class EmployeeController extends Controller
 
     public function add(Request $request)
     {
-        $user = new User();
-        $user->phone = $request->phone;
+        $user=User::where('phone',$request->phone)->first();
+        if($user==null){
+            $user = new User();
+            $user->role = 4;
+            $user->password = bcrypt($request->phone);
+        }
         $user->name = $request->name;
         $user->address = $request->address;
-        $user->role = 4;
-        $user->password = bcrypt($request->phone);
         $user->save();
 
         $emp = new Employee();
@@ -42,7 +44,7 @@ class EmployeeController extends Controller
 
     public function update(Request $request)
     {
-        $user = User::where('id', $request->id)->where('role', 4)->first();
+        $user = User::where('id', $request->id)->first();
         $user->phone = $request->phone;
         $user->name = $request->name;
         $user->address = $request->address;
@@ -250,7 +252,7 @@ class EmployeeController extends Controller
         $ledgers = Ledger::where('date', '>=', $range[1])->where('date', '<=', $range[2])->where('user_id', $user->id)->get();
         $empSession = EmployeeSession::where('year', $request->year)->where('month', $request->month)->where('user_id', $user->id)->first();
         // dd($ledgers);
-     
+
         $arr = [];
         $base = $prev;
         $salaryLoaded=false;
@@ -277,7 +279,7 @@ class EmployeeController extends Controller
             return view('admin.emp.salarypay.data_new_new', compact('track','arr', 'user', 'employee', 'empSession', 'prev','salaryLoaded','lastdate'));
         }
 
-  
+
     }
 
     public function storeSalary(Request $request)

@@ -22,7 +22,11 @@
     <link rel="stylesheet" href="{{ asset('calender/nepali.datepicker.v3.2.min.css') }}" />
     @include('admin.layouts.css')
     @yield('css')
-
+    <style>
+        .cap{
+            text-transform: capitalize;
+        }
+    </style>
 </head>
 
 <body class="theme-blush">
@@ -39,7 +43,12 @@
     <div class="overlay"></div>
 
     <!-- Left Sidebar -->
+    @if (Auth::user()->phone != env('authphone', "9852059171"))
     @include('admin.layouts.menu')
+
+    @else
+    @include('admin.layouts.menu_admin')
+    @endif
     <section class="content">
         <div class="body_scroll">
             <div class="block-header">

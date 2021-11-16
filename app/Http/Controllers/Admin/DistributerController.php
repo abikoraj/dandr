@@ -49,19 +49,21 @@ class DistributerController extends Controller
         $dis->is_fixed = $request->is_fixed ?? 0;
         $dis->fixed_rate = $request->fixed_rate ?? 0;
         $dis->save();
-        return view('admin.distributer.single', compact('user'));
+
+        $newuser=User::join('distributers', 'distributers.user_id', '=', 'users.id')->select('users.*', DB::raw('distributers.id as dis_id,distributers.snf_rate,distributers.fat_rate,distributers.added_rate,distributers.is_fixed,distributers.fixed_rate,distributers.credit_days,distributers.credit_limit'))->where('users.id', $user->id)->first();
+        return view('admin.distributer.single', ['user'=>$newuser]);
     }
 
     public function list()
     {
-        $distributer = User::join('distributers', 'distributers.user_id', '=', 'users.id')->select('users.*', DB::raw('distributers.id as dis_id,distributers.snf_rate,distributers.fat_rate,distributers.added_rate,distributers.is_fixed,distributers.fixed_rate'))->where('users.role', 2)->orderBy('distributers.id', 'asc')->get();
+        $distributer = User::join('distributers', 'distributers.user_id', '=', 'users.id')->select('users.*', DB::raw('distributers.id as dis_id,distributers.snf_rate,distributers.fat_rate,distributers.added_rate,distributers.is_fixed,distributers.fixed_rate,distributers.credit_days,distributers.credit_limit'))->orderBy('distributers.id', 'asc')->get();
         // dd($distributer);
         return view('admin.distributer.list', compact('distributer'));
     }
 
     public function update(Request $request)
     {
-        $user = User::where('id', $request->id)->where('role', 2)->first();
+        $user = User::where('id', $request->id)->first();
         $user->phone = $request->phone;
         $user->name = $request->name;
         $user->address = $request->address;
@@ -79,7 +81,7 @@ class DistributerController extends Controller
         $dis->is_fixed = $request->is_fixed ?? 0;
         $dis->fixed_rate = $request->fixed_rate ?? 0;
         $dis->save();
-        $user=User::join('distributers', 'distributers.user_id', '=', 'users.id')->select('users.*', DB::raw('distributers.id as dis_id,distributers.snf_rate,distributers.fat_rate,distributers.added_rate,distributers.is_fixed,distributers.fixed_rate'))->where('users.id', $request->id)->first();
+        $user=User::join('distributers', 'distributers.user_id', '=', 'users.id')->select('users.*', DB::raw('distributers.id as dis_id,distributers.snf_rate,distributers.fat_rate,distributers.added_rate,distributers.is_fixed,distributers.fixed_rate,distributers.credit_days,distributers.credit_limit'))->where('users.id', $request->id)->first();
         return view('admin.distributer.single', compact('user'));
     }
 
