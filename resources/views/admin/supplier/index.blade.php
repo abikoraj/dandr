@@ -2,7 +2,9 @@
 @section('title','Suppliers')
 @section('head-title','Suppliers')
 @section('toobar')
+@if (auth_has_per('07.02'))
 <button type="button" class="btn btn-primary waves-effect m-r-20" data-toggle="modal" data-target="#largeModal">Create Supplier</button>
+@endif
 @endsection
 @section('content')
 <div class="pt-2 pb-2">
@@ -211,7 +213,7 @@
 
     // delete
     function removeData(id) {
-      
+
         if (confirm('Are you sure?')) {
             axios({
                     method: 'get',

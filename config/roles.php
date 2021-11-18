@@ -80,4 +80,29 @@ return [
         ]
     ],
 
+    "suppliers" => [
+        'code' => '07',
+        'children' => [
+            'supplier list' => ['code' => '07.01'],
+            'supplier add' => ['code' => '07.02'],
+            'supplier edit' => ['code' => '07.03'],
+            'supplier delete' => ['code' => '07.04'],
+            'purchase bills' => ['code' => '07.05'],
+            'purchase add' => ['code' => '07.06'],
+            'purchase edit' => ['code' => '07.07'],
+            'purchase delete' => ['code' => '07.08'],
+            'Supplier Payment' => ['code' => '07.09'],
+            'Opening Balance' => ['code' => '07.10'],
+        ]
+    ],
+
+    "customer" => [
+        'code' => '08',
+        'children' => [
+            'customer list' => ['code' => '08.01'],
+            'payment' => ['code' => '08.02'],
+        ]
+    ],
+
+
 ];

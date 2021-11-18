@@ -78,6 +78,31 @@ class Menu
                     ["Expenses", '06.05', route('admin.expense.index')],
                 ],
             ],
+
+            "supplier" => [
+                'code' => '07',
+                'link' => null,
+                'icon' => 'apps',
+                'text' => "Suppliers",
+                'children' => [
+                    ["Supplier List", '07.01', route('admin.supplier.index')],
+                    ["Purchase Bill", '07.05', route('admin.supplier.bill')],
+                    ["Supplier Payment", '07.09', route('admin.supplier.pay')],
+                    ["Opening Balance", '07.10', route('admin.supplier.previous.balance')],
+                ],
+            ],
+
+            "customer" => [
+                'code' => '08',
+                'link' => null,
+                'icon' => 'apps',
+                'text' => "Customers",
+                'children' => [
+                    ["List", '08.01', route('admin.customer.home')],
+                    ["Payment", '08.02', route('admin.customer.payment.index')],
+                ],
+            ],
+
         ];
     }
 }

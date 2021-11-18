@@ -10,7 +10,9 @@
     <td>
         <button  type="button" class="btn btn-primary btn-sm editfarmer" onclick="showItems({{$bill->id}});" >View Items</button>
         <a  type="a" class="btn btn-primary btn-sm editfarmer" target="_blank" href="{{route('admin.supplier.bill.item.detail',['bill'=>$bill->id])}}">Detail</a>
-        <button class="btn btn-danger btn-sm" onclick="removeData({{$bill->id}});">Delete</button>
+        @if (auth_has_per('07.08'))
+         <button class="btn btn-danger btn-sm" onclick="removeData({{$bill->id}});">Delete</button>
+        @endif
     </td>
 </tr>
 @endforeach

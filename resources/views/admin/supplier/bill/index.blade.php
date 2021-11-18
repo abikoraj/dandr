@@ -6,8 +6,9 @@
 @endsection
 @section('head-title', 'Supplier Bill')
 @section('toobar')
+@if (auth_has_per('07.06'))
     <button class="btn btn-primary" onclick="$('#addBill').addClass('shown');">Add Bill</button>
-
+@endif
 @endsection
 @section('content')
     <div class="row mb-2">
@@ -199,13 +200,13 @@
                     });
             }
         }
-      
+
         window.onload = function() {
             $('#type').val(0).change();
             loadData();
         };
 
-       
+
 
     </script>
 @endsection
