@@ -6,7 +6,11 @@
     <td>{{ $exp->payment_detail }}</td>
     <td>{{ $exp->remark }}</td>
     <td>
+        @if (auth_has_per('06.07'))
         <button  type="button"  class="btn btn-primary btn-sm" onclick="initEdit('{{$exp->title}}',{{$exp->id}});" >Edit</button>
+        @endif
         |
+        @if (auth_has_per('06.08'))
         <button class="btn btn-danger btn-sm" onclick="removeData({{$exp->id}});">Delete</button></td>
+        @endif
 </tr>

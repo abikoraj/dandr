@@ -5,6 +5,7 @@
 @endsection
 
 @section('content')
+@if (auth_has_per('06.02'))
     <div>
         <form action="{{ route('admin.expense.category.add') }}" method="POST">
             @csrf
@@ -23,6 +24,7 @@
             </div>
         </form>
     </div>
+@endif
     <hr>
     <div class="row">
         @foreach (\App\Models\Expcategory::latest()->get() as $item)
@@ -35,8 +37,12 @@
                         <input type="hidden" name="id" value="{{ $item->id }}">
                         <input type="text" name="name" id="name-{{$item->id}}" class="form-control" value="{{ $item->name }}">
                         <div class="d-flex">
+                            @if (auth_has_per('06.03'))
                             <button class="btn btn-primary w-50">Update</button>
+                            @endif
+                            @if (auth_has_per('06.04'))
                             <span class="btn btn-danger w-50 text-white" onclick="delete()">Delete</span>
+                            @endif
                         </div>
                     </form>
                 </div>

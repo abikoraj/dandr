@@ -52,4 +52,32 @@ return [
             "ledger" => ['code' => "04.11"],
         ]
     ],
+
+    "staff" => [
+        'code' => '05',
+        'children' => [
+            'employee list' => ['code' => '05.01'],
+            'employee add' => ['code' => '05.02'],
+            'employee edit' => ['code' => '05.03'],
+            'employee delete' => ['code' => '05.04'],
+            'account opening' => ['code' => '05.05'],
+            'advance' => ['code' => '05.06'],
+            'salary' => ['code' => '05.07'],
+        ]
+    ],
+
+    "manage expense" => [
+        'code' => '06',
+        'children' => [
+            'category list' => ['code' => '06.01'],
+            'category add' => ['code' => '06.02'],
+            'category edit' => ['code' => '06.03'],
+            'category delete' => ['code' => '06.04'],
+            'expense list' => ['code' => '06.05'],
+            'expense add' => ['code' => '06.06'],
+            'expense edit' => ['code' => '06.07'],
+            'expense delete' => ['code' => '06.08'],
+        ]
+    ],
+
 ];

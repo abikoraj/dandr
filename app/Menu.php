@@ -55,6 +55,29 @@ class Menu
                     ["Milk Collection", '04.07', route('admin.distributer.MilkData.index')],
                 ],
             ],
+            "staff" => [
+                'code' => '05',
+                'link' => null,
+                'icon' => 'apps',
+                'text' => "Staff Manage",
+                'children' => [
+                    ["Employees", '05.01', route('admin.employee.index')],
+                    ["Account Opening", '05.05', route('admin.employee.account.index')],
+                    ["Advance", '05.06', route('admin.employee.advance')],
+                    ["Salary Pay", '05.07', route('admin.salary.pay')],
+                ],
+            ],
+
+            "expese" => [
+                'code' => '06',
+                'link' => null,
+                'icon' => 'apps',
+                'text' => "Manage Expense",
+                'children' => [
+                    ["Expense Categories", '06.01', route('admin.expense.category')],
+                    ["Expenses", '06.05', route('admin.expense.index')],
+                ],
+            ],
         ];
     }
 }

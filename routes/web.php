@@ -147,7 +147,7 @@ Route::name('admin.')->group(function () {
 
         Route::prefix('distributers')->name('distributer.')->group(function () {
             // XXX distributer
-            Route::get('', [DistributerController::class, 'index'])->name('index');
+            Route::get('', [DistributerController::class, 'index'])->name('index')->middleware('permmission:04.01');
             Route::post('add', [DistributerController::class, 'add'])->name('add');
             Route::get('list', [DistributerController::class, 'list'])->name('list');
             Route::post('update', [DistributerController::class, 'update'])->name('update');

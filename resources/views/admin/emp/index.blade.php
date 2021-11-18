@@ -2,7 +2,9 @@
 @section('title','Employess')
 @section('head-title','Employees')
 @section('toobar')
+@if (auth_has_per('05.02'))
 <button type="button" class="btn btn-primary waves-effect m-r-20" data-toggle="modal" data-target="#largeModal">Create Employee</button>
+@endif
 @endsection
 @section('content')
 <div class="pt-2 pb-2">

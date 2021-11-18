@@ -18,7 +18,7 @@ class CreateCreditNotesTable extends Migration
             $table->unsignedBigInteger('fiscal_year_id')->nullable();
             $table->foreign('fiscal_year_id')->references('id')->on('fiscal_years');
             //XXX customer Detail
-            $table->text('customer_name')->default('Cash Account');
+            $table->string('customer_name')->default('Cash Account');
             $table->text('customer_address')->nullable();
             $table->text('customer_phone')->nullable();
             $table->text('customer_pan')->nullable();
@@ -41,7 +41,7 @@ class CreateCreditNotesTable extends Migration
              //XXX Entry Point Data
              $table->unsignedBigInteger('user_id')->nullable();
              $table->foreign('user_id')->references('id')->on('users');
- 
+
              //XXX Sales Return Data
              $table->unsignedBigInteger('ref_id')->nullable();
             $table->timestamps();

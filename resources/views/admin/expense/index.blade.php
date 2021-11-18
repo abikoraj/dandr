@@ -10,8 +10,12 @@
     @include('admin.expense.add')
     <div class="col lg-2">
         <div class="pt-2 pb-2">
+            @if (auth_has_per('06.06'))
             <button class="btn btn-primary mr-1" data-toggle="modal" data-target="#addModal">Add Expense</button>
+            @endif
+            @if (auth_has_per('06.02'))
             <a href="{{route('admin.expense.category')}}" class="btn btn-secondary">Expense Categories</a>
+            @endif
         </div>
     </div>
 @endsection
@@ -37,7 +41,7 @@
     </div>
     <hr>
     <div class="table-responsive" id="expenseData">
-        
+
     </div>
 
 
@@ -105,7 +109,7 @@
                 .catch(function(response) {
                     //handle error
                     console.log(response);
-                
+
                 });
         }
 

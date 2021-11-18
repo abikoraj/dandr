@@ -18,7 +18,7 @@ class CreatePosBillsTable extends Migration
             $table->unsignedBigInteger('fiscal_year_id')->nullable();
             $table->foreign('fiscal_year_id')->references('id')->on('fiscal_years');
             //XXX customer Detail
-            $table->text('customer_name')->default('Cash Account');
+            $table->string('customer_name')->default('Cash Account');
             $table->text('customer_address')->nullable();
             $table->text('customer_phone')->nullable();
             $table->text('customer_pan')->nullable();
