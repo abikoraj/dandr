@@ -148,16 +148,16 @@ Route::name('admin.')->group(function () {
         Route::prefix('distributers')->name('distributer.')->group(function () {
             // XXX distributer
             Route::get('', [DistributerController::class, 'index'])->name('index')->middleware('permmission:04.01');
-            Route::post('add', [DistributerController::class, 'add'])->name('add');
+            Route::post('add', [DistributerController::class, 'add'])->name('add')->middleware('permmission:04.02');
             Route::get('list', [DistributerController::class, 'list'])->name('list');
-            Route::post('update', [DistributerController::class, 'update'])->name('update');
-            Route::post('delete', [DistributerController::class, 'delete'])->name('delete')->middleware('authority');
+            Route::post('update', [DistributerController::class, 'update'])->name('update')->middleware('permmission:04.03');
+            Route::post('delete', [DistributerController::class, 'delete'])->name('delete')->middleware('permmission:04.04');
 
             Route::get('detail/{id}', [DistributerController::class, 'distributerDetail'])->name('detail');
             Route::post('detail', [DistributerController::class, 'distributerDetailLoad'])->name('detail.load');
 
 
-            Route::get('opening', [DistributerController::class, 'opening'])->name('detail.opening');
+            Route::get('opening', [DistributerController::class, 'opening'])->name('detail.opening')->middleware('permmission:04.06');
             Route::post('opening/list', [DistributerController::class, 'loadLedger'])->name('detail.opening.list');
             Route::post('ledger', [DistributerController::class, 'ledger'])->name('detail.ledger');
             Route::post('ledger/update', [DistributerController::class, 'updateLedger'])->name('detail.ledger.update')->middleware('authority');
@@ -166,7 +166,7 @@ Route::name('admin.')->group(function () {
             Route::get('request', [DistributerController::class, 'distributerRequest'])->name('request');
             Route::get('change/status/{id}', [DistributerController::class, 'distributerRequestChangeStatus'])->name('request.change.status');
 
-            Route::match(['GET','POST'],'credit-list', [DistributerController::class, 'creditList'])->name('credit.list');
+            Route::match(['GET','POST'],'credit-list', [DistributerController::class, 'creditList'])->name('credit.list')->middleware('permmission:04.10');
 
 
 
@@ -178,13 +178,13 @@ Route::name('admin.')->group(function () {
             Route::post('sell-del', [DistributersellController::class,'deleteDistributersell'])->name('sell.del')->middleware('authority');
 
             //XXX Distributor Payments
-            Route::get('payment', [DistributorPaymentController::class, 'index'])->name('payemnt');
+            Route::get('payment', [DistributorPaymentController::class, 'index'])->name('payemnt')->middleware('permmission:04.05');
             Route::post('due-list', [DistributorPaymentController::class, 'due'])->name('due');
             Route::post('due-pay', [DistributorPaymentController::class, 'pay'])->name('pay');
 
             //XXXX Distributer Milk Data
             Route::prefix('milk-data')->name('MilkData.')->group(function () {
-                Route::match(['get', 'post'], '',[DistributerMilkController::class,'index'])->name('index');
+                Route::match(['get', 'post'], '',[DistributerMilkController::class,'index'])->name('index')->middleware('permmission:04.07');
                 Route::match(['get', 'post'], 'add',[DistributerMilkController::class,'add'])->name('add');
                 Route::match(['get', 'post'], 'update',[DistributerMilkController::class,'update'])->name('update');
                 Route::match(['get', 'post'], 'delete',[DistributerMilkController::class,'delete'])->name('delete');
@@ -192,7 +192,7 @@ Route::name('admin.')->group(function () {
             });
             //XXXX Distributer Milk Data
             Route::prefix('snf-fat')->name('snffat.')->group(function () {
-                Route::match(['get', 'post'], '',[DistributerSnfFatController::class,'index'])->name('index');
+                Route::match(['get', 'post'], '',[DistributerSnfFatController::class,'index'])->name('index')->middleware('permmission:04.08');
                 Route::match(['get', 'post'], 'add',[DistributerSnfFatController::class,'add'])->name('add');
                 Route::match(['get', 'post'], 'update',[DistributerSnfFatController::class,'update'])->name('update');
                 Route::match(['get', 'post'], 'delete',[DistributerSnfFatController::class,'delete'])->name('delete');
@@ -236,13 +236,13 @@ Route::name('admin.')->group(function () {
 
         Route::prefix('expenses')->name('expense.')->group(function () {
             //XXX expense categories
-            Route::get('categories', 'Admin\ExpenseController@categoryIndex')->name('category');
+            Route::get('categories', 'Admin\ExpenseController@categoryIndex')->name('category')->middleware('permmission:06.01');
             Route::post('category-add', 'Admin\ExpenseController@categoryAdd')->name('category.add');
             Route::post('category-update', 'Admin\ExpenseController@categoryUpdate')->name('category.update');
             Route::post('category/expenses', 'Admin\ExpenseController@categoryExpenses')->name('list-category');
 
             // XXX  expensess
-            Route::get('', 'Admin\ExpenseController@index')->name('index');
+            Route::get('', 'Admin\ExpenseController@index')->name('index')->middleware('permmission:06.05');
             Route::post('expense-add', 'Admin\ExpenseController@add')->name('add');
             Route::post('update', 'Admin\ExpenseController@update')->name('update')->middleware('authority');
             Route::post('edit', 'Admin\ExpenseController@edit')->name('edit')->middleware('authority');
@@ -254,7 +254,7 @@ Route::name('admin.')->group(function () {
 
         Route::prefix('suppliers')->name('supplier.')->group(function () {
             // XXX suppliers
-            Route::get('',[SupplierController::class,'index'])->name('index');
+            Route::get('',[SupplierController::class,'index'])->name('index')->middleware('permmission:07.01');
             Route::post('add',[SupplierController::class,'add'])->name('add');
             Route::get('list',[SupplierController::class,'list'])->name('list');
             Route::post('delete',[SupplierController::class,'delete'])->name('delete')->middleware('authority');
@@ -262,12 +262,12 @@ Route::name('admin.')->group(function () {
             //XXX supplier details
             Route::get('detail/{id}',[SupplierController::class,'detail'])->name('detail');
             Route::post('load-detail',[SupplierController::class,'loadDetail'])->name('load-detail');
-            Route::get('payment',[SupplierController::class,'payment'])->name('pay');
+            Route::get('payment',[SupplierController::class,'payment'])->name('pay')->middleware('permmission:07.09');
             Route::post('due',[SupplierController::class,'due'])->name('due');
             Route::post('due-pay',[SupplierController::class,'duePay'])->name('due.pay');
 
             // XXX supplier bills
-            Route::get('bills',[SupplierController::class,'indexBill'])->name('bill');
+            Route::get('bills',[SupplierController::class,'indexBill'])->name('bill')->middleware('permmission:07.05');
             Route::match(['GET','POST'],'bill-add',[SupplierController::class,'addBill'])->name('bill.add');
             Route::post('bill-list',[SupplierController::class,'listBill'])->name('bill.list');
             Route::post('bill-update',[SupplierController::class,'updateBill'])->name('bill.update');
@@ -277,14 +277,14 @@ Route::name('admin.')->group(function () {
             Route::post('bill-cancel',[SupplierController::class,'cancelBill'])->name('bill.item.cancel');
 
             // XXX supplier previous
-            Route::get('previous-balance',[SupplierController::class,'previousBalance'])->name('previous.balance');
+            Route::get('previous-balance',[SupplierController::class,'previousBalance'])->name('previous.balance')->middleware('permmission:07.10');
             Route::post('previous-balance-add',[SupplierController::class,'previousBalanceAdd'])->name('previous.balance.add');
             Route::post('previous-balance-load',[SupplierController::class,'previousBalanceLoad'])->name('previous.balance.load');
         });
 
         Route::prefix('employees')->name('employee.')->group(function () {
             // XXX XXX employees
-            Route::get('', [EmployeeController::class,'index'])->name('index');
+            Route::get('', [EmployeeController::class,'index'])->name('index')->middleware('permmission:05.01');
             Route::post('add', [EmployeeController::class,'add'])->name('add');
             Route::post('update', [EmployeeController::class,'update'])->name('update')->middleware('authority');
             Route::get('list', [EmployeeController::class,'list'])->name('list');
@@ -292,14 +292,14 @@ Route::name('admin.')->group(function () {
             Route::get('detail/{id}', [EmployeeController::class,'detail'])->name('detail');
             Route::post('load/emp/data', [EmployeeController::class,'loadData'])->name('load.data');
             //XXX Employee Advance Management
-            Route::get('advance', [EmployeeController::class,'advance'])->name('advance');
+            Route::get('advance', [EmployeeController::class,'advance'])->name('advance')->middleware('permmission:05.06');
             Route::post('addadvance', [EmployeeController::class,'addAdvance'])->name('advance.add');
             Route::post('getadvance', [EmployeeController::class,'getAdvance'])->name('advance.list');
             Route::post('deladvance', [EmployeeController::class,'delAdvance'])->name('advance.del')->middleware('authority');;
             Route::post('updateadvance', [EmployeeController::class,'updateAdvance'])->name('advance.update')->middleware('authority');
             Route::post('advance/transfer', [EmployeeController::class,'amountTransfer'])->name('amount.transfer');
             //XXX Employee Account Opening
-            Route::match(['get', 'post'],'account', [EmployeeController::class,'accountIndex'])->name('account.index');
+            Route::match(['get', 'post'],'account', [EmployeeController::class,'accountIndex'])->name('account.index')->middleware('permmission:05.05');
             Route::match(['get', 'post'],'account-add', [EmployeeController::class,'accountAdd'])->name('account.add');
             //XXX Employee Month Closing
             Route::post('account-closing', [EmployeeController::class,'closeSession'])->name('account.close');
@@ -320,7 +320,7 @@ Route::name('admin.')->group(function () {
 
         // XXX salary payment
         Route::prefix('employee/salary')->name('salary.')->group(function () {
-            Route::get('/', 'Admin\EmployeeController@salaryIndex')->name('pay');
+            Route::get('/', 'Admin\EmployeeController@salaryIndex')->name('pay')->middleware('permmission:05.07');
             Route::post('load', 'Admin\EmployeeController@loadEmpData')->name('load.emp.data');
             Route::post('pay/salary', 'Admin\EmployeeController@storeSalary')->name('save');
             Route::post('list', 'Admin\EmployeeController@paidList')->name('list');
@@ -392,7 +392,7 @@ Route::name('admin.')->group(function () {
         //XXX Customer
         Route::group(['prefix' => 'customer'], function () {
             Route::name('customer.')->group(function () {
-                Route::match(['GET','POST'],'', [CustomerController::class,'index'])->name('home');
+                Route::match(['GET','POST'],'', [CustomerController::class,'index'])->name('home')->middleware('permmission:08.01');
                 Route::match(['GET','POST'],'all', [CustomerController::class,'all'])->name('all');
                 Route::post('add', [CustomerController::class,'add'])->name('add');
                 Route::post('update', [CustomerController::class,'update'])->name('update')->middleware('authority');
@@ -402,7 +402,7 @@ Route::name('admin.')->group(function () {
                 Route::match(['get', 'post'], 'detail/{id}',[CustomerController::class,'detail'])->name('detail');
 
                 Route::name('payment.')->prefix('payment')->group(function(){
-                    Route::match(['get', 'post'],  '',[CustomerController::class,'payment'])->name('index');
+                    Route::match(['get', 'post'],  '',[CustomerController::class,'payment'])->name('index')->middleware('permmission:08.02');
                     Route::match(['get', 'post'],  'add',[CustomerController::class,'addPayment'])->name('add');
                 });
             });
@@ -413,7 +413,7 @@ Route::name('admin.')->group(function () {
         Route::group(['prefix' => 'report'], function () {
             Route::name('report.')->group(function () {
 
-                Route::get('', [ReportController::class,'index'])->name('home');
+                Route::get('', [ReportController::class,'index'])->name('home')->middleware('permmission:12.01');
 
                 Route::match(['GET', 'POST'], 'farmer', [ReportController::class,'farmer'])->name('farmer');
                 Route::post('farmer/changeSession', [ReportController::class,'farmerSession'])->name('farmer.session');
@@ -434,7 +434,7 @@ Route::name('admin.')->group(function () {
         ///XXX billing
         Route::group(['prefix' => 'offers'], function () {
             Route::name('offers.')->group(function () {
-                Route::match(['get', 'post'], '',[OfferController::class,'index'])->name('index');
+                Route::match(['get', 'post'], '',[OfferController::class,'index'])->name('index')->middleware('permmission:10.03');
                 Route::post( 'add',[OfferController::class,'add'])->name('add');
                 Route::post( 'update',[OfferController::class,'update'])->name('update');
                 Route::get( 'del/{offer}',[OfferController::class,'del'])->name('del');
@@ -456,13 +456,12 @@ Route::name('admin.')->group(function () {
         //XXX POS Billing
         Route::prefix('pos-billing')->group(function () {
             Route::name('pos.billing.')->group(function () {
-                Route::match(['GET','POST'], "",[PosBillingController::class,'index'])->name('index');
+                Route::match(['GET','POST'], "",[PosBillingController::class,'index'])->name('index')->middleware('permmission:09.02');
                 Route::match(['GET','POST'], "detail",[PosBillingController::class,'detail'])->name('detail');
-                Route::match(['GET','POST'], "print",[PosBillingController::class,'print'])->name('print');
+                Route::match(['GET','POST'], "print",[PosBillingController::class,'print'])->name('print')->middleware('permmission:09.03');
                 Route::match(['GET','POST'], "print-info",[PosBillingController::class,'printInfo'])->name('print.info');
                 Route::match(['GET','POST'], "creditnote-info",[PosBillingController::class,'creditNoteInfo'])->name('creditnote.info');
-
-                Route::match(['GET','POST'], "return",[PosBillingController::class,'salesReturn'])->name('return');
+                Route::match(['GET','POST'], "return",[PosBillingController::class,'salesReturn'])->name('return')->middleware('permmission:09.04');
                 Route::match(['GET','POST'], "return-single/{bill}",[PosBillingController::class,'salesReturnSingle'])->name('return-single');
                 Route::match(['GET','POST'], "cancel",[PosBillingController::class,'cancel'])->name('cancel');
                 Route::match(['GET','POST'], "return/init",[PosBillingController::class,'initSalesReturn'])->name('return.init');
@@ -473,7 +472,7 @@ Route::name('admin.')->group(function () {
         //XXX Counter
         Route::group(['prefix' => 'counter'], function () {
             Route::name('counter.')->group(function () {
-                Route::get('', [CounterController::class,'index'])->name('home');
+                Route::get('', [CounterController::class,'index'])->name('home')->middleware('permmission:10.02');
                 Route::get('stat/{counter}', [CounterController::class,'getStatus'])->name('status.get');
                 Route::post('update/{id}', [CounterController::class,'update'])->name('update');
                 Route::post('add', [CounterController::class,'add'])->name('add');
@@ -482,7 +481,7 @@ Route::name('admin.')->group(function () {
 
                 Route::group(['prefix' => 'day'], function () {
                     Route::name('day.')->group(function () {
-                        Route::get('', [CounterController::class,'day'])->name('index');
+                        Route::get('', [CounterController::class,'day'])->name('index')->middleware('permmission:10.01');
                         Route::post('open', [CounterController::class,'dayOpen'])->name('open');
                         Route::post('approve', [CounterController::class,'dayApprove'])->name('approve');
                         Route::get('reopen', [CounterController::class,'dayReopen'])->name('reopen');
@@ -494,7 +493,7 @@ Route::name('admin.')->group(function () {
 
         Route::group(['prefix' => 'bank'], function () {
             Route::name('bank.')->group(function () {
-                Route::get('', [BankController::class,'index'])->name('index');
+                Route::get('', [BankController::class,'index'])->name('index')->middleware('permmission:11.01');
                 Route::post('add', [BankController::class,'add'])->name('add');
                 Route::post('update', [BankController::class,'update'])->name('update');
                 Route::post('delete', [BankController::class,'delete'])->name('delete');
@@ -502,7 +501,7 @@ Route::name('admin.')->group(function () {
         });
         Route::group(['prefix' => 'gateway'], function () {
             Route::name('gateway.')->group(function () {
-                Route::get('', [GatewayController::class,'index'])->name('index');
+                Route::get('', [GatewayController::class,'index'])->name('index')->middleware('permmission:11.02');
                 Route::post('add', [GatewayController::class,'add'])->name('add');
                 Route::post('update', [GatewayController::class,'update'])->name('update');
                 Route::post('delete', [GatewayController::class,'delete'])->name('delete');
@@ -544,7 +543,7 @@ Route::name('admin.')->group(function () {
 Route::name('pos.')->prefix('pos')->group(function(){
 
     Route::middleware(['pos'])->group(function () {
-        Route::view('day', 'pos.counter.day')->name('day');
+        Route::view('day', 'pos.counter.day')->name('day')->middleware('permmission:09.01');
         Route::match(['GET', 'POST'], 'bill', [POSController::class,'index'])->name('index');
         Route::match(['GET', 'POST'], 'counter', [POSController::class,'counter'])->name('counter');
         Route::match(['GET', 'POST'], 'counter-open', [POSController::class,'counterOpen'])->name('counter.open');

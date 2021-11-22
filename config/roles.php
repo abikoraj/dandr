@@ -104,5 +104,39 @@ return [
         ]
     ],
 
+    "POS" => [
+        'code' => '09',
+        'children' => [
+            'POS Interface' => ['code' => '09.01'],
+            'Search Bills' => ['code' => '09.02'],
+            'Reprint Bills' => ['code' => '09.03'],
+            'Sales Returns' => ['code' => '09.04'],
+        ]
+    ],
+
+    "POS Setting" => [
+        'code' => '10',
+        'children' => [
+            'Day Management' => ['code' => '10.01'],
+            'Counters' => ['code' => '10.02'],
+            'Offers' => ['code' => '10.03'],
+        ]
+    ],
+
+    "Payment Setting" => [
+        'code' => '11',
+        'children' => [
+            'Banks' => ['code' => '11.01'],
+            'Payments Gateways' => ['code' => '11.02'],
+        ]
+    ],
+
+    "Reports" => [
+        'code' => '12',
+        'children' => [
+            'Reports' => ['code' => '12.01'],
+        ]
+    ],
+
 
 ];

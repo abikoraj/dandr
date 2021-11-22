@@ -103,6 +103,53 @@ class Menu
                 ],
             ],
 
+            "pos" => [
+                'code' => '09',
+                'link' => null,
+                'icon' => 'apps',
+                'text' => "POS",
+                'children' => [
+                    ["POS Interface", '09.01', url('/pos/day')],
+                    ["Search Bills", '09.02', route('admin.pos.billing.index')],
+                    ["Reprint Bills", '09.03', route('admin.pos.billing.print')],
+                    ["Sales Returns", '09.04', route('admin.pos.billing.return')],
+                ],
+            ],
+
+
+            "pos setting" => [
+                'code' => '10',
+                'link' => null,
+                'icon' => 'apps',
+                'text' => "POS Setting",
+                'children' => [
+                    ["Day Management", '10.01', route('admin.counter.day.index')],
+                    ["Counters", '10.02', route('admin.counter.home')],
+                    ["Offers", '10.03', route('admin.offers.index')],
+                ],
+            ],
+
+            "Payment setting" => [
+                'code' => '11',
+                'link' => null,
+                'icon' => 'apps',
+                'text' => "Payment Setting",
+                'children' => [
+                    ["Banks", '11.01', route('admin.bank.index')],
+                    ["Payment Gateways", '11.02', route('admin.gateway.index')],
+                ],
+            ],
+
+            "Reports" => [
+                'code' => '12',
+                'link' => null,
+                'icon' => 'apps',
+                'text' => "Reports",
+                'children' => [
+                    ["Reports", '12.01', route('admin.report.home')],
+                ],
+            ],
+
         ];
     }
 }
