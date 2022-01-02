@@ -106,9 +106,6 @@
 
         }
 
-
-
-
         //item name
         function renderItem() {
 
@@ -155,6 +152,7 @@
           console.log(item,'add to item');
           $('#item-name').val(item.name);
           $('#item-rate').val(item.rate);
+          $('#item-wholesale').val(item.wholesale);
           $('#item-barcode').val(item.barcode);
           $('#item-name').clearSearch();
           billpanel.selectedItem=item;

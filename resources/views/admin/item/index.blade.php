@@ -32,7 +32,7 @@
                     <th>sell Price </th>
                     <th>Stock </th>
                     <th>Unit Type</th>
-                    <th>Reward (%)</th>
+                    <th>Reward </th>
                     <th>Action</th>
                 </tr>
             </thead>

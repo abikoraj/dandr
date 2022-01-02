@@ -245,7 +245,7 @@ class POSController extends Controller
     public function items()
     {
         $items = Item::where('posonly', 1)->select(
-            DB::raw('id,title as name,number as barcode,sell_price as rate,tax,taxable')
+            DB::raw('id,title as name,number as barcode,sell_price as rate,wholesale,tax,taxable')
         )->get();
         // dd($items);
         return response()->json($items);
@@ -254,7 +254,7 @@ class POSController extends Controller
     public function itemSingle(Request $request){
         if($request->filled('barcode')){
             return response()->json(Item::where('number',$request->barcode)->select(
-                DB::raw('id,title as name,number as barcode,sell_price as rate,tax,taxable')
+                DB::raw('id,title as name,number as barcode,sell_price as rate,tax,taxable,wholesale')
             )->first());
         }
     }

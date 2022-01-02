@@ -42,7 +42,7 @@ class ItemController extends Controller
 
             $large=env('large',false);
             if(!$large){
-    
+
                 $items = Item::select('id','title','sell_price','stock','unit','reward_percentage','number')->latest()->get();
             }
             return view('admin.item.index',compact('items','large'));
@@ -67,7 +67,7 @@ class ItemController extends Controller
         $items=Item::where('dis_number','like',$request->keyword.'%')->where('disonly',1)->select('id','dis_price','title','dis_number','sell_price','number')->take(24)->get();
         return response()->json($items);
     }
-    
+
 
     public function save(Request $request){
         $item = new Item();
@@ -77,6 +77,7 @@ class ItemController extends Controller
         $item->sell_price = $request->sell_price;
         $item->stock = $request->stock;
         $item->unit = $request->unit;
+        $item->wholesale = $request->wholesale??0;
         $item->reward_percentage = $request->reward;
         if($request->hasFile('image')){
             $item->image=$request->image->store('uploads/item');
@@ -87,7 +88,7 @@ class ItemController extends Controller
         $item->disonly=$request->disonly??0;
         $item->posonly=$request->posonly??0;
         $item->farmeronly=$request->farmeronly??0;
-        
+
         $item->taxable=$request->taxable??0;
         $item->tax=$request->tax;
 
@@ -129,19 +130,19 @@ class ItemController extends Controller
         $item->trackstock=$request->trackstock??0;
         $item->trackexpiry=$request->trackexpiry??0;
         $item->sellonline=$request->sellonline??0;
-        $item->disonly=$request->disonly??0;    
+        $item->disonly=$request->disonly??0;
         $item->posonly=$request->posonly??0;
         $item->farmeronly=$request->farmeronly??0;
 
         $item->taxable=$request->taxable??0;
         $item->tax=$request->tax;
-        
+
         $item->description=$request->description;
         $item->minqty=$request->minqty;
         $item->expirydays=$request->expirydays;
         $item->dis_number=$request->dis_number;
         $item->dis_price=$request->dis_price;
-        
+
         $item->save();
 
         return view('admin.item.single',compact('item'));

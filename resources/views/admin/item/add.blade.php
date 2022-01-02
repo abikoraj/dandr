@@ -25,15 +25,25 @@
                                     <input type="text" id="inum" name="number" class="form-control next" data-next="cprice" placeholder="Enter unique item number" required>
                                 </div>
                             </div>
-
-                            <div class="col-lg-6">
-                                <label for="cprice">Sale Price</label>
+                            @php
+                                $w=env('use_wholesale',false);
+                                $r=$w?4:6;
+                            @endphp
+                            <div class="col-lg-{{$r}}">
+                                <label for="cprice">{{$w?'Cost':'Sale'}} Price</label>
                                 <div class="form-group">
-                                    <input type="number" id="cprice" name="cost_price" min="0" class="form-control next" data-next="sprice" placeholder="Enter cost price" required>
+                                    <input type="number" id="cprice" name="cost_price" min="0" class="form-control next" data-next="{{$w?'wprice':'sprice'}}" placeholder="Enter {{$w?'cost':'sale'}} price" required>
                                 </div>
                             </div>
-
-                            <div class="col-lg-6">
+                            @if ($w)
+                                <div class="col-lg-{{$r}}">
+                                    <label for="wprice">WholeSale Price</label>
+                                    <div class="form-group">
+                                        <input type="number" id="wprice" name="wholesale" min="0" class="form-control next" data-next="sprice" placeholder="Enter cost price" required>
+                                    </div>
+                                </div>
+                            @endif
+                            <div class="col-lg-{{$r}}">
                                 <label for="sprice">Sell Price</label>
                                 <div class="form-group">
                                     <input type="number" id="sprice" name="sell_price" min="0" class="form-control next" data-next="stock" placeholder="Enter sell price" required>

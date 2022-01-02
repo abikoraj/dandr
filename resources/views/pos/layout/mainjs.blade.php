@@ -35,6 +35,17 @@ function addItem(barcode) {
     console.log(barcode);
 }
 
+function checkWholeSale(ele) {
+    if(ele.checked){
+        $('#item-wholesale').removeClass('d-none');
+        $('#item-rate').addClass('d-none');
+    }else{
+        $('#item-wholesale').addClass('d-none');
+        $('#item-rate').removeClass('d-none');
+    }
+}
+
+
 const producturl = "";
 lock = false;
 const states = {
@@ -57,6 +68,8 @@ const stateClass = [
     "",
     " bg-danger",
 ];
+
+
 var chat;
 $.connection.hub.url = "http://localhost:4200/signalr";
 try {
@@ -68,6 +81,8 @@ try {
 } catch (err) {
     console.log(err);
 }
+
+
 var billpanel = {
     holdBillId:null,
     raw: null,
@@ -174,6 +189,7 @@ var billpanel = {
                         rate: item.rate,
                         taxable: item.taxable,
                         tax: item.tax,
+                        wholesale: item.wholesale,
                     };
                 }
                 this.products = p;
@@ -494,12 +510,13 @@ var billpanel = {
             $("#item-name").focus();
             $("#item-name").select();
         } else {
+            const is_wholesale=$('#item-iswholesale')[0].checked;
             key = item.id.toString();
             billItem = this.billitems[key];
             billItem = this.billitems[key];
             if (billItem == undefined) {
 
-                const _amount=item.rate*_qty;
+                const _amount=(is_wholesale?item.wholesale: item.rate)*_qty;
                 const _discount=0;
                 const tot=_amount-_discount;
                 let _taxable=0;
@@ -512,7 +529,7 @@ var billpanel = {
                 this.billitems[key] = {
                     item_id: item.id,
                     item_name: item.name,
-                    item_rate:item.rate,
+                    item_rate:(is_wholesale?item.wholesale: item.rate),
                     item_taxable:item.taxable,
                     item_tax:item.tax,
                     amount:_amount,

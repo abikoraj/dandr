@@ -14,10 +14,16 @@
             {{-- <select id="item-name"  class="form-control" onchange="billpanel.setRate();"></select> --}}
           </div>
       </div>
+      @if(env('use_wholesale',false))
+        <div class="col-md-12" id="check-holesale">
+            <input type="checkbox" name="item-iswholesale" id="item-iswholesale" onchange="checkWholeSale(this)" > <label class="ml-1 text-white" for="item-iswholesale">Use Wholesale</label>
+        </div>
+      @endif
       <div class="col-md-6">
         <div class="form-group">
           <label for="item-rate" class="mb-1 text-white">Rate</label>
           <input id="item-rate" type="number" readonly  class="form-control">
+          <input id="item-wholesale" type="number" readonly  class="form-control d-none" >
         </div>
       </div>
       <div class="col-md-6">
