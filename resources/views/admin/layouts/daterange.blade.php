@@ -5,16 +5,16 @@
             Report Duration
         </label>
         <select name="type" id="type" onchange="manageDisplay(this)" class="form-control show-tick ms ">
-            <option value="-1">All</option>
-            <option value="0">Session</option>
-            <option value="1">Daily</option>
-            <option value="2">Weekly</option>
-            <option value="3">Monthly</option>
-            <option value="4">Yearly</option>
-            <option value="5">Custom</option>
+            <option value="-1" {{$sel_range==-1?'selected':''}}>All</option>
+            <option value="0" {{$sel_range==0?'selected':''}}>Session</option>
+            <option value="1" {{$sel_range==1?'selected':''}}>Daily</option>
+            <option value="2" {{$sel_range==2?'selected':''}}>Weekly</option>
+            <option value="3" {{$sel_range==3?'selected':''}}>Monthly</option>
+            <option value="4" {{$sel_range==4?'selected':''}}>Yearly</option>
+            <option value="5" {{$sel_range==5?'selected':''}}>Custom</option>
             @if (env('use_pos',false))
 
-                <option value="6">Fiscal Year</option>
+                <option value="6" {{$sel_range==6?'selected':''}}>Fiscal Year</option>
             @endif
         </select>
 

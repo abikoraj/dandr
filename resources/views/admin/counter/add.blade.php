@@ -15,7 +15,7 @@
                                 <div class="form-group">
                                     <input type="text" id="name" name="name" class="form-control next" data-next="phone" placeholder="Enter Counter name" required>
                                 </div>
-                            </div>                         
+                            </div>
                         </div>
                 </div>
             </div>
@@ -29,7 +29,7 @@
 </div>
 
 @section('js1')
-    
+
 
     <script>
         function saveData(e) {
@@ -38,6 +38,7 @@
                 lock=true;
                 showProgress('Adding Counter');
                 var data=new FormData(document.getElementById('addCounter'));
+                data.append('date',$('#day').val());
                 axios.post('{{route('admin.counter.add')}}',data)
                 .then((res)=>{
                     $('#data').append(res.data);

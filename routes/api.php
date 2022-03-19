@@ -28,8 +28,24 @@ Route::post('bill/{id}', function ($id) {
 Route::middleware('auth')->get('/user', function (Request $request) {
 
 });
-Route::match(['GET','POST'],'items',[ItemController::class,'index']);
 Route::middleware(['auth:api'])->group(function () {
+    Route::match(['GET','POST'],'items',[ItemController::class,'index']);
+    Route::get('centers',function(){
+        return response(json_encode([
+            'centers'=>DB::table('centers')->get(['id','name']),
+            'company'=>[
+                'name'=>env('companyName'),
+                'phone'=>env('companyphone'),
+                'reg'=>env('companyRegNO'),
+                'panvat'=>env('companyVATPAN'),
+                'usetax'=>env('companyUseTax'),
+                'billtitle'=>env('companyBillTitle'),
+                'address'=>env('companyAddress')
+            ],
+            'counters'=>DB::table('counters')->get(['id','name'])
+
+        ]));
+    });
     Route::post('pos-user',[LoginController::class,'addPosUser']);
 
     Route::middleware('permmission:09.05')->group(function(){
@@ -37,6 +53,8 @@ Route::middleware(['auth:api'])->group(function () {
         Route::prefix('customers')->group(function(){
             Route::get('customers/{center_id}',[customerController::class,'index']);
         });
+
+        Route::post('sync-bill', [ItemController::class,'syncBills']);
 
 
 
@@ -46,26 +64,11 @@ Route::middleware(['auth:api'])->group(function () {
     });
 });
 
-Route::get('json/{table}',function($table){
-    return response(json_encode(DB::table($table)->first(),JSON_NUMERIC_CHECK|JSON_PRESERVE_ZERO_FRACTION));
-});
+// Route::get('json/{table}',function($table){
+//     return response(json_encode(DB::table($table)->first(),JSON_NUMERIC_CHECK|JSON_PRESERVE_ZERO_FRACTION));
+// });
 
-Route::get('centers',function(){
-    return response(json_encode([
-        'centers'=>DB::table('centers')->get(['id','name']),
-        'company'=>[
-            'name'=>env('companyName'),
-            'phone'=>env('companyphone'),
-            'reg'=>env('companyRegNO'),
-            'panvat'=>env('companyVATPAN'),
-            'usetax'=>env('companyUseTax'),
-            'billtitle'=>env('companyBillTitle'),
-            'address'=>env('companyAddress')
-        ],
-        'counters'=>DB::table('counters')->get(['id','name'])
 
-    ]));
-});
 
 
 Route::post('login',[LoginController::class,'index']);

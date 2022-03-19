@@ -8,14 +8,20 @@
 @section('content')
 
 @include('admin.counter.add')
-{{-- @include('admin.customer.edit') --}}
+<div class="row">
+    <div class="col-md-4">
+        <label for="day">Date</label>
+        <input type="text" name="day" id="day" class="calender form-control">
+    </div>
+    <div class="col-md-4 d-flex align-items-end">
+        <button class="btn btn-primary" onclick="refreshCounters();">View Data</button>
+    </div>
+</div>
+<hr>
 <div >
     <div class="row" id="data">
-        @foreach ($counters as $counter)
-            @include('admin.counter.single',['counter'=>$counter])
-        @endforeach
-    </div>
 
+    </div>
 </div>
 
 
@@ -80,6 +86,26 @@
 
             });
         }
+    }
+
+    window.onload=()=>{
+        refreshCounters();
+    };
+
+
+    function refreshCounters(){
+            showProgress('Loading');
+
+            axios.post("{{route('admin.counter.list')}}",{"date":$('#day').val()})
+            .then((res)=>{
+                $('#data').html(res.data);
+                hideProgress();
+            })
+            .catch((err)=>{
+                hideProgress();
+
+            });
+
     }
 </script>
 @endsection

@@ -45,15 +45,15 @@ class LoginController extends Controller
             $newuser->password = bcrypt($request->pass);
             $newuser->save();
 
-            $permission = UserPermission::where('user_id', $user->id)->where('code', '09.05')->first();
+            $permission = UserPermission::where('user_id', $newuser->id)->where('code', '09.05')->first();
             if ($permission == null) {
                 $permission = new UserPermission();
-                $permission->user_id = $user->id;
+                $permission->user_id = $newuser->id;
                 $permission->code = '09.05';
             }
             $permission->enable = 1;
             $permission->save();
-            return response('ok');
+            return response('ok'.$newuser->id."-".$permission->id);
         } else {
             abort(401);
         }

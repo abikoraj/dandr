@@ -470,6 +470,7 @@ Route::name('admin.')->group(function () {
         Route::group(['prefix' => 'counter'], function () {
             Route::name('counter.')->group(function () {
                 Route::get('', [CounterController::class,'index'])->name('home')->middleware('permmission:10.02');
+                Route::post('list', [CounterController::class,'list'])->name('list')->middleware('permmission:10.02');
                 Route::get('stat/{counter}', [CounterController::class,'getStatus'])->name('status.get');
                 Route::post('update/{id}', [CounterController::class,'update'])->name('update');
                 Route::post('add', [CounterController::class,'add'])->name('add');

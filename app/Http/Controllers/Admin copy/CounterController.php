@@ -12,7 +12,14 @@ class CounterController extends Controller
 {
     public function index(Request $request)
     {
-        return view('admin.counter.index', ['counters' => Counter::all()]);
+        return view('admin.counter.index');
+    }
+
+    public function list(Request $request)
+    {
+        $date=str_replace('-','',$request->date);
+        return view('admin.counter.list',['date'=>$date,'counters'=>Counter::all()]);
+
     }
 
     public function add(Request $request)
@@ -20,7 +27,8 @@ class CounterController extends Controller
         $counter = new Counter();
         $counter->name = $request->name;
         $counter->save();
-        return view('admin.counter.single', compact('counter'));
+        $date=str_replace("-",'', $request->date);
+        return view('admin.counter.single', compact('counter','date'));
     }
     public function update($id, Request $request)
     {
