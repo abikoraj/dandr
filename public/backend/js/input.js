@@ -84,7 +84,7 @@ function loadDates(selector){
         $(this).focus(function(){
             this.select();
         })
-        
+
     });
 }
 
@@ -93,7 +93,7 @@ $(".mask").each(function () {
     console.log('ading mask',maskid );
     $("#" + maskid).mask($("#" + maskid).data('dmask'));
     console.log('added mask',maskid );
-    
+
 });
 
 //XXX set nepali calender
@@ -326,8 +326,8 @@ $('.switch').each(function(){
                 $(target).addClass('d-none');
             }
         }
-        
-       
+
+
         console.log('switching again',target,this.checked);
 
     });
@@ -339,13 +339,13 @@ $('.image-input>input').change(function(){
 
         m.onload = function(e){
             $('#'+c_id+">label>img").attr('src',e.target.result);
-           
+
         };
         m.readAsDataURL(this.files[0]);
     }else{
         $('#'+c_id+">label>img").attr('src','');
     }
-  
+
 });
 
 function remove_image(c_id) {
@@ -396,7 +396,7 @@ $('.toogle').each(function(){
         console.log(collapse,on,'collapse');
 
     });
-    
+
 });
 
 
@@ -451,4 +451,18 @@ function setClickShortCut(list){
 function newTab(url){
 	$('#xxx_52').attr('href',url);
 	$('#xxx_52')[0].click();
+}
+
+
+function toNepaliDate(d){
+    const year=parseInt(d/10000);
+    let _d=d%10000;
+    const month=parseInt(_d/100);
+     _d=_d%100;
+    return ''+year+'-'+(month<10?'0'+month:month)+'-'+(_d<10?('0'+_d):_d);
+
+}
+
+function fromNepaliDate(){
+
 }

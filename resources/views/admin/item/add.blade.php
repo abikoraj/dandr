@@ -145,6 +145,44 @@
                             </div>
                         </div>
                 </div>
+                <div class="p-3">
+
+                    @if(env('multi_stock',false))
+                    <table class="table">
+                          <tr>
+                              <th>
+                                  Center
+                              </th>
+                              <th>
+                                  Wholesale
+                              </th>
+                              <th>
+                                  Retail
+                              </th>
+                              <th>
+                                  Qty
+                              </th>
+                          </tr>
+                        @foreach ($centers as $center)
+                            <tr>
+                                <td>
+                                    <input type="hidden" name="centers[]" value="{{$center->id}}">
+                                    {{$center->name}}
+                                </td>
+                                <td>
+                                    <input class="form-control" type="number" name="wholesale_{{$center->id}}" required value="0">
+                                </td>
+                                <td>
+                                    <input class="form-control" type="number" name="rate_{{$center->id}}" required value="0">
+                                </td>
+                                <td>
+                                    <input class="form-control" type="number" name="qty_{{$center->id}}" required value="0">
+                                </td>
+                            </tr>
+                        @endforeach
+                    </table>
+                    @endif
+                </div>
             </div>
             <div class="modal-footer">
                 <button class="btn btn-raised btn-primary waves-effect" type="submit">Submit Data</button>

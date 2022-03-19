@@ -510,7 +510,10 @@ var billpanel = {
             $("#item-name").focus();
             $("#item-name").select();
         } else {
-            const is_wholesale=$('#item-iswholesale')[0].checked;
+            let is_wholesale=false;
+            if(useWholesale){
+                is_wholesale=$('#item-iswholesale')[0].checked;
+            }
             key = item.id.toString();
             billItem = this.billitems[key];
             billItem = this.billitems[key];

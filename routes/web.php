@@ -66,7 +66,6 @@ Route::match(['get', 'post'], 'logout', 'AuthController@logout')->name('logout')
 
 Route::name('admin.')->group(function () {
 
-
     Route::group(['middleware' => 'role:admin', 'prefix' => 'admin'], function () {
         Route::get('dashboard', 'Admin\DashboardController@index')->name('dashboard');
         Route::prefix('collection-centers')->name('center.')->group(function () {
@@ -78,6 +77,8 @@ Route::name('admin.')->group(function () {
             Route::post('update', 'Admin\CenterController@updateCollectionCenter')->name('update')->middleware('authority');
         });
 
+
+
         Route::prefix('farmers')->name('farmer.')->group(function () {
             // XXX farmer routes
             Route::get('', 'Admin\FarmerController@index')->name('list')->middleware('permmission:01.01');
@@ -85,9 +86,7 @@ Route::name('admin.')->group(function () {
             Route::post('minlist-by-center', 'Admin\FarmerController@minlistFarmerByCenter')->name('minlist-bycenter');
 
 
-            Route::post('add', 'Admin\FarmerController@addFarmer')->name('add')->middleware('permmission:01.02');
             Route::get('detail/{id}', 'Admin\FarmerController@farmerDetail')->name('detail');
-
             Route::post('update', 'Admin\FarmerController@updateFarmer')->name('update')->middleware('permmission:01.03');
             Route::get('delete/{id}', 'Admin\FarmerController@deleteFarmer')->name('delete')->middleware('permmission:01.04');
             Route::post('load-session-data', 'Admin\FarmerController@loadSessionData')->name('load-session-data');
@@ -212,6 +211,10 @@ Route::name('admin.')->group(function () {
         Route::prefix('items')->name('item.')->group(function () {
             Route::match(['GET','POST'],'', [ItemController::class,'index'])->name('index')->middleware('permmission:03.04');
             Route::match(['GET','POST'],'all', [ItemController::class,'all'])->name('all');
+            Route::match(['GET','POST'],'stockout', [ItemController::class,'stockOut'])->name('stockout')->middleware('permmission:03.05');;
+            Route::get('stockout-list', [ItemController::class,'stockOutList'])->name('stockout-list')->middleware('permmission:03.05');
+            Route::get('stockout-view/{id}', [ItemController::class,'stockOutView'])->name('stockout-view')->middleware('permmission:03.05');
+            Route::get('stockout-cancel/{id}', [ItemController::class,'stockOutCancel'])->name('stockout-cancel')->middleware('permmission:03.05');
             Route::match(['GET','POST'],'barcode', [ItemController::class,'barcode'])->name('barcode');
             Route::match(['GET','POST'],'product', [ItemController::class,'product'])->name('product');
             Route::match(['GET','POST'],'product-barcode', [ItemController::class,'productBarcode'])->name('product-barcode');
@@ -310,12 +313,6 @@ Route::name('admin.')->group(function () {
         Route::prefix('sms')->name('sms.')->group(function(){
             Route::post('distributer-credit','SMSController@distributerCredit')->name('distributer.credit');
         });
-
-
-
-
-
-
 
 
         // XXX salary payment

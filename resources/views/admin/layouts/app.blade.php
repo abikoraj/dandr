@@ -44,10 +44,10 @@
 
     <!-- Left Sidebar -->
     @if (Auth::user()->phone != env('authphone', "9852059171"))
-    @include('admin.layouts.menu')
+        @include('admin.layouts.menu')
 
     @else
-    @include('admin.layouts.menu_admin')
+         @include('admin.layouts.menu_admin')
     @endif
     <section class="content">
         <div class="body_scroll">

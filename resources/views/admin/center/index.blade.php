@@ -1,8 +1,10 @@
 @extends('admin.layouts.app')
-@section('title','Collection Centers')
-@section('head-title','Collection Center')
+@section('title','Branch')
+@section('head-title','Branch')
 @section('toobar')
-<button type="button" class="btn btn-primary waves-effect m-r-20" data-toggle="modal" data-target="#largeModal">Create New Center</button>
+<button type="button" class="btn btn-primary waves-effect m-r-20" data-toggle="modal" data-target="#largeModal">
+   Create Branch
+</button>
 @endsection
 @section('content')
 <div class="pt-2 pb-2">
@@ -13,8 +15,10 @@
         <thead>
             <tr>
                 <th>#Id</th>
-                <th>Center Name</th>
-                <th>Center Address</th>
+                <th>Name</th>
+                <th>Address</th>
+                @if (env('use_milk',false))
+
                 <th>Fat <br> Rate (Rs.)</th>
                 <th>Snf <br> Rate (Rs.)</th>
                 @if (env('hasextra',0)==1)
@@ -32,6 +36,7 @@
                         Cooling <br>
                         Cost
                     </th>
+                @endif
                 @endif
                 <th>Action</th>
             </tr>
@@ -73,6 +78,8 @@
                                     <input type="text" id="address" name="address" class="form-control next" data-next="fat-rate" placeholder="Collection Center Address" required>
                                 </div>
                             </div>
+                            @if (env('use_milk',false))
+
                             <div class="col-lg-6">
                                 <label for="name">Fat Rate</label>
                                 <div class="form-group">
@@ -103,6 +110,7 @@
                                     <input type="number" id="cc" name="cc" class="form-control" step="0.001" placeholder="Enter Cooling Cost" value="0" required>
                                 </div>
                             </div>
+                            @endif
                         </div>
                 </div>
             </div>
@@ -168,7 +176,7 @@
             });
     }
 
- 
+
     function removeCenter(id) {
         if (confirm('Are you sure?')) {
             axios({

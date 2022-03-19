@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller;
 use App\Models\Center;
 use App\Models\CenterStock;
 use App\Models\Item;
+use App\Models\StockOut;
+use App\Models\StockOutItem;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -45,7 +47,8 @@ class ItemController extends Controller
 
                 $items = Item::select('id','title','sell_price','stock','unit','reward_percentage','number')->latest()->get();
             }
-            return view('admin.item.index',compact('items','large'));
+            $centers=DB::table('centers')->get(['id','name']);
+            return view('admin.item.index',compact('items','large','centers'));
         }
     }
 
@@ -54,7 +57,12 @@ class ItemController extends Controller
         return response()->json($items);
     }
     public function barcode(Request $request){
-        $items=Item::where('number','like',$request->keyword.'%')->select('id','sell_price','title','number')->take(24)->get();
+        if($request->filled('exact')){
+            $items=DB::table('items')->where('number',$request->keyword)->select('id','sell_price','title','number')->take(1)->get();
+        }else{
+
+            $items=Item::where('number','like',$request->keyword.'%')->select('id','sell_price','title','number')->take(24)->get();
+        }
         return response()->json($items);
     }
 
@@ -99,6 +107,23 @@ class ItemController extends Controller
         $item->dis_price=$request->dis_price;
 
         $item->save();
+
+        if(env('multi_stock',false)){
+            if($request->filled('centers')){
+                foreach ($request->centers as $key => $center_id) {
+                    $amount=$request->input('qty_'.$center_id);
+                    $rate=$request->input('rate_'.$center_id);
+                    $stock=new CenterStock();
+                    $stock->item_id=$item->id;
+                    $stock->center_id=$center_id;
+                    $wholesale=$request->input('wholesale_'.$center_id);
+                    $stock->amount=$amount;
+                    $stock->rate=$rate;
+                    $stock->wholesale=$wholesale;
+                    $stock->save();
+                }
+            }
+        }
         if($request->filled('rettype')){
             return response()->json($item);
         }else{
@@ -162,6 +187,7 @@ class ItemController extends Controller
                 foreach ($request->center_ids as $center_id) {
                     $amount=$request->input('amount_'.$center_id);
                     $rate=$request->input('rate_'.$center_id);
+                    $wholesale=$request->input('wholesale_'.$center_id);
                     $stock=CenterStock::where('item_id',$id)->where('center_id',$center_id)->first();
                     if($stock==null){
                         $stock=new CenterStock();
@@ -170,6 +196,7 @@ class ItemController extends Controller
                     }
                     $stock->amount=$amount;
                     $stock->rate=$rate;
+                    $stock->wholesale=$wholesale;
                     $stock->save();
                     // $totalStock+=$amount;
                 }
@@ -184,5 +211,108 @@ class ItemController extends Controller
             return redirect()->route('admin.dashboard');
         }
 
+    }
+
+
+    public function stockOut(Request $request)
+    {
+        $items=[];
+        if($request->getMethod()=="GET"){
+            $centers=DB::table('centers')->get(['id','name']);
+            $items = DB::table('items')->get(['id','title','number']);
+
+            return view('admin.item.stockout',compact('items','centers'));
+        }else{
+            $sout=new StockOut();
+            $date = str_replace('-', '', $request->info['date']);
+            $center_id = str_replace('-', '', $request->info['center_id']);
+            // dd($request->items);
+            $ids=[];
+            try {
+                //code...
+                $sout=StockOut::create([
+                    'date'=>$date,
+                    'center_id'=>$center_id
+                ]);
+                foreach ($request->items as $key => $item) {
+                    $sout_item=StockOutItem::create([
+                        'item_id'=>$item['item_id'],
+                        'amount'=>$item['qty'],
+                        'stock_out_id'=>$sout->id
+                    ]);
+                    array_push($ids,$sout_item->id);
+
+                    $cstock=CenterStock::where('item_id',$sout_item->item_id,$center_id)->first();
+                    if($cstock==null){
+
+                        $item=DB::table('items')->where('id',$sout_item->item_id)->first(['sell_price','wholesale']);
+                        $cstock=new CenterStock();
+                        $cstock->item_id=$sout_item->item_id;
+                        $cstock->center_id=$center_id;
+                        $cstock->amount=$sout_item->amount;
+                        $cstock->rate=$item->sell_price;
+                        $cstock->wholesale=$item->wholesale;
+
+                    }else{
+                        $cstock->amount+=$sout_item->amount;
+
+                    }
+                    $cstock->save();
+                }
+
+                return response('ok');
+            } catch (\Throwable $th) {
+                if($sout->id==null || $sout->id==0){
+                    $sout->delete();
+                }
+
+                if(count($ids)>0){
+                    StockOutItem::whereIn('id',$ids)->delete();
+                }
+                return abort(500,$th->getMessage());
+
+
+            }
+        }
+    }
+
+    public function stockOutList(){
+        $stockOuts=DB::table('stock_outs')->join('centers','centers.id','=','stock_outs.center_id')->select(
+            'stock_outs.date',
+            'stock_outs.id',
+            'stock_outs.canceled',
+            'centers.name'
+        )->orderBy('stock_outs.id','desc')->get();
+        // dd($stockOuts);
+            return view('admin.item.stockoutlist',compact('stockOuts'));
+    }
+
+    public function stockOutView($id)
+    {
+        $stockOut=DB::table('stock_outs')->join('centers','centers.id','=','stock_outs.center_id')->select(
+            'stock_outs.date',
+            'stock_outs.id',
+            'stock_outs.canceled',
+            'centers.name'
+        )->where('stock_outs.id',$id)->first();
+        $stockOutItems=DB::table('stock_out_items')
+        ->join('items','items.id','=','stock_out_items.item_id')
+        ->where('stock_out_items.stock_out_id',$id)
+        ->get(['stock_out_items.amount','items.title','stock_out_items.id']);
+        return view('admin.item.stockoutview',compact ('stockOut','stockOutItems','id'));
+    }
+    public function stockOutCancel($id)
+    {
+        DB::table('stock_outs')->where('stock_outs.id',$id)->update(['canceled'=>1]);
+        $stockOut=DB::table('stock_outs')->where('id',$id)->first();
+        $stockOutItems=DB::table('stock_out_items')
+        ->where('stock_out_id',$id)->get(['item_id','amount']);
+        foreach ($stockOutItems as $key => $item) {
+            $cstock=CenterStock::where('item_id',$item->item_id,$stockOut->center_id)->first();
+            if($cstock!=null){
+                $cstock->amount-=$item->amount;
+                $cstock->save();
+            }
+        }
     }
 }

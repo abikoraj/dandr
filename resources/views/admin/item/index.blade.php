@@ -52,7 +52,7 @@
         lorem
     </div> --}}
     @if (auth_has_per('03.01'))
-        @include('admin.item.add')
+        @include('admin.item.add',['centers'=>$centers])
     @endif
 
     @include('admin.item.singlejs')

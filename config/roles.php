@@ -111,6 +111,7 @@ return [
             'Search Bills' => ['code' => '09.02'],
             'Reprint Bills' => ['code' => '09.03'],
             'Sales Returns' => ['code' => '09.04'],
+            'sync' => ['code' => '09.05'],
         ]
     ],
 

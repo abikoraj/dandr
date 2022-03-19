@@ -30,54 +30,10 @@ class FarmerController extends Controller
         return view('admin.farmer.index');
     }
 
-    public function addFarmer(Request $request)
-    {
-
-        if ($request->filled('no')) {
-            $max = $request->no;
-        } else {
-
-            $max = (User::join('farmers', 'farmers.user_id', '=', 'users.id')->where('farmers.center_id', $request->center_id)->max('users.no') ?? 0) + 1;
-        }
-        $user = new User();
-        $user->phone = $request->phone ?? "9800000000";
-        $user->name = $request->name;
-        $user->address = $request->address;
-        $user->role = 1;
-        $user->password = bcrypt(12345);
-        $user->no = $max;
-        $user->save();
-
-        $id = $user->id;
-        $farmer = new Farmer();
-        $farmer->user_id = $user->id;
-        $farmer->center_id = $request->center_id;
-        $farmer->usecc = $request->usecc ?? 0;
-        $farmer->usetc = $request->usetc ?? 0;
-        $farmer->userate = $request->userate ?? 0;
-        $farmer->rate = $request->rate;
-        $farmer->no = $max;
-
-        $farmer->save();
-        if ($request->has('advance')) {
-            if ($request->advance > 0) {
-                $manager = new LedgerManage($user->id);
-                $manager->addLedger('Opening Balance', 1, $request->advance, $request->date, '101');
-            }
-        }
-        $user = User::find($id);
-        $user->usecc = $farmer->usecc;
-        $user->usetc = $farmer->usetc;
-        $user->userate = $farmer->userate;
-        $user->rate = $farmer->rate;
-        return view('admin.farmer.single', compact('user'));
-    }
 
     public function listFarmerByCenter(Request $request)
     {
-        // dd($request->all());
         $farmers = User::join('farmers', 'farmers.user_id', '=', 'users.id')->where('farmers.center_id', $request->center)->select('users.id','users.name','users.phone','users.address', 'farmers.center_id', 'farmers.usecc', 'farmers.usetc', 'farmers.userate', 'farmers.rate','farmers.no')->orderBy('users.no', 'asc')->get();
-        // dd($farmers);
         return view('admin.farmer.list', ['farmers' => $farmers]);
     }
 
@@ -242,7 +198,7 @@ class FarmerController extends Controller
 
     public function deleteFarmer($id)
     {
-        $user = User::where('id', $id)->where('role', 1)->first();
+        $user = User::where('id', $id)->first();
         $user->delete();
         return response()->json('Delete successfully !');
     }

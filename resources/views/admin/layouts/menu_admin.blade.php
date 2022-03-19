@@ -36,7 +36,14 @@
                     </ul>
                 </li>
             @endif
+            @if (env('use_pos',false))
+            <li><a href="javascript:void(0);" class="waves-effect waves-block menu-toggle"><i class="zmdi zmdi-shopping-cart"></i><span>Branch</span></a>
+                <ul class="ml-menu">
+                    <li><a href="{{ route('admin.center.index') }}" class="waves-effect waves-block">Manage Branches</a></li>
 
+                </ul>
+            </li>
+            @endif
             @if (env('use_milk',false))
 
                 <li><a href="javascript:void(0);" class="waves-effect waves-block menu-toggle"><i class="zmdi zmdi-shopping-cart"></i><span>Milk Collection</span></a>
@@ -51,6 +58,7 @@
             <li><a href="javascript:void(0);" class="waves-effect waves-block menu-toggle"><i class="zmdi zmdi-shopping-cart"></i><span>Items</span></a>
                 <ul class="ml-menu">
                     <li><a href="{{ route('admin.item.index') }}" class="waves-effect waves-block">Items</a></li>
+                    <li><a href="{{ route('admin.item.stockout-list') }}" class="waves-effect waves-block">Stock Out</a></li>
                 </ul>
             </li>
             {{-- @if (env('tier',1)==1) --}}

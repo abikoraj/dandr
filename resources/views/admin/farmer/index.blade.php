@@ -86,7 +86,7 @@
         var bodyFormData = new FormData(document.getElementById('form_validation'));
         axios({
                 method: 'post',
-                url: '{{ route("admin.farmer.add")}}',
+                url: '{{ route("sahakari.members.add")}}',
                 data: bodyFormData,
                 headers: {
                     'Content-Type': 'multipart/form-data'

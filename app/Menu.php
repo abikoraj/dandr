@@ -38,6 +38,7 @@ class Menu
                 'text' => "Items",
                 'children' => [
                     ["Items", '03.04', route('admin.item.index')],
+                    ["Stock Out", '03.05', route('admin.item.stockout-list')],
                 ],
             ],
             "distributer" => [
