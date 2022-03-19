@@ -97,8 +97,6 @@ class SupplierController extends Controller
                 } else {
                     $billItem->has_expairy = 0;
                 }
-
-
                 $billItem->supplierbill_id = $bill->id;
                 $billItem->save();
                 //XXX Add Stock
@@ -107,7 +105,6 @@ class SupplierController extends Controller
                     $item->stock += $billItem->qty;
                     $item->save();
                 }
-
                 $total += $billItem->rate * $billItem->qty;
             }
             $bill->discount = $request->idiscount;
@@ -130,7 +127,6 @@ class SupplierController extends Controller
                     $ei->save();
                 }
             }
-
             $ledger = new LedgerManage($request->user_id);
             $ledger->addLedger('Item puchase from supplier bill no - ' . $bill->billno, 1, $bill->total, $date, '125', $bill->id);
             if ($request->ipaid > 0) {

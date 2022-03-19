@@ -87,6 +87,7 @@ class ItemController extends Controller
         $item->unit = $request->unit;
         $item->wholesale = $request->wholesale??0;
         $item->reward_percentage = $request->reward;
+        $item->points = $request->points;
         if($request->hasFile('image')){
             $item->image=$request->image->store('uploads/item');
         }
@@ -103,8 +104,8 @@ class ItemController extends Controller
         $item->description=$request->description;
         $item->minqty=$request->minqty;
         $item->expirydays=$request->expirydays;
-        $item->dis_number=$request->dis_number;
-        $item->dis_price=$request->dis_price;
+        $item->dis_number=$request->dis_number??0;
+        $item->dis_price=$request->dis_price??0;
 
         $item->save();
 
@@ -147,6 +148,7 @@ class ItemController extends Controller
         $item->stock = $request->stock;
         $item->unit = $request->unit;
         $item->reward_percentage = $request->reward;
+        $item->points = $request->points;
 
         if($request->hasFile('image')){
             $item->image=$request->image->store('uploads/item');
@@ -165,8 +167,8 @@ class ItemController extends Controller
         $item->description=$request->description;
         $item->minqty=$request->minqty;
         $item->expirydays=$request->expirydays;
-        $item->dis_number=$request->dis_number;
-        $item->dis_price=$request->dis_price;
+        $item->dis_number=$request->dis_number??'';
+        $item->dis_price=$request->dis_price??0;
 
         $item->save();
 

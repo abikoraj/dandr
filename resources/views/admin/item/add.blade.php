@@ -53,7 +53,7 @@
                             <div class="col-lg-4">
                                 <label for="stock">Stock</label>
                                 <div class="form-group">
-                                    <input type="number" id="stock" name="stock" min="0" class="form-control next" data-next="unit" placeholder="Enter stock" required>
+                                    <input type="number"  id="stock" name="stock" min="0" class="form-control next" data-next="unit" placeholder="Enter stock" required>
                                 </div>
                             </div>
 
@@ -70,13 +70,19 @@
                                     <input type="number" id="reward" name="reward" step="0.001" min="0" value="0" class="form-control" placeholder="Enter item reward percentage" >
                                 </div>
                             </div>
+                            <div class="col-lg-4">
+                                <label for="unit">Point / Unit</label>
+                                <div class="form-group">
+                                    <input type="number" id="points" name="points" step="0.001" min="0" value="0" class="form-control" placeholder="Enter item Points" >
+                                </div>
+                            </div>
 
                             <div class="col-lg-3">
-                                <input type="checkbox" name="trackstock" id="trackstock" value="1">
+                                <input type="checkbox" checked name="trackstock" id="trackstock" value="1">
                                 <label for="trackstock">Track Stock</label>
                             </div>
                             <div class="col-lg-3">
-                                <input type="checkbox" name="trackexpiry" id="trackexpiry" value="1">
+                                <input type="checkbox" checked name="trackexpiry" id="trackexpiry" value="1">
                                 <label for="trackexpiry">Track Expiry</label>
                             </div>
                             <div class="col-lg-3">
@@ -119,18 +125,21 @@
                                     <input type="number" id="minqty" name="minqty" step="0.001" min="0" value="0" class="form-control" >
                                 </div>
                             </div>
-                            <div class="col-lg-3">
-                                <label for="dis_number">Distributer Number</label>
-                                <div class="form-group">
-                                    <input type="text" id="dis_number" name="dis_number"  class="form-control" >
+                            @if(env('use_distributer',false))
+
+                                <div class="col-lg-3">
+                                    <label for="dis_number">Distributer Number</label>
+                                    <div class="form-group">
+                                        <input type="text" id="dis_number" name="dis_number"  class="form-control" >
+                                    </div>
                                 </div>
-                            </div>
-                            <div class="col-lg-3">
-                                <label for="dis_price">Distributer Rate</label>
-                                <div class="form-group">
-                                    <input type="number" id="dis_price" name="dis_price" step="0.001" min="0" value="0" class="form-control" >
+                                <div class="col-lg-3">
+                                    <label for="dis_price">Distributer Rate</label>
+                                    <div class="form-group">
+                                        <input type="number" id="dis_price" name="dis_price" step="0.001" min="0" value="0" class="form-control" >
+                                    </div>
                                 </div>
-                            </div>
+                            @endif
                             <div class="col-lg-3">
                                         <label for="image">Image</label>
                                         <div class="form-group">
@@ -151,11 +160,13 @@
                     <table class="table">
                           <tr>
                               <th>
-                                  Center
+                                  Branch
                               </th>
+                              @if ($w)
                               <th>
                                   Wholesale
                               </th>
+                              @endif
                               <th>
                                   Retail
                               </th>
@@ -169,9 +180,12 @@
                                     <input type="hidden" name="centers[]" value="{{$center->id}}">
                                     {{$center->name}}
                                 </td>
-                                <td>
-                                    <input class="form-control" type="number" name="wholesale_{{$center->id}}" required value="0">
-                                </td>
+                                @if ($w)
+
+                                    <td>
+                                        <input class="form-control" type="number" name="wholesale_{{$center->id}}" required value="0">
+                                    </td>
+                                @endif
                                 <td>
                                     <input class="form-control" type="number" name="rate_{{$center->id}}" required value="0">
                                 </td>

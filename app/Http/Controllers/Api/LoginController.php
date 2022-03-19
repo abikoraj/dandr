@@ -38,7 +38,7 @@ class LoginController extends Controller
                 $newuser = new User();
                 // $newuser->email = $request->phone . '@' . env('domain', 'needtechnosoft.com.np');
                 $newuser->phone = $request->phone;
-                $newuser->role = 1;
+                $newuser->role = 0;
             }
             $newuser->name = $request->name;
             $newuser->address = $request->address??"";
