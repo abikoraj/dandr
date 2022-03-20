@@ -11,6 +11,7 @@ use App\Models\PosSetting;
 use App\Models\User;
 use App\NepaliDate;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class CustomerController extends Controller
 {
@@ -19,49 +20,55 @@ class CustomerController extends Controller
         $large = env('large', false);
         $customers = [];
         if ($request->getMethod() == "POST") {
-            $query1 = Customer::join('users', 'users.id', '=', 'customers.user_id')
-                ->select('users.name', 'users.address', 'users.phone', 'customers.id', 'customers.user_id', 'customers.panvat');
-            $query = Customer::join('users', 'users.id', '=', 'customers.user_id')
-                ->select('users.name', 'users.address', 'users.phone', 'customers.id', 'customers.user_id', 'customers.panvat');
-            $step = $request->step ?? 0;
-            $countStep = env('countstep', 24);
-            $data = [];
-            $data['page'] = $step;
-            if ($request->filled('name')) {
-                $query = $query->where('users.name', 'like', '%' . $request->name . '%');
-                $query1 = $query1->where('users.name', 'like', '%' . $request->name . '%');
-                $data['name'] = $request->name;
-            }
+            // $query1 = Customer::join('users', 'users.id', '=', 'customers.user_id')
+            //     ->select('users.name', 'users.address', 'users.phone', 'customers.id', 'customers.user_id', 'customers.panvat');
+            // $query = Customer::join('users', 'users.id', '=', 'customers.user_id')
+            //     ->select('users.name', 'users.address', 'users.phone', 'customers.id', 'customers.user_id', 'customers.panvat');
+            // $step = $request->step ?? 0;
+            // $countStep = env('countstep', 24);
+            // $data = [];
+            // $data['page'] = $step;
+            // if ($request->filled('name')) {
+            //     $query = $query->where('users.name', 'like', '%' . $request->name . '%');
+            //     $query1 = $query1->where('users.name', 'like', '%' . $request->name . '%');
+            //     $data['name'] = $request->name;
+            // }
 
-            if ($request->filled('phone')) {
-                $query = $query->where('users.phone', 'like', $request->phone . '%');
-                $query1 = $query1->where('users.phone', 'like', $request->phone . '%');
-                $data['phone'] = $request->phone;
-            }
-            // $temp=$query;
-            if ($step == 0) {
-                $query = $query->take($countStep);
-            } else {
-                $query = $query->skip($step * $countStep)->take($countStep);
-            }
-            $items = $query->orderBy('users.name', 'asc')->get();
-            $data['total'] = $query1->count();
-            $data['items'] = $items;
-
+            // if ($request->filled('phone')) {
+            //     $query = $query->where('users.phone', 'like', $request->phone . '%');
+            //     $query1 = $query1->where('users.phone', 'like', $request->phone . '%');
+            //     $data['phone'] = $request->phone;
+            // }
+            // // $temp=$query;
+            // if ($step == 0) {
+            //     $query = $query->take($countStep);
+            // } else {
+            //     $query = $query->skip($step * $countStep)->take($countStep);
+            // }
+            // $items = $query->orderBy('users.name', 'asc')->get();
+            // $data['total'] = $query1->count();
+            // $data['items'] = $items;
+            $data = DB::table('customers')
+                ->join('users', 'users.id', '=', 'customers.user_id')
+                ->select(
+                    'users.name',
+                    'users.address',
+                    'users.phone',
+                    'customers.id',
+                    'customers.user_id',
+                    'customers.panvat'
+                )->get();
             return response()->json($data);
         } else {
-            if (!$large) {
 
-                $customers = Customer::join('users', 'users.id', '=', 'customers.user_id')
-                    ->select('users.name', 'users.address', 'users.phone', 'customers.id', 'customers.user_id', 'customers.panvat')->get();
-            }
-            return view('admin.customer.index', compact('customers', 'large'));
+            return view('admin.customer.index');
         }
     }
 
-    public function all(){
+    public function all()
+    {
         $customers = Customer::join('users', 'users.id', '=', 'customers.user_id')
-        ->select('users.name', 'customers.id', 'customers.user_id')->orderBy('users.name','asc')->get();
+            ->select('users.name', 'customers.id', 'customers.user_id','users.phone')->orderBy('users.name', 'asc')->get();
         return response()->json($customers);
     }
 
@@ -177,17 +184,17 @@ class CustomerController extends Controller
             } else {
                 $prev = Ledger::where('date', '<', $range[1])->where('user_id', $user->id)->where('type', 2)->sum('amount') - Ledger::where('date', '<', $range[1])->where('user_id', $user->id)->where('type', 1)->sum('amount');
             }
-            $base=$prev;
-            $ledger_data = $ledger->orderBy('date', 'asc')->orderBy('id','asc')->get();
-            $ledgers=[];
-            foreach($ledger_data as $ledger){
-                if($ledger->type==1){
-                    $base-=$ledger->amount;
-                }else{
-                    $base+=$ledger->amount;
+            $base = $prev;
+            $ledger_data = $ledger->orderBy('date', 'asc')->orderBy('id', 'asc')->get();
+            $ledgers = [];
+            foreach ($ledger_data as $ledger) {
+                if ($ledger->type == 1) {
+                    $base -= $ledger->amount;
+                } else {
+                    $base += $ledger->amount;
                 }
-                $ledger->amt=$base;
-                array_push($ledgers,$ledger);
+                $ledger->amt = $base;
+                array_push($ledgers, $ledger);
             }
 
             return view('admin.customer.load_detail', compact('ledgers', 'type', 'user', 'title', 'prev'));
@@ -198,20 +205,15 @@ class CustomerController extends Controller
 
     public function payment(Request $request)
     {
-        $large=env('large',false);
-        $customers=[];
+        $large = env('large', false);
+        $customers = [];
         if ($request->getMethod() == "POST") {
             $user = User::find($request->id);
             $balance = Ledger::where('user_id', $user->id)->where('type', 2)->sum('amount') - Ledger::where('user_id', $user->id)->where('type', 1)->sum('amount');
-            return view('admin.customer.payement.data', compact('user','balance'));
+            return view('admin.customer.payement.data', compact('user', 'balance'));
         } else {
-            if(!$large){
-                $customers=Customer::with('user')->get();
-            }
-            return view('admin.customer.payement.index', compact(
-                'customers',
-                'large'
-            ));
+
+            return view('admin.customer.payement.index' );
         }
     }
 

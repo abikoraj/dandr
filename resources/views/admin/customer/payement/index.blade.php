@@ -4,24 +4,17 @@
 
 @section('content')
     <div class="row">
-        <div class="col-md-3">
+        <div class="col-md-4">
 
-            <input type="text" id="sid" placeholder="Search Customer" class="form-control mb-2">
-            <table class="table table-bordered  dataTable" style="cursor: pointer" id="customers">
-                @if($large)
-                @foreach ($customers as $customer)
-                    <tbody id="data">
-                        <tr data-name="{{ $customer->user->name }}" id="customer_{{ $customer->user_id }}" onclick="selectCustomer({{ $customer->user_id }},'{{ $customer->user->name }}')"> 
-                            <td>
-                                {{ $customer->user->name }}
-                            </td>
-                        </tr>
-                    </tbody>
-                @endforeach
-                @endif
-            </table>
+            <input type="text" onkeydown="keyboardSel(event)" id="sid" placeholder="Search Customer" oninput="filterCustomer(this.value)" class="form-control mb-2">
+            <div style="max-height: 430px;overflow-y:auto;">
+
+                <table class="table table-bordered " style="cursor: pointer" id="customers">
+
+                </table>
+            </div>
         </div>
-        <div class="col-md-9" id="allData">
+        <div class="col-md-8" id="allData">
 
         </div>
     </div>
@@ -31,95 +24,117 @@
 
 @endsection
 @section('js')
-    @if($large)
-        @include('admin.search.list')
-        
-    @endif
-    <script>
-        @if(!$large)
-            initTableSearch('sid', 'data', ['name']);
-        @endif
-        lock = false;
-        var _id=-1;
-        var _name="";
-        function selectCustomer(id,name){
-            _id=id;
-            _name=name;
-            showProgress("Loading "+name+"'s Data")
-            axios.post('{{route('admin.customer.payment.index')}}',{"id":id})
-            .then((res)=>{
-                $('#allData').html(res.data);
-                hideProgress();
-                setDate('date',true);
-            })
-            .catch((err)=>{
-                hideProgress();
 
-            });
+
+
+    <script>
+        var allData = [];
+        var customers = [];
+        var lock = false;
+        var _id = -1;
+        var _name = "";
+        total=0;
+        index=0;
+
+        function keyboardSel(e) {
+
+            if(e.which==13){
+                $($('#customers>tr')[index]).click();
+                return;
+            }else if(e.which==38){
+                index-=1;
+                if(index<0){
+                    index=0;
+                }
+            }else if(e.which==40){
+                index+=1;
+                if(index>total){
+                    index=total;
+                }
+            }
+            $('#customers>tr').removeClass('btn-primary');
+            $($('#customers>tr')[index]).addClass('btn-primary');
+            $('#customers>tr')[index].scrollIntoView();
         }
 
-        function addPayment(e){
-            e.preventDefault();
-            if(!lock){
-                lock=true;
-                showProgress("Adding Payment for "+_name);
-                data=new FormData(document.getElementById('addPayment'));
-                axios.post("{{route('admin.customer.payment.add')}}",data)
-                .then((res)=>{
+        function selectCustomer(id, name,ele) {
+            $('#customers>tr').removeClass('btn-primary');
+            $(ele).addClass('btn-primary');
+            _id = id;
+            _name = name;
+            showProgress("Loading " + name + "'s Data")
+            axios.post('{{ route('admin.customer.payment.index') }}', {
+                    "id": id
+                })
+                .then((res) => {
                     $('#allData').html(res.data);
                     hideProgress();
-                    setDate('date',true);
+                    setDate('date', true);
                 })
-                .catch((err)=>{
+                .catch((err) => {
                     hideProgress();
 
                 });
+        }
+
+        function addPayment(e) {
+            e.preventDefault();
+            if (!lock) {
+                lock = true;
+                showProgress("Adding Payment for " + _name);
+                data = new FormData(document.getElementById('addPayment'));
+                axios.post("{{ route('admin.customer.payment.add') }}", data)
+                    .then((res) => {
+                        $('#allData').html(res.data);
+                        hideProgress();
+                        setDate('date', true);
+                    })
+                    .catch((err) => {
+                        hideProgress();
+
+                    });
             }
         }
 
-        @if($large)
-            function loadCustomer(){
-                axios.get('{{route('admin.customer.all')}}')
-                .then((res)=>{
-                    $('#sid').search({
-                        filterfunc:'filterCustomer',
-                        renderfunc:'renderCustomer',
-                        rendercustom: true,
-                        renderele: "#customers",
-                        list:res.data,
-                        renderfirst:true
-                    });
+
+        function loadCustomer() {
+            axios.get('{{ route('admin.customer.all') }}')
+                .then((res) => {
+                    allData = res.data;
+                    customers = allData;
+                   renderCustomer();
+                    console.log(res.data);
+
                 });
-            }
-            function filterCustomer(_keyword) {
-                console.log(this,_keyword);
-                let _list=[];
-                let _index=0;
-                for (let index = 0; index < this.length; index++) {
-                    const element = this[index];
+        }
 
-                    if (element.name.toLowerCase().startsWith(_keyword.toLowerCase())) {
-                        _list.push(element);
-                        if (_index >= 100) {
-                            break;
-                        }
-                        _index += 1;
-                    }
-                }
-                return _list;
-            }
-            function  renderCustomer() {
-            html="";
-            console.log(this);
-            this.forEach((item) => {
+        function filterCustomer(_keyword) {
+            if(_keyword.length>0){
+                customers=allData.filter(o=>o.name.toLowerCase().startsWith(_keyword)||o.phone.startsWith(_keyword));
+                renderCustomer();
+            }else{
+                customers=allData;
 
-                html +='<tr data-name="'+item.name+'->name }}" id="customer_'+item.id+'" onclick="selectCustomer('+item.user_id+',\''+item.name+'\')"><td>'+item.name+'</td></tr>';
+            }
+
+        }
+
+        function renderCustomer() {
+            html = "";
+
+            let id=0;
+            customers.forEach((item) => {
+
+                html += '<tr  index="'+(id++)+'"  onclick="selectCustomer(' + item.user_id + ',\'' + item.name + '\',this)"><td>' + item.name +
+                    ' ('+item.phone+')</td></tr>';
 
             });
-            
-            return html; 
-            }
-            loadCustomer();
-        @endif
+            total=id;
+            $('#customers').html( html);
+            index=0;
+            $($('#customers>tr')[index]).addClass('btn-primary');
+            $('#customers>tr')[index].scrollIntoView();
+        }
+        loadCustomer();
     </script>
 @endsection

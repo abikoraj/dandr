@@ -2,7 +2,7 @@
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h4 class="title" id="largeModalLabel">Create Customer</h4>
+                <h4 class="title" id="largeModalLabel">Edit Customer</h4>
             </div>
             <hr>
             <div class="card">

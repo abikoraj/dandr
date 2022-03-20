@@ -119,7 +119,7 @@
                                 @if($l->identifire==130)
                                     {{-- <button  onclick="initEditLedger('{{$l->title}}',{{$l->id}});">Edit</button>
                                     <button  onclick="deleteLedger({{$l->id}},loadData);">Delete</button> --}}
-                                    <button  onclick="win.showGet('Bill Detail ','{{route('admin.billing.detail',['id'=>$l->foreign_key])}}');">Detail</button>
+                                    <button  onclick=" win.showPost('Bill Detail  ' , '{{route('admin.pos.billing.detail')}}', {id: {{$l->foreign_key}}});">Detail</button>
                                 @else
                                 @endif
                             </td>

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\LedgerManage;
 use App\Models\Center;
 use App\Models\CenterStock;
 use App\Models\Counter;
@@ -155,6 +156,24 @@ class ItemController extends Controller
                     array_push($bis, $bi);
                 }
             }
+
+            if($_bill->customer_id != null){
+
+                $ledger = new LedgerManage($new_cus->user_id);
+                $paidamount=($bill->grandtotal<$bill->paid)?$bill->grandtotal:$bill->paid;
+
+                if(env('acc_system','old')=='old'){
+                    $ledger->addLedger('Bill No '.$bill->bill_no, 1,    $bill->grandtotal,  $bill->date, 130, $bill->id);
+                    if ($paidamount > 0) {
+                        $ledger->addLedger('Payment For  Bill No '.$bill->bill_no, 2, $paidamount,  $bill->date, 131, $bill->id);
+                    }
+                }else{
+                    $ledger->addLedger('Bill No '.$bill->bill_no, 2,    $bill->grandtotal,  $bill->date, 130, $bill->id);
+                    if ($paidamount > 0) {
+                        $ledger->addLedger('Payment For Bill No '.$bill->bill_no, 1, $paidamount,  $bill->date, 131, $bill->id);
+                    }
+                }
+            }
             $status->current+=$bill->grandtotal;
             $status->save();
         } catch (\Throwable $th) {
@@ -183,5 +202,10 @@ class ItemController extends Controller
             'msg'=>"Bill Saved Sucessfully",
             'bill_id'=>$bill->id
         ]);
+    }
+
+    public function syncLedger (Request $request)
+    {
+
     }
 }

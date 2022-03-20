@@ -33,11 +33,27 @@
         Customer</button>
 @endsection
 @section('content')
-
-    <div class="pt-2 pb-2" >
-        <input type="text" oninput="search(this)"  class="w-50" placeholder="Search with name or phone number">
+    @if ($large)
+        <div class="row">
+            <div class="col-md-3">
+                <input type="text" class="form-control"  id="search-name" placeholder="Search using name" oninput="_name=this.value;console.log(this.value,_name);">
+            </div>
+            <div class="col-md-3">
+                <input type="text" class="form-control"  id="search-phone" placeholder="Search using Phone" oninput="phone=this.value;">
+            </div>
+            <div class="col-md-3">
+                <button class="btn btn-primary w-100" onclick="step=0;loadData()">Search</button>
+            </div>
+            <div class="col-md-3">
+                <button class="btn btn-danger w-100" onclick="reset()">Reset</button>
+            </div>
+        </div>
+        <hr>
+    @else
+    <div class="pt-2 pb-2">
+        <input type="text" id="sid" placeholder="Search">
     </div>
-
+    @endif
     @include('admin.customer.add')
     @include('admin.customer.edit')
     <div class="table-responsive">
@@ -53,7 +69,9 @@
                 </tr>
             </thead>
             <tbody id="data">
-
+                {{-- @foreach ($customers as $customer)
+                    @include('admin.customer.single',['customer'=>$customer])
+                @endforeach --}}
 
             </tbody>
         </table>
@@ -68,16 +86,23 @@
 @endsection
 @section('js')
 
-
+    var d
     <script>
-        var customers = [];
-        var allData=[];
         lock = false;
 
-        const countStep = {{ env('countstep', 24) }};
-        var step = 0;
-        var $count = 0;
-        var total = 0;
+        countStep = {{ env('countstep', 24) }};
+        @if ($large)
+            var step=0;
+            var _name='';
+            var phone='';
+            var $count='';
+            var total=0;
+
+        @else
+            initTableSearch('sid', 'data', ['name']);
+            // initTableSearch('sid', 'itemData', ['name']);
+        @endif
+
 
         function del(id) {
             if (!lock) {
@@ -105,18 +130,20 @@
             }
         }
 
-
+        @if($large)
         function loadData() {
             if (!lock) {
                 lock = true;
                 showProgress("Loading Customers");
-                axios.post('{{ route('admin.customer.home') }}', {})
+                axios.post('{{ route('admin.customer.home') }}', {
+                        "step": step,
+                        "name": _name != '' ? _name : null,
+                        "phone": phone != '' ? phone : null
+                    })
                     .then((res) => {
-                        allData=res.data;
-                        customers = res.data;
-                        // console.log(customers);
-                        render(customers.slice(step * countStep, countStep));
-                        renderPagination(customers.length);
+                        console.log(res);
+                        render(res.data.items);
+                        renderPagination(res.data.total);
                         lock = false;
                         hideProgress();
                     })
@@ -127,13 +154,13 @@
                     });
             }
         }
-        //reset
-        function reset() {
+         //reset
+         function  reset() {
             $('#search-name').val('');
             $('#search-phone').val('');
-            _name = '';
-            phone = '';
-            step = 0;
+            _name='';
+            phone='';
+            step=0;
             loadData();
         }
 
@@ -152,22 +179,22 @@
                 rendered = rendered.replaceAll('xxx_name', data.name);
                 rendered = rendered.replaceAll('xxx_phone', data.phone);
                 rendered = rendered.replaceAll('xxx_address', data.address);
-                rendered = rendered.replaceAll('xxx_panvat', data.panvat ?? '');
+                rendered = rendered.replaceAll('xxx_panvat', data.panvat??'');
                 rendered = rendered.replaceAll('XXX_user_id', data.user_id);
                 rendered = rendered.replaceAll('XXX_basicInfo', encodeURIComponent(JSON.stringify(data)));
                 // rendered = rendered.replaceAll('xxx_reward_percentage', data.reward_percentage);
                 html += rendered;
                 console.log(rendered);
             }
-            $('#data').html(html);
+            $('#data').html('');
+            $('#data').append(html);
+            console.log(html);
 
         }
 
         function show(_step) {
             step = _step;
-            console.log(step);
-            render(customers.slice(step * countStep,(step * countStep)+ countStep));
-            renderPagination(customers.length);
+            loadData();
         }
 
         function loadStep() {
@@ -188,7 +215,7 @@
         function renderPagination(count) {
             $count = count;
             total = parseInt($count / countStep) + ($count % countStep != 0 ? 1 : 0);
-            // console.log(total);
+            console.log(total);
             $('#pagination').html('')
             $('#pagination').removeClass('d-none');
 
@@ -218,12 +245,8 @@
                         }
                     }
                     $('#pagination').append(
-                        '<div><input id="pagination-input" class="pagination-input"><button class="btn btn-primary mx-1 " onclick="loadStep()">go</button>'
-                    );
-
-                    $('#pagination').append('<button class="btn btn-outline-primary mx-1 " onclick="show(0)">First</button>');
-                    $('#pagination').append('<button class="btn btn-outline-primary mx-1 " onclick="show('+(total-1)+')">Last</button></div>');
-
+                        '<div><input id="pagination-input" class="pagination-input"><button class="btn btn-primary mx-1 " onclick="loadStep()">go</button><div>'
+                        );
 
 
                 } else {
@@ -246,13 +269,23 @@
             }
         }
 
-        function search(ele){
-            step=0;
-            key=ele.value.toLowerCase();
-            customers=allData.filter(o=>o.name.toLowerCase().startsWith(key)|| o.phone.startsWith(key));
-            render(customers.slice(step * countStep,(step * countStep)+ countStep));
-            renderPagination(customers.length);
-        }
+        $('#search-name').keydown(function (e) {
+
+            if(e.which==13 && _name.length>2){
+                step=0;
+                loadData();
+            }
+        });
+
+        $('#search-phone').keydown(function (e) {
+
+            if(e.which==13 && phone.length>4){
+                step=0;
+                loadData();
+            }
+        });
+
         loadData();
+        @endif
     </script>
 @endsection

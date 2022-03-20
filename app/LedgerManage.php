@@ -62,7 +62,7 @@ class LedgerManage
     **customer section
     * "130" = "Sold to customer"
     * "131" = "customer Payment"
-    * "135" = "customer Payment"
+    * "135" = "customer Payment extra"
     * "134" = "customer opening Balance"
     */
     public function addLedger($particular, $type, $amount, $date, $identifier, $foreign_id = null)

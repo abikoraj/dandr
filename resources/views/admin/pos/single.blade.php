@@ -13,16 +13,16 @@
     </td>
 
     <td>
-        <span class="btn btn-primary" onclick="loadDetail({{$bill->id}},{{$bill->bill_no}});">
+        <span class="btn btn-primary" onclick="loadDetail({{$bill->id}},'{{$bill->bill_no}}');">
             View Detail
         </span>
         @if ($print==1)
-        <span class="btn btn-primary" onclick="initPrint({{$bill->id}},{{$bill->bill_no}});">
+        <span class="btn btn-primary" onclick="initPrint({{$bill->id}},'{{$bill->bill_no}}');">
             print
         </span>
         @endif
         @if ($cancel==1)
-        <span class="btn btn-primary" onclick="cancel({{$bill->id}},{{$bill->bill_no}});">
+        <span class="btn btn-primary" onclick="cancel({{$bill->id}},'{{$bill->bill_no}}');">
             Cancel
         </span>
         @endif
