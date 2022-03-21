@@ -50,7 +50,10 @@ class BillingController extends Controller
             $bno = $data->max;
         }
         $bno += 1;
-
+        $center_id=env('maincenter',-1);
+        if($center_id==-1){
+            $center_id=DB::table('centers')->select('id')->first()->id;
+        }
         $bill->bill_no = $bno;
         $bill->date = $setting->date;
         $bill->counter_id = $cid;

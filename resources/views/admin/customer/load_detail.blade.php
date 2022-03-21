@@ -119,7 +119,12 @@
                                 @if($l->identifire==130)
                                     {{-- <button  onclick="initEditLedger('{{$l->title}}',{{$l->id}});">Edit</button>
                                     <button  onclick="deleteLedger({{$l->id}},loadData);">Delete</button> --}}
-                                    <button  onclick=" win.showPost('Bill Detail  ' , '{{route('admin.pos.billing.detail')}}', {id: {{$l->foreign_key}}});">Detail</button>
+                                    @if($l->out==1)
+                                    <button  onclick=" win.showPost('Bill Detail  ' , '{{route('admin.pos.billing.detail')}}', {id: {{$l->foreign_key}},out:{{$l->out}},center_id:{{$customer->center_id}}});">Detail</button>
+
+                                    @else
+                                        <button  onclick=" win.showPost('Bill Detail  ' , '{{route('admin.pos.billing.detail')}}', {id: {{$l->foreign_key}},out:{{$l->out}}});">Detail</button>
+                                    @endif
                                 @else
                                 @endif
                             </td>

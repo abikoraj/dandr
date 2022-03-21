@@ -9,10 +9,12 @@ use App\Models\CenterStock;
 use App\Models\Counter;
 use App\Models\Customer;
 use App\Models\Item;
+use App\Models\Ledger;
 use App\Models\PosBill;
 use App\Models\PosBillItem;
 use App\Models\PosSetting;
 use App\Models\User;
+use App\NepaliDate;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -41,14 +43,14 @@ class ItemController extends Controller
         $bis = [];
         $items = [];
         $centers = [];
-        $counter=Counter::where('id',$_bill->counter_id)->first();
-        $status=$counter->currentStatus($_bill->date);
+        $counter = Counter::where('id', $_bill->counter_id)->first();
+        $status = $counter->currentStatus($_bill->date);
         try {
-            if (PosBill::where('fiscal_year_id', $fy->id)->where('bill_no', $_bill->bill_no)->count()>0) {
+            if (PosBill::where('fiscal_year_id', $fy->id)->where('bill_no', $_bill->bill_no)->count() > 0) {
                 return response()->json([
-                    'status'=>true,
-                    'msg'=>"Bill Saved Sucessfully",
-                    'bill_id'=>PosBill::where('fiscal_year_id', $fy->id)->where('bill_no', $_bill->bill_no)->select('id')->first()->id
+                    'status' => true,
+                    'msg' => "Bill Saved Sucessfully",
+                    'bill_id' => PosBill::where('fiscal_year_id', $fy->id)->where('bill_no', $_bill->bill_no)->select('id')->first()->id
                 ]);
             }
             $bill->bill_no = $_bill->bill_no;
@@ -61,20 +63,20 @@ class ItemController extends Controller
             if ($_bill->customer_id != null) {
                 $customer = (object)$request->customer;
 
-                $cus_user = User::where('phone', $customer->phone)->first();
-                if ($cus_user == null) {
-                    $cus_user = new User();
-                    $cus_user->password = bcrypt($customer->phone);
-                    $cus_user->role = 5;
-                    $cus_user->save();
-                }
-                $cus_user->name = $customer->name;
-                $cus_user->address = $customer->address;
-                $cus_user->phone = $customer->phone;
-                $cus_user->save();
-
-                $new_cus = Customer::where('user_id', $cus_user->id)->first();
+                $new_cus = Customer::where('foreign_id', $customer->id)->where('center_id', $request->center_id)->first();
                 if ($new_cus == null) {
+                    $cus_user = User::where('phone', $customer->phone)->first();
+                    if ($cus_user == null) {
+                        $cus_user = new User();
+                        $cus_user->password = bcrypt($customer->phone);
+                        $cus_user->role = 5;
+                        $cus_user->save();
+                    }
+                    $cus_user->name = $customer->name;
+                    $cus_user->address = $customer->address;
+                    $cus_user->phone = $customer->phone;
+                    $cus_user->save();
+
                     $new_cus = new Customer();
                     $new_cus->panvat = $customer->panvat;
                     $new_cus->center_id = $request->center_id;
@@ -82,7 +84,6 @@ class ItemController extends Controller
                     $new_cus->foreign_id = $customer->id;
                     $new_cus->save();
                 }
-
                 // $cus_user=User::where('phone',$request)
                 $bill->customer_name = $customer->name;
                 $bill->customer_address = $customer->address;
@@ -129,9 +130,11 @@ class ItemController extends Controller
                     if ($item->trackstock == 1) {
                         $item->stock -= $bi->qty;
                         $item->save();
-                            array_push($items,[
-                                'item'=>$item,
-                                'qty'=>$bi->qty
+                        array_push(
+                            $items,
+                            [
+                                'item' => $item,
+                                'qty' => $bi->qty
                             ]
                         );
                         $center_stock = CenterStock::where('center_id', $request->center_id)->where('item_id', $item->id)->first();
@@ -147,9 +150,9 @@ class ItemController extends Controller
                             $center_stock->amount -= $bi->qty;
                             $center_stock->save();
                         }
-                        array_push($centers,[
-                            'stock'=>$center_stock,
-                            'qty'=>$bi->qty
+                        array_push($centers, [
+                            'stock' => $center_stock,
+                            'qty' => $bi->qty
                         ]);
                     }
                     $bi->save();
@@ -157,55 +160,76 @@ class ItemController extends Controller
                 }
             }
 
-            if($_bill->customer_id != null){
 
-                $ledger = new LedgerManage($new_cus->user_id);
-                $paidamount=($bill->grandtotal<$bill->paid)?$bill->grandtotal:$bill->paid;
-
-                if(env('acc_system','old')=='old'){
-                    $ledger->addLedger('Bill No '.$bill->bill_no, 1,    $bill->grandtotal,  $bill->date, 130, $bill->id);
-                    if ($paidamount > 0) {
-                        $ledger->addLedger('Payment For  Bill No '.$bill->bill_no, 2, $paidamount,  $bill->date, 131, $bill->id);
-                    }
-                }else{
-                    $ledger->addLedger('Bill No '.$bill->bill_no, 2,    $bill->grandtotal,  $bill->date, 130, $bill->id);
-                    if ($paidamount > 0) {
-                        $ledger->addLedger('Payment For Bill No '.$bill->bill_no, 1, $paidamount,  $bill->date, 131, $bill->id);
-                    }
-                }
-            }
-            $status->current+=$bill->grandtotal;
+            $status->current += $bill->grandtotal;
             $status->save();
         } catch (\Throwable $th) {
-            if($bill->id!=null && $bill->id!=0){
+            if ($bill->id != null && $bill->id != 0) {
                 foreach ($items as $key => $item_holder) {
-                    $item=$item_holder['item'];
-                    $item->stock+=$item_holder['qty'];
+                    $item = $item_holder['item'];
+                    $item->stock += $item_holder['qty'];
                     $item->save();
                 }
                 foreach ($centers as $key => $center_holder) {
-                    $center_Stock=$center_holder['qty'];
-                    $center_Stock->amount+=$center_holder['qty'];
+                    $center_Stock = $center_holder['qty'];
+                    $center_Stock->amount += $center_holder['qty'];
                     $center_Stock->save();
                 }
 
-                DB::table('pos_bill_items')->where('pos_bill_id',$bill->id)->delete();
+                DB::table('pos_bill_items')->where('pos_bill_id', $bill->id)->delete();
                 $bill->delete();
                 return response()->json([
-                    'status'=>false,
-                    'msg'=>"Bill Cannot be Saved, ".$th->getMessage()
+                    'status' => false,
+                    'msg' => "Bill Cannot be Saved, " . $th->getMessage()
                 ]);
             }
         }
         return response()->json([
-            'status'=>true,
-            'msg'=>"Bill Saved Sucessfully",
-            'bill_id'=>$bill->id
+            'status' => true,
+            'msg' => "Bill Saved Sucessfully",
+            'bill_id' => $bill->id
         ]);
     }
 
-    public function syncLedger (Request $request)
+    public function syncLedger(Request $request)
     {
+        $customer = (object)$request->customer;
+        $ledger = (object) $request->ledger;
+        $new_cus = Customer::where('foreign_id', $customer->id)->where('center_id', $request->center_id)->first();
+        if ($new_cus == null) {
+            $cus_user = User::where('phone', $customer->phone)->first();
+            if ($cus_user == null) {
+                $cus_user = new User();
+                $cus_user->password = bcrypt($customer->phone);
+                $cus_user->role = 5;
+                $cus_user->save();
+            }
+            $cus_user->name = $customer->name;
+            $cus_user->address = $customer->address;
+            $cus_user->phone = $customer->phone;
+            $cus_user->save();
 
+            $new_cus = new Customer();
+            $new_cus->panvat = $customer->panvat;
+            $new_cus->center_id = $request->center_id;
+            $new_cus->user_id = $cus_user->id;
+            $new_cus->foreign_id = $customer->id;
+            $new_cus->save();
+        }
+        $nepalidate = new NepaliDate($ledger->date);
+        $l = new \App\Models\Ledger();
+        $l->amount = $ledger->amount;
+        $l->title = $ledger->particular;
+        $l->date = $ledger->date;
+        $l->identifire = $ledger->identifire;
+        $l->foreign_key = $ledger->foreign_id;
+        $l->user_id = $new_cus->user_id;
+        $l->year = $nepalidate->year;
+        $l->month = $nepalidate->month;
+        $l->session = $nepalidate->session;
+        $l->type = $ledger->type;
+        $l->out=1;
+        $l->save();
+        return response($l);
     }
 }

@@ -129,7 +129,9 @@ class CustomerController extends Controller
 
     public function detail($id, Request $request)
     {
-        $user = User::where('id', $id)->first();
+        $customer=DB::table('customers')->where('id',$id)->first();
+        $user = DB::table('users')->where('id', $customer->user_id)->first();
+
         if ($request->getMethod() == "POST") {
             $year = $request->year;
             $month = $request->month;
@@ -141,7 +143,7 @@ class CustomerController extends Controller
             $date = 1;
             $title = "";
 
-            $ledger = Ledger::where('user_id', $request->user_id);
+            $ledger = Ledger::where('user_id', $user->id);
             if ($type == 0) {
                 $range = NepaliDate::getDate($request->year, $request->month, $request->session);
                 $ledger = $ledger->where('date', '>=', $range[1])->where('date', '<=', $range[2]);
@@ -176,7 +178,6 @@ class CustomerController extends Controller
             }
             // dd($ledger->toSql(),$ledger->getBindings());
             $prev = 0;
-            $user = User::where('id', $request->user_id)->first();
             if ($type == 1) {
                 $prev = Ledger::where('date', '<', $date)->where('user_id', $user->id)->where('type', 2)->sum('amount') - Ledger::where('date', '<', $date)->where('user_id', $user->id)->where('type', 1)->sum('amount');
             } else if ($type = -1) {
@@ -197,9 +198,9 @@ class CustomerController extends Controller
                 array_push($ledgers, $ledger);
             }
 
-            return view('admin.customer.load_detail', compact('ledgers', 'type', 'user', 'title', 'prev'));
+            return view('admin.customer.load_detail', compact('ledgers','customer', 'type', 'user', 'title', 'prev'));
         } else {
-            return view('admin.customer.detail', compact('user'));
+            return view('admin.customer.detail', compact('user','customer'));
         }
     }
 

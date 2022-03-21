@@ -31,7 +31,7 @@
 <script src="{{ asset('backend/plugins/select2/select2.min.js') }}"></script>
 <script src="{{ asset('calender/nepali.datepicker.v3.2.min.js') }}"></script>
 <script>
-    
+
 
     function loadData(){
         var user = {{ $user->id }};
@@ -45,11 +45,11 @@
             'date1':$('#date1').val(),
             'date2': $('#date2').val(),
             'type':$('#type').val(),
-            'user_id':{{$user->id}}
+
         };
         axios({
                 method: 'post',
-                url: '{{ route("admin.customer.detail",['id'=>$user->id]) }}',
+                url: '{{ route("admin.customer.detail",['id'=>$customer->id]) }}',
                 data:data ,
         })
         .then(function(response) {
@@ -67,6 +67,6 @@
     };
 
 
-   
+
 </script>
 @endsection

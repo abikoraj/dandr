@@ -79,6 +79,7 @@ class LedgerManage
         $l->month = $nepalidate->month;
         $l->session = $nepalidate->session;
         $l->type = $type;
+
         $l->save();
         return $l;
     }

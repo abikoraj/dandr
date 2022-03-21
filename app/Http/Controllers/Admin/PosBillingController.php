@@ -89,8 +89,14 @@ class PosBillingController extends Controller
 
     public function detail(Request $request)
     {
-        $bill = PosBill::find($request->id);
-        $bill->billitems;
+        if($request->out==1){
+            $bill = PosBill::where('sync_id',$request->id)->first();
+            $bill->billitems;
+        }else{
+
+            $bill = PosBill::find($request->id);
+            $bill->billitems;
+        }
         return view('admin.pos.detail', compact('bill'));
     }
 
