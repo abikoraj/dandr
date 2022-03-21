@@ -5,6 +5,7 @@ namespace App\Http\Controllers\POS;
 use App\Http\Controllers\Controller;
 use App\LedgerManage;
 use App\Models\Bank;
+use App\Models\CenterStock;
 use App\Models\Counter;
 use App\Models\Customer;
 use App\Models\Item;
@@ -50,8 +51,10 @@ class BillingController extends Controller
         //     $bno = $data->max;
         // }
         // $bno += 1;
-        $bno=9999999;
-        while
+        $bno=999999;
+        while(DB::table('pos_bills')->where('bill_no',$bno)->count()>0){
+            $bno+=1;
+        }
         $center_id=env('maincenter',-1);
         if($center_id==-1){
             $center_id=DB::table('centers')->select('id')->first()->id;
@@ -114,6 +117,19 @@ class BillingController extends Controller
                     $item->save();
                 }
                 $bi->save();
+                $center_stock = CenterStock::where('center_id', $center_id)->where('item_id', $item->id)->first();
+                if ($center_stock == null) {
+                    $center_stock = new CenterStock();
+                    $center_stock->center_id = $request->center_id;
+                    $center_stock->item_id = $item->id;
+                    $center_stock->wholesale = $item->wholesale;
+                    $center_stock->rate = $item->sell_price;
+                    $center_stock->amount = -1 * $bi->qty;
+                    $center_stock->save();
+                } else {
+                    $center_stock->amount -= $bi->qty;
+                    $center_stock->save();
+                }
                 array_push($bis, $bi);
             }
         }
