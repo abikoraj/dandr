@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\LedgerManage;
 use App\Models\BillExpenses;
+use App\Models\CenterStock;
 use App\Models\Item;
 use App\Models\Ledger;
 use App\Models\Supplierbill;
@@ -13,6 +14,7 @@ use App\Models\Supplierpayment;
 use App\Models\User;
 use App\NepaliDate;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class SupplierController extends Controller
 {
@@ -104,6 +106,23 @@ class SupplierController extends Controller
                 if ($item->trackstock) {
                     $item->stock += $billItem->qty;
                     $item->save();
+                }
+                $center_id=env('maincenter',-1);
+                if($center_id==-1){
+                    $center_id=DB::table('centers')->select('id')->first()->id;
+                }
+                $center_stock = CenterStock::where('center_id', $center_id)->where('item_id', $item->id)->first();
+                if ($center_stock == null) {
+                    $center_stock = new CenterStock();
+                    $center_stock->center_id = $request->center_id;
+                    $center_stock->item_id = $item->id;
+                    $center_stock->wholesale = $item->wholesale;
+                    $center_stock->rate = $item->sell_price;
+                    $center_stock->amount = $billItem->qt;
+                    $center_stock->save();
+                } else {
+                    $center_stock->amount+=  $billItem->qty;
+                    $center_stock->save();
                 }
 
                 $total += $billItem->rate * $billItem->qty;
