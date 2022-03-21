@@ -1,6 +1,14 @@
-<div class="col-md-4">
+<div class="col-md-4" id="counter-{{$counter->id}}">
     <div class="card shadow ">
         <div class="p-2 ">
+            @if ($counter->center_id==null)
+                Branch Not Set
+            @else
+            <div>
+                Branch - {{$centers->where('id',$counter->center_id)->first()->name}}
+            </div>
+            @endif
+            <hr>
            @if(!$counter->hasStatus($date))
                 <form action="{{route('admin.counter.update',['id'=>$counter->id])}}" method="post">
                     @csrf
@@ -11,7 +19,7 @@
                         </div>
                         @if (!$counter->hasBill($date))
                             <div class="col-md-6 p-1">
-                                <button class="btn btn-danger w-100">Delete</button>
+                                <button onclick="event.preventDefault();delCounter({{$counter->id}});" class="btn btn-danger w-100">Delete</button>
                             </div>
                         @endif
                     </div>

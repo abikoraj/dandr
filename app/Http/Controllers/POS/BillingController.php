@@ -55,9 +55,12 @@ class BillingController extends Controller
         while(DB::table('pos_bills')->where('bill_no',$bno)->count()>0){
             $bno+=1;
         }
-        $center_id=env('maincenter',-1);
-        if($center_id==-1){
-            $center_id=DB::table('centers')->select('id')->first()->id;
+        $center_id=$counter->center_id;
+        if($center_id==null){
+            $center_id=env('maincenter',-1);
+            if($center_id==-1){
+                $center_id=DB::table('centers')->select('id')->first()->id;
+            }
         }
         $bill->bill_no = $bno;
         $bill->center_id=$center_id;

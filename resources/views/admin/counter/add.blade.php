@@ -10,13 +10,25 @@
                     <form id="addCounter" method="POST" onsubmit="return saveData(event);">
                         @csrf
                         <div class="row">
-                            <div class="col-lg-12">
+                            <div class="col-lg-6">
                                 <label for="name">Counter Name</label>
                                 <div class="form-group">
-                                    <input type="text" id="name" name="name" class="form-control next" data-next="phone" placeholder="Enter Counter name" required>
+                                    <input type="text" id="name" name="name" class="form-control next"  placeholder="Enter Counter name" required>
                                 </div>
                             </div>
+                            <div class="col-lg-6">
+                                <label for="center_id"> Branch</label>
+                                <div class="form-group">
+                                    <select type="text" id="center_id" name="center_id" class="form-control next"  placeholder="Enter Counter name" required>
+                                        @foreach (\App\Models\Center::all() as $center)
+                                            <option value="{{$center->id}}">{{$center->name}}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                            </div>
+
                         </div>
+
                 </div>
             </div>
             <div class="modal-footer">

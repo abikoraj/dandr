@@ -474,7 +474,7 @@ Route::name('admin.')->group(function () {
                 Route::get('stat/{counter}', [CounterController::class,'getStatus'])->name('status.get');
                 Route::post('update/{id}', [CounterController::class,'update'])->name('update');
                 Route::post('add', [CounterController::class,'add'])->name('add');
-                Route::post('delete/{id}', [CounterController::class,'delete'])->name('delete');
+                Route::get('delete/{id}', [CounterController::class,'del'])->name('delete');
                 Route::match(['get', 'post'], 'status/{id}',[CounterController::class,'status'])->name('status');
 
                 Route::group(['prefix' => 'day'], function () {

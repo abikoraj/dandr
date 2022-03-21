@@ -34,21 +34,20 @@
 
     lock=false;
 
-    function del(id){
+    function delCounter(id){
         if(!lock){
-            if(prompt('Please Type Yes To Delete').toLowerCase()=="yes"){
-
+            if(prompt('Please type yes to delete').toLowerCase()=="yes"){
                 lock=true;
                 showProgress('Deleting Counter');
                 var data={'id':id};
-                axios.post('{{route('admin.customer.del')}}',data)
+                const url='{{route('admin.counter.delete',['id'=>'xxx_id'])}}';
+                axios.get(url.replace('xxx_id',id))
                 .then((res)=>{
 
-                    $('#customer_'+id).replaceWith(res.data);
+                    $('#counter-'+id).remove();
                     hideProgress();
                     lock=false;
-                    $('#editModal').modal('hide');
-                    document.getElementById('editCustomer').reset();
+
                 })
                 .catch((err)=>{
                     hideProgress();

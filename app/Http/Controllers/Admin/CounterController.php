@@ -3,10 +3,12 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Center;
 use App\Models\Counter;
 use App\Models\CounterStatus;
 use App\Models\PosSetting;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class CounterController extends Controller
 {
@@ -18,7 +20,9 @@ class CounterController extends Controller
     public function list(Request $request)
     {
         $date=str_replace('-','',$request->date);
-        return view('admin.counter.list',['date'=>$date,'counters'=>Counter::all()]);
+        $centers=Center::all();
+
+        return view('admin.counter.list',['date'=>$date,'counters'=>Counter::all(),'centers'=>$centers]);
 
     }
 
@@ -26,9 +30,11 @@ class CounterController extends Controller
     {
         $counter = new Counter();
         $counter->name = $request->name;
+        $counter->center_id = $request->center_id;
         $counter->save();
         $date=str_replace("-",'', $request->date);
-        return view('admin.counter.single', compact('counter','date'));
+        $centers=Center::all();
+        return view('admin.counter.single', compact('counter','date','centers'));
     }
     public function update($id, Request $request)
     {
@@ -40,6 +46,11 @@ class CounterController extends Controller
 
     }
 
+    public function del($id)
+    {
+        DB::table('counters')->where('id',$id)->delete();
+        return response('ok');
+    }
     //XXX Counter Day Management
     public function day(Request $request)
     {
