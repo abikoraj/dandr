@@ -27,7 +27,14 @@
                             <input type="number" id="ecprice" step="0.01"  value="{{$item->cost_price}}" name="cost_price" min="0" class="form-control next" data-next="esprice" placeholder="Enter cost price" required>
                         </div>
                     </div>
-
+                    @if ($w)
+                        <div class="col-lg-{{$r}}">
+                            <label for="wprice">WholeSale Price</label>
+                            <div class="form-group">
+                                <input type="number" id="wprice" name="wholesale" min="0" class="form-control next" data-next="sprice" placeholder="Enter cost price" required>
+                            </div>
+                        </div>
+                    @endif
                     <div class="col-lg-6">
                         <label for="sprice">Sell Price</label>
                         <div class="form-group">
@@ -109,21 +116,21 @@
                             <input type="number" id="eminqty" name="minqty" step="0.001" min="0" class="form-control" value="{{$item->minqty}}" >
                         </div>
                     </div>
-                    @if ($w)
+                    @if(env('use_distributer',false))
 
-                        <div class="col-lg-3">
-                            <label for="dis_number">Distributer Number</label>
-                            <div class="form-group">
-                                <input type="text" id="dis_number" name="dis_number"  class="form-control" value="{{$item->dis_number}}" >
-                            </div>
-                        </div>
-                        <div class="col-lg-3">
-                            <label for="dis_price">Distributer Rate</label>
-                            <div class="form-group">
-                                <input type="number" id="dis_price" name="dis_price" step="0.001" min="0"  class="form-control" value="{{$item->dis_price}}" >
-                            </div>
-                        </div>
-                    @endif
+                                <div class="col-lg-3">
+                                    <label for="dis_number">Distributer Number</label>
+                                    <div class="form-group">
+                                        <input type="text" id="edis_number" name="dis_number"  value="{{$item->dis_number}}" class="form-control" >
+                                    </div>
+                                </div>
+                                <div class="col-lg-3">
+                                    <label for="dis_price">Distributer Rate</label>
+                                    <div class="form-group">
+                                        <input type="number" id="edis_price" name="dis_price" value="{{$item->dis_price}}" step="0.001" min="0" value="0" class="form-control" >
+                                    </div>
+                                </div>
+                            @endif
                     <div class="col-lg-3">
 
                         <label for="image">Image</label>

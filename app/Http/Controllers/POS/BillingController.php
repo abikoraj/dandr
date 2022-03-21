@@ -51,6 +51,7 @@ class BillingController extends Controller
         // }
         // $bno += 1;
         $bno=9999999;
+        while
         $center_id=env('maincenter',-1);
         if($center_id==-1){
             $center_id=DB::table('centers')->select('id')->first()->id;

@@ -105,6 +105,7 @@ class SupplierController extends Controller
                     $item->stock += $billItem->qty;
                     $item->save();
                 }
+
                 $total += $billItem->rate * $billItem->qty;
             }
             $bill->discount = $request->idiscount;
