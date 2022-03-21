@@ -84,7 +84,7 @@ class BillingController extends Controller
         $bill->save();
         $id=$bill->id;
         $bno=$center_id.$counter->id.$id;
-        while(DB::table('pos_bills')->where('bill_no',$bno)->count()==0){
+        while(DB::table('pos_bills')->where('bill_no',$bno)->count()>0){
             $id+=1;
             $bno=$center_id.$counter->id.$id;
         }
