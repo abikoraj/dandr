@@ -45,16 +45,18 @@ class BillingController extends Controller
         $bill = new PosBill();
         $data = PosBill::where('fiscal_year_id', $fy->id)->select(DB::raw('max(cast(bill_no as int)) as max'))->first();
         // dd($data);
-        $bno = 0;
-        if ($data != null) {
-            $bno = $data->max;
-        }
-        $bno += 1;
+        // $bno = 0;
+        // if ($data != null) {
+        //     $bno = $data->max;
+        // }
+        // $bno += 1;
+        $bno=9999999;
         $center_id=env('maincenter',-1);
         if($center_id==-1){
             $center_id=DB::table('centers')->select('id')->first()->id;
         }
         $bill->bill_no = $bno;
+        $bill->center_id=$center_id;
         $bill->date = $setting->date;
         $bill->counter_id = $cid;
         $bill->counter_name = $counter->name;
@@ -79,6 +81,14 @@ class BillingController extends Controller
         $bill->due = $request->total['due'];
         $bill->return = $request->total['return'];
         $bill->user_id = $user->id;
+        $bill->save();
+        $id=$bill->id;
+        $bno=$center_id.$counter->id.$id;
+        while(DB::table('pos_bills')->where('bill_no',$bno)->count()==0){
+            $id+=1;
+            $bno=$center_id.$counter->id.$id;
+        }
+        $bill->bill_no=$bno;
         $bill->save();
         $bis = [];
         foreach ($request->billitems as $key => $_bi) {
