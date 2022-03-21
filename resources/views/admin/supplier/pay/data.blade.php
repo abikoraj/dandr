@@ -4,7 +4,28 @@
 @endphp
 
 
-<div class="card py-4 px-2 my-3 shadow" style="font-size:2rem;font-weight:600;">
+<div class="card py-4 px-2  shadow" style="">
+    <table class="table table-bordered">
+        <tr>
+            <th>
+                Date
+            </th>
+            <th>
+                Amount (Rs.)
+            </th>
+        </tr>
+        @foreach ($payments as $payment)
+            <tr>
+                <td>
+                    {{_nepalidate($payment->date)}}
+                </td>
+                <td>
+                    {{$payment->amount}}
+                </td>
+            </tr>
+        @endforeach
+    </table>
+    <hr>
     <strong>
         Current Balance :
     </strong>
@@ -15,6 +36,7 @@
     {{$supplier->balance<0?"CR":"DR" }}
     @endif
 </div>
+
 <div class="card py-4 px-2 my-3 shadow">
     <div class="row">
         <div class="col-md-6">
@@ -35,6 +57,5 @@
         <div class="col-md-4">
             <button class="btn btn-success" onclick="pay()">Pay</button>
         </div>
-
     </div>
 </div>

@@ -14,11 +14,11 @@ class AdminSeeder extends Seeder
     public function run()
     {
         $user=new User();
-        $user->name=env('APP_NAME',"Nawa Durga");
-        $user->phone=env('authphone',"9852059171");
+        $user->name="Krishna Rai";
+        $user->phone=env('authphone',"9852078275");
         $user->password=bcrypt('admin');
         $user->role=0;
-        $user->address="Ramailo, Morang";
+        $user->address="Biratnagar - 3";
         $user->save();
     }
 }

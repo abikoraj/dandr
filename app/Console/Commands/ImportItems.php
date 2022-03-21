@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands;
 
+use App\Models\CenterStock;
 use App\Models\Item;
 use Illuminate\Console\Command;
 
@@ -68,6 +69,15 @@ class ImportItems extends Command
                 $item->posonly=1;
                 $item->trackstock=1;
                 $item->save();
+
+
+                $center_stock = new CenterStock();
+                $center_stock->center_id = env('maincenter',1);
+                $center_stock->item_id = $item->id;
+                $center_stock->wholesale = $item->wholesale;
+                $center_stock->rate = $item->sell_price;
+                $center_stock->amount = $item->stock;
+                $center_stock->save();
 
                 echo "{$item->title} added.\t\r\n";
             } catch (\Throwable $th) {

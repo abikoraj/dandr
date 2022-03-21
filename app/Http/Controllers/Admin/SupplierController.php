@@ -362,9 +362,10 @@ class SupplierController extends Controller
     {
         $id=$request->id;
         $supplier = User::find($request->id);
+        $payments=Ledger::where('user_id',$supplier->id)->where('identifire','127')->get(['date','amount']);
         $supplier->balance=Ledger::where('user_id',$supplier->id)->where('type',2)->sum('amount') - Ledger::where('user_id',$supplier->id)->where('type',1)->sum('amount');
 
-        return view('admin.supplier.pay.data', compact('supplier', 'id'));
+        return view('admin.supplier.pay.data', compact('supplier', 'id','payments'));
     }
 
     public function duePay(Request $request)

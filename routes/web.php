@@ -11,6 +11,7 @@ use App\Http\Controllers\Admin\DistributerSnfFatController;
 use App\Http\Controllers\Admin\DistributorPaymentController;
 use App\Http\Controllers\Admin\EmployeeController;
 use App\Http\Controllers\Admin\GatewayController;
+use App\Http\Controllers\Admin\ImportController;
 use App\Http\Controllers\Admin\ItemController;
 use App\Http\Controllers\Admin\OfferController;
 use App\Http\Controllers\Admin\PosBillingController;
@@ -283,6 +284,11 @@ Route::name('admin.')->group(function () {
             Route::get('previous-balance',[SupplierController::class,'previousBalance'])->name('previous.balance')->middleware('permmission:07.10');
             Route::post('previous-balance-add',[SupplierController::class,'previousBalanceAdd'])->name('previous.balance.add');
             Route::post('previous-balance-load',[SupplierController::class,'previousBalanceLoad'])->name('previous.balance.load');
+        });
+
+        //xxx import
+        Route::prefix('import')->name('import.')->group(function(){
+            Route::match(['get', 'post'], 'supplier',[ImportController::class,'supplier'])->name('supplier');
         });
 
         Route::prefix('employees')->name('employee.')->group(function () {
