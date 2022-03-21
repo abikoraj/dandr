@@ -1,9 +1,11 @@
 <?php
 
+use App\Http\Controllers\Admin\CustomerController as AdminCustomerController;
 use App\Http\Controllers\Api\customerController;
 use App\Http\Controllers\Api\GeneralController;
 use App\Http\Controllers\Api\ItemController;
 use App\Http\Controllers\Api\LoginController;
+use App\Models\Customer;
 use App\Models\PosBill;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -42,17 +44,16 @@ Route::middleware(['auth:api'])->group(function () {
                 'billtitle'=>env('companyBillTitle'),
                 'address'=>env('companyAddress')
             ],
-            'counters'=>DB::table('counters')->get(['id','name'])
-
+            'counters'=>DB::table('counters')->get(['id','name','center_id'])
         ]));
     });
     Route::post('pos-user',[LoginController::class,'addPosUser']);
 
     Route::middleware('permmission:09.05')->group(function(){
-
         Route::prefix('customers')->group(function(){
             Route::get('customers/{center_id}',[customerController::class,'index']);
         });
+        Route::post('customers/{center_id}',[GeneralController::class,'getCustomers']);
 
         Route::post('sync-bill', [ItemController::class,'syncBills']);
         Route::post('sync-ledger', [ItemController::class,'syncLedger']);
@@ -68,9 +69,11 @@ Route::middleware(['auth:api'])->group(function () {
 
 Route::post('login',[LoginController::class,'index']);
 Route::get('info',[GeneralController::class,'info']);
-
+Route::get('test',function(){
+    return response()->json(['status'=>true]);
+});
 
 Route::get('',function(){
-   return [memory_get_peak_usage(true),DB::table('users')->first()];
+   return "Welcome To NeedTechnosoft";
 });
 
