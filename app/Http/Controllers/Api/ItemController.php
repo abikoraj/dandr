@@ -202,7 +202,7 @@ class ItemController extends Controller
                 $cus_user = new User();
                 $cus_user->password = bcrypt($customer->phone);
                 $cus_user->role = 5;
-                $cus_user->save();
+
             }
             $cus_user->name = $customer->name;
             $cus_user->address = $customer->address;
@@ -216,20 +216,35 @@ class ItemController extends Controller
             $new_cus->foreign_id = $customer->id;
             $new_cus->save();
         }
-        $nepalidate = new NepaliDate($ledger->date);
-        $l = new \App\Models\Ledger();
-        $l->amount = $ledger->amount;
-        $l->title = $ledger->particular;
-        $l->date = $ledger->date;
-        $l->identifire = $ledger->identifire;
-        $l->foreign_key = $ledger->foreign_id;
-        $l->user_id = $new_cus->user_id;
-        $l->year = $nepalidate->year;
-        $l->month = $nepalidate->month;
-        $l->session = $nepalidate->session;
-        $l->type = $ledger->type;
-        $l->out=1;
-        $l->save();
+        try {
+            $nepalidate = new NepaliDate($ledger->date);
+            $l = new \App\Models\Ledger();
+            $l->amount = $ledger->amount;
+            $l->title = $ledger->particular;
+            $l->date = $ledger->date;
+            $l->identifire = $ledger->identifire;
+            $l->foreign_key = $ledger->foreign_id;
+            $l->user_id = $new_cus->user_id;
+            $l->year = $nepalidate->year;
+            $l->month = $nepalidate->month;
+            $l->session = $nepalidate->session;
+            $l->type = $ledger->type;
+            $l->out=1;
+            $l->save();
+            return response()->json([
+                'status' => true,
+                'msg' => "Bill Saved Sucessfully",
+                'ledger_id' => $l->id
+            ]);
+        } catch (\Throwable $th) {
+            return response()->json([
+                'status' => false,
+                'msg' => $th->getMessage(),
+                'ledger_id' => null
+            ]);
+        }
+
+
         return response($l);
     }
 }

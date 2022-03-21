@@ -56,12 +56,6 @@ Route::middleware(['auth:api'])->group(function () {
 
         Route::post('sync-bill', [ItemController::class,'syncBills']);
         Route::post('sync-ledger', [ItemController::class,'syncLedger']);
-
-
-
-
-
-
     });
 });
 
