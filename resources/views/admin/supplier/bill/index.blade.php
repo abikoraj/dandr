@@ -184,10 +184,7 @@
             if (confirm('Are you sure?')) {
                 axios({
                         method: 'get',
-                        url: '{{ route('admin.supplier.bill.delete') }}',
-                        data: {
-                            "id": id
-                        },
+                        url: '{{ route('admin.supplier.bill.delete') }}?id='+dataid,
                     })
                     .then(function(response) {
                         // console.log(response.data);
