@@ -13,7 +13,7 @@
         xxx_address
     </xxx_td>
     <xxx_td>
-        xxx_panvat
+        xxx_points
     </xxx_td>
 
     <xxx_td>

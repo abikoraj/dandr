@@ -14,6 +14,7 @@ use App\Http\Controllers\Admin\GatewayController;
 use App\Http\Controllers\Admin\ImportController;
 use App\Http\Controllers\Admin\ItemController;
 use App\Http\Controllers\Admin\OfferController;
+use App\Http\Controllers\Admin\PointController;
 use App\Http\Controllers\Admin\PosBillingController;
 use App\Http\Controllers\Admin\SellitemController;
 use App\Http\Controllers\Admin\SupplierController;
@@ -493,6 +494,11 @@ Route::name('admin.')->group(function () {
                 });
 
             });
+        });
+
+        //xxx point calculation
+        Route::prefix('point-calculation')->name("point.")->group(function(){
+            route::match(['GET','POST'],'',[PointController::class,'index'])->name('index');
         });
 
         Route::group(['prefix' => 'bank'], function () {

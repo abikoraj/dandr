@@ -47,7 +47,7 @@ class ImportItems extends Command
                 //code...
                 $data=fgetcsv($file);
                 $item=new Item();
-                $number=$data[0];
+                $number=$data[5];
                 $tempnum=$number;
                 $i=0;
 
@@ -59,12 +59,12 @@ class ImportItems extends Command
                 }
 
                 $item->number = $tempnum;
-                $item->title = $data[1];
-                $item->cost_price = $data[2];
-                $item->sell_price = $data[3];
-                $item->stock = $data[5];
+                $item->title = $data[0];
+                $item->cost_price = $data[1];
+                $item->sell_price = $data[2];
+                $item->wholesale = $data[3];
+                $item->stock = $data[4];
                 $item->unit = '--';
-                $item->wholesale = $data[4];
                 $item->trackexpiry=1;
                 $item->posonly=1;
                 $item->trackstock=1;

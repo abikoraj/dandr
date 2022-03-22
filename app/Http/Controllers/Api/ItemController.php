@@ -35,6 +35,11 @@ class ItemController extends Controller
 
     public function syncBills(Request $request)
     {
+        $pointSetting=getSetting('point')??(object)([
+            'type'=>0,
+            'point'=>0,
+            'per'=>0
+        ]);
         $setting = PosSetting::first();
         $fy = $setting->fiscalYear();
         $bill = new PosBill();
@@ -53,6 +58,7 @@ class ItemController extends Controller
                     'bill_id' => PosBill::where('fiscal_year_id', $fy->id)->where('bill_no', $_bill->bill_no)->select('id')->first()->id
                 ]);
             }
+            $point=0;
             $bill->bill_no = $_bill->bill_no;
             $bill->date = $_bill->date;
             $bill->counter_id = $_bill->counter_id;
@@ -109,7 +115,9 @@ class ItemController extends Controller
             }
             $bill->user_id = $user->id;
             $bill->save();
-
+            if($pointSetting->type==1){
+                $point=$bill->grandtotal/$pointSetting->per*$pointSetting->point;
+            }
 
             foreach ($request->items as $key => $_bi) {
                 if ($_bi != null) {
@@ -126,10 +134,13 @@ class ItemController extends Controller
                     $bi->tax_per = $_bi['tax_per'];
                     $bi->total = $_bi['total'];
                     $bi->use_tax = $_bi['use_tax'];
-                    $item = Item::where('id', $_bi['item_id'])->select('id', 'title', 'wholesale', 'sell_price', 'stock', 'trackstock')->first();
+                    $item = Item::where('id', $_bi['item_id'])->select('id', 'title', 'wholesale', 'sell_price', 'stock', 'trackstock','points')->first();
                     if ($item->trackstock == 1) {
                         $item->stock -= $bi->qty;
                         $item->save();
+                        if($pointSetting->type==2){
+                            $point+=$bi->qty*$item->points;
+                        }
                         array_push(
                             $items,
                             [
@@ -160,7 +171,15 @@ class ItemController extends Controller
                 }
             }
 
+            $bill->points=$point;
+            $bill->save();
 
+            if ($bill->customer_id != null) {
+
+                if($point>0){
+                    DB::update('update customers set points = ifnull(points,0) + ? where id = ?', [$point,$bill->customer_id]);
+                }
+            }
             $status->current += $bill->grandtotal;
             $status->save();
         } catch (\Throwable $th) {

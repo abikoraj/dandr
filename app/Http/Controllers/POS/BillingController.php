@@ -23,6 +23,12 @@ class BillingController extends Controller
     public function add(Request $request)
     {
         // dd($request->all());
+        $pointSetting=getSetting('point')??(object)([
+            'type'=>0,
+            'point'=>0,
+            'per'=>0
+        ]);
+        $point=0;
         $cid = session('counter');
         $setting = PosSetting::first();
         if ($setting == null) {
@@ -89,6 +95,9 @@ class BillingController extends Controller
         $bill->return = $request->total['return'];
         $bill->user_id = $user->id;
         $bill->save();
+        if($pointSetting->type==1){
+            $point=$bill->grandtotal/$pointSetting->per*$pointSetting->point;
+        }
         $id=$bill->id;
         $bno=$center_id.$counter->id.$id;
         while(DB::table('pos_bills')->where('bill_no',$bno)->count()>0){
@@ -104,7 +113,7 @@ class BillingController extends Controller
                 $bi = new PosBillItem();
                 $bi->pos_bill_id = $bill->id;
                 $bi->qty = $_bi['qty'];
-                $item = Item::where('id', $_bi['item_id'])->select('id', 'title', 'sell_price', 'stock', 'trackstock')->first();
+                $item = Item::where('id', $_bi['item_id'])->select('id', 'title', 'sell_price', 'stock', 'trackstock','points')->first();
                 $bi->rate = $_bi['item_rate'];
                 $bi->name = $_bi['item_name'];
                 $bi->item_id = $_bi['item_id'];
@@ -118,6 +127,10 @@ class BillingController extends Controller
                 if ($item->trackstock == 1) {
                     $item->stock -= $bi->qty;
                     $item->save();
+                }
+
+                if($pointSetting->type==2){
+                    $point+=$bi->qty*$item->points;
                 }
                 $bi->save();
                 $center_stock = CenterStock::where('center_id', $center_id)->where('item_id', $item->id)->first();
@@ -179,7 +192,13 @@ class BillingController extends Controller
                 ['used'=>1]
             );
         }
-
+        $bill->points=$point;
+        $bill->save();
+        if ($request->filled('customer')) {
+            if($point>0){
+                DB::update('update customers set points = points + ? where id = ?', [$point,$bill->customer_id]);
+            }
+        }
         $b = PosBill::find($bill->id);
         $b->billitems;
         $b->payment;

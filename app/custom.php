@@ -1,7 +1,9 @@
 <?php
 
+use App\Models\Setting;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Config;
+use Illuminate\Support\Facades\DB;
 
 define('farmer', 1);
 define('distributer', 2);
@@ -146,5 +148,26 @@ function xxx_per_func() {
 
 function roleToWord($key){
     return str_replace('_',' ',$key);
+}
+
+function getSetting($key,$direct=false){
+    $s=DB::table('settings')->where('key',$key)->select('value')->first();
+    return $direct?($s!=null?$s->value:null):($s!=null?json_decode($s->value):null);
+}
+
+function setSetting($key,$value,$direct=false){
+    $s=Setting::where('key',$key)->first();
+    if($s==null){
+        $s=new Setting();
+        $s->key=$key;
+    }
+    if($direct){
+        $s->value=$value;
+    }else{
+
+        $s->value=json_encode($value);
+    }
+    $s->save();
+    return $s;
 }
 // function

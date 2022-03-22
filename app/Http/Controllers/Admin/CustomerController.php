@@ -56,7 +56,7 @@ class CustomerController extends Controller
                     'users.phone',
                     'customers.id',
                     'customers.user_id',
-                    'customers.panvat'
+                    'customers.points'
                 )->get();
             return response()->json($data);
         } else {
