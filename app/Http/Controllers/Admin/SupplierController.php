@@ -118,7 +118,7 @@ class SupplierController extends Controller
                     $center_stock->item_id = $item->id;
                     $center_stock->wholesale = $item->wholesale;
                     $center_stock->rate = $item->sell_price;
-                    $center_stock->amount = $billItem->qt;
+                    $center_stock->amount = $billItem->qty;
                     $center_stock->save();
                 } else {
                     $center_stock->amount +=  $billItem->qty;
