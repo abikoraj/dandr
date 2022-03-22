@@ -174,7 +174,7 @@ class SupplierController extends Controller
                 $center_stock = CenterStock::where('center_id', env('maincenter'))->where('item_id', $item->id)->first();
                 if ($center_stock == null) {
                     $center_stock = new CenterStock();
-                    $center_stock->center_id = $request->center_id;
+                    $center_stock->center_id = env('maincenter');
                     $center_stock->item_id = $item->id;
                     $center_stock->wholesale = $item->wholesale;
                     $center_stock->rate = $item->sell_price;
@@ -375,7 +375,7 @@ class SupplierController extends Controller
                 $center_stock = CenterStock::where('center_id', env('maincenter'))->where('item_id', $item->id)->first();
                 if ($center_stock == null) {
                     $center_stock = new CenterStock();
-                    $center_stock->center_id = $request->center_id;
+                    $center_stock->center_id = env('maincenter');
                     $center_stock->item_id = $item->id;
                     $center_stock->wholesale = $item->wholesale;
                     $center_stock->rate = $item->sell_price;
