@@ -107,21 +107,21 @@ class SupplierController extends Controller
                     $item->stock += $billItem->qty;
                     $item->save();
                 }
-                $center_id=env('maincenter',-1);
-                if($center_id==-1){
-                    $center_id=DB::table('centers')->select('id')->first()->id;
+                $center_id = env('maincenter', -1);
+                if ($center_id == -1) {
+                    $center_id = DB::table('centers')->select('id')->first()->id;
                 }
                 $center_stock = CenterStock::where('center_id', $center_id)->where('item_id', $item->id)->first();
                 if ($center_stock == null) {
                     $center_stock = new CenterStock();
-                    $center_stock->center_id = $request->center_id;
+                    $center_stock->center_id = $center_id;
                     $center_stock->item_id = $item->id;
                     $center_stock->wholesale = $item->wholesale;
                     $center_stock->rate = $item->sell_price;
                     $center_stock->amount = $billItem->qt;
                     $center_stock->save();
                 } else {
-                    $center_stock->amount+=  $billItem->qty;
+                    $center_stock->amount +=  $billItem->qty;
                     $center_stock->save();
                 }
 
@@ -160,9 +160,32 @@ class SupplierController extends Controller
 
     public function cancelBill(Request $request)
     {
-         $bill=Supplierbill::where('id',$request->bill_id)->first();
+        $bill = Supplierbill::where('id', $request->bill_id)->first();
         $bill->canceled = 1;
         $bill->save();
+
+        $billitems = Supplierbillitem::where('supplierbill_id', $bill->id)->get(['item_id','qty']);
+        foreach ($billitems as $key => $bi) {
+            # code...
+            $item = Item::where('id', $bi->item_id)->select('id', 'title', 'wholesale', 'sell_price', 'stock', 'trackstock', 'points')->first();
+            if ($item->trackstock == 1) {
+                $item->stock -= $bi->qty;
+                $item->save();
+                $center_stock = CenterStock::where('center_id', env('maincenter'))->where('item_id', $item->id)->first();
+                if ($center_stock == null) {
+                    $center_stock = new CenterStock();
+                    $center_stock->center_id = $request->center_id;
+                    $center_stock->item_id = $item->id;
+                    $center_stock->wholesale = $item->wholesale;
+                    $center_stock->rate = $item->sell_price;
+                    $center_stock->amount = -1 * $bi->qty;
+                }else{
+                    $center_stock->amount -=  $bi->qty;
+
+                }
+                $center_stock->save();
+            }
+        }
 
         $l1 = Ledger::where([
             'identifire' => 125,
@@ -341,7 +364,33 @@ class SupplierController extends Controller
     {
         $id = $request->id;
         $bill = Supplierbill::where('id', $id)->first();
+
+        $billitems = Supplierbillitem::where('supplierbill_id', $bill->id)->get(['item_id','qty']);
+        foreach ($billitems as $key => $bi) {
+            # code...
+            $item = Item::where('id', $bi->item_id)->select('id', 'title', 'wholesale', 'sell_price', 'stock', 'trackstock', 'points')->first();
+            if ($item->trackstock == 1) {
+                $item->stock -= $bi->qty;
+                $item->save();
+                $center_stock = CenterStock::where('center_id', env('maincenter'))->where('item_id', $item->id)->first();
+                if ($center_stock == null) {
+                    $center_stock = new CenterStock();
+                    $center_stock->center_id = $request->center_id;
+                    $center_stock->item_id = $item->id;
+                    $center_stock->wholesale = $item->wholesale;
+                    $center_stock->rate = $item->sell_price;
+                    $center_stock->amount = -1 * $bi->qty;
+                }else{
+                    $center_stock->amount -=  $bi->qty;
+
+                }
+                $center_stock->save();
+            }
+        }
+
         $bill->delete();
+
+
         $data = [];
         $data[0] = Ledger::where('foreign_key', $id)->where('identifire', 125)->first();
         $ddd = Ledger::where('foreign_key', $id)->where('identifire', 126)->first();
@@ -360,12 +409,12 @@ class SupplierController extends Controller
 
     public function due(Request $request)
     {
-        $id=$request->id;
+        $id = $request->id;
         $supplier = User::find($request->id);
-        $payments=Ledger::where('user_id',$supplier->id)->where('identifire','127')->get(['date','amount']);
-        $supplier->balance=Ledger::where('user_id',$supplier->id)->where('type',2)->sum('amount') - Ledger::where('user_id',$supplier->id)->where('type',1)->sum('amount');
+        $payments = Ledger::where('user_id', $supplier->id)->where('identifire', '127')->get(['date', 'amount']);
+        $supplier->balance = Ledger::where('user_id', $supplier->id)->where('type', 2)->sum('amount') - Ledger::where('user_id', $supplier->id)->where('type', 1)->sum('amount');
 
-        return view('admin.supplier.pay.data', compact('supplier', 'id','payments'));
+        return view('admin.supplier.pay.data', compact('supplier', 'id', 'payments'));
     }
 
     public function duePay(Request $request)

@@ -32,7 +32,7 @@
                     <th>sell Price </th>
                     <th>Stock </th>
                     <th>Unit Type</th>
-                    <th>Reward </th>
+                    {{-- <th>Reward </th> --}}
                     <th>Action</th>
                 </tr>
             </thead>
@@ -211,7 +211,7 @@
                 rendered = rendered.replaceAll('xxx_sell_price', data.sell_price);
                 rendered = rendered.replaceAll('xxx_stock', data.stock);
                 rendered = rendered.replaceAll('xxx_unit', data.unit);
-                rendered = rendered.replaceAll('xxx_reward_percentage', data.reward_percentage);
+                // rendered = rendered.replaceAll('xxx_reward_percentage', data.reward_percentage);
                 html += rendered;
                 console.log(rendered);
             }

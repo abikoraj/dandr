@@ -122,6 +122,7 @@
                     <li><a href="{{ route('admin.counter.day.index') }}" class="waves-effect waves-block">Day Management </a></li>
                     <li><a href="{{ route('admin.counter.home') }}" class="waves-effect waves-block">Counters </a></li>
                     <li><a href="{{ route('admin.offers.index') }}" class="waves-effect waves-block">Offers </a></li>
+                    <li><a href="{{ route('admin.point.index') }}" class="waves-effect waves-block">Reard Points </a></li>
                 </ul>
             </li>
             <li><a href="javascript:void(0);" class="waves-effect waves-block menu-toggle"><i class="zmdi zmdi-shopping-cart"></i><span>Payment Setting</span></a>

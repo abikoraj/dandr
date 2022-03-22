@@ -4,7 +4,7 @@
     <td>{{$item->sell_price}}</td>
     <td>{{$item->stock}}</td>
     <td>{{$item->unit}}</td>
-    <td>{{$item->reward_percentage}}</td>
+    {{-- <td>{{$item->reward_percentage}}</td> --}}
     <td>
         @if (auth_has_per('03.02'))
         <button  class="btn btn-primary btn-sm"  onclick="initEdit({{$item->id}});" >Edit</button>

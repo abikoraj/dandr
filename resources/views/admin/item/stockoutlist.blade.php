@@ -45,6 +45,7 @@
             </xxx_td>
             <xxx_td>
                 <a href="{{route('admin.item.stockout-view',['id'=>'xxx_id'])}}" class="btn btn-success">View</a>
+                <a href="{{route('admin.item.stockout-print',['id'=>'xxx_id'])}}" class="btn btn-primary">Print</a>
             </xxx_td>
         </xxx_tr>
     </span>
