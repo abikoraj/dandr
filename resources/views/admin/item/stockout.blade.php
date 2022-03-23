@@ -258,7 +258,9 @@
                 .then((res)=>{
                     selectedItems=[];
                     renderList();
+                    const print_url="{{route('admin.item.stockout-print',['id'=>'xxx_id'])}}";
                     console.log(res.data);
+                    window.open(print_url.replace('xxx_id',res.data));
                     running=false;
                 })
                 .catch((err)=>{

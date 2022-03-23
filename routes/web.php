@@ -13,6 +13,7 @@ use App\Http\Controllers\Admin\EmployeeController;
 use App\Http\Controllers\Admin\GatewayController;
 use App\Http\Controllers\Admin\ImportController;
 use App\Http\Controllers\Admin\ItemController;
+use App\Http\Controllers\admin\ItemStockController;
 use App\Http\Controllers\Admin\OfferController;
 use App\Http\Controllers\Admin\PointController;
 use App\Http\Controllers\Admin\PosBillingController;
@@ -213,13 +214,14 @@ Route::name('admin.')->group(function () {
         Route::prefix('items')->name('item.')->group(function () {
             Route::match(['GET','POST'],'', [ItemController::class,'index'])->name('index')->middleware('permmission:03.04');
             Route::match(['GET','POST'],'all', [ItemController::class,'all'])->name('all');
-
+            //xxx stock
             Route::match(['GET','POST'],'stockout', [ItemController::class,'stockOut'])->name('stockout')->middleware('permmission:03.05');;
             Route::get('stockout-list', [ItemController::class,'stockOutList'])->name('stockout-list')->middleware('permmission:03.05');
             Route::get('stockout-view/{id}', [ItemController::class,'stockOutView'])->name('stockout-view')->middleware('permmission:03.05');
             Route::get('stockout-cancel/{id}', [ItemController::class,'stockOutCancel'])->name('stockout-cancel')->middleware('permmission:03.05');
             Route::get('stockout-print/{id}', [ItemController::class,'stockOutPrint'])->name('stockout-print')->middleware('permmission:03.05');
-
+            //stock view
+            Route::match(["GET","POST"],'items-center-stock',[ItemStockController::class,'index'])->name('items-center-stock');
             Route::match(['GET','POST'],'barcode', [ItemController::class,'barcode'])->name('barcode');
             Route::match(['GET','POST'],'product', [ItemController::class,'product'])->name('product');
             Route::match(['GET','POST'],'product-barcode', [ItemController::class,'productBarcode'])->name('product-barcode');

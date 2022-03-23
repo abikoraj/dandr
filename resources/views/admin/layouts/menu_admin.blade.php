@@ -59,6 +59,7 @@
                 <ul class="ml-menu">
                     <li><a href="{{ route('admin.item.index') }}" class="waves-effect waves-block">Items</a></li>
                     <li><a href="{{ route('admin.item.stockout-list') }}" class="waves-effect waves-block">Stock Out</a></li>
+                    <li><a href="{{ route('admin.item.items-center-stock') }}" class="waves-effect waves-block">Branch Stock </a></li>
                 </ul>
             </li>
             {{-- @if (env('tier',1)==1) --}}

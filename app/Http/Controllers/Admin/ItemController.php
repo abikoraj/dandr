@@ -272,7 +272,7 @@ class ItemController extends Controller
                     }
                     $outstock->save();
                 }
-                return response('ok');
+                return response($sout->id);
             } catch (\Throwable $th) {
                 if($sout->id==null || $sout->id==0){
                     $sout->delete();
