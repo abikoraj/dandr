@@ -58,12 +58,12 @@ class ImportSupplier extends Command
                 $user->save();
 
                 $advance=floatval($data[5]);
-                $due=floatval($data[5]);
+                $due=floatval($data[4]);
                 if($advance!=0 || $due!=0){
 
                     $l=new Ledger();
-                    $nepalidate = new NepaliDate(20781208);
-                    $l->date = 20781208;
+                    $nepalidate = new NepaliDate(20781209);
+                    $l->date = 20781209;
                     $l->identifire = '128';
 
                     $l->year = $nepalidate->year;
