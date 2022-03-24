@@ -32,28 +32,28 @@
                             <div class="col-lg-{{$r}}">
                                 <label for="cprice">{{$w?'Cost':'Sale'}} Price</label>
                                 <div class="form-group">
-                                    <input type="number" id="cprice" name="cost_price" min="0" class="form-control next" data-next="{{$w?'wprice':'sprice'}}" placeholder="Enter {{$w?'cost':'sale'}} price" required>
+                                    <input type="number" step="0.01" id="cprice" name="cost_price" min="0" class="form-control next" data-next="{{$w?'wprice':'sprice'}}" placeholder="Enter {{$w?'cost':'sale'}} price" required>
                                 </div>
                             </div>
                             @if ($w)
                                 <div class="col-lg-{{$r}}">
                                     <label for="wprice">WholeSale Price</label>
                                     <div class="form-group">
-                                        <input type="number" id="wprice" name="wholesale" min="0" class="form-control next" data-next="sprice" placeholder="Enter cost price" required>
+                                        <input type="number" step="0.01" id="wprice" name="wholesale" min="0" class="form-control next" data-next="sprice" placeholder="Enter cost price" required>
                                     </div>
                                 </div>
                             @endif
                             <div class="col-lg-{{$r}}">
                                 <label for="sprice">Sell Price</label>
                                 <div class="form-group">
-                                    <input type="number" id="sprice" name="sell_price" min="0" class="form-control next" data-next="stock" placeholder="Enter sell price" required>
+                                    <input type="number" step="0.01" id="sprice" name="sell_price" min="0" class="form-control next" data-next="stock" placeholder="Enter sell price" required>
                                 </div>
                             </div>
 
                             <div class="col-lg-4">
                                 <label for="stock">Stock</label>
                                 <div class="form-group">
-                                    <input type="number"  id="stock" name="stock" min="0" class="form-control next" data-next="unit" placeholder="Enter stock" required>
+                                    <input type="number" step="0.01" id="stock" name="stock" min="0" class="form-control next" data-next="unit" placeholder="Enter stock" required>
                                 </div>
                             </div>
 

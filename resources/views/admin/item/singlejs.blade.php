@@ -5,7 +5,7 @@
         <xxx_td>xxx_sell_price</xxx_td>
         <xxx_td>xxx_stock</xxx_td>
         <xxx_td>xxx_unit</xxx_td>
-        <xxx_td>xxx_reward_percentage</xxx_td>
+        {{-- <xxx_td>xxx_reward_percentage</xxx_td> --}}
         <xxx_td>
             @if (auth_has_per('03.02'))
         <button  class="btn btn-primary btn-sm"  onclick="initEdit(xxx_id);" >Edit</button>
