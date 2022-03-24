@@ -13,7 +13,7 @@ use App\Http\Controllers\Admin\EmployeeController;
 use App\Http\Controllers\Admin\GatewayController;
 use App\Http\Controllers\Admin\ImportController;
 use App\Http\Controllers\Admin\ItemController;
-use App\Http\Controllers\admin\ItemStockController;
+use App\Http\Controllers\Admin\ItemStockController;
 use App\Http\Controllers\Admin\OfferController;
 use App\Http\Controllers\Admin\PointController;
 use App\Http\Controllers\Admin\PosBillingController;
