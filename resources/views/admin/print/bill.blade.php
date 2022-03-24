@@ -92,7 +92,7 @@
 
         <tr class="no-border">
             <th colspan="{{$colspan}}" class="text-end">Discount:</th>
-            <td>Rs. {{ (float) $bill->discount }}</td>
+            <td>Rs. {{ (float) $bill->discount +(float) $bill->ldiscount  }}</td>
         </tr>
         @endif
         @if (env('companyUseTax', false))

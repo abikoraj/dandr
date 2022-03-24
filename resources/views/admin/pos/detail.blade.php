@@ -103,7 +103,7 @@
         </tr>
         <tr class="no-border">
             <th colspan="{{$colspan}}" class="text-right">Discount:</th>
-            <td>{{ (float) $bill->discount }}</td>
+            <td>{{ (float) $bill->discount + (float) $bill->ldiscount}}</td>
         </tr>
         @if (env('companyUseTax', false))
 

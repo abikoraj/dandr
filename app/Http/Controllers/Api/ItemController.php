@@ -54,7 +54,7 @@ class ItemController extends Controller
             if (PosBill::where('fiscal_year_id', $fy->id)->where('bill_no', $_bill->bill_no)->count() > 0) {
                 return response()->json([
                     'status' => true,
-                    'msg' => "Bill Saved Sucessfully",
+                    'msg' => "Bill Saved Sucessfully old",
                     'bill_id' => PosBill::where('fiscal_year_id', $fy->id)->where('bill_no', $_bill->bill_no)->select('id')->first()->id
                 ]);
             }
@@ -76,7 +76,6 @@ class ItemController extends Controller
                         $cus_user = new User();
                         $cus_user->password = bcrypt($customer->phone);
                         $cus_user->role = 5;
-                        $cus_user->save();
                     }
                     $cus_user->name = $customer->name;
                     $cus_user->address = $customer->address;
@@ -89,6 +88,7 @@ class ItemController extends Controller
                     $new_cus->user_id = $cus_user->id;
                     $new_cus->foreign_id = $customer->id;
                     $new_cus->save();
+
                 }
                 // $cus_user=User::where('phone',$request)
                 $bill->customer_name = $customer->name;
@@ -107,6 +107,7 @@ class ItemController extends Controller
             $bill->grandtotal = $_bill->grandtotal;
             $bill->paid = $_bill->paid;
             $bill->due = $_bill->due;
+            $bill->ldiscount = $_bill->ldiscount;
             $bill->return = $_bill->return;
             $bill->sync_id = $_bill->id;
             $user = User::where('phone', $_bill->user_id)->first();
@@ -197,15 +198,15 @@ class ItemController extends Controller
 
                 DB::table('pos_bill_items')->where('pos_bill_id', $bill->id)->delete();
                 $bill->delete();
-                return response()->json([
-                    'status' => false,
-                    'msg' => "Bill Cannot be Saved, " . $th->getMessage()
-                ]);
             }
+            return response()->json([
+                'status' => false,
+                'msg' => "Bill Cannot be Saved, " . $th->getMessage()
+            ]);
         }
         return response()->json([
             'status' => true,
-            'msg' => "Bill Saved Sucessfully",
+            'msg' => "Bill Saved Sucessfully new",
             'bill_id' => $bill->id
         ]);
     }
@@ -237,9 +238,13 @@ class ItemController extends Controller
         }
         try {
             $nepalidate = new NepaliDate($ledger->date);
+            $title=$ledger->particular;
+            if(strlen($title)>100){
+                $title=substr($title,0,100)."...";
+            }
             $l = new \App\Models\Ledger();
             $l->amount = $ledger->amount;
-            $l->title = $ledger->particular;
+            $l->title = $title;
             $l->date = $ledger->date;
             $l->identifire = $ledger->identifire;
             $l->foreign_key = $ledger->foreign_id;
@@ -252,7 +257,7 @@ class ItemController extends Controller
             $l->save();
             return response()->json([
                 'status' => true,
-                'msg' => "Bill Saved Sucessfully",
+                'msg' => "Ledger Saved Sucessfully",
                 'ledger_id' => $l->id
             ]);
         } catch (\Throwable $th) {
