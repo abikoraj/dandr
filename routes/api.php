@@ -57,6 +57,7 @@ Route::middleware(['auth:api'])->group(function () {
 
         Route::post('sync-bill', [ItemController::class,'syncBills']);
         Route::post('sync-ledger', [ItemController::class,'syncLedger']);
+        Route::post('show-ledger', [ItemController::class,'showLedger']);
     });
 });
 
@@ -68,6 +69,7 @@ Route::middleware(['auth:api'])->group(function () {
 
 
 Route::post('login',[LoginController::class,'index']);
+Route::post('login-remote',[LoginController::class,'loginRemote']);
 Route::get('info',[GeneralController::class,'info']);
 Route::get('test',function(){
     return response()->json(['status'=>true]);

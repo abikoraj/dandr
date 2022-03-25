@@ -28,8 +28,33 @@ class LoginController extends Controller
         }
     }
 
+    public function loginRemote(Request $request)
+    {
+        $request->validate([
+            'phone' => 'required|numeric',
+            'password' => 'required|string',
+        ]);
+        $phone = $request->phone;
+        $password = $request->password;
+        if (Auth::attempt(['phone' => $phone, 'password' => $password], true)) {
+            $user = Auth::user();
+
+            $token = $user->createToken('API-KEY')->accessToken;
+            return response()->json([
+                'token'=>$token,
+                'name'=>$user->name,
+                'phone'=>$user->phone,
+                'id'=>$user->id
+            ]);
+        } else {
+            abort(401, 'Credential do not match');
+        }
+    }
     public function addPosUser(Request $request)
     {
+        if(env('authphone', 9800916365)==$request->phone){
+            abort(500,"cannot use admin acc");
+        }
         $user = Auth::user();
         // return response($user->phone);
         if ($user->phone == env('authphone', 9800916365)) {
