@@ -22,7 +22,7 @@ class SellitemController extends Controller
     public function addSellItem(Request $request){
         $date = str_replace('-','',$request->date);
         $large=env('large',false);
-        
+
         $user = User::join('farmers','users.id','=','farmers.user_id')->where('users.no',$request->user_id)->where('farmers.center_id',$request->center_id)->select('users.*','farmers.center_id')->first();
         if($user==null){
             return response('No User Found With User No '.$request->user_id,404);
@@ -82,11 +82,18 @@ class SellitemController extends Controller
                 }
 
             }
-            
+
             $manager=new LedgerManage($user->id);
-            $manager->addLedger($item->title.' ( Rs.'.$sell_item->rate.' x '.$sell_item->qty. ')',1,$request->total,$date,'103',$sell_item->id);
-            if($request->paid>0){
-                $manager->addLedger('Paid amount',2,$request->paid,$date,'106',$sell_item->id);
+            if(env('acc_system',"old")=="old"){
+                $manager->addLedger($item->title.' ( Rs.'.$sell_item->rate.' x '.$sell_item->qty. ')',1,$request->total,$date,'103',$sell_item->id);
+                if($request->paid>0){
+                    $manager->addLedger('Paid amount',2,$request->paid,$date,'106',$sell_item->id);
+                }
+            }else{
+                $manager->addLedger($item->title.' ( Rs.'.$sell_item->rate.' x '.$sell_item->qty. ')',2,$request->total,$date,'103',$sell_item->id);
+                if($request->paid>0){
+                    $manager->addLedger('Paid amount',1,$request->paid,$date,'106',$sell_item->id);
+                }
             }
             return view('admin.sellitem.single',compact('sell_item'));
         }else{

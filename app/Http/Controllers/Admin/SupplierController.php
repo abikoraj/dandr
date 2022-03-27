@@ -430,13 +430,12 @@ class SupplierController extends Controller
         $payment->payment_detail = $request->method ?? "";
         $payment->user_id = $request->id;
         $payment->save();
-
         $ledger = new LedgerManage($request->id);
         $ledger->addLedger("Payment to supplier", 2, $request->amount, $date, '127', $payment->id);
         $supplier = User::find($request->id);
-
         $id = $request->id;
-        return view('admin.supplier.pay.data', compact('supplier', 'id'));
+        $payments = Ledger::where('user_id', $supplier->id)->where('identifire', '127')->get(['date', 'amount']);
+        return view('admin.supplier.pay.data', compact('supplier', 'id','payments'));
     }
 
 

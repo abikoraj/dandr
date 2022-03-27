@@ -39,7 +39,7 @@
                                 <div class="col-lg-{{$r}}">
                                     <label for="wprice">WholeSale Price</label>
                                     <div class="form-group">
-                                        <input type="number" step="0.01" id="wprice" name="wholesale" min="0" class="form-control next" data-next="sprice" placeholder="Enter cost price" required>
+                                        <input type="number" step="0.01" id="wprice" name="wholesale" min="0" class="form-control next" data-next="sprice" placeholder="Enter wholesale price" required>
                                     </div>
                                 </div>
                             @endif

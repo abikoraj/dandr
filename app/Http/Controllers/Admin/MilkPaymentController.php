@@ -48,7 +48,11 @@ class MilkPaymentController extends Controller
             $payment->name=$user->name;
             $payment->no=$user->no;
             $ledger=new LedgerManage($user->id);
-            $ledger->addLedger('Payment Milk Payment Given To Farmer',1,$request->amount,$date,'121',$payment->id);
+            if(env('acc_system','old')=='old'){
+                $ledger->addLedger('Payment Milk Payment Given To Farmer',1,$request->amount,$date,'121',$payment->id);
+            }else{
+                $ledger->addLedger('Payment Milk Payment Given To Farmer',2,$request->amount,$date,'121',$payment->id);
+            }
             return view('admin.milk.payment.single',compact('payment'));
         }else{
             return '<tr class="text-center"><td colspan="4"> <strong> <span class="text-danger">Your payment has been failed due to Session is not closed yet !</span></strong></td></tr>';
@@ -78,7 +82,7 @@ class MilkPaymentController extends Controller
         // dd($request->all());
         $date = str_replace('-', '', $request->date);
         $payment=MilkPayment::find($request->id);
-       
+
         $payment->delete();
         $l=Ledger::where(
             [
@@ -86,7 +90,7 @@ class MilkPaymentController extends Controller
                 ['foreign_key','=',$request->id]
             ]
         )->first();
-     
+
         $l->delete();
         return response('ok');
     }

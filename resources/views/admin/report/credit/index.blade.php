@@ -2,7 +2,7 @@
 @section('title','Report - Credit')
 
 @section('head-title')
-    <a href="{{route('report.home')}}">Report</a> / Credit
+    <a href="{{route('admin.report.home')}}">Report</a> / Credit
 
 @endsection
 

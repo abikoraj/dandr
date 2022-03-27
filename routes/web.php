@@ -414,6 +414,11 @@ Route::name('admin.')->group(function () {
                     Route::match(['get', 'post'],  '',[CustomerController::class,'payment'])->name('index')->middleware('permmission:08.02');
                     Route::match(['get', 'post'],  'add',[CustomerController::class,'addPayment'])->name('add');
                 });
+
+                Route::name('due.')->prefix('due')->group(function(){
+                    Route::match(['get', 'post'],  '',[CustomerController::class,'due'])->name('index')->middleware('permmission:08.02');
+                    Route::match(['get', 'post'],  'send-sms',[CustomerController::class,'sendSMS'])->name('send-sms');
+                });
             });
         });
 
@@ -423,11 +428,9 @@ Route::name('admin.')->group(function () {
             Route::name('report.')->group(function () {
 
                 Route::get('', [ReportController::class,'index'])->name('home')->middleware('permmission:12.01');
-
                 Route::match(['GET', 'POST'], 'farmer', [ReportController::class,'farmer'])->name('farmer');
                 Route::post('farmer/changeSession', [ReportController::class,'farmerSession'])->name('farmer.session');
                 Route::post('farmer/single/changeSession', [ReportController::class,'farmerSingleSession'])->name('farmer.single.session');
-
                 Route::match(['GET', 'POST'], 'milk', [ReportController::class,'milk'])->name('milk');
                 Route::match(['GET', 'POST'], 'sales', [ReportController::class,'sales'])->name('sales');
                 Route::match(['GET', 'POST'], 'pos', [ReportController::class,'posSales'])->name('pos.sales');

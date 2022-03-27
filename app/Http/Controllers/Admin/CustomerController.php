@@ -238,4 +238,17 @@ class CustomerController extends Controller
         $user = User::find($request->id);
         return view('admin.customer.payement.data', compact('user'));
     }
+    public function due()
+    {
+        $customer=DB::select('select name,phone,address,(dr-cr) as due from
+        (select
+        name,
+        phone,
+        address,
+        (select sum(amount) as cr from ledgers where ledgers.user_id=u.id and type=1) as cr,
+        (select sum(amount) as dr from ledgers where ledgers.user_id=u.id and type=2) as dr
+         from customers c join users u on u.id=c.user_id) as data where (data.dr - data.cr)>0
+        ');
+        dd($customer);
+    }
 }

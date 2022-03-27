@@ -57,9 +57,9 @@ Route::middleware(['auth:api'])->group(function () {
 
         Route::post('sync-bill', [ItemController::class,'syncBills']);
         Route::post('sync-ledger', [ItemController::class,'syncLedger']);
-        Route::post('show-ledger', [ItemController::class,'showLedger']);
     });
 });
+Route::match(['GET',"POST"],'show-ledger', [ItemController::class,'showLedger']);
 
 // Route::get('json/{table}',function($table){
 //     return response(json_encode(DB::table($table)->first(),JSON_NUMERIC_CHECK|JSON_PRESERVE_ZERO_FRACTION));

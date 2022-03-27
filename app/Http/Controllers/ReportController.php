@@ -107,11 +107,20 @@ class ReportController extends Controller
         $nextdate = NepaliDate::getNextDate($request->year, $request->month, $request->session);
         $lastdate = $lastdate = str_replace('-', '', $request->date);;
         $ledger = new LedgerManage($request->id);
-        if (env('hasextra', 0) == 1) {
-            $ledger->addLedger("Bonus", 1, $request->bonus, $lastdate, '124');
-        }
-        if ($request->grandtotal > 0) {
-            $ledger->addLedger("Payment for milk (" . ($request->milk) . "l)", 2, $request->grandtotal, $lastdate, '108');
+        if(env('acc_system',"old")=="old"){
+            if (env('hasextra', 0) == 1) {
+                $ledger->addLedger("Bonus", 1, $request->bonus, $lastdate, '124');
+            }
+            if ($request->grandtotal > 0) {
+                $ledger->addLedger("Payment for milk (" . ($request->milk) . "l)", 2, $request->grandtotal, $lastdate, '108');
+            }
+        }else{
+            if (env('hasextra', 0) == 1) {
+                $ledger->addLedger("Bonus", 2, $request->bonus, $lastdate, '124');
+            }
+            if ($request->grandtotal > 0) {
+                $ledger->addLedger("Payment for milk (" . ($request->milk) . "l)", 1, $request->grandtotal, $lastdate, '108');
+            }
         }
         $farmerreport = new FarmerReport();
         $farmerreport->user_id = $request->id;
@@ -151,10 +160,16 @@ class ReportController extends Controller
 
             $ledger = new LedgerManage($data->id);
             $grandtotal = $data->grandtotal ?? 0;
-
             if ($data->grandtotal > 0) {
-                $ledger->addLedger("Payment for milk (" . ($data->milk) . "l X " . ($data->rate ?? 0) . ")", 2, $data->grandtotal ?? 0, $lastdate, '108');
+                if(env('acc_system',"old")=="old"){
+                    $ledger->addLedger("Payment for milk (" . ($data->milk) . "l X " . ($data->rate ?? 0) . ")", 2, $data->grandtotal ?? 0, $lastdate, '108');
+                }else{
+                    $ledger->addLedger("Payment for milk (" . ($data->milk) . "l X " . ($data->rate ?? 0) . ")", 1, $data->grandtotal ?? 0, $lastdate, '108');
+
+                }
             }
+
+
 
             $farmerreport = new FarmerReport();
             $farmerreport->user_id = $data->id;
@@ -577,6 +592,7 @@ class ReportController extends Controller
 
     public function credit()
     {
+
         $farmercredit = \App\Models\User::where('role', 1)->where('amount', '>', 0)->where('amounttype', 1)->get();
         $distributorcredit = \App\Models\User::where('role', 2)->where('amount', '>', 0)->where('amounttype', 1)->get();
         return view('admin.report.credit.index', compact('farmercredit', 'distributorcredit'));

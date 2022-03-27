@@ -276,10 +276,15 @@ class ItemController extends Controller
     {
         $customer = Customer::where('foreign_id', $request->id)->where('center_id', $request->center_id)->select('user_id')->first();
         if($customer==null){
-            return response()->json(['status'=>false,"No User Found"]);
+            abort(404,"No User Found");
+
         }else{
-            $ledgers=DB::table('ledgers')->where('user_id',$customer->user_id)->orderBy('date')->orderBy('id')->get();
-            return response()->json(['status'=>true,'ledgers'=>$ledgers]);
+            $ledgers=DB::table('ledgers')
+            ->where('user_id',$customer->user_id)
+            ->orderBy('date')->orderBy('id')
+            ->select('id','date','title','type','amount')
+            ->get();
+            return response()->json($ledgers);
         }
     }
 }
