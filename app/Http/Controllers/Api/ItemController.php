@@ -225,7 +225,7 @@ class ItemController extends Controller
 
             }
             $cus_user->name = $customer->name;
-            $cus_user->address = $customer->address;
+            $cus_user->address = $customer->address??"";
             $cus_user->phone = $customer->phone;
             $cus_user->save();
 
