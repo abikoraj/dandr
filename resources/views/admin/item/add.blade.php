@@ -171,7 +171,7 @@
                                   Retail
                               </th>
                               <th>
-                                  Qty
+                                  Stock
                               </th>
                           </tr>
                         @foreach ($centers as $center)

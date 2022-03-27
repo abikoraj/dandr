@@ -13,7 +13,7 @@
                     Collection Center
                 </div>
                 <div class="col-md-3">
-                    Amount
+                    Stock
                 </div>
                 <div class="col-md-3">
                     Rate
@@ -41,7 +41,7 @@
                         <input class="form-control" type="number" name="rate_{{$center->id}}" id="rate_{{$center->id}}" min="0" step="0.01" value="{{$stock==null?$item->sell_price:$stock->rate}}" required>
                     </div>
                     <div class="col-md-3">
-                        <input class="form-control" type="number" name="wholesale_{{$center->id}}" id="wholesale_{{$center->id}}" min="0" step="0.01" value="{{$stock==null?$item->sell_price:$stock->rate}}" required>
+                        <input class="form-control" type="number" name="wholesale_{{$center->id}}" id="wholesale_{{$center->id}}" min="0" step="0.01" value="{{$stock==null? $item->wholesale : $stock->wholesale }}" required>
                     </div>
                 </div>
             @endforeach

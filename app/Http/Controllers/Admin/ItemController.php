@@ -135,8 +135,9 @@ class ItemController extends Controller
 
     public function edit(Request $request){
         $item=Item::where('id',$request->id)->first();
+        $centers=DB::table('centers')->get(['id','name']);
         // dd($item);
-        return view('admin.item.edit',compact('item'));
+        return view('admin.item.edit',compact('item','centers'));
     }
 
     public function update(Request $request){
@@ -160,17 +161,33 @@ class ItemController extends Controller
         $item->disonly=$request->disonly??0;
         $item->posonly=$request->posonly??0;
         $item->farmeronly=$request->farmeronly??0;
-
         $item->taxable=$request->taxable??0;
         $item->tax=$request->tax;
-
         $item->description=$request->description;
         $item->minqty=$request->minqty;
         $item->expirydays=$request->expirydays;
         $item->dis_number=$request->dis_number??'';
         $item->dis_price=$request->dis_price??0;
-
         $item->save();
+
+        if($request->filled('center_ids')){
+            foreach ($request->center_ids as $center_id) {
+                $amount=$request->input('amount_'.$center_id);
+                $rate=$request->input('rate_'.$center_id);
+                $wholesale=$request->input('wholesale_'.$center_id);
+                $stock=CenterStock::where('item_id',$item->id)->where('center_id',$center_id)->first();
+                if($stock==null){
+                    $stock=new CenterStock();
+                    $stock->item_id=$item->id;
+                    $stock->center_id=$center_id;
+                }
+                $stock->amount=$amount;
+                $stock->rate=$rate;
+                $stock->wholesale=$wholesale;
+                $stock->save();
+                // $totalStock+=$amount;
+            }
+        }
 
         return view('admin.item.single',compact('item'));
     }
