@@ -140,18 +140,21 @@
                                     </div>
                                 </div>
                             @endif
-                            <div class="col-lg-3">
-                                        <label for="image">Image</label>
-                                        <div class="form-group">
-                                            <input type="file" id="image" name="image" accept="image/*" class="form-control" >
-                                        </div>
-                            </div>
-                            <div class="col-lg-9">
-                                <label for="description">Description</label>
-                                <div class="form-group">
-                                    <textarea id="description" name="description"  class="form-control" ></textarea>
+                            @if (env('use_online',false))
+
+                                <div class="col-lg-3">
+                                            <label for="image">Image</label>
+                                            <div class="form-group">
+                                                <input type="file" id="image" name="image" accept="image/*" class="form-control" >
+                                            </div>
                                 </div>
-                            </div>
+                                <div class="col-lg-9">
+                                    <label for="description">Description</label>
+                                    <div class="form-group">
+                                        <textarea id="description" name="description"  class="form-control" ></textarea>
+                                    </div>
+                                </div>
+                            @endif
                         </div>
                 </div>
                 <div class="p-3">

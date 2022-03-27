@@ -153,6 +153,7 @@
                     </div>
                 @endif
                 <div class="col-12"></div>
+                @if (env('use_online',false))
                 <div class="col-lg-3">
 
                     <label for="image">Image</label>
@@ -172,6 +173,7 @@
                             class="form-control">{{ $item->description }}</textarea>
                     </div>
                 </div>
+                @endif
             </div>
             <div class="py-3">
                 <div class="row m-0">
