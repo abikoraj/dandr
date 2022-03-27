@@ -1,3 +1,3 @@
-{{$dis->name}},
-Your Due is Rs. {{$dis->amount}}
-- {{env('APP_NAME','')}}
+{{$name}},
+Your Due is Rs. {{$due}}
+- {{env('companyName','')}}
