@@ -10,6 +10,7 @@ use App\Models\Ledger;
 use App\Models\PosSetting;
 use App\Models\User;
 use App\NepaliDate;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -238,17 +239,29 @@ class CustomerController extends Controller
         $user = User::find($request->id);
         return view('admin.customer.payement.data', compact('user'));
     }
-    public function due()
+    public function creditList(Request $request)
     {
-        $customer=DB::select('select name,phone,address,(dr-cr) as due from
-        (select
-        name,
-        phone,
-        address,
-        (select sum(amount) as cr from ledgers where ledgers.user_id=u.id and type=1) as cr,
-        (select sum(amount) as dr from ledgers where ledgers.user_id=u.id and type=2) as dr
-         from customers c join users u on u.id=c.user_id) as data where (data.dr - data.cr)>0
-        ');
-        dd($customer);
+        if($request->getMethod()=="POST"){
+            $date = str_replace('-', '', $request->date);
+            $now=Carbon::now();
+            $customers=DB::select('select id,name,phone,address,(dr-cr) as due,latestPay,lastsms,last from
+            (select
+            u.id,
+            name,
+            phone,
+            address,
+            ifnull(c.lastsms,"N/A") as lastsms,
+            ifnull(DATEDIFF(?,c.lastsms),"N/A") as last,
+            (select sum(amount) as cr from ledgers where ledgers.user_id=u.id and type=1) as cr,
+            (select sum(amount) as dr from ledgers where ledgers.user_id=u.id and type=2) as dr,
+            ifnull((select max(date) from customer_payments where user_id = u.id),0) as latestPay
+             from customers c join users u on u.id=c.user_id) as data where (data.dr - data.cr)>0
+             and latestPay < ?
+            ',[$now->format('Y-m-d'),$date]);
+            return response()->json($customers);
+        }else{
+
+            return view('admin.customer.credit.index');
+        }
     }
 }

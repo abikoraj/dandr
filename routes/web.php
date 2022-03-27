@@ -28,6 +28,7 @@ use App\Http\Controllers\ReportController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Sahakari\HomeController;
 use App\Http\Controllers\Sahakari\Member\MemberController;
+use App\Http\Controllers\SMSController;
 use App\Models\Item;
 use App\Models\Sahakari\HomeCntroller;
 
@@ -323,7 +324,8 @@ Route::name('admin.')->group(function () {
 
 
         Route::prefix('sms')->name('sms.')->group(function(){
-            Route::post('distributer-credit','SMSController@distributerCredit')->name('distributer.credit');
+            Route::post('distributer-credit',[SMSController::class,'distributerCredit'])->name('distributer.credit');
+            Route::post('customer-credit',[SMSController::class,'customerCredit'])->name('customer.credit');
         });
 
 
@@ -415,8 +417,8 @@ Route::name('admin.')->group(function () {
                     Route::match(['get', 'post'],  'add',[CustomerController::class,'addPayment'])->name('add');
                 });
 
-                Route::name('due.')->prefix('due')->group(function(){
-                    Route::match(['get', 'post'],  '',[CustomerController::class,'due'])->name('index')->middleware('permmission:08.02');
+                Route::name('credit-list.')->prefix('credit-list')->group(function(){
+                    Route::match(['get', 'post'],  '',[CustomerController::class,'creditList'])->name('index')->middleware('permmission:08.02');
                     Route::match(['get', 'post'],  'send-sms',[CustomerController::class,'sendSMS'])->name('send-sms');
                 });
             });
@@ -538,6 +540,8 @@ Route::name('admin.')->group(function () {
             Route::match(['GET', 'POST'], 'gallery', 'Admin\HomepageController@gallery')->name('gallery');
             Route::match(['GET', 'POST'], 'gallery/del/{gallery}', 'Admin\HomepageController@galleryDel')->name('gallery-del');
         });
+
+
 
 
         Route::group(['prefix' => 'user'], function () {

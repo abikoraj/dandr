@@ -3,7 +3,7 @@ namespace App\sms;
 
 use Illuminate\Support\Facades\Http;
 
-class Aakash 
+class Aakash
 {
     const url="https://sms.aakashsms.com/sms/v3/send";
     private $token;
@@ -18,6 +18,6 @@ class Aakash
             'to'    => $phone,
             'text'  =>$msg
         ]);
-        return $response;
+        return $response->ok();
     }
 }
