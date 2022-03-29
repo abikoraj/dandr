@@ -71,6 +71,22 @@
         $('#edue').val($('#erate').val() * $('#eqty').val());
     }
 
+    @if (auth_has_per('07.11'))
+        function delPayment(pay_id,id){
+            if(prompt('Enter yes to continue')=='yes'){
+                axios.post("{{route('admin.supplier.delete.pay')}}",{
+                    id:id,
+                    payment_id:pay_id
+                })
+                .then((res)=>{
+                    loaddata();
+                })
+                .catch((err)=>{
+                    showNotification('bg-danger',"Some Error Occured Please Try Again");
+                });
+            }
+        }
+    @endif
     function paidTotal() {
         var total = parseFloat($('#total').val());
         var paid = parseFloat($('#paid').val());

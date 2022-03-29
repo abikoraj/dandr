@@ -411,7 +411,7 @@ class SupplierController extends Controller
     {
         $id = $request->id;
         $supplier = User::find($request->id);
-        $payments = Ledger::where('user_id', $supplier->id)->where('identifire', '127')->get(['date', 'amount']);
+        $payments = Ledger::where('user_id', $supplier->id)->where('identifire', '127')->get(['date', 'amount','foreign_key','id']);
         $supplier->balance = Ledger::where('user_id', $supplier->id)->where('type', 2)->sum('amount') - Ledger::where('user_id', $supplier->id)->where('type', 1)->sum('amount');
 
         return view('admin.supplier.pay.data', compact('supplier', 'id', 'payments'));
@@ -439,6 +439,13 @@ class SupplierController extends Controller
         return view('admin.supplier.pay.data', compact('supplier', 'id','payments'));
     }
 
+    public function delPayment(Request $request)
+    {
+
+        DB::table('supplierpayments')->where('id',$request->payment_id)->delete();
+        DB::table('ledgers')->where('id',$request->id)->delete();
+        return response('ok');
+    }
 
 
     // supplier previous balance

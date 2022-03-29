@@ -57,14 +57,10 @@
             $('#customers>tr')[index].scrollIntoView();
         }
 
-        function selectCustomer(id, name,ele) {
-            $('#customers>tr').removeClass('btn-primary');
-            $(ele).addClass('btn-primary');
-            _id = id;
-            _name = name;
-            showProgress("Loading " + name + "'s Data")
+        function loadData(){
+            showProgress("Loading " + _name + "'s Data")
             axios.post('{{ route('admin.customer.payment.index') }}', {
-                    "id": id
+                    "id": _id
                 })
                 .then((res) => {
                     $('#allData').html(res.data);
@@ -76,6 +72,13 @@
 
                 });
         }
+        function selectCustomer(id, name,ele) {
+            $('#customers>tr').removeClass('btn-primary');
+            $(ele).addClass('btn-primary');
+            _id = id;
+            _name = name;
+            loadData();
+        }
 
         function addPayment(e) {
             e.preventDefault();
@@ -85,7 +88,7 @@
                 data = new FormData(document.getElementById('addPayment'));
                 axios.post("{{ route('admin.customer.payment.add') }}", data)
                     .then((res) => {
-                        $('#allData').html(res.data);
+                        loadData();
                         hideProgress();
                         setDate('date', true);
                     })
@@ -96,6 +99,21 @@
             }
         }
 
+        function delPayment(pay_id,id){
+            if(prompt('Enter yes to continue')=='yes'){
+                axios.post("{{route('admin.customer.payment.del')}}",{
+                    id:id,
+                    payment_id:pay_id
+                })
+                .then((res)=>{
+                    loadData();
+                })
+                .catch((err)=>{
+                    console.log(err);
+                    showNotification('bg-danger',"Some Error Occured Please Try Again");
+                });
+            }
+        }
 
         function loadCustomer() {
             axios.get('{{ route('admin.customer.all') }}')

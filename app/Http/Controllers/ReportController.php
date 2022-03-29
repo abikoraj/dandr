@@ -423,11 +423,14 @@ class ReportController extends Controller
                 }
                 array_push($billItemDatas, $billItemData);
             }
+
+
             // dd($billItemDatas);
             $groupData = json_encode(ReportManager::makeGroup($type,$request),JSON_NUMERIC_CHECK );
             // dd($groupData);
             return view('admin.report.billingsale.data', compact('bills', 'billItemDatas','type','groupData','saleReturn'));
         } else {
+
             return view('admin.report.billingsale.index');
         }
     }

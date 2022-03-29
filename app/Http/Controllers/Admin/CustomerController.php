@@ -211,8 +211,9 @@ class CustomerController extends Controller
         $customers = [];
         if ($request->getMethod() == "POST") {
             $user = User::find($request->id);
+            $payments=DB::table('ledgers')->where('user_id', $user->id)->where('identifire',135)->get(['id','foreign_key','date','amount']);
             $balance = Ledger::where('user_id', $user->id)->where('type', 2)->sum('amount') - Ledger::where('user_id', $user->id)->where('type', 1)->sum('amount');
-            return view('admin.customer.payement.data', compact('user', 'balance'));
+            return view('admin.customer.payement.data', compact('user', 'balance','payments'));
         } else {
 
             return view('admin.customer.payement.index' );
@@ -237,7 +238,16 @@ class CustomerController extends Controller
             $ledger->addLedger("Payment", 1, $payment->amount, $date, 135, $payment->id);
         }
         $user = User::find($request->id);
-        return view('admin.customer.payement.data', compact('user'));
+        return response('ok');
+    }
+
+    public function delPayment(Request $request)
+    {
+
+        DB::table('customer_payments')->where('id',$request->payment_id)->delete();
+        DB::table('ledgers')->where('id',$request->id)->delete();
+        return response('ok');
+
     }
     public function creditList(Request $request)
     {

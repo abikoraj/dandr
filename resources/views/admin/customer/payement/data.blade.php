@@ -13,17 +13,17 @@
             <th class="text-end px-2">Current Balance:</th>
             <td>
                 @if ($balance!=0)
-                    {{$balance>0?'DR. '.$balance:''}}    
-                    {{$balance<0?'CR. '.(-1*$balance):''}}    
+                    {{$balance>0?'DR. '.$balance:''}}
+                    {{$balance<0?'CR. '.(-1*$balance):''}}
                 @else
                     0
                 @endif
-                
+
             </td>
         </tr>
     </table>
 
-    
+
 </div>
 <hr>
 <div>
@@ -36,14 +36,18 @@
                 Amount (Rs.)
             </th>
             <th>
-                Detail
+
             </th>
         </tr>
-        @foreach ($user->customerPayments as $payment)
+        @foreach ($payments as $payment)
             <tr>
                 <td>{{_nepalidate($payment->date)}}</td>
                 <td>{{$payment->amount}}</td>
-                <td>{{$payment->description}}</td>
+                <td>
+                    <button class="btn btn-danger" onclick="delPayment({{$payment->foreign_key??-1}},{{$payment->id}})">
+                        Delete
+                    </button>
+                </td>
             </tr>
         @endforeach
     </table>

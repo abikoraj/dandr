@@ -126,6 +126,10 @@ function has_per($per,$list): bool{
     return $list->where('code',$per)->count()>0;
 }
 
+function isSuper(){
+    return Auth::check()?((Auth::user()->phone)==env('authphone','')):false;
+}
+
 function auth_has_per($per){
     try {
         $user=Auth::user();

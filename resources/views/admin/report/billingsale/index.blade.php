@@ -74,12 +74,6 @@
 @include('admin.layouts.daterange')
 <hr>
 <div class="row">
-    <div class="col-md-9">
-       <div class="row">
-
-       </div>
-
-    </div>
     <div class="col-md-3">
         <span class="btn btn-primary" onclick="loadData()"> Load Report</span>
         <span class="btn btn-danger" onclick="$('#allData').html('');$('#type').val(-1);manageDisplay($('#type')[0])"> Reset</span>
@@ -100,10 +94,10 @@
     function loadData(){
 
 
-        if($('#type').val()==-1){
-            alert('Please Select Report Duration ');
-            return;
-        }
+        // if($('#type').val()==-1){
+        //     alert('Please Select Report Duration ');
+        //     return;
+        // }
 
         var d={
             'year':$('#year').val(),

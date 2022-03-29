@@ -181,7 +181,7 @@ class ItemController extends Controller
                     DB::update('update customers set points = ifnull(points,0) + ? where id = ?', [$point,$bill->customer_id]);
                 }
             }
-            $status->current += $bill->grandtotal;
+            $status->current += ($bill->paid-$bill->return);
             $status->save();
         } catch (\Throwable $th) {
             if ($bill->id != null && $bill->id != 0) {

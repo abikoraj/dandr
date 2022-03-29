@@ -274,8 +274,9 @@ Route::name('admin.')->group(function () {
             Route::get('detail/{id}',[SupplierController::class,'detail'])->name('detail');
             Route::post('load-detail',[SupplierController::class,'loadDetail'])->name('load-detail');
             Route::get('payment',[SupplierController::class,'payment'])->name('pay')->middleware('permmission:07.09');
-            Route::post('due',[SupplierController::class,'due'])->name('due');
-            Route::post('due-pay',[SupplierController::class,'duePay'])->name('due.pay');
+            Route::post('due',[SupplierController::class,'due'])->name('due')->middleware('permmission:07.09');;
+            Route::post('due-pay',[SupplierController::class,'duePay'])->name('due.pay')->middleware('permmission:07.09');
+            Route::post('payment-delete',[SupplierController::class,'delPayment'])->name('delete.pay')->middleware('permmission:07.11');
 
             // XXX supplier bills
             Route::get('bills',[SupplierController::class,'indexBill'])->name('bill')->middleware('permmission:07.05');
@@ -412,9 +413,10 @@ Route::name('admin.')->group(function () {
                 //detail
                 Route::match(['get', 'post'], 'detail/{id}',[CustomerController::class,'detail'])->name('detail');
 
-                Route::name('payment.')->prefix('payment')->group(function(){
-                    Route::match(['get', 'post'],  '',[CustomerController::class,'payment'])->name('index')->middleware('permmission:08.02');
+                Route::name('payment.')->middleware('permmission:08.02')->prefix('payment')->group(function(){
+                    Route::match(['get', 'post'],  '',[CustomerController::class,'payment'])->name('index');
                     Route::match(['get', 'post'],  'add',[CustomerController::class,'addPayment'])->name('add');
+                    Route::match(['get', 'post'],  'del',[CustomerController::class,'delPayment'])->name('del');
                 });
 
                 Route::name('credit-list.')->prefix('credit-list')->group(function(){

@@ -13,6 +13,7 @@
             <th>
                 Amount (Rs.)
             </th>
+            <th></th>
         </tr>
         @foreach ($payments as $payment)
             <tr>
@@ -21,6 +22,14 @@
                 </td>
                 <td>
                     {{$payment->amount}}
+                </td>
+
+                <td>
+                    @if (auth_has_per('07.11'))
+                    <button class="btn btn-danger" onclick="delPayment({{$payment->foreign_key}},{{$payment->id}})">
+                        Delete
+                    </button>
+                    @endif
                 </td>
             </tr>
         @endforeach

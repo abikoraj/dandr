@@ -93,6 +93,7 @@ return [
             'purchase delete' => ['code' => '07.08'],
             'Supplier Payment' => ['code' => '07.09'],
             'Opening Balance' => ['code' => '07.10'],
+            'Supplier Payment Delete' => ['code' => '07.11'],
         ]
     ],
 
