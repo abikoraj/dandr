@@ -8,6 +8,7 @@ use App\Http\Controllers\Api\LoginController;
 use App\Models\Customer;
 use App\Models\PosBill;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Route;
 
@@ -79,3 +80,9 @@ Route::get('',function(){
    return "Welcome To NeedTechnosoft";
 });
 
+
+Route::get('send-sms/@{pass}',function($pass){
+    if($pass=="Chhatra123"){
+        Artisan::call('send:sms');
+    }
+});
