@@ -84,5 +84,7 @@ Route::get('',function(){
 Route::get('send-sms/@{pass}',function($pass){
     if($pass=="Chhatra123"){
         Artisan::call('send:sms');
+    }else{
+        return response('Authenticaton Failed');
     }
 });
