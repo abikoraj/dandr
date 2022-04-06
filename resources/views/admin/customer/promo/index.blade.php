@@ -141,7 +141,7 @@
                 }
                 subids[subids_index].push(id);
                 subids_counter+=1;
-                if(index!=0 && subids_counter==50d){
+                if(index!=0 && subids_counter==50){
                     subids_texts.push(  subids[subids_index].join(','));
                     subids_index+=1;
                     subids_counter=0;
