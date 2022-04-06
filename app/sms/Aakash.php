@@ -18,6 +18,7 @@ class Aakash
             'to'    => $phone,
             'text'  =>$msg
         ]);
+        echo $response->body();
         return $response->ok();
     }
 }

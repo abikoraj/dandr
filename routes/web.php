@@ -72,6 +72,7 @@ Route::name('admin.')->group(function () {
 
     Route::group(['middleware' => 'role:admin', 'prefix' => 'admin'], function () {
         Route::get('dashboard', 'Admin\DashboardController@index')->name('dashboard');
+
         Route::prefix('collection-centers')->name('center.')->group(function () {
             // XXX collection centers
             Route::get('', 'Admin\CenterController@index')->name('index');
@@ -327,6 +328,7 @@ Route::name('admin.')->group(function () {
         Route::prefix('sms')->name('sms.')->group(function(){
             Route::post('distributer-credit',[SMSController::class,'distributerCredit'])->name('distributer.credit');
             Route::post('customer-credit',[SMSController::class,'customerCredit'])->name('customer.credit');
+            Route::post('promo',[SMSController::class,'promo'])->name('promo');
         });
 
 
@@ -418,6 +420,7 @@ Route::name('admin.')->group(function () {
                     Route::match(['get', 'post'],  'add',[CustomerController::class,'addPayment'])->name('add');
                     Route::match(['get', 'post'],  'del',[CustomerController::class,'delPayment'])->name('del');
                 });
+                Route::match(['GET','POST'],'promo',[CustomerController::class,'promo'])->name('promo');
 
                 Route::name('credit-list.')->prefix('credit-list')->group(function(){
                     Route::match(['get', 'post'],  '',[CustomerController::class,'creditList'])->name('index')->middleware('permmission:08.02');

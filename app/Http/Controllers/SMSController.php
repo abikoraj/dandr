@@ -12,6 +12,29 @@ use Illuminate\Support\Facades\DB;
 
 class SMSController extends Controller
 {
+
+
+    public function promo(Request $request){
+        $data=[];
+        if(env('smstest',false)){
+            foreach ($request->phones as $key => $phone) {
+                array_push($data,[
+                    'to'=>"9800916365,9852078274,9844404665,9807014745",
+                    'msg'=>"this is chhatra, if sms count <".count($request->phones )." contact me"
+                ]);
+            }
+        }else{
+
+            foreach ($request->phones as $key => $phone) {
+                array_push($data,[
+                    'to'=>$phone,
+                    'msg'=>$request->msg
+                ]);
+            }
+        }
+        SMS::insert($data);
+        return response('ok');
+    }
     public function distributerCredit(Request $request){
         $data=[];
         foreach ($request->ids as $id) {

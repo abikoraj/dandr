@@ -274,4 +274,17 @@ class CustomerController extends Controller
             return view('admin.customer.credit.index');
         }
     }
+
+    public function promo(Request $request)
+    {
+        if($request->getMethod()=="POST"){
+            return response()->json(
+                DB::select('select u.name,u.id,u.phone,u.address from users u join customers c on u.id=c.user_id where c.center_id in ('. implode(",",$request->centers) .')')
+            );
+        }else{
+
+            $centers=DB::table('centers')->get(['id','name']);
+            return view('admin.customer.promo.index',compact('centers'));
+        }
+    }
 }

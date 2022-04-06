@@ -1,34 +1,43 @@
 @extends('admin.layouts.app')
-@section('title','Customer Credit List')
+@section('title','Promo Message')
 @section('css')
 <link rel="stylesheet" href="{{ asset('backend/plugins/select2/select2.css') }}" />
 @endsection
-@section('head-title','Customer Credit List')
+@section('head-title','Promo Message')
 @section('toobar')
 
 @endsection
 @section('content')
 <div class="p-3">
     <div class="row">
-        <div class="col-md-4">
-            <label for="before">Last Payment Before</label>
-            <input type="text" class="calender form-control" id="date">
+        <div class="col-md-12">
+            <div class="row">
+                @foreach ($centers as $center)
+                <div class="col-md-2" >
+                    <input type="checkbox" value="{{$center->id}}" name="center_{{$center->id}}" id="center_{{$center->id}}" class="center" checked> {{$center->name}}
+                </div>
+                @endforeach
+            </div>
+            <hr>
         </div>
         <div class="col-md-2 d-flex align-items-end">
-
             <button class="btn w-100 btn-primary" onclick="loadData()">
                 Load Data
             </button>
         </div>
         <div class="col-md-2 d-flex align-items-end">
-            <button class="btn w-100 btn-danger">
+            <button class="btn w-100 btn-danger" onclick="resetData()">
                 Reset Data
             </button>
         </div>
     </div>
 </div>
 <div class="p-3 d-none" id="data-holder">
-    <form action="{{route('admin.sms.customer.credit')}}" method="POST" onsubmit="return sendSMS(event);">
+    <form action="{{route('admin.sms.promo')}}" method="POST" onsubmit="return sendSMS(event);">
+        <textarea name="sms" id="sms" cols="30" rows="10" class="mb-2 form-control"></textarea>
+        <div class="py-2">
+            <button class="btn btn-sucess">Send Sms</button>
+        </div>
         @csrf
         <table class="table table-bordered">
             <tr>
@@ -42,24 +51,14 @@
                 <th>
                     Phone
                 </th>
-                <th>
-                    Credit (Rs.)
-                </th>
-                <th>
-                    last  Payment
-                </th>
-                <th>
-                    Last SMS
-                </th>
+
 
             </tr>
            <tbody id="data">
 
            </tbody>
         </table>
-        <div class="py-2">
-            <button class="btn btn-sucess">Send Sms</button>
-        </div>
+
     </form>
 </div>
 @endsection
@@ -76,31 +75,30 @@
 
     function loadData(){
         if(!working){
+            let centers=[];
+            $('.center').each(function (index, element) {
+                if(element.checked){
+                    centers.push(element.value);
+                }
+
+            });
+            if(centers.length==0){
+                alert("Please Select At Least One Center");
+                return;
+            }
             working=true;
-            showProgress("Loading Credit Data");
-            axios.post('{{route('admin.customer.credit-list.index')}}',{date:$('#date').val()})
+            showProgress("Loading Customers");
+            axios.post('{{route('admin.customer.promo')}}',{centers:centers})
             .then((res)=>{
                 console.log(res.data);
                 let html="";
                 res.data.forEach(cus => {
                     html+="<tr>"+
-                        "<td><input class='selectable' type='checkbox' value='"+cus.id+"'></td>"+
+                        "<td><input class='selectable' type='checkbox' value='"+{{env('smstest',false)?'9800916365':'cus.phone'}}+"'></td>"+
                         "<td>"+cus.name+"</td>"+
                         "<td>"+cus.address+"</td>"+
                         "<td>"+cus.phone+"</td>"+
-                        "<td>"+cus.due+"</td>";
-                        if(cus.latestPay==0){
-                            html+="<td>No Record</td>";
-                        }else{
-                           html+= "<td>"+toNepaliDate(cus.latestPay)+"</td>";
-                        }
-                        if(cus.last=="N/A"){
-                            html+= "<td>N/A</td>";
-                        }else{
-                            html+= "<td>"+cus.last +" Days</td>";
-                        }
-
-                        html+="</tr>";
+                        "</tr>";
                 });
                 $('#data').html(html);
                 $('#data-holder').removeClass("d-none");
@@ -116,21 +114,54 @@
         }
     }
 
+    function resetData(){
+        $('#data-holder').addClass("d-none");
+    }
+
     function sendSMS(e){
         e.preventDefault();
         eles=document.querySelectorAll('.selectable:checked');
-        let ids=[];
-        if(eles.length>0){
-            for (let index = 0; index < eles.length; index++) {
-                const element = eles[index];
-                ids.push(element.value);
+        const msg=$('#sms').val();
+        if(msg==''){
+            alert("Please Enter Message");
+            return;
+        }
 
+        if(eles.length>0){
+
+            let subids=[];
+            let subids_texts=[];
+            let subids_index=0;
+            let subids_counter=0;
+
+            for (let index = 0; index < eles.length; index++) {
+                const id = eles[index].value;
+                if(subids[subids_index]==undefined){
+                    subids[subids_index]=[];
+                }
+                subids[subids_index].push(id);
+                subids_counter+=1;
+                if(index!=0 && subids_counter==50d){
+                    subids_texts.push(  subids[subids_index].join(','));
+                    subids_index+=1;
+                    subids_counter=0;
+                }else{
+
+                    if(index==(eles.length-1)){
+                        subids_texts.push(  subids[subids_index].join(','));
+
+                    }
+                }
             }
+
+
+
             if(!working){
                 working=true;
                 showProgress("Sending SMS");
-                axios.post('{{route('admin.sms.customer.credit')}}',{
-                    ids:ids
+                axios.post('{{route('admin.sms.promo')}}',{
+                    msg:msg,
+                    phones:subids_texts
                 })
                 .then((res)=>{
                     console.log(res.data);
