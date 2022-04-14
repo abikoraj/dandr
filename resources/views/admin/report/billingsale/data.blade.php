@@ -45,7 +45,7 @@
                                 <td>{{ _nepalidate($b->date) }}</td>
                                 <td>{{ $b->customer_name }}</td>
                                 <td>{{ (float) $b->total }}</td>
-                                <td>{{ (float) $b->discount }}</td>
+                                <td>{{ (float) ($b->discount+$b->ldiscount) }}</td>
                                 <td>{{ (float) $b->taxable }}</td>
                                 <td>{{ (float) $b->tax }}</td>
                                 <td>{{ (float) $b->grandtotal }}</td>
@@ -60,7 +60,7 @@
                                     {{coll_sum($bills,'total')}}
                                 </td>
                                 <td>
-                                    {{coll_sum($bills,'discount')}}
+                                    {{coll_sum($bills,'discount')+coll_sum($bills,'ldiscount')}}
                                 </td>
                                 <td>
                                     {{coll_sum($bills,'taxable')}}

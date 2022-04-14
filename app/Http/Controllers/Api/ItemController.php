@@ -57,6 +57,7 @@ class ItemController extends Controller
                     'msg' => "Bill Saved Sucessfully old",
                     'bill_id' => PosBill::where('fiscal_year_id', $fy->id)->where('bill_no', $_bill->bill_no)->select('id')->first()->id
                 ]);
+                // $bill=PosBill::where('fiscal_year_id', $fy->id)->where('bill_no', $_bill->bill_no)->first();
             }
             $point=0;
             $bill->bill_no = $_bill->bill_no;
@@ -119,7 +120,6 @@ class ItemController extends Controller
             if($pointSetting->type==1){
                 $point=$bill->grandtotal/$pointSetting->per*$pointSetting->point;
             }
-
             foreach ($request->items as $key => $_bi) {
                 if ($_bi != null) {
                     $bi = new PosBillItem();
