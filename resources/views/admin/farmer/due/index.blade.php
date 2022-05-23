@@ -50,6 +50,9 @@
     }
 
     function loadData(){
+
+        $('#allData').html('');
+
         var user_no = $('#u_no').val();
         var center_id = $('#center_id').val();
         axios({
@@ -90,6 +93,22 @@
         });
     })
 
+    function deletePayment(id){
+        if(prompt('Enter yes to delete payment')=='yes'){
+            axios({
+            method: 'post',
+            url: '{{ route("admin.farmer.pay.delete")}}',
+            data:{'id':id}
+        })
+        .then(function(response) {
+           loadData();
+        })
+        .catch(function(response) {
+            console.log(response);
+        });
+        }
+    }
+
 // due payment
     function duePayment(){
         if($('#totaldue').val() == 0 || $('#p_amt').val() == 0 || $('#p_detail').val() == ''){
@@ -117,6 +136,7 @@
             .then(function(response) {
                 showNotification('bg-success', 'Payment has been successed!');
                 $('#p_amt').val(0);
+                loadData();
             })
             .catch(function(response) {
                 //handle error

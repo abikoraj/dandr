@@ -1,5 +1,5 @@
 @extends('admin.layouts.app')
-@section('title', 'Distributer Milk Sell')
+@section('title', 'Distributer SNF FAT')
 @section('css')
     <link rel="stylesheet" href="{{ asset('backend/plugins/select2/select2.css') }}" />
     <link rel="stylesheet" href="{{ asset('calender/nepali.datepicker.v3.2.min.css') }}" />
@@ -158,7 +158,7 @@
                     $('#id').focus();
                     return false;
                 } else {
-    
+
                     sellock = true;
                     var bodyFormData = new FormData(document.getElementById('sellMilkData'));
                     axios({
@@ -194,7 +194,7 @@
         // update
         function update(id){
             if(confirm('Do You Want to Update SNF FAT?')){
-                axios.post('{{route('admin.distributer.MilkData.update')}}',{
+                axios.post('{{route('admin.distributer.snffat.update')}}',{
                     "id":id,
                     "snf":$('#snf-'+id).val(),
                     "fat":$('#fat-'+id).val(),

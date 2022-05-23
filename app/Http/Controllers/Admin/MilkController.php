@@ -4,10 +4,12 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\LedgerManage;
+use App\Models\Item;
 use App\Models\Milkdata;
 use App\Models\Product;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 use function PHPSTORM_META\type;
 
@@ -21,14 +23,14 @@ class MilkController extends Controller
         // dd($request->all());
         $actiontype=0;
         $date = str_replace('-', '', $request->date);
-        $user = User::join('farmers','users.id','=','farmers.user_id')->where('users.no',$request->user_id)->where('farmers.center_id',$request->center_id)->select('users.*','farmers.center_id')->first();
+        $user = User::join('farmers','users.id','=','farmers.user_id')->where('farmers.no',$request->user_id)->where('farmers.center_id',$request->center_id)->select('users.id','farmers.no','farmers.center_id')->first();
         // $user=User::where('no',$request->user_id)->first();
         // dd($user,$request);
         if($user==null ){
             return response("Farmer Not Found",400);
         }else{
             if($user->no==null){
-            return response("Farmer Not Found",500);
+                return response("Farmer Not Found",500);
 
             }
         }
@@ -43,7 +45,7 @@ class MilkController extends Controller
         }
 
         //request->type 1=save/replace type=2 add
-        $product = Product::where('id',env('milk_id'))->first();
+        $product = Item::where('id',env('milk_id'))->first();
         $oldmilk = 0;
         if($request->session == 0){
             if($type==0){
@@ -80,7 +82,11 @@ class MilkController extends Controller
 
     public function milkDataLoad(Request $request){
         $date = str_replace('-', '', $request->date);
-        $milkData = Milkdata::where(['date'=>$date,'center_id'=>$request->center_id])->get();
+        $milkData = DB::table('milkdatas')
+        ->join('farmers','farmers.user_id','=','milkdatas.user_id')
+        ->where(['date'=>$date,'milkdatas.center_id'=>$request->center_id])
+        ->select('milkdatas.*','farmers.no')
+        ->get();
         return view('admin.milk.dataload',['milkdatas'=>$milkData]);
     }
 
@@ -98,6 +104,11 @@ class MilkController extends Controller
     }
     public function delete(Request $request){
         $milkdata=Milkdata::find($request->id);
+        $product = Item::where('id',env('milk_id'))->first();
+        if($product!=null){
+            $product->stock-= ($milkdata->e_amount+$milkdata->m_amount);
+            $product->save();
+        }
         $milkdata->delete();
         return response('ok',200);
     }

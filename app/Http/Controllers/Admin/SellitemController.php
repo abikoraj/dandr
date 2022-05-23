@@ -14,43 +14,44 @@ use Illuminate\Http\Request;
 
 class SellitemController extends Controller
 {
-    public function index(){
-        $large=env('large',false);
-        return view('admin.sellitem.index',compact('large'));
+    public function index()
+    {
+        $large = env('large', false);
+        return view('admin.sellitem.index', compact('large'));
     }
 
-    public function addSellItem(Request $request){
-        $date = str_replace('-','',$request->date);
-        $large=env('large',false);
+    public function addSellItem(Request $request)
+    {
+        $date = str_replace('-', '', $request->date);
+        $large = env('large', false);
 
-        $user = User::join('farmers','users.id','=','farmers.user_id')->where('users.no',$request->user_id)->where('farmers.center_id',$request->center_id)->select('users.*','farmers.center_id')->first();
-        if($user==null){
-            return response('No User Found With User No '.$request->user_id,404);
+        $user = User::join('farmers', 'users.id', '=', 'farmers.user_id')->where('users.no', $request->user_id)->where('farmers.center_id', $request->center_id)->select('users.*', 'farmers.center_id')->first();
+        if ($user == null) {
+            return response('No User Found With User No ' . $request->user_id, 404);
         }
-        $item = Item::where('number',$request->number)->first();
-        if($item==null){
-            return response('No Item Found With Item No '.$request->user_id,404);
+        $item = Item::where('number', $request->number)->first();
+        if ($item == null) {
+            return response('No Item Found With Item No ' . $request->user_id, 404);
         }
         // dd($user->id);
-        $d=new NepaliDate($date);
-        if(!$d->isPrevClosed($user->id)){
-            return response('Previous session is not closed yet',500);
+        $d = new NepaliDate($date);
+        if (!$d->isPrevClosed($user->id)) {
+            return response('Previous session is not closed yet', 500);
         }
         $canadd = false;
         if ($item->trackstock == 1) {
-            if(env('multi_stock',false)){
-                $stock=$item->stock($request->center_id);
-                if($stock==null){
-                    $canadd=false;
-
-                }else{
-                    if ($stock->amount <$request->qty) {
+            if (env('multi_stock', false)) {
+                $stock = $item->stock($request->center_id);
+                if ($stock == null) {
+                    $canadd = false;
+                } else {
+                    if ($stock->amount < $request->qty) {
                         $canadd = false;
-                    }else{
-                        $canadd=true;
+                    } else {
+                        $canadd = true;
                     }
                 }
-            }else{
+            } else {
 
                 if ($item->stock > $request->qty) {
                     $canadd = true;
@@ -60,7 +61,7 @@ class SellitemController extends Controller
             $canadd = true;
         }
 
-        if($canadd){
+        if ($canadd) {
             $sell_item = new Sellitem();
             $sell_item->total = $request->total;
             $sell_item->qty = $request->qty;
@@ -72,18 +73,21 @@ class SellitemController extends Controller
             $sell_item->item_id = $item->id;
             $sell_item->date = $date;
             $sell_item->save();
-            if ($item->trackstock == 1){
+            if ($item->trackstock == 1) {
                 $item->stock = $item->stock - $request->qty;
                 $item->save();
-                if(env('multi_stock',false)){
-                    $stock=$item->stock($request->center_id);
-                    $stock->amount=$stock->amount-$request->qty;
+                if (env('multi_stock', false)) {
+                    $stock = $item->stock($request->center_id);
+                    $stock->amount = $stock->amount - $request->qty;
                     $stock->save();
                 }
-
             }
 
-            $manager=new LedgerManage($user->id);
+            $manager = new LedgerManage($user->id);
+            // $manager->addLedger($item->title . ' ( Rs.' . $sell_item->rate . ' x ' . $sell_item->qty . ')', 1, $request->total, $date, '103', $sell_item->id);
+            // if ($request->paid > 0) {
+            //     $manager->addLedger('Paid amount', 2, $request->paid, $date, '106', $sell_item->id);
+            // }
             if(env('acc_system',"old")=="old"){
                 $manager->addLedger($item->title.' ( Rs.'.$sell_item->rate.' x '.$sell_item->qty. ')',1,$request->total,$date,'103',$sell_item->id);
                 if($request->paid>0){
@@ -95,9 +99,9 @@ class SellitemController extends Controller
                     $manager->addLedger('Paid amount',1,$request->paid,$date,'106',$sell_item->id);
                 }
             }
-            return view('admin.sellitem.single',compact('sell_item'));
-        }else{
-            return response('item Stock is not available',500);
+            return view('admin.sellitem.single', compact('sell_item'));
+        } else {
+            return response('item Stock is not available', 500);
         }
         // LedgerManage::addLedger('Sell Item', 1,$request->total,$date,'101');
     }
@@ -147,81 +151,82 @@ class SellitemController extends Controller
     // }
 
 
-    public function sellItemList(Request $request){
-        $date = str_replace('-','',$request->date);
-        $farmer = Farmer::where('center_id',$request->center_id)->select('user_id')->get();
+    public function sellItemList(Request $request)
+    {
+        $date = str_replace('-', '', $request->date);
+        $farmer = Farmer::where('center_id', $request->center_id)->select('user_id')->get();
         // $user = User::join('farmers','users.id','=','farmers.user_id')->where('users.no',$request->no)->where('farmers.center_id',$request->center_id)->select('users.*','farmers.center_id')->first();
-        $sell = Sellitem::where('date',$date)->whereIn('user_id',$farmer)->get();
-        return view('admin.sellitem.list',compact('sell'));
+        $sell = Sellitem::where('date', $date)->whereIn('user_id', $farmer)->get();
+        return view('admin.sellitem.list', compact('sell'));
     }
 
-    public function deleteSellitem(Request $request){
-        $date = str_replace('-','',$request->date);
+    public function deleteSellitem(Request $request)
+    {
+        $date = str_replace('-', '', $request->date);
 
         $sell = Sellitem::find($request->id);
-        $item = Item::where('id',$sell->item_id)->first();
+        $item = Item::where('id', $sell->item_id)->first();
 
-        $paid=$sell->paid;
-        $total=$sell->total;
-        $user_id=$sell->user_id;
+        $paid = $sell->paid;
+        $total = $sell->total;
+        $user_id = $sell->user_id;
 
-        $title=$item->title.' ( Rs.'.$sell->rate.' x '.$sell->qty. ')';
+        $title = $item->title . ' ( Rs.' . $sell->rate . ' x ' . $sell->qty . ')';
 
         $item->stock = $item->stock + $sell->qty;
 
         $item->save();
         $sell->delete();
-        $manager=new LedgerManage($user_id);
-        $ledger=[];
-        $ledger[0] = Ledger::where('identifire','103')->where('foreign_key',$request->id)->first();
-        if($paid>0){
-            $ledger[1]=Ledger::where('identifire','106')->where('foreign_key',$request->id)->first();
+        $manager = new LedgerManage($user_id);
+        $ledger = [];
+        $ledger[0] = Ledger::where('identifire', '103')->where('foreign_key', $request->id)->first();
+        if ($paid > 0) {
+            $ledger[1] = Ledger::where('identifire', '106')->where('foreign_key', $request->id)->first();
         }
         // $ledger[0] = Ledger::where('identifire','106')->where('foreign_key',$request->id);
         LedgerManage::delLedger($ledger);
-                // $manager->addLedger('Cancel sell: '.$title,2,$total,$date,'116',$request->id);
+        // $manager->addLedger('Cancel sell: '.$title,2,$total,$date,'116',$request->id);
         // if($paid>0){
         //     $manager->addLedger('Cancel paid: '.$title,1,$paid,$date,'117',$request->id);
         // }
 
         return response('Sell Deleted Sucessfully');
-
     }
 
-    public function multidel(Request $request){
+    public function multidel(Request $request)
+    {
         // dd($request->ids);
-        foreach($request->ids as $id){
+        foreach ($request->ids as $id) {
 
 
             $sell = Sellitem::find($id);
-            $item = Item::where('id',$sell->item_id)->first();
+            $item = Item::where('id', $sell->item_id)->first();
 
-            $paid=$sell->paid;
-            $total=$sell->total;
-            $user_id=$sell->user_id;
+            $paid = $sell->paid;
+            $total = $sell->total;
+            $user_id = $sell->user_id;
 
-            $title=$item->title.' ( Rs.'.$sell->rate.' x '.$sell->qty. ')';
+            $title = $item->title . ' ( Rs.' . $sell->rate . ' x ' . $sell->qty . ')';
 
             $item->stock = $item->stock + $sell->qty;
             $item->save();
             $sell->delete();
-            $manager=new LedgerManage($user_id);
-            $ledger=[];
-            echo "id:".$id.", paid:".$paid."<br>";
-            $ledger1=Ledger::where('user_id',$user_id)->where('identifire','103')->where('foreign_key',$id)->first();
-            if($ledger1!=null){
-                array_push($ledger,$ledger1);
+            $manager = new LedgerManage($user_id);
+            $ledger = [];
+            echo "id:" . $id . ", paid:" . $paid . "<br>";
+            $ledger1 = Ledger::where('user_id', $user_id)->where('identifire', '103')->where('foreign_key', $id)->first();
+            if ($ledger1 != null) {
+                array_push($ledger, $ledger1);
             }
 
             echo "step1 <br>";
 
-            if($paid>0){
-                $ledger2=Ledger::where('user_id',$user_id)->where('identifire','106')->where('foreign_key',$id)->first();
-                if($ledger2!=null){
-                    array_push($ledger,$ledger1);
+            if ($paid > 0) {
+                $ledger2 = Ledger::where('user_id', $user_id)->where('identifire', '106')->where('foreign_key', $id)->first();
+                if ($ledger2 != null) {
+                    array_push($ledger, $ledger1);
                 }
                 echo "step2 <br>";
-
             }
             // $ledger[0] = Ledger::where('identifire','106')->where('foreign_key',$request->id);
             LedgerManage::delLedger($ledger);

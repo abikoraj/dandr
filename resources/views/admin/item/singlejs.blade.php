@@ -4,7 +4,11 @@
         <xxx_td>xxx_number</xxx_td>
         <xxx_td>xxx_sell_price</xxx_td>
         <xxx_td>xxx_stock</xxx_td>
+        @if (env('multi_stock',false))
+        <xxx_td>xxx_cunit</xxx_td>
+        @else
         <xxx_td>xxx_unit</xxx_td>
+        @endif
         {{-- <xxx_td>xxx_reward_percentage</xxx_td> --}}
         <xxx_td>
             @if (auth_has_per('03.02'))

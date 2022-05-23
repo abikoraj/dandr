@@ -40,7 +40,7 @@
                             <div class="col-lg-6">
                                 <label for="ecredit_limit">Credit Limit</label>
                                 <div class="form-group">
-                                    <input type="number" id="ecredit_limit" name="credit_limit" min="0" step="0.01" class="form-control next" data-next="address" placeholder="Enter Credit Days" required>
+                                    <input type="number" id="ecredit_limit" name="credit_limit" min="0" step="0.01" class="form-control next" data-next="address" placeholder="Enter Credit Limit" required>
                                 </div>
                             </div>
                             <div class="col-md-3">

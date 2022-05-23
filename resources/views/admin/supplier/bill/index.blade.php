@@ -7,7 +7,7 @@
 @section('head-title', 'Supplier Bill')
 @section('toobar')
 @if (auth_has_per('07.06'))
-    <button class="btn btn-primary" onclick="$('#addBill').addClass('shown');">Add Bill</button>
+    <a class="btn btn-primary" target="_blank" href="{{route('admin.supplier.bill.add')}}">Add Bill</a>
 @endif
 @endsection
 @section('content')
@@ -23,7 +23,7 @@
             </select>
         </div>
     </div>
-    @include('admin.supplier.bill.add')
+    {{-- @include('admin.supplier.bill.add') --}}
 
     <div class="pt-2 pb-2">
         @include('admin.layouts.daterange')
@@ -94,7 +94,6 @@
     </div>
     </div>
 
-    @include('admin.supplier.bill.addItem')
 @endsection
 @section('js')
     <script src="{{ asset('backend/plugins/select2/select2.min.js') }}"></script>

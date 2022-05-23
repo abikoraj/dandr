@@ -38,10 +38,10 @@
                         <input class="form-control" type="number" name="amount_{{$center->id}}" id="amount_{{$center->id}}" min="0" step="0.01" value="{{$stock==null?0:$stock->amount}}" required>
                     </div>
                     <div class="col-md-3">
-                        <input class="form-control" type="number" name="rate_{{$center->id}}" id="rate_{{$center->id}}" min="0" step="0.01" value="{{$stock==null?$item->sell_price:$stock->rate}}" required>
+                        <input class="form-control" type="number" name="rate_{{$center->id}}" id="rate_{{$center->id}}" min="0" step="0.01" value="{{$stock==null?($stock->rate==0?'':$stock->rate):''}}" {{$item->posonly==1?'required':''}}>
                     </div>
                     <div class="col-md-3">
-                        <input class="form-control" type="number" name="wholesale_{{$center->id}}" id="wholesale_{{$center->id}}" min="0" step="0.01" value="{{$stock==null? $item->wholesale : $stock->wholesale }}" required>
+                        <input class="form-control" type="number" name="wholesale_{{$center->id}}" id="wholesale_{{$center->id}}" min="0" step="0.01"value="{{$stock==null?($stock->wholesale==0?'':$stock->wholesale):''}}" {{$item->posonly==1?'required':''}}>
                     </div>
                 </div>
             @endforeach

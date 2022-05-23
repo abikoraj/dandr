@@ -17,7 +17,7 @@
                                 <div class="form-group">
                                     <label for="date">Collection Center</label>
                                     <select name="center_id" id="center_id" class="form-control show-tick ms next" data-next="name" required>
-                                        <option>Select A Center</option>
+                                        <option value="-1">Select A Center</option>
                                         @foreach(\App\Models\Center::all() as $c)
                                         <option value="{{$c->id}}">{{ $c->name }}</option>
                                         @endforeach
@@ -48,7 +48,7 @@
                             <div class="col-lg-6">
                                 <label for="name">Farmer Address</label>
                                 <div class="form-group">
-                                    <input type="text" id="address" name="address" class="form-control next" data-next="advance" placeholder="Enter farmer address" required>
+                                    <input type="text" id="address" name="address" class="form-control "  placeholder="Enter farmer address" required>
                                 </div>
                             </div>
 
@@ -81,7 +81,7 @@
                     <input type="checkbox" id="another"> Add Another
                 </span>
                 <span>
-                    <input type="checkbox" id="auto"> Auto Increment
+                    <input onchange="changeAutoIncrement(this);" type="checkbox" id="auto"> Auto Increment
                 </span>
             </div>
         </div>

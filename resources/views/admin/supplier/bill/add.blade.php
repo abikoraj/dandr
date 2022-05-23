@@ -1,196 +1,202 @@
-<div class="window " id="addBill">
-    <div class="inner-window">
-        <div class="top-bar">
-            <span id="wt">
-                Add Bill
-            </span>
-            <span id="wcc" onclick="$('#addBill').removeClass('shown')">
-                close
-            </span>
-        </div>
-        <div class="content" id="wc">
-            <div class="p-2">
-                <div class="card">
-                    <div class="body">
-                        <form id="add-bill" method="POST" onsubmit="return saveData(event);">
-                            @csrf
-                            <div class="row">
-                                <div class="col-md-12">
-                                    <div class="row">
-                                        <div class="col-lg-6 mb-4">
-                                            <label for="name">Choose Supplier</label>
-                                            <select name="user_id" id="supplier"
-                                                class="form-control show-tick ms select2" data-placeholder="Select"
-                                                required>
-                                                <option></option>
-                                                @foreach (\App\Models\User::where('role', 3)->get() as $s)
-                                                    <option value="{{ $s->id }}">{{ $s->name }}</option>
-                                                @endforeach
-                                            </select>
-                                        </div>
+@extends('admin.layouts.app')
+@section('title','Purchase Bill Add')
+@section('css')
+    <link rel="stylesheet" href="{{ asset('backend/plugins/select2/select2.css') }}" />
+@endsection
+@section('head-title','Purchase Bill Add')
+@section('content')
 
-                                        <div class="col-lg-3">
-                                            <label for="name">Bill No.</label>
-                                            <div class="form-group">
-                                                <input type="text" id="billno" name="billno" class="form-control next"
-                                                    data-next="nepali-datepicker" placeholder="Enter supplier bill no."
-                                                    required>
-                                            </div>
-                                        </div>
+<div class="p-2">
+    <div class="card">
+    </div>
+</div>
+<div class="body">
+    <form id="add-bill" method="POST" onsubmit="return saveData(event);">
+        @csrf
+        <div class="row">
+            <div class="col-md-12">
+                <div class="row">
+                    <div class="col-lg-6 mb-4">
+                        <label for="name">Choose Supplier</label>
+                        <select name="user_id" id="supplier"
+                            class="form-control show-tick ms select2" data-placeholder="Select"
+                            required>
+                            <option></option>
+                            @foreach (\App\Models\User::where('role', 3)->get() as $s)
+                                <option value="{{ $s->id }}">{{ $s->name }}</option>
+                            @endforeach
+                        </select>
+                    </div>
 
-                                        <div class="col-md-3">
-                                            <div class="form-group">
-                                                <label for="date">Date</label>
-                                                <input type="text" name="date" id="nepali-datepicker"
-                                                    class="calender form-control" placeholder="Date" required>
-                                            </div>
-                                        </div>
+                    <div class="col-lg-3">
+                        <label for="name">Bill No.</label>
+                        <div class="form-group">
+                            <input type="text" id="billno" name="billno" class="form-control next"
+                                data-next="nepali-datepicker" placeholder="Enter supplier bill no."
+                                required>
+                        </div>
+                    </div>
 
-                                        <div class="col-md-3">
-                                            <div class="form-group">
-                                                <label for="ptr" class="d-flex justify-content-between"> 
-                                                    <span>
-                                                    
-                                                        Particular Items 
-                                                    </span> 
-                                                    <span  class=" btn-link p-0"
-                                                    data-toggle="modal" data-target="#createItems">New Item+</span></label>
-                                                    @if (!env('large',false))
-                                                    <select name="" id="ptr" class="form-control show-tick ms select2"
-                                                        data-placeholder="Select">
-                                                        <option></option>
-                                                        @foreach (\App\Models\Item::select('id','title','cost_price')->get() as $i)
-                                                            <option value="{{$i->id}}"> {{ $i->title }}
-                                                            </option>
-                                                        @endforeach
-                                                    </select>
-                                                    @else
-                                                        <input name="" id="ptr" class="form-control " class="search-product">
-                                                        <div id="ptr-option">
-                                                            <div id="ptr-option-title"></div>
-                                                            <span class="btn btn-sm btn-danger" onclick="clear_item_selected(true)">&times;</span>
-                                                        </div>
-                                                    @endif
-                                            </div>
-                                        </div>
+                    <div class="col-md-3">
+                        <div class="form-group">
+                            <label for="date">Date</label>
+                            <input type="text" name="date" id="nepali-datepicker"
+                                class="calender form-control" placeholder="Date" required>
+                        </div>
+                    </div>
 
-                                        <div class="col-md-2">
-                                            <div class="from-group">
-                                                <label for="rate"> Rate </label>
-                                                <input type="number" onkeyup="singleItemTotal();"
-                                                    class="form-control next" data-next="qty" id="rate" value="0"
-                                                     step="0.001">
-                                            </div>
-                                        </div>
+                    <div class="col-md-3">
+                        <div class="form-group">
+                            <label for="ptr" class="d-flex justify-content-between">
+                                <span>
 
-                                        <div class="col-md-2">
-                                            <div class="from-group">
-                                                <label for="qty"> Quantity </label>
-                                                <input type="number" onkeyup="singleItemTotal();"
-                                                    class="form-control next" data-next="additem" id="qty" value="1"
-                                                     step="0.001">
-                                            </div>
-                                        </div>
+                                    Particular Items
+                                </span>
+                                <span  class=" btn-link p-0"
+                                data-toggle="modal" data-target="#createItems">New Item+</span></label>
 
-                                        <div class="col-md-2">
-                                            <div class="from-group">
-                                                <label for="rate"> Total </label>
-                                                <input type="number" class="form-control" id="total" value="0"
-                                                     step="0.001" readonly>
-                                            </div>
-                                        </div>
-                                        
-                                        <div class="col-md-2">
-                                            <div class="from-group">
-                                                <label for="has_expairy"><input type="checkbox" id="has_expairy"> Expairy </label>
-                                                <input type="date" class="form-control" id="exp_date" disabled>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-2" >
-                                            <div class="from-group">
-                                                <span class="btn btn-primary btn-block" id="additem"
-                                                    onclick="addItems();">Add</span>
-                                            </div>
-                                        </div>
+                                <select name="" id="ptr" class="form-control show-tick ms select2"
+                                    data-placeholder="Select">
+                                    <option></option>
+
+                                </select>
+{{--
+                                    <input name="" id="ptr" class="form-control " class="search-product">
+                                    <div id="ptr-option">
+                                        <div id="ptr-option-title"></div>
+                                        <span class="btn btn-sm btn-danger" onclick="clear_item_selected(true)">&times;</span>
                                     </div>
-                                </div>
-                                <div class="col-md-6 b-1">
-                                    <div class="row">
-                                        <div class="col-md-12 mt-4 mb-3">
-                                            <table class="table table-bordered">
-                                                <thead>
-                                                    <tr>
-                                                        <th>Particular</th>
-                                                        <th>Rate</th>
-                                                        <th>Qty</th>
-                                                        <Th>Total</Th>
-                                                        <th>exp_date</th>
-                                                        <th>Action</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody id="item_table">
+                                --}}
+                        </div>
+                    </div>
 
-                                                </tbody>
-                                            </table>
-                                            <div class="d-flex justify-content-end">
-                                                <div style="margin-top: 4px; margin-right: 5px;">
-                                                    <div style="display:flex;width:100%;justify-content: flex-end;">
-                                                        <strong> Total:</strong>
-                                                        <input type="number"  step="0.01" value="0" id="itotal" readonly>
-                                                    </div>
-                                                    <div style="display:flex;width:100%;justify-content: flex-end;">
-                                                        <strong> Discount:</strong>
-                                                        <input type="number"  oninput="calculateTotal()"  step="0.01" value="0" id="idiscount" name="idiscount">
-                                                    </div>
-                                                    <div style="display:flex;width:100%;justify-content: flex-end;">
-                                                        <strong> Taxable:</strong>
-                                                        <input type="number"  step="0.01" value="0" id="itaxable"  readonly>
-                                                    </div>
-                                                    <div style="display:flex;width:100%;justify-content: flex-end;">
-                                                        <strong> Tax:</strong>
-                                                        <input type="number"  oninput="calculateTotal()"  step="0.01" value="0" id="itax" name="itax">
-                                                    </div>
-                                                    <div style="display:flex;width:100%;justify-content: flex-end;">
-                                                        <strong> Grand Total:</strong>
-                                                        <input type="number"  step="0.01" value="0" id="igrandtotal"  readonly>
-                                                    </div>
-                                                    <div style="display:flex;width:100%;justify-content: flex-end;">
-                                                        <strong> Paid:</strong>
-                                                        <input type="number" oninput="calculateTotal()" step="0.01" value="0" id="ipaid" name="ipaid">
-                                                    </div>
-                                                    <div style="display:flex;width:100%;justify-content: flex-end;"  readonly>
-                                                        <strong> Due:</strong>
-                                                        <input type="number"  step="0.01" value="0" id="idue">
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
+                    <div class="col-md-2">
+                        <div class="from-group">
+                            <label for="rate"> Rate </label>
+                            <input type="number" onkeyup="singleItemTotal();"
+                                class="form-control next" data-next="qty" id="rate" value="0"
+                                 step="0.001">
+                        </div>
+                    </div>
 
-                                    
-                                    </div>
-                                </div>
-                                <div class="col-md-6 b-1">
-                                    @include('admin.supplier.bill.extracharge')
-                                </div>
-                                <div class="col-md-12 text-right">
-                                    <button class="btn btn-primary">Add Bill</button>
-                                </div>
-                            </div>
-                        </form>
+                    <div class="col-md-2">
+                        <div class="from-group">
+                            <label for="qty"> Quantity </label>
+                            <input type="number" onkeyup="singleItemTotal();"
+                                class="form-control next" data-next="additem" id="qty" value="1"
+                                 step="0.001">
+                        </div>
+                    </div>
+
+                    <div class="col-md-2">
+                        <div class="from-group">
+                            <label for="rate"> Total </label>
+                            <input type="number" class="form-control" id="total" value="0"
+                                 step="0.001" readonly>
+                        </div>
+                    </div>
+
+                    <div class="col-md-2">
+                        <div class="from-group">
+                            <label for="has_expairy"><input type="checkbox" id="has_expairy"> Expairy </label>
+                            <input type="date" class="form-control" id="exp_date" disabled>
+                        </div>
+                    </div>
+                    <div class="col-md-2" >
+                        <div class="from-group">
+                            <span class="btn btn-primary btn-block" id="additem"
+                                onclick="addItems();">Add</span>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
-    </div>
-</div>
+            <div class="col-md-6 b-1">
+                <div class="row">
+                    <div class="col-md-12 mt-4 mb-3">
+                        <table class="table table-bordered">
+                            <thead>
+                                <tr>
+                                    <th>Particular</th>
+                                    <th>Rate</th>
+                                    <th>Qty</th>
+                                    <Th>Total</Th>
+                                    <th>exp_date</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="item_table">
 
+                            </tbody>
+                        </table>
+                        <div class="d-flex justify-content-end">
+                            <div style="margin-top: 4px; margin-right: 5px;">
+                                <div style="display:flex;width:100%;justify-content: flex-end;">
+                                    <strong> Total:</strong>
+                                    <input type="number"  step="0.01" value="0" id="itotal" readonly>
+                                </div>
+                                <div style="display:flex;width:100%;justify-content: flex-end;">
+                                    <strong> Discount:</strong>
+                                    <input type="number"  oninput="calculateTotal()"  step="0.01" value="0" id="idiscount" name="idiscount">
+                                </div>
+                                <div style="display:flex;width:100%;justify-content: flex-end;">
+                                    <strong> Taxable:</strong>
+                                    <input type="number"  step="0.01" value="0" id="itaxable"  readonly>
+                                </div>
+                                <div style="display:flex;width:100%;justify-content: flex-end;">
+                                    <strong> Tax:</strong>
+                                    <input type="number"  oninput="calculateTotal()"  step="0.01" value="0" id="itax" name="itax">
+                                </div>
+                                <div style="display:flex;width:100%;justify-content: flex-end;">
+                                    <strong> Grand Total:</strong>
+                                    <input type="number"  step="0.01" value="0" id="igrandtotal"  readonly>
+                                </div>
+                                <div style="display:flex;width:100%;justify-content: flex-end;">
+                                    <strong> Paid:</strong>
+                                    <input type="number" oninput="calculateTotal()" step="0.01" value="0" id="ipaid" name="ipaid">
+                                </div>
+                                <div style="display:flex;width:100%;justify-content: flex-end;"  readonly>
+                                    <strong> Due:</strong>
+                                    <input type="number"  step="0.01" value="0" id="idue">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+
+                </div>
+            </div>
+            <div class="col-md-6 b-1">
+                @include('admin.supplier.bill.extracharge')
+            </div>
+            <div class="col-md-12 text-right">
+                <button class="btn btn-primary">Add Bill</button>
+            </div>
+        </div>
+    </form>
+</div>
+@extends('admin.supplier.bill.addItem')
+@endsection
 @section('js2')
+    <script src="{{ asset('backend/plugins/select2/select2.min.js') }}"></script>
     @include('admin.search.item')
     <script>
-            @if(env('large',false))
-                var item_id=-1;
-                item_title='';
-            @endif
+        const items={!! json_encode($items) !!};
+        const units={!! json_encode($units) !!};
+
+        $(document).ready(function () {
+
+           let itemOptions='<option value=""></option>';
+            items.forEach(item => {
+                itemOptions+="<option value='"+item.id+"'>"+item.title+"</option>"
+            });
+            $('#ptr').append(itemOptions);
+
+            $('#ptr').select2({
+                placeholder: 'Select a Item'
+            });
+        });
+
+
         function saveData(e) {
             e.preventDefault();
             if ($('#supplier').val() == '') {
@@ -237,7 +243,7 @@
             }
         }
 
-        
+
         var i = 0;
         var itemKeys = [];
         // bill items js
@@ -251,13 +257,8 @@
                 $("#ptr").focus();
                 return false;
             }
-            @if(env('large',false))
-                id=item_id;
-                title=item_title;
-            @else
-                id=$('#ptr').val();
-                title=$( "#ptr option:selected" ).text();
-            @endif
+            id=$('#ptr').val();
+            title=$( "#ptr option:selected" ).text();
             if(id<0){
                 alert('Please Select a Item');
             }
@@ -285,13 +286,11 @@
             $('#rate').val('0');
             $('#qty').val('1');
             $('#total').val('0')
-          
+
             itemKeys.push(i);
             i += 1;
             suffle();
-            @if(env('large',false))
-                clear_item_selected();
-            @endif
+
         }
 
         function suffle() {
@@ -301,7 +300,7 @@
 
         function calculateTotal() {
             var itotal = 0;
-            
+
             for (let index = 0; index < itemKeys.length; index++) {
                 const element = itemKeys[index];
                 itotal += parseFloat($("#total_" + element).val());;
@@ -376,50 +375,28 @@
             }
         });
 
-        function itemRender() {
-            console.log(this.data, 'renderdata');
-            html = '';
-            html += '<table class="w-100">'
-            this.data.items.forEach(item => {
-                html+="<tr class='search-item' onclick='item_selected(\""+item.title+"\","+item.id+")'><td>"+item.title+"</td></tr>"
-            });
-            html += "</table>"
-            return html;
-        }
-        function item_selected(_title,_id) {
-            item_title=_title;
-            item_id=_id;
-            $('#ptr').closeSearch();
-            $('#ptr').hide()
-            $('#ptr-option-title').html(item_title);
-            $('#ptr-option').show();
-            $('#rate').focus();
-            $('#rate').select();
+        // function itemRender() {
+        //     console.log(this.data, 'renderdata');
+        //     html = '';
+        //     html += '<table class="w-100">'
+        //     this.data.items.forEach(item => {
+        //         html+="<tr class='search-item' onclick='item_selected(\""+item.title+"\","+item.id+")'><td>"+item.title+"</td></tr>"
+        //     });
+        //     html += "</table>"
+        //     return html;
+        // }
+        // function item_selected(_title,_id) {
+        //     item_title=_title;
+        //     item_id=_id;
+        //     $('#ptr').closeSearch();
+        //     $('#ptr').hide()
+        //     $('#ptr-option-title').html(item_title);
+        //     $('#ptr-option').show();
+        //     $('#rate').focus();
+        //     $('#rate').select();
 
-        }
-        function clear_item_selected(q=false){
-            title='';
-            id=-1;
-            $('#ptr').show()
-            $('#ptr-option-title').html('');
-            $('#ptr-option').hide();
-            $('#ptr').focus();
-            if(q){
-                $('#ptr').showSearch()
+        // }
 
-            }
-        }
 
-        $('#ptr').search({
-            url:'{{route('admin.item.index')}}'
-        });
-        // $('#supplier').search({mod:"sup"});
-        $('#ptr-option').hide();
-
-        $('body').click(function(e){
-            const $target = $(event.target);
-            console.log('clicked',e,$target);
-        })
-        
     </script>
 @endsection

@@ -5,13 +5,13 @@
         <td>{{ $user->phone }}</td>
     @endif
     <td>{{ $user->address }} </td>
-    <td>
+    {{-- <td>
         @if($user->amount > 0)
             {{ $user->amount}}   ( {{$user->amounttype==1?"Cr":"Dr"}} )
         @else
             --
         @endif
-    </td>
+    </td> --}}
     <td>
         @if (auth_has_per('01.03'))
 

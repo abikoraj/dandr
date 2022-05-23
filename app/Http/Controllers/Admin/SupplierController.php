@@ -65,7 +65,9 @@ class SupplierController extends Controller
 
     public function indexBill()
     {
-        return view('admin.supplier.bill.index');
+        $centers=DB::table('centers')->get(['id','name']);
+        $units=DB::table('conversions')->get(['id','name']);
+        return view('admin.supplier.bill.index',compact('centers','units'));
     }
 
     public function addBill(Request $request)
@@ -86,13 +88,12 @@ class SupplierController extends Controller
             $bill->save();
             $traker =  $request->counter;
             $total = 0;
+            $multi_package=env('multi_package',false);
             foreach ($traker as $key => $value) {
                 $billItem = new Supplierbillitem();
                 $billItem->title = $request->input('ptr_' . $value);
-                $billItem->rate = $request->input('rate_' . $value);
-                $billItem->qty = $request->input('qty_' . $value);
-                $billItem->remaning = $request->input('qty_' . $value);
                 $billItem->item_id = $request->input('item_id_' . $value);
+                $item = Item::where('id', $billItem->item_id)->first();
                 if ($request->filled('has_exp_' . $value)) {
                     $billItem->expiry_date = $request->input('exp_date_' . $value);
                     $billItem->has_expairy = 1;
@@ -100,9 +101,28 @@ class SupplierController extends Controller
                     $billItem->has_expairy = 0;
                 }
                 $billItem->supplierbill_id = $bill->id;
+                if($multi_package){
+                    $billItem->conversion_id=$request->input('conversion_id_' . $value);
+                    $billItem->conversion_rate = $request->input('rate_' . $value);
+                    $billItem->conversion_qty = $request->input('qty_' . $value);
+
+                    if($billItem->conversion_id==$item->conversion_id){
+
+                        $billItem->rate = $request->input('rate_' . $value);
+                        $billItem->qty = $request->input('qty_' . $value);
+                        $billItem->remaning = $request->input('qty_' . $value);
+                    }else{
+                        $conversion=DB::table('conversions')->where('id',$billItem->conversion_id)->first();
+                        $billItem->qty=$conversion->main/$conversion->local * $billItem->conversion_qty ;
+                        $billItem->rate= $conversion->local/$conversion->main * $billItem->conversion_rate ;
+                    }
+                }else{
+                    $billItem->rate = $request->input('rate_' . $value);
+                    $billItem->qty = $request->input('qty_' . $value);
+                }
+                $billItem->remaning = $billItem->qty;
                 $billItem->save();
                 //XXX Add Stock
-                $item = Item::where('id', $billItem->item_id)->first();
                 if ($item->trackstock) {
                     $item->stock += $billItem->qty;
                     $item->save();
@@ -154,7 +174,17 @@ class SupplierController extends Controller
             }
             return view('admin.supplier.bill.single', compact('bill'));
         } else {
-            return view('admin.supplier.bill.add');
+            $centers=DB::table('centers')->get(['id','name']);
+            if(env('multi_package',false)){
+
+                $items=DB::table('items')->get(['id','title','conversion_id']);
+                $units=DB::table('conversions')->get(['id','name','local','main','parent_id']);
+                return view('admin.supplier.bill.addMultiPackage',compact('centers','units','items'));
+            }else{
+                $items=DB::table('items')->get(['id','title']);
+                return view('admin.supplier.bill.add',compact('centers','items'));
+            }
+
         }
     }
 
@@ -260,8 +290,13 @@ class SupplierController extends Controller
 
     public function billDetail(Supplierbill $bill)
     {
-        // dd($bill);
-        return view('admin.supplier.bill.detail', compact('bill'));
+        if(env('multi_package',false)){
+            $billItems = DB::select("select concat(title,' (',(select name from conversions where id=supplierbillitems.conversion_id),')') as title,conversion_qty as qty,conversion_rate as rate,has_expairy,expiry_date from supplierbillitems where supplierbill_id=?",[$bill->id] );
+        }else{
+
+            $billItems = DB::table('supplierbillitems')->where('supplierbill_id', $bill->id)->get(['title','rate','qty','expiry_date','has_expairy']);
+        }
+        return view('admin.supplier.bill.detail', compact('bill','billItems'));
     }
 
     public function detail($id)
@@ -341,7 +376,12 @@ class SupplierController extends Controller
     public function billItems(Request $request)
     {
         // dd($request->all());
-        $billItem = Supplierbillitem::where('supplierbill_id', $request->bill_id)->get();
+        if(env('multi_package',false)){
+            $billItem = DB::select("select concat(title,' (',(select name from conversions where id=supplierbillitems.conversion_id),')') as title,conversion_qty as qty,conversion_rate as rate from supplierbillitems where supplierbill_id=?",[$request->bill_id] );
+        }else{
+
+            $billItem = DB::table('supplierbillitems')->where('supplierbill_id', $request->bill_id)->get(['title','rate','qty']);
+        }
         // dd($billItem);
         return view('admin.supplier.bill.item', compact('billItem'));
     }

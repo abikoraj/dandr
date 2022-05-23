@@ -169,8 +169,6 @@ class ReportController extends Controller
                 }
             }
 
-
-
             $farmerreport = new FarmerReport();
             $farmerreport->user_id = $data->id;
             $farmerreport->milk = $data->milk;

@@ -163,7 +163,8 @@ $(".modal").each(function () {
     $(this).on("shown.bs.modal", function (e) {
         _id = $(this).data("ff");
         console.log("shown", _id);
-        $("#" + _id).focus();
+        // $("#" + _id)[0].focus();
+        document.getElementById(_id).focus();
     });
 });
 
@@ -186,6 +187,16 @@ $(".checkfarmer").focusout(function () {
         }
     }
 });
+
+function getDateTimeLocal(dateVal){
+    var day = dateVal.getDate().toString().padStart(2, "0");
+    var month = (1 + dateVal.getMonth()).toString().padStart(2, "0");
+    var hour = dateVal.getHours().toString().padStart(2, "0");
+    var minute = dateVal.getMinutes().toString().padStart(2, "0");
+    var sec = dateVal.getSeconds().toString().padStart(2, "0");
+    var ms = dateVal.getMilliseconds().toString().padStart(3, "0");
+    return dateVal.getFullYear() + "-" + (month) + "-" + (day) + "T" + (hour) + ":" + (minute)  ;
+}
 
 function CheckFarmer(no) {
     return exists("#farmer-" + no);

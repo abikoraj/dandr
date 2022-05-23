@@ -65,14 +65,14 @@ class DistributersellController extends Controller
             $sell_item->user_id = $user->id;
             $sell_item->item_id = $item->id;
             $sell_item->date = $date;
-            $item->save();
+            $sell_item->save();
             if ($item->trackstock == 1){
                 $item->stock = $item->stock - $request->qty;
-                $sell_item->save();
+                $item->save();
             }
             $sell_item->name=$user->name;
             $sell_item->title=$item->title;
-            $sell_item->save();
+            // $sell_item->save();
             $manager = new LedgerManage($user->id);
             if(env('acc_system','old')=='old'){
                 $manager->addLedger($item->title . ' ( Rs.' . $sell_item->rate . ' x ' . $sell_item->qty . ')', 1, $request->total, $date, '103', $sell_item->id);
@@ -105,10 +105,14 @@ class DistributersellController extends Controller
     public function deleteDistributersell(Request $request)
     {
         // $date = str_replace('-','',$request->date);
-        $sell = Sellitem::find($request->id);
-        $sell->delete();
+        $sell = Sellitem::where('id',$request->id)->first();
+        if($sell!=null){
+            $sell->delete();
+        }
         $data = Ledger::where('foreign_key', $request->id)->where('identifire', 103)->first();
-        $data->delete();
+        if($data!=null){
+            $data->delete();
+        }
         $ddd = Ledger::where('foreign_key', $request->id)->where('identifire', 114)->first();
         if ($ddd != null) {
              $ddd->delete();

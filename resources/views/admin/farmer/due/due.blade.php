@@ -33,6 +33,36 @@
 </div> --}}
 
 <div class="mt-4" style="border: 1px solid rgb(136, 126, 126); padding:1rem;">
+    <table class="table">
+        <thead>
+            <tr>
+                <th>
+                    Date
+                </th>
+                <th>
+                    Amount
+                </th>
+                <th>
+
+                </th>
+            </tr>
+            @foreach ($user->payments as $payment)
+                <tr>
+                    <td>
+                        {{_nepalidate($payment->date)}}
+                    </td>
+                    <td>
+                        Rs. {{$payment->amount}}
+                    </td>
+                    <td>
+                        <button class="btn btn-danger btn-sm" onclick="deletePayment({{$payment->id}})">delete</button>
+                    </td>
+                </tr>
+            @endforeach
+        </thead>
+    </table>
+    <hr>
+
     <div class="row">
         <div class="col-md-4">
             <label for="date">Date</label>

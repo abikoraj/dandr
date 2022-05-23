@@ -37,7 +37,7 @@
                     <th>Farmer phone</th>
                 @endif
                 <th>Farmer Address</th>
-                <th>Balance (Rs.)</th>
+                {{-- <th>Balance (Rs.)</th> --}}
                 <th></th>
             </tr>
         </thead>
@@ -81,12 +81,20 @@
         if(lock){
 
         }else{
+            if($('#center_id').val()==-1){
+                alert('Please select Collection center ');
+                return;
+            }
+            if(!($('#auto')[0].checked ) && $('#farmer_no').val()=='') {
+                alert("Please enter farmer no");
+                return;
+            }
         lock=true;
         var center = $('#center_id').val();
         var bodyFormData = new FormData(document.getElementById('form_validation'));
         axios({
                 method: 'post',
-                url: '{{ route("sahakari.members.add")}}',
+                url: '{{ route("admin.farmer.add")}}',
                 data: bodyFormData,
                 headers: {
                     'Content-Type': 'multipart/form-data'
@@ -100,13 +108,20 @@
                 }
                 // $('#form_validation').trigger("reset");
                 $('#name').val('');
-                $('#no').val('');
+                $('#farmer_no').val('');
                 $('#advance').val(0);
                 $('#phone').val('');
                 $('#address').val('');
+                if($('#center_id').val()==$('#loadFarmerByCenter').val()){
+                    $('#farmerData').prepend(response.data);
+                }
 
-                $('#name').focus();
-                $('#farmerData').prepend(response.data);
+                if($('#auto')[0].checked){
+                    $('#name').focus();
+
+                }else{
+                    $('#farmer_no').focus();
+                }
                 $('#center_id').val(center).change();
                 lock=false;
             })
@@ -116,6 +131,14 @@
                 lock=false;
             });
 
+        }
+    }
+
+    function changeAutoIncrement(ele){
+        if(ele.checked){
+            $('#farmer_no').removeAttr('required');
+        }else{
+            $('#farmer_no').attr('required', 'required');
         }
     }
 

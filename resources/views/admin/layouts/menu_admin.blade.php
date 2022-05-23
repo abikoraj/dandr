@@ -135,7 +135,11 @@
                 </ul>
             </li>
             @endif
-
+            <li><a href="javascript:void(0);" class="waves-effect waves-block menu-toggle"><i class="zmdi zmdi-shopping-cart"></i><span> Setting</span></a>
+                <ul class="ml-menu">
+                    <li><a href="{{ route('admin.setting.conversion.index') }}" class="waves-effect waves-block">Units </a></li>
+                </ul>
+            </li>
             <li><a href="{{route('admin.report.home')}}" class="waves-effect waves-block"><i class="zmdi zmdi-shopping-cart"></i><span>Reports</span></a></li>
             <li><a href="{{route('admin.user.users')}}" class="waves-effect waves-block"><i class="zmdi zmdi-shopping-cart"></i><span>Users</span></a></li>
             <li><a href="{{route('admin.backup.index')}}" class="waves-effect waves-block"><i class="zmdi zmdi-shopping-cart"></i><span>Backup</span></a></li>

@@ -31,7 +31,7 @@
         <label for="">Date </label>
         <div>{{_nepalidate($bill->date)}}</div>
       </div>
-    
+
     </div>
     <hr>
     <div class="row">
@@ -56,12 +56,12 @@
             <th>
               Total
             </th>
-          
+
           </tr>
           @php
               $tot=0;
           @endphp
-          @foreach ($bill->billitems as $item)
+          @foreach ($billItems as $item)
               <tr>
                 <td>
                   {{$item->title}}
@@ -85,7 +85,7 @@
                       $tot+=$item->qty*$item->rate;
                   @endphp
                 </td>
-               
+
               </tr>
           @endforeach
           <tr>

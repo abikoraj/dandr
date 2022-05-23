@@ -1,3 +1,4 @@
+
 @foreach ($billItem as $item)
     <tr>
         <td>{{ $item->title}}</td>

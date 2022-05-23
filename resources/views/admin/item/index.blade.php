@@ -99,36 +99,6 @@
         @endif
 
 
-        function saveData(e) {
-            e.preventDefault();
-            if (!lock) {
-                lock = true;
-                var bodyFormData = new FormData(document.getElementById('add-bill'));
-                axios({
-                        method: 'post',
-                        url: '{{ route('admin.item.save') }}',
-                        data: bodyFormData,
-                        headers: {
-                            'Content-Type': 'multipart/form-data'
-                        }
-                    })
-                    .then(function(response) {
-                        console.log(response);
-                        showNotification('bg-success', 'Item added successfully!');
-                        $('#largeModal').modal('toggle');
-                        $('#form_validation').trigger("reset")
-                        // $('#itemData').prepend(response.data);
-                        lock = false;
-                    })
-                    .catch(function(response) {
-                        showNotification('bg-danger', 'Item Number already exist!');
-                        //handle error
-                        console.log(response);
-                        lock = false;
-
-                    });
-            }
-        }
 
         @if (auth_has_per('03.02'))
 
@@ -208,9 +178,10 @@
                 rendered = _r.replaceAll('xxx_id', data.id);
                 rendered = rendered.replaceAll('xxx_title', data.title);
                 rendered = rendered.replaceAll('xxx_number', data.number);
-                rendered = rendered.replaceAll('xxx_sell_price', data.sell_price);
+                rendered = rendered.replaceAll('xxx_sell_price', data.sell_price==0?'--':data.sell_price);
                 rendered = rendered.replaceAll('xxx_stock', data.stock);
                 rendered = rendered.replaceAll('xxx_unit', data.unit);
+                rendered = rendered.replaceAll('xxx_cunit', data.cunit==null?data.unit:data.cunit);
                 // rendered = rendered.replaceAll('xxx_reward_percentage', data.reward_percentage);
                 html += rendered;
                 console.log(rendered);
@@ -248,9 +219,12 @@
             $('#pagination').html('')
             if (total > 1) {
                 $('#pagination').addClass('row');
-                if (total > 10) {
+                if (total > 16) {
                     _min = step - 8;
                     _max = step + 8;
+                    if(_min<0){
+                        _min=0;
+                    }
                     if (_min < 0) {
                         _max = _max - _min;
                         _min = 0;

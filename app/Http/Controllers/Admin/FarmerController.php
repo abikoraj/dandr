@@ -22,6 +22,7 @@ use App\Models\Snffat;
 use App\Models\User;
 use App\NepaliDate;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class FarmerController extends Controller
 {
@@ -33,13 +34,13 @@ class FarmerController extends Controller
 
     public function listFarmerByCenter(Request $request)
     {
-        $farmers = User::join('farmers', 'farmers.user_id', '=', 'users.id')->where('farmers.center_id', $request->center)->select('users.id','users.name','users.phone','users.address', 'farmers.center_id', 'farmers.usecc', 'farmers.usetc', 'farmers.userate', 'farmers.rate','farmers.no')->orderBy('users.no', 'asc')->get();
+        $farmers = User::join('farmers', 'farmers.user_id', '=', 'users.id')->where('farmers.center_id', $request->center)->select('users.id','users.name','users.phone','users.address', 'farmers.center_id', 'farmers.usecc', 'farmers.usetc', 'farmers.userate', 'farmers.rate','farmers.no')->orderBy('farmers.no', 'asc')->get();
         return view('admin.farmer.list', ['farmers' => $farmers]);
     }
 
     public function minlistFarmerByCenter(Request $request)
     {
-        $farmers = User::join('farmers', 'farmers.user_id', '=', 'users.id')->where('farmers.center_id', $request->center)->select('users.no', 'users.name')->orderBy('users.no', 'asc')->get();
+        $farmers = DB::table('users')->join('farmers', 'farmers.user_id', '=', 'users.id')->where('farmers.center_id', $request->center)->select('farmers.no', 'users.name')->orderBy('users.no', 'asc')->get();
         return view('admin.farmer.minlist', ['farmers' => $farmers]);
     }
 
@@ -166,6 +167,44 @@ class FarmerController extends Controller
 
 
 
+    public function addFarmer(Request $request)
+    {
+
+        if ($request->filled('farmer_no')) {
+            $max = $request->farmer_no;
+        } else {
+            $max = (DB::table('users')
+            ->join('farmers', 'farmers.user_id', '=', 'users.id')
+            ->where('farmers.center_id', $request->center_id)
+            ->max('farmers.no') ?? 0) + 1;
+        }
+        $user = new User();
+        $user->phone = $request->phone ?? "9800000000";
+        $user->name = $request->name;
+        $user->address = $request->address;
+        $user->role = 1;
+        $user->password = bcrypt(12345);
+        $user->no = $max;
+        $user->save();
+
+        $id = $user->id;
+        $farmer = new Farmer();
+        $farmer->user_id = $user->id;
+        $farmer->center_id = $request->center_id;
+        $farmer->usecc = $request->usecc ?? 0;
+        $farmer->usetc = $request->usetc ?? 0;
+        $farmer->userate = $request->userate ?? 0;
+        $farmer->rate = $request->f_rate;
+        $farmer->no = $max;
+        $farmer->save();
+
+
+        $user->usecc = $farmer->usecc;
+        $user->usetc = $farmer->usetc;
+        $user->userate = $farmer->userate;
+        $user->rate = $farmer->rate;
+        return view('admin.farmer.single', compact('user'));
+    }
 
     public function updateFarmer(Request $request)
     {
@@ -214,8 +253,16 @@ class FarmerController extends Controller
     {
         $user = User::join('farmers', 'users.id', '=', 'farmers.user_id')->where('users.no', $request->no)->where('farmers.center_id', $request->center_id)->select('users.*', 'farmers.center_id')->first();
         $user->balance=Ledger::where('user_id',$user->id)->where('type',2)->sum('amount') - Ledger::where('user_id',$user->id)->where('type',1)->sum('amount');
+        $user->payments=db::table('farmerpayments')->where('user_id',$user->id)->orderBy('date')->get();
         // dd($balance);
         return view('admin.farmer.due.due', compact('user'));
+    }
+
+    public function paymentDelete(Request $request)
+    {
+        DB::delete('delete from farmerpayments where id = ?', [$request->id]);
+        DB::delete('delete from ledgers where foreign_key = ? and identifire=107', [$request->id]);
+        return response('ok');
     }
 
     public function paymentSave(Request $request)
@@ -230,7 +277,13 @@ class FarmerController extends Controller
         $farmerPay->save();
 
         $ledger = new LedgerManage($user->id);
-        $ledger->addLedger('Paid by farmer amount', 2, $request->pay, $date, '107', $farmerPay->id);
+        if(env('acc_system','old')=="old"){
+
+            $ledger->addLedger('Paid by farmer amount', 2, $request->pay, $date, '107', $farmerPay->id);
+        }else{
+            $ledger->addLedger('Paid by farmer amount', 1, $request->pay, $date, '107', $farmerPay->id);
+
+        }
         return response('Payment Added Sucessfully');
     }
 

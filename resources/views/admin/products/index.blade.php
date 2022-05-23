@@ -96,7 +96,7 @@
         var bodyFormData = new FormData(document.getElementById('form_validation'));
         axios({
                 method: 'post',
-                url: '{{ route("product.add")}}',
+                url: '{{ route("admin.product.add")}}',
                 data: bodyFormData,
                 headers: {
                     'Content-Type': 'multipart/form-data'
@@ -121,7 +121,7 @@
         // console.log(bodyFormData);
         axios({
                 method: 'post',
-                url: '{{route('product.update')}}',
+                url: '{{route('admin.product.update')}}',
                 data: bodyFormData,
                 headers: {
                     'Content-Type': 'multipart/form-data'
@@ -144,7 +144,7 @@
         if (confirm('Are you sure?')) {
             axios({
                     method: 'post',
-                    url: '{{route('product.del')}}',
+                    url: '{{route('admin.product.del')}}',
                     data:{'id':id}
                 })
                 .then(function(response) {

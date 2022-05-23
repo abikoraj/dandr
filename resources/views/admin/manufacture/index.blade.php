@@ -15,7 +15,7 @@
 @endif
 <div class="row">
     <div class="col-md-12 bg-light">
-        <form action="{{ route('manufacture.store') }}" method="POST" id="milkData">
+        <form action="{{ route('admin.manufacture.store') }}" method="POST" id="milkData">
             @csrf
             <div class="row">
                 <div class="col-md-3">
@@ -31,7 +31,7 @@
                         <select name="item_id" class="form-control show-tick ms next" data-next="session" required>
                             <option></option>
                             @foreach(\App\Models\Product::all() as $p)
-                            <option value="{{$p->id}}">{{ $p->name }}</option>
+                                <option value="{{$p->id}}">{{ $p->name }}</option>
                             @endforeach
                         </select>
                     </div>

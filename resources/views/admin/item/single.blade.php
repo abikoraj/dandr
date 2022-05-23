@@ -1,9 +1,15 @@
 <tr id="item-{{ $item->id }}" data-name="{{ $item->title }}">
     <td>{{$item->title}}</td>
     <td>{{$item->number}}</td>
-    <td>{{$item->sell_price}}</td>
+    <td>{{$item->sell_price==0?'--':$item->sell_price}}</td>
     <td>{{$item->stock}}</td>
+    @if (env('multi_package',false))
+    <td>
+        {{$item->cunit}}
+    </td>
+    @else
     <td>{{$item->unit}}</td>
+    @endif
     {{-- <td>{{$item->reward_percentage}}</td> --}}
     <td>
         @if (auth_has_per('03.02'))

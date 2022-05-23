@@ -16,6 +16,7 @@ class ItemController extends Controller
     //
     public function index(Request $request){
         $items=[];
+
         if($request->getMethod()=="POST"){
             $query=Item::where('id','>',0);
             $query1=Item::where('id','>',0);
@@ -35,7 +36,7 @@ class ItemController extends Controller
             }else{
                 $query=$query->skip($step*$countStep)->take($countStep);
             }
-            $items=$query->select('id','title','sell_price','stock','unit','reward_percentage','number')->latest()->get();
+            $items=$query->select(DB::raw('id,title,sell_price,stock,unit,reward_percentage,number,(select name from conversions where id=items.conversion_id) as cunit'))->latest()->get();
             $data['total']=$query1->count();
             $data['items']=$items;
 
@@ -44,11 +45,12 @@ class ItemController extends Controller
 
             $large=env('large',false);
             if(!$large){
-
-                $items = Item::select('id','title','sell_price','stock','unit','reward_percentage','number')->latest()->get();
+                $items = DB::table('items')->select(DB::raw('id,title,sell_price,stock,unit,reward_percentage,number,(select name from conversions where id=items.conversion_id) as cunit'))->latest()->get();
             }
+
             $centers=DB::table('centers')->get(['id','name']);
-            return view('admin.item.index',compact('items','large','centers'));
+            $units=Db::table('conversions')->select('id','name','is_base')->get();
+            return view('admin.item.index',compact('items','large','centers','units'));
         }
     }
 
@@ -60,7 +62,6 @@ class ItemController extends Controller
         if($request->filled('exact')){
             $items=DB::table('items')->where('number',$request->keyword)->select('id','sell_price','title','number')->take(1)->get();
         }else{
-
             $items=Item::where('number','like',$request->keyword.'%')->select('id','sell_price','title','number')->take(24)->get();
         }
         return response()->json($items);
@@ -81,13 +82,14 @@ class ItemController extends Controller
         $item = new Item();
         $item->title = $request->name;
         $item->number = $request->number;
-        $item->cost_price = $request->cost_price;
-        $item->sell_price = $request->sell_price;
-        $item->stock = $request->stock;
-        $item->unit = $request->unit;
+        $item->cost_price = $request->cost_price??0;
+        $item->sell_price = $request->sell_price??0;
+        $item->stock = $request->stock??0;
+        $item->unit = $request->unit??'--';
         $item->wholesale = $request->wholesale??0;
         $item->reward_percentage = $request->reward;
         $item->points = $request->points;
+        $item->conversion_id = $request->conversion_id;
         if($request->hasFile('image')){
             $item->image=$request->image->store('uploads/item');
         }
@@ -113,22 +115,27 @@ class ItemController extends Controller
             if($request->filled('centers')){
                 foreach ($request->centers as $key => $center_id) {
                     $amount=$request->input('qty_'.$center_id);
-                    $rate=$request->input('rate_'.$center_id);
+                    $rate=$request->input('rate_'.$center_id)??0;
                     $stock=new CenterStock();
                     $stock->item_id=$item->id;
                     $stock->center_id=$center_id;
-                    $wholesale=$request->input('wholesale_'.$center_id);
+                    $wholesale=$request->input('wholesale_'.$center_id)??0;
                     $stock->amount=$amount;
                     $stock->rate=$rate;
                     $stock->wholesale=$wholesale;
                     $stock->save();
+                    $item->stock+=$stock->amount;
+                    if($center_id==env('maincenter',-1)){
+                        $item->sell_price=$rate;
+                        $item->wholesale=$wholesale;
+                    }
                 }
             }
+            $item->save();
         }
         if($request->filled('rettype')){
             return response()->json($item);
         }else{
-
             return view('admin.item.single',compact('item'));
         }
     }
@@ -136,20 +143,24 @@ class ItemController extends Controller
     public function edit(Request $request){
         $item=Item::where('id',$request->id)->first();
         $centers=DB::table('centers')->get(['id','name']);
+        $units=DB::table('conversions')->where('is_base',1)->get(['id','name']);
         // dd($item);
-        return view('admin.item.edit',compact('item','centers'));
+        return view('admin.item.edit',compact('item','centers','units'));
     }
 
     public function update(Request $request){
         $item = Item::where('id',$request->id)->first();
         $item->title = $request->name;
         $item->number = $request->number;
-        $item->cost_price = $request->cost_price;
-        $item->sell_price = $request->sell_price;
-        $item->stock = $request->stock;
-        $item->unit = $request->unit;
+        $item->cost_price = $request->cost_price??0;
+        $item->sell_price = $request->sell_price??0;
+        if($request->filled('stock')){
+            $item->stock = $request->stock??0;
+        }
+        $item->unit = $request->unit??'--';
         $item->reward_percentage = $request->reward;
         $item->points = $request->points;
+        $item->conversion_id = $request->conversion_id;
 
         if($request->hasFile('image')){
             $item->image=$request->image->store('uploads/item');
@@ -171,10 +182,11 @@ class ItemController extends Controller
         $item->save();
 
         if($request->filled('center_ids')){
+            $newstock=0;
             foreach ($request->center_ids as $center_id) {
                 $amount=$request->input('amount_'.$center_id);
-                $rate=$request->input('rate_'.$center_id);
-                $wholesale=$request->input('wholesale_'.$center_id);
+                $rate=$request->input('rate_'.$center_id)??0;
+                $wholesale=$request->input('wholesale_'.$center_id)??0;
                 $stock=CenterStock::where('item_id',$item->id)->where('center_id',$center_id)->first();
                 if($stock==null){
                     $stock=new CenterStock();
@@ -185,8 +197,15 @@ class ItemController extends Controller
                 $stock->rate=$rate;
                 $stock->wholesale=$wholesale;
                 $stock->save();
-                // $totalStock+=$amount;
+                if($center_id==env('maincenter',-1)){
+                    $item->sell_price=$rate;
+                    $item->wholesale=$wholesale;
+                }
+                $newstock+=$stock->amount;
             }
+
+            $item->stock=$newstock;
+            $item->save();
         }
 
         return view('admin.item.single',compact('item'));
@@ -205,8 +224,8 @@ class ItemController extends Controller
             if($request->getMethod()=="POST"){
                 foreach ($request->center_ids as $center_id) {
                     $amount=$request->input('amount_'.$center_id);
-                    $rate=$request->input('rate_'.$center_id);
-                    $wholesale=$request->input('wholesale_'.$center_id);
+                    $rate=$request->input('rate_'.$center_id)??0;
+                    $wholesale=$request->input('wholesale_'.$center_id)??0;
                     $stock=CenterStock::where('item_id',$id)->where('center_id',$center_id)->first();
                     if($stock==null){
                         $stock=new CenterStock();
@@ -227,7 +246,7 @@ class ItemController extends Controller
                 return view('admin.item.stock',compact('item','centers'));
             }
         }else{
-            return redirect()->route('admin.dashboard');
+            return redirect()->route('admin.item.index');
         }
 
     }
