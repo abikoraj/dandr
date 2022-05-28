@@ -7,6 +7,7 @@ use App\Models\CenterStock;
 use App\Models\ManufacturedProduct;
 use App\Models\ManufactureProcess;
 use App\Models\ManufactureProcessItem;
+use App\Models\ManufactureWastage;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Symfony\Component\Process\Process;
@@ -22,28 +23,33 @@ class ManufactureProcessController extends Controller
     //
     public function index(Request $request)
     {
+
         $processes = DB::table('manufacture_processes')
             ->join('manufactured_products', 'manufactured_products.id', '=', 'manufacture_processes.manufactured_product_id')
-            ->join('items', 'items.id', '=', 'manufactured_products.item_id')
-            ->join('conversions', 'conversions.id', '=', 'items.conversion_id')
-            ->select(
-                DB::raw(
-                    'items.title,
-                    conversions.name as unit,
-                    manufacture_processes.id,
+            ->join('items', 'items.id', '=', 'manufactured_products.item_id');
+        if (env('multi_package', false)) {
+            $processes = $processes->join('conversions', 'conversions.id', '=', 'items.conversion_id');
+        }
+        $processes = $processes->select(
+            DB::raw(
+                'items.title,' .
+                    (env('multi_package', false) ? 'conversions.name as unit,' : 'item.unit,')
+                    . 'manufacture_processes.id,
                     manufacture_processes.expected,
                     manufacture_processes.start,
                     manufacture_processes.stage,
                     manufacture_processes.expected_end'
-                )
             )
+        )
             ->get();
         return view('admin.manufacture.process.index', compact('processes'));
     }
 
+
+
     public function checkStock(Request $request)
     {
-        $items = db::select('select m.id,m.item_id,i.stock,i.title from manufactured_product_items m join items i on m.item_id=i.id where m.id in (' . implode(',', $request->manufactured_product_item_ids) . ')');
+        $items = db::select('select m.id,m.item_id,i.stock from manufactured_product_items m join items i on m.item_id=i.id where m.id in (' . implode(',', $request->manufactured_product_item_ids) . ')');
         $msgs = [];
         foreach ($items as $key => $item) {
             $amount = $request->input('amount_' . $item->id);
@@ -108,73 +114,76 @@ class ManufactureProcessController extends Controller
     public function detail($id, Request $request)
     {
         $multiStock = env('multi_stock', false);
-        if ($multiStock) {
-            $process = DB::table('manufacture_processes')
-                ->join('manufactured_products', 'manufactured_products.id', '=', 'manufacture_processes.manufactured_product_id')
-                ->join('items', 'items.id', '=', 'manufactured_products.item_id')
-                ->join('conversions', 'conversions.id', '=', 'items.conversion_id')
-                ->join('centers', 'centers.id', '=', 'manufacture_processes.center_id')
+        $process = DB::table('manufacture_processes')
+            ->join('manufactured_products', 'manufactured_products.id', '=', 'manufacture_processes.manufactured_product_id')
+            ->join('items', 'items.id', '=', 'manufactured_products.item_id');
 
-                ->select(
-                    DB::raw(
-                        'items.title,
-                    ((manufactured_products.day*86400000)+(manufactured_products.hour*3600000)+(manufactured_products.minute*60000)) as finish_ms,
-                        centers.name as center,
-                        manufactured_products.item_id,
-                        conversions.name as unit,
-                        manufacture_processes.*'
-                    )
-                )
-                ->where('manufacture_processes.id', $id)->first();
+        if (env('multi_stock', false)) {
 
-            $items =  DB::table('manufacture_process_items')
-                ->join('manufactured_product_items', 'manufactured_product_items.id', '=', 'manufacture_process_items.manufactured_product_item_id')
-                ->join('items', 'items.id', '=', 'manufactured_product_items.item_id')
-                ->join('conversions', 'conversions.id', '=', 'items.conversion_id')
-                ->join('centers', 'centers.id', '=', 'manufacture_process_items.center_id')
-                ->select(
-                    DB::raw(
-                        'items.title,
-                    centers.name as center,
-                    manufactured_product_items.item_id,
-                    conversions.name as unit,
-                    manufacture_process_items.*'
-
-
-                    )
-                )
-                ->where('manufacture_process_items.manufacture_process_id', $process->id)->get();
-        } else {
-            $process = DB::table('manufacture_processes')
-                ->join('manufactured_products', 'manufactured_products.id', '=', 'manufacture_processes.manufactured_product_id')
-                ->join('items', 'items.id', '=', 'manufactured_products.item_id')
-                ->join('conversions', 'conversions.id', '=', 'items.conversion_id')
-                ->select(
-                    DB::raw(
-                        'items.title,
-                        manufactured_products.item_id,
-                        conversions.name as unit,
-                        manufacture_processes.*'
-                    )
-                )
-                ->where('manufacture_processes.id', $id)->first();
-            $items =  DB::table('manufacture_process_items')
-                ->join('manufactured_product_items', 'manufactured_product_items.id', '=', 'manufacture_process_items.manufactured_product_item_id')
-                ->join('items', 'items.id', '=', 'manufactured_product_items.item_id')
-                ->join('conversions', 'conversions.id', '=', 'items.conversion_id')
-                ->select(
-                    DB::raw(
-                        'items.title,
-                    manufactured_product_items.item_id,
-                    conversions.name as unit,
-                    manufacture_process_items.*'
-
-
-                    )
-                )
-                ->where('manufacture_process_items.manufacture_process_id', $process->id)->get();
+            $process = $process->join('centers', 'centers.id', '=', 'manufacture_processes.center_id');
         }
-        return view('admin.manufacture.process.detail', compact('items', 'process', 'multiStock'));
+
+        if (env('multi_package', false)) {
+            $process = $process->join('conversions', 'conversions.id', '=', 'items.conversion_id');
+        }
+
+        $process = $process->select(
+            DB::raw(
+                'items.title,
+                ((manufactured_products.day*86400000)+(manufactured_products.hour*3600000)+(manufactured_products.minute*60000)) as finish_ms,
+                    '.($multiStock?'centers.name as center,':'').'
+                    manufactured_products.item_id,'
+                    .(env('multi_package',false)?'conversions.name as unit,':'items.unit,').
+                    'manufacture_processes.*'
+            )
+        )
+            ->where('manufacture_processes.id', $id)->first();
+
+
+        $items =  DB::table('manufacture_process_items')
+            ->join('manufactured_product_items', 'manufactured_product_items.id', '=', 'manufacture_process_items.manufactured_product_item_id')
+            ->join('items', 'items.id', '=', 'manufactured_product_items.item_id');
+        if (env('multi_stock', false)) {
+
+            $items = $items->join('centers', 'centers.id', '=', 'manufacture_process_items.center_id');
+        }
+
+        if (env('multi_package', false)) {
+            $items = $items->join('conversions', 'conversions.id', '=', 'items.conversion_id');
+        }
+
+
+
+        $items = $items->select(
+            DB::raw(
+                'items.title,' .
+                    (env('multi_stock', false) ? 'centers.name as center,' : '')
+                    . 'manufactured_product_items.item_id,' .
+                    (env('multi_package', false) ? 'conversions.name as unit,' : 'items.unit,')
+                    . 'manufacture_process_items.*'
+            )
+        )
+            ->where('manufacture_process_items.manufacture_process_id', $process->id)->get();
+
+
+        $wastages=[];
+        if ($process->stage > 2) {
+
+            if (env('multi_package', false)) {
+
+                $wastages = DB::select("select w.id,i.title,w.amount,c.name as unit
+                from manufacture_wastages w
+                join items i on i.id=w.item_id
+                join conversions c on c.id=i.conversion_id
+                where w.manufacture_process_id=?", [$process->id]);
+            } else {
+                $wastages = DB::select("select w.id,i.title,w.amount,i.unit
+                from manufacture_wastages w
+                join items i on i.id=w.item_id
+                where w.manufacture_process_id=?", [$process->id]);
+            }
+        }
+        return view('admin.manufacture.process.detail', compact('wastages','items', 'process', 'multiStock'));
     }
 
     public function add(Request $request)
@@ -235,10 +244,121 @@ class ManufactureProcessController extends Controller
         }
     }
 
-    function startProcess($id, Request $request)
+
+
+    public function checkCancelStock(Request $request, $items)
+    {
+        $arr = [];
+        foreach ($items as $key => $item) {
+            $amount = $request->input('amount_' . $item->id);
+            if ($item->amount < $amount) {
+                array_push($arr, $item->id);
+            }
+        }
+        return $arr;
+    }
+
+    public function cancelProcess($id, Request $request)
+    {
+
+        $process = ManufactureProcess::where('id', $id)->first();
+        $oldStage = $process->stage;
+
+        if ($oldStage == 1) {
+            $process->stage = 5;
+            $process->save();
+            return response()->json(['status' => true]);
+        }
+        $items = db::select('select
+        mp.id,
+        m.item_id,
+        mp.center_id,
+        mp.amount
+        from manufactured_product_items m
+        join manufacture_process_items mp
+        on mp.manufactured_product_item_id=m.id
+        where mp.manufacture_process_id = ?', [$id]);
+        $returnType = $request->return_type;
+        if ($returnType == 6) {
+            $arr = $this->checkCancelStock($request, $items);
+            if (count($arr) > 0) {
+                return response()->json(['status' => false, 'wrong' => $arr]);
+            }
+        }
+
+        $process->stage = $returnType;
+        $process->save();
+
+        if ($returnType == 5 && $oldStage > 1) {
+
+            foreach ($items as $key => $item) {
+                DB::update('update items set stock = stock+? where id=?', [$item->amount, $item->item_id]);
+                if (env('multi_stock', false)) {
+                    $center_id = $item->center_id;
+                    $centerStock = CenterStock::where('item_id', $item->item_id)->where('center_id', $center_id)->select('id', 'amount')->first();
+                    if ($centerStock == null) {
+                        $centerStock = new CenterStock();
+                        $centerStock->amount =  $item->amount;
+                        $centerStock->item_id = $item->item_id;
+                        $centerStock->center_id = $center_id;
+                    } else {
+                        $centerStock->amount += $item->amount;
+                    }
+                    $centerStock->save();
+                }
+            }
+        } elseif ($returnType == 6 && $oldStage > 1) {
+            foreach ($items as $key => $item) {
+                $wastage = new ManufactureWastage();
+                $wastage->item_id = $item->item_id;
+                $wastage->manufacture_process_id = $process->id;
+                $amount = $item->amount - $request->input('amount_' . $item->id);
+                DB::update('update items set stock = stock+? where id=?', [$amount, $item->item_id]);
+                if (env('multi_stock', false)) {
+                    $center_id = $item->center_id;
+                    $wastage->center_id = $center_id;
+                    $centerStock = CenterStock::where('item_id', $item->item_id)->where('center_id', $center_id)->select('id', 'amount')->first();
+                    if ($centerStock == null) {
+                        $centerStock = new CenterStock();
+                        $centerStock->amount =  $amount;
+                        $centerStock->item_id = $item->item_id;
+                        $centerStock->center_id = $center_id;
+                    } else {
+                        $centerStock->amount += $amount;
+                    }
+                    $centerStock->save();
+                }
+                $wastage->amount = $amount;
+                $wastage->save();
+            }
+        }
+
+        if ($oldStage == 3) {
+
+            $product = DB::table('manufactured_products')->where('id', $process->manufactured_product_id)->first();
+            DB::update('update items set stock = stock-? where id=?', [$process->actual, $product->item_id]);
+            if (env('multi_stock')) {
+                $center_id = $process->center_id;
+                $centerStock = CenterStock::where('item_id', $product->item_id)->where('center_id', $center_id)->select('id', 'amount')->first();
+                if ($centerStock == null) {
+                    $centerStock = new CenterStock();
+                    $centerStock->amount = -1 * $process->actual;
+                    $centerStock->item_id = $product->item_id;
+                    $centerStock->center_id = $center_id;
+                } else {
+                    $centerStock->amount -= $process->actual;
+                }
+                $centerStock->save();
+            }
+        }
+        return response()->json(['status' => true]);
+    }
+
+
+    public function startProcess($id, Request $request)
     {
         $process = ManufactureProcess::where('id', $id)->first();
-        if($process->stage==2){
+        if ($process->stage > 1) {
             return redirect()->back();
         }
         $process->start = $request->start;
@@ -277,13 +397,51 @@ class ManufactureProcessController extends Controller
     {
 
         $process = ManufactureProcess::where('id', $id)->first();
-        if($process->stage==3){
+        if ($process->stage == 3) {
             return redirect()->back();
         }
         $process->end = $request->end;
         $process->actual = $request->actual;
         $process->stage = 3;
         $process->save();
+
+        $items = db::select('select
+        mp.id,
+        m.item_id,
+        mp.center_id,
+        mp.amount
+        from manufactured_product_items m
+        join manufacture_process_items mp
+        on mp.manufactured_product_item_id=m.id
+        where mp.manufacture_process_id = ?', [$id]);
+        foreach ($items as $key => $item) {
+            if ($request->filled('amount_' . $item->id)) {
+                $amount = $request->input('amount_' . $item->id);
+                if ($amount > 0) {
+
+                    $wastage = new ManufactureWastage();
+                    $wastage->item_id = $item->item_id;
+                    $wastage->manufacture_process_id = $process->id;
+                    DB::update('update items set stock = stock-? where id=?', [$amount, $item->item_id]);
+                    if (env('multi_stock', false)) {
+                        $center_id = $item->center_id;
+                        $wastage->center_id = $center_id;
+                        $centerStock = CenterStock::where('item_id', $item->item_id)->where('center_id', $center_id)->select('id', 'amount')->first();
+                        if ($centerStock == null) {
+                            $centerStock = new CenterStock();
+                            $centerStock->amount = -1 * $amount;
+                            $centerStock->item_id = $item->item_id;
+                            $centerStock->center_id = $center_id;
+                        } else {
+                            $centerStock->amount -= $amount;
+                        }
+                        $centerStock->save();
+                    }
+                    $wastage->amount = $amount;
+                    $wastage->save();
+                }
+            }
+        }
 
         $product = DB::table('manufactured_products')->where('id', $process->manufactured_product_id)->first();
         DB::update('update items set stock = stock+? where id=?', [$process->actual, $product->item_id]);
@@ -301,7 +459,6 @@ class ManufactureProcessController extends Controller
             $centerStock->save();
         }
         return redirect()->back();
-
     }
 
 
@@ -316,13 +473,16 @@ class ManufactureProcessController extends Controller
 
     public function loadTemplate(Request $request)
     {
+        $templateData = DB::table('manufactured_product_items')
+            ->join('items', 'items.id', '=', 'manufactured_product_items.item_id');
+        if (env('multi_stock', false)) {
+            $templateData = $templateData->join('conversions', 'conversions.id', '=', 'items.conversion_id');
+        }
+        $templateData = $templateData->select(DB::raw('concat(items.title,\'(\',' . (env('multi_package', false) ? 'conversions.name' : 'items.unit') . ',\')\') as title,manufactured_product_items.amount,manufactured_product_items.id'))
+            ->where('manufactured_product_items.manufactured_product_id', $request->id)
+            ->get();
         return response()->json(
-            DB::table('manufactured_product_items')
-                ->join('items', 'items.id', '=', 'manufactured_product_items.item_id')
-                ->join('conversions', 'conversions.id', '=', 'items.conversion_id')
-                ->where('manufactured_product_items.manufactured_product_id', $request->id)
-                ->select(DB::raw('concat(items.title,\'(\',conversions.name ,\')\') as title,manufactured_product_items.amount,manufactured_product_items.id'))
-                ->get()
+            $templateData
         );
     }
 }

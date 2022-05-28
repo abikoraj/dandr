@@ -313,8 +313,8 @@
                         console.log(response);
                         showNotification('bg-success', 'Item added successfully!');
                         $('#largeModal').modal('toggle');
-                        $('#form_validation').trigger("reset")
-                        // $('#itemData').prepend(response.data);
+                        $('#add-bill').trigger("reset")
+                        $('#itemData').prepend(response.data);
                         lock = false;
                     })
                     .catch(function(response) {

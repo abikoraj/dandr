@@ -9,6 +9,7 @@ use App\Models\DistributorPayment;
 use App\Models\Distributorsell;
 use App\Models\Ledger;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class DistributorPaymentController extends Controller
 {
@@ -21,8 +22,14 @@ class DistributorPaymentController extends Controller
         $distributor=Distributer::find($request->id);
         $id=$request->id;
         $distributor->balance=Ledger::where('user_id',$distributor->user_id)->where('type',2)->sum('amount') - Ledger::where('user_id',$distributor->user_id)->where('type',1)->sum('amount');
-
+        $distributor->payments=DB::table('distributor_payments')->where('user_id',$distributor->user_id)->get();
         return view('admin.distributer.payment.data',compact('distributor','id'));
+    }
+
+    public function del($id){
+        DB::table('distributor_payments')->where('id',$id)->delete();
+        DB::table('ledgers')->where('foreign_key',$id)->where('identifire',114)->delete();
+        return response('ok');
     }
 
     public function pay(Request $request){
@@ -66,9 +73,11 @@ class DistributorPaymentController extends Controller
         }else{
             $ledger->addLedger("Payment by distributor",1,$request->amount,$date,'114',$payment->id);
         }
-        // $bills=Distributorsell::where('distributer_id',$request->id)->where('deu','>',0)->get();
-        $id=$request->id;
-        return view('admin.distributer.payment.data',compact('distributor','id'));
+        return response('ok');
+        // // $bills=Distributorsell::where('distributer_id',$request->id)->where('deu','>',0)->get();
+        // $id=$request->id;
+        // $distributor->balance=Ledger::where('user_id',$distributor->user_id)->where('type',2)->sum('amount') - Ledger::where('user_id',$distributor->user_id)->where('type',1)->sum('amount');
+        // return view('admin.distributer.payment.data',compact('distributor','id'));
 
     }
 }

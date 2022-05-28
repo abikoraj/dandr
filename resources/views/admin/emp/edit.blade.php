@@ -35,7 +35,19 @@
                             <div class="col-lg-6">
                                 <label for="name">Employee Salary</label>
                                 <div class="form-group">
-                                    <input type="number" id="esalary" name="salary" class="form-control next" data-next="eacc" placeholder="Enter employee salary" required>
+                                    <input type="number" id="esalary" name="salary" class="form-control next" data-next="estart" placeholder="Enter employee salary" required>
+                                </div>
+                            </div>
+                            <div class="col-lg-6">
+                                <label for="name">Start Date</label>
+                                <div class="form-group">
+                                    <input type="text" id="estart" name="start" class="form-control calender next" data-next="eend" placeholder="Enter employment start date" >
+                                </div>
+                            </div>
+                            <div class="col-lg-6">
+                                <label for="name">End Date</label>
+                                <div class="form-group">
+                                    <input type="text" id="eend" name="end" class="form-control calender next" data-next="eacc" placeholder="Enter employment end date" >
                                 </div>
                             </div>
 

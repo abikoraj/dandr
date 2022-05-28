@@ -3,8 +3,40 @@
 
 @endphp
 
+<div class="shadow py-4 px-2">
+    <table class="table">
+        <thead>
+            <tr>
+                <th>
+                    Date
+                </th>
+                <th>
+                    Amount
+                </th>
+                <th>
 
-<div class="card py-4 px-2 my-3 shadow" style="font-size:2rem;font-weight:600;">
+                </th>
+            </tr>
+            @foreach ($distributor->payments as $payment)
+                <tr>
+                    <td>
+                        {{_nepalidate($payment->date)}}
+                    </td>
+                    <td>
+                        Rs. {{$payment->amount}}
+                    </td>
+                    <td>
+                        <button class="btn btn-danger btn-sm" onclick="deletePayment({{$payment->id}})">delete</button>
+                    </td>
+                </tr>
+            @endforeach
+        </thead>
+    </table>
+</div>
+
+<div class="card py-4 px-2 my-3 shadow" style="font-size:1.3rem;font-weight:600;">
+
+
     <strong>
         Current Balance :
     </strong>
@@ -20,7 +52,7 @@
         <div class="col-md-6">
             <div class="form-group">
                 <label for="date">Date</label>
-                <input readonly type="text" name="date" id="nepali-datepicker" class="form-control next" data-next="user_id" placeholder="Date">
+                <input  type="text" name="date" id="nepali-datepicker" class="form-control next" data-next="user_id" placeholder="Date">
             </div>
         </div>
         <div class="col-md-6">

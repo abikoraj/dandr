@@ -111,6 +111,15 @@
                     <li><a href="{{ route('admin.customer.promo') }}" class="waves-effect waves-block">Promo  SMS</a></li>
                 </ul>
             </li>
+            @if (env('use_manufacture',false))
+            <li><a href="javascript:void(0);" class="waves-effect waves-block menu-toggle"><i class="zmdi zmdi-shopping-cart"></i><span>Manufacture</span></a>
+                <ul class="ml-menu">
+                    <li><a href="{{ route('admin.manufacture.product.index') }}" class="waves-effect waves-block">Manage Products</a></li>
+                    <li><a href="{{ route('admin.manufacture.process.index') }}" class="waves-effect waves-block">Manage Process</a></li>
+
+                </ul>
+            </li>
+            @endif
             @if (env('use_pos',false))
             <li><a href="javascript:void(0);" class="waves-effect waves-block menu-toggle"><i class="zmdi zmdi-shopping-cart"></i><span>POS</span></a>
                 <ul class="ml-menu">

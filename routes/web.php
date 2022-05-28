@@ -165,9 +165,11 @@ Route::name('admin.')->group(function () {
             Route::get('list', [DistributerController::class, 'list'])->name('list');
             Route::post('update', [DistributerController::class, 'update'])->name('update')->middleware('permmission:04.03');
             Route::post('delete', [DistributerController::class, 'delete'])->name('delete')->middleware('permmission:04.04');
+            Route::middleware('permmission:04.04')->group(function(){
 
-            Route::get('detail/{id}', [DistributerController::class, 'distributerDetail'])->name('detail');
-            Route::post('detail', [DistributerController::class, 'distributerDetailLoad'])->name('detail.load');
+                Route::get('detail/{id}', [DistributerController::class, 'distributerDetail'])->name('detail');
+                Route::post('detail', [DistributerController::class, 'distributerDetailLoad'])->name('detail.load');
+            });
 
 
             Route::get('opening', [DistributerController::class, 'opening'])->name('detail.opening')->middleware('permmission:04.06');
@@ -184,28 +186,31 @@ Route::name('admin.')->group(function () {
 
 
             // XXX distributer sell
+            Route::middleware('permmission:04.09')->group(function(){
+                Route::get('sells', [DistributersellController::class, 'index'])->name('sell');
+                Route::post('sell-add', [DistributersellController::class, 'addDistributersell'])->name('sell.add');
+                Route::post('sell-list', [DistributersellController::class, 'listDistributersell'])->name('sell.list');
+                Route::post('sell-del', [DistributersellController::class, 'deleteDistributersell'])->name('sell.del')->middleware('authority');
+            });
 
-            Route::get('sells', [DistributersellController::class, 'index'])->name('sell');
-            Route::post('sell-add', [DistributersellController::class, 'addDistributersell'])->name('sell.add');
-            Route::post('sell-list', [DistributersellController::class, 'listDistributersell'])->name('sell.list');
-            Route::post('sell-del', [DistributersellController::class, 'deleteDistributersell'])->name('sell.del')->middleware('authority');
-
+            Route::middleware('permmission:04.05')->group(function(){
             //XXX Distributor Payments
-            Route::get('payment', [DistributorPaymentController::class, 'index'])->name('payemnt')->middleware('permmission:04.05');
+            Route::get('payment', [DistributorPaymentController::class, 'index'])->name('payemnt');
+            Route::post('payment-del/{id}', [DistributorPaymentController::class, 'del'])->name('payemnt.del');
             Route::post('due-list', [DistributorPaymentController::class, 'due'])->name('due');
             Route::post('due-pay', [DistributorPaymentController::class, 'pay'])->name('pay');
-
+            });
             //XXXX Distributer Milk Data
-            Route::prefix('milk-data')->name('MilkData.')->group(function () {
-                Route::match(['get', 'post'], '', [DistributerMilkController::class, 'index'])->name('index')->middleware('permmission:04.07');
+            Route::prefix('milk-data')->name('MilkData.')->middleware('permmission:04.07')->group(function () {
+                Route::match(['get', 'post'], '', [DistributerMilkController::class, 'index'])->name('index');
                 Route::match(['get', 'post'], 'add', [DistributerMilkController::class, 'add'])->name('add');
                 Route::match(['get', 'post'], 'update', [DistributerMilkController::class, 'update'])->name('update');
                 Route::match(['get', 'post'], 'delete', [DistributerMilkController::class, 'delete'])->name('delete');
                 Route::match(['get', 'post'], 'add-to-ledger', [DistributerMilkController::class, 'addToLedger'])->name('addToLedger');
             });
             //XXXX Distributer Milk Data
-            Route::prefix('snf-fat')->name('snffat.')->group(function () {
-                Route::match(['get', 'post'], '', [DistributerSnfFatController::class, 'index'])->name('index')->middleware('permmission:04.08');
+            Route::prefix('snf-fat')->name('snffat.')->middleware('permmission:04.08')->group(function () {
+                Route::match(['get', 'post'], '', [DistributerSnfFatController::class, 'index'])->name('index');
                 Route::match(['get', 'post'], 'add', [DistributerSnfFatController::class, 'add'])->name('add');
                 Route::match(['get', 'post'], 'update', [DistributerSnfFatController::class, 'update'])->name('update');
                 Route::match(['get', 'post'], 'delete', [DistributerSnfFatController::class, 'delete'])->name('delete');
@@ -241,7 +246,7 @@ Route::name('admin.')->group(function () {
             Route::post('item-update', [ItemController::class, 'update'])->name('update')->middleware('authority')->middleware('permmission:03.02');
         });
 
-        Route::prefix('sell-items')->name('sell.item.')->group(function () {
+        Route::prefix('sell-items')->name('sell.item.')->middleware('permmission:01.08')->group(function () {
             // XXX sell items
             Route::get('', [SellitemController::class, 'index'])->name('index');
             Route::post('add', [SellitemController::class, 'addSellItem'])->name('add');
@@ -387,12 +392,17 @@ Route::name('admin.')->group(function () {
             });
         });
 
+        //XXX maufacture process
         Route::prefix('manufacture-process')->name('manufacture.process.')->group(function () {
             Route::get('',[ManufactureProcessController::class,'index'])->name('index');
+            Route::match(['get', 'post'], 'add',[ManufactureProcessController::class,'add'])->name('add');
             Route::get('detail/{id}',[ManufactureProcessController::class,'detail'])->name('detail');
             Route::post('start-process/{id}',[ManufactureProcessController::class,'startProcess'])->name('start.process');
             Route::post('finish-process/{id}',[ManufactureProcessController::class,'finishProcess'])->name('finish.process');
-            Route::match(['get', 'post'], 'add',[ManufactureProcessController::class,'add'])->name('add');
+
+            Route::post('cancel-process/{id}',[ManufactureProcessController::class,'cancelProcess'])->name('cancel.process');
+            Route::post('cancel-process-partial/{id}',[ManufactureProcessController::class,'cancelProcessPartial'])->name('cancel.process.partial');
+            Route::get('cancel-process-start/{id}',[ManufactureProcessController::class,'cancelProcessStart'])->name('cancel.process.start');
 
             Route::post( 'load-template',[ManufactureProcessController::class,'loadTemplate'])->name('load.template');
             Route::post( 'check-stock',[ManufactureProcessController::class,'checkStock'])->name('check.stock');
@@ -551,16 +561,16 @@ Route::name('admin.')->group(function () {
         });
 
         Route::group(['prefix' => 'bank'], function () {
-            Route::name('bank.')->group(function () {
-                Route::get('', [BankController::class, 'index'])->name('index')->middleware('permmission:11.01');
+            Route::name('bank.')->middleware('permmission:11.01')->group(function () {
+                Route::get('', [BankController::class, 'index'])->name('index');
                 Route::post('add', [BankController::class, 'add'])->name('add');
                 Route::post('update', [BankController::class, 'update'])->name('update');
                 Route::post('delete', [BankController::class, 'delete'])->name('delete');
             });
         });
         Route::group(['prefix' => 'gateway'], function () {
-            Route::name('gateway.')->group(function () {
-                Route::get('', [GatewayController::class, 'index'])->name('index')->middleware('permmission:11.02');
+            Route::name('gateway.')->middleware('permmission:11.02')->group(function () {
+                Route::get('', [GatewayController::class, 'index'])->name('index');
                 Route::post('add', [GatewayController::class, 'add'])->name('add');
                 Route::post('update', [GatewayController::class, 'update'])->name('update');
                 Route::post('delete', [GatewayController::class, 'delete'])->name('delete');

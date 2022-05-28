@@ -12,8 +12,8 @@
 @endsection
 @section('content')
     @php
-    $btnStage = ['', 'warning', 'primary', 'success'];
-    $textStage = ['', 'Pending', 'Processing', 'Finished'];
+    $btnStage = ['', 'warning', 'primary', 'success', 'danger', 'danger', 'danger'];
+    $textStage = ['', 'Pending', 'Processing', 'Finished', 'Canceled ', 'Canceled ', 'Canceled'];
     @endphp
     <span class="px-3 py-2 d-inline-block bg-{{ $btnStage[$process->stage] }} text-white">
         Status: {{ $textStage[$process->stage] }}
@@ -60,7 +60,7 @@
         @endif
     </div>
     <hr>
-    <h4 class="m-0">Raw Material Used</h4>
+    <h4 class="m-0">Raw Material {{$process->stage==1?"Estimated":"Used"}}</h4>
     <table class="table">
         <thead>
             <tr>
@@ -90,71 +90,203 @@
             @endforeach
         </tbody>
     </table>
+    @if ($process->stage > 2 && count($wastages) > 0)
+        <h4 class="m-0">Wastage Raw Material </h4>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Item Name</th>
+                    <th>qty</th>
+                    {{-- @if ($multiStock)
+                        <th>Center</th>
+                    @endif --}}
+                </tr>
+            </thead>
+            <tbody>
+                @foreach ($wastages as $item)
+                    <tr>
+                        <td>
+                            {{ $item->title }}
+                            <div id="stock_check_{{ $item->id }}" class="stock_check text-danger">
 
-    <div class="shadow p-3">
-        @if ($process->stage == 1)
-            <form action="{{ route('admin.manufacture.process.start.process', ['id' => $process->id]) }}" method="post"
-                id="start-process">
-                @csrf
-                <div class="row">
-                    <div class="col-md-4">
+                            </div>
+                        </td>
+                        <td>
+                            {{ $item->amount }} {{ $item->unit }}
+                        </td>
+                        {{-- @if ($multiStock)
+                            <td>{{ $item->center }}</td>
+                        @endif --}}
+                    </tr>
+                @endforeach
+            </tbody>
+        </table>
+    @endif
 
-                        <div class="form-group">
-                            <label for="start">Start Datetime </label>
-                            <input type="datetime-local" onchange="changeStart(this)" name="start" id="start"
-                                class="form-control" required>
-                        </div>
+
+    @if ($process->stage < 3)
+    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#modal-next-{{$process->stage}}">
+        {{$process->stage==1?"Start Manufacturing Process":"Finish Manufacturing Process"}}
+      </button>
+        <div class="modal fade" id="modal-next-{{$process->stage}}" tabindex="-1" role="dialog" aria-hidden="true">
+            <div class="modal-dialog modal-lg" role="document">
+                <div class="modal-content">
+                    <div class="modal-body">
+                        @if ($process->stage == 1)
+                            <form action="{{ route('admin.manufacture.process.start.process', ['id' => $process->id]) }}"
+                                method="post" id="start-process">
+                                @csrf
+                                <div class="row">
+                                    <div class="col-md-4">
+
+                                        <div class="form-group">
+                                            <label for="start">Start Datetime </label>
+                                            <input type="datetime-local" onchange="changeStart(this)" name="start" id="start"
+                                                class="form-control" required>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <label for="expected_end">Expected finish Datetime</label>
+                                            <input type="datetime-local" name="expected_end" id="expected_end" class="form-control"
+                                                required>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4 pt-4">
+                                        <button class="btn btn-primary "> Start Process</button>
+                                    </div>
+                                </div>
+
+                            </form>
+                        @elseif ($process->stage == 2)
+                            <form action="{{ route('admin.manufacture.process.finish.process', ['id' => $process->id]) }}"
+                                method="post" id="start-process">
+                                @csrf
+                                <div class="row">
+                                    <div class="col-md-4">
+
+                                        <div class="form-group">
+                                            <label for="start">Actual Yield </label>
+                                            <input type="number" value="{{ $process->expected }}" step="0.0001"
+                                                onchange="changeStart(this)" name="actual" id="actual" class="form-control" required>
+                                        </div>
+
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <label for="end">Finish Time</label>
+                                            <input type="datetime-local" name="end" id="end" class="form-control" required>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-4 pt-4">
+                                        <button class="btn btn-primary " onclick="return prompt('Enter yes to finish process')=='yes';">
+                                            Finish Process</button>
+                                    </div>
+
+
+                                </div>
+                                <table class="table">
+                                    <tr>
+                                        <th>
+                                            Item Name
+                                        </th>
+                                        <th>
+                                            Wastage Amount
+                                        </th>
+                                    </tr>
+
+                                    @foreach ($items as $item)
+                                        <tr>
+                                            <td>
+                                                {{ $item->title }}
+                                            </td>
+                                            <td>
+                                                <input type="number" value="0" name="amount_{{ $item->id }}"> {{ $item->unit }}
+                                            </td>
+                                        </tr>
+                                    @endforeach
+                                </table>
+
+                            </form>
+                        @endif
                     </div>
-                    <div class="col-md-4">
-                        <div class="form-group">
-                            <label for="expected_end">Expected finish Datetime</label>
-                            <input type="datetime-local" name="expected_end" id="expected_end" class="form-control"
-                                required>
-                        </div>
-                    </div>
-                    <div class="col-md-4 pt-4">
-                        <button class="btn btn-primary "> Start Process</button>
-                    </div>
+
                 </div>
+            </div>
+        </div>
+        {{-- <div class="shadow p-3 mb-3">
+        </div> --}}
+    @endif
+    @if ($process->stage < 4)
 
-            </form>
-        @elseif ($process->stage==2)
-            <form action="{{ route('admin.manufacture.process.finish.process', ['id' => $process->id]) }}" method="post"
-                id="start-process">
-                @csrf
-                <div class="row">
-                    <div class="col-md-4">
+        <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#modal-cancel-{{$process->stage}}">
+            Cancel Manufacturing Process
+        </button>
+        <div class="modal fade" id="modal-cancel-{{$process->stage}}" tabindex="-1" role="dialog" aria-hidden="true">
+            <div class="modal-dialog modal-lg" role="document">
+                <div class="modal-content">
+                    <div class="modal-body">
 
-                        <div class="form-group">
-                            <label for="start">Actual Yield </label>
-                            <input type="number" value="{{$process->expected}}" step="0.0001" onchange="changeStart(this)" name="actual" id="actual"
-                                class="form-control" required>
-                        </div>
+                        <form action="{{ route('admin.manufacture.process.cancel.process', ['id' => $process->id]) }}" method="post" onsubmit="return cancelProcess(event,this);">
+                            @csrf
+                            <div class="form-group">
+                                <label for="return_type">Process Cancel Type</label>
+                                <select name="return_type" id="return_type" class="form-control ms" onchange="returnTypeChange(this)">
+                                    <option value="5">No Raw Material Used</option>
+                                    @if ($process->stage > 1)
+                                        <option value="6">Partial Wastage</option>
+                                        <option value="4">Full Wastage</option>
+                                    @endif
+                                </select>
+                            </div>
+                            @if ($process->stage > 1)
+                                <div id="partial_cancel_items" style="display: none;">
 
-                    </div>
-                    <div class="col-md-4">
-                        <div class="form-group">
-                            <label for="end">Finish Time</label>
-                            <input type="datetime-local"  name="end" id="end" class="form-control"
-                                required>
-                        </div>
-                    </div>
+                                    <table class="table">
+                                        <tr>
+                                            <th>
+                                                Item Name
+                                            </th>
+                                            <th>
+                                                Wastage Amount
+                                            </th>
+                                        </tr>
 
-                    <div class="col-md-4 pt-4">
-                        <button class="btn btn-primary " onclick="return prompt('Enter yes to finish process')=='yes';"> Finish Process</button>
-                    </div>
-                </div>
+                                        @foreach ($items as $item)
+                                            <tr>
+                                                <td>
+                                                    <input type="hidden" name="manufacture_process_item_id[]"
+                                                        value="{{ $item->id }}">
+                                                    {{ $item->title }}
+                                                </td>
+                                                <td>
+                                                    <input type="number" value="{{ $item->amount }}"
+                                                        name="amount_{{ $item->id }}"> {{ $item->unit }}
+                                                </td>
+                                            </tr>
+                                        @endforeach
+                                    </table>
+                                </div>
+                            @endif
 
-            </form>
-        @endif
-    </div>
+                            <div class="py-2">
+                                <button class="btn btn-danger" >Cancel Manufacture Process</button>
+                            </div>
+                        </form>
+                    </div></div></div></div>
+        {{-- <div class="shadow p-3">
+        </div> --}}
+    @endif
+
+
 @endsection
 @section('js')
     <script src="{{ asset('backend/plugins/select2/select2.min.js') }}"></script>
     <script>
         const currentDate = getDateTimeLocal(new Date('{{ $process->start }}'));
         const end = getDateTimeLocal(new Date('{{ $process->expected_end }}'));
-        </script>
+    </script>
     @if ($process->stage == 1)
         <script>
             $(document).ready(function() {
@@ -167,7 +299,8 @@
             });
 
             function startProcess(ele) {
-                axios.post('{{ route('admin.manufacture.process.start.process', ['id' => $process->id]) }}', new FormData(ele))
+                axios.post('{{ route('admin.manufacture.process.start.process', ['id' => $process->id]) }}', new FormData(
+                        ele))
                     .then((res) => {
                         hideProgress();
                         window.location.reload();
@@ -210,14 +343,14 @@
         </script>
     @elseif($process->stage == 2)
         <script>
-            const countDownDate=new Date('{{ $process->expected_end }}').getTime();
+            const countDownDate = new Date('{{ $process->expected_end }}').getTime();
 
 
-            $(document).ready(function () {
+            $(document).ready(function() {
                 const x = setInterval(function() {
 
                     // Get today's date and time
-                    const now =new Date().getTime();
+                    const now = new Date().getTime();
 
                     // Find the distance between now and the count down date
                     const distance = countDownDate - now;
@@ -242,4 +375,38 @@
             });
         </script>
     @endif
+
+    @if ($process->stage < 4)
+        <script>
+            function returnTypeChange(ele) {
+                if (ele.value == 6) {
+                    $('#partial_cancel_items').show();
+                } else {
+                    $('#partial_cancel_items').hide();
+
+                }
+            }
+        </script>
+    @endif
+
+    <script>
+        function cancelProcess(e,ele){
+            e.preventDefault();
+
+            if(prompt('Enter yes to cancel process')=='yes'){
+                showProgress("Canceling the process");
+                axios.post(ele.action,new FormData(ele))
+                .then((res)=>{
+                    if(res.data.status){
+                        window.location.reload();
+                        hideProgress();
+                    }else{
+                        showNotification('bg-danger','Process Cannot be canceled');
+                        hideProgress();
+
+                    }
+                })
+            }
+        }
+    </script>
 @endsection

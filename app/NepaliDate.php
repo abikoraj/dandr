@@ -8,7 +8,7 @@ class NepaliDate
     public $month;
     public $day;
     public $session;
-    private static $_bs = [
+    public static $_bs = [
         0  => [2000, 30, 32, 31, 32, 31, 30, 30, 30, 29, 30, 29, 31],
         1  => [2001, 31, 31, 32, 31, 31, 31, 30, 29, 30, 29, 30, 30],
         2  => [2002, 31, 31, 32, 32, 31, 30, 30, 29, 30, 29, 30, 30],
@@ -101,6 +101,36 @@ class NepaliDate
         89 => [2089, 30, 32, 31, 32, 31, 30, 30, 30, 29, 30, 30, 30],
         90 => [2090, 30, 32, 31, 32, 31, 30, 30, 30, 29, 30, 30, 30],
     ];
+
+    public static function calculateSalary($year,$month,$employee){
+        if($employee->start==null && $employee->enddate==null){
+            return $employee->salary;
+        }
+
+        $start=$employee->start??0;
+        $end=$employee->enddate??0;
+        $days=self::$_bs[$year-2000][$month];
+        $_start=$year*10000+$month*100+1;
+        $_end=$year*10000+$month*100+$days;
+        $extra=0;
+        if($_start>$end){
+            // dd($start,$end,$_start,$_end,$days,$extra);
+
+            return 0;
+        }
+
+        if($start>$_start){
+            $extra+=$start-$_start;
+        }
+        if($end<$_end){
+            $extra+=$_end-$end;
+        }
+
+        $salary= $extra>0?($employee->salary/$days*($days-$extra)):$employee->salary;
+        // dd($start,$end,$_start,$_end,$days,$extra,$salary);
+        return (int)$salary;
+    }
+
 
     public function  getBS(){
         return self::$_bs;

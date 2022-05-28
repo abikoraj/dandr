@@ -127,6 +127,7 @@ class Menu
                     ["Day Management", '10.01', route('admin.counter.day.index')],
                     ["Counters", '10.02', route('admin.counter.home')],
                     ["Offers", '10.03', route('admin.offers.index')],
+                    ["Offers", '10.04', route('admin.point.index')],
                 ],
             ],
 

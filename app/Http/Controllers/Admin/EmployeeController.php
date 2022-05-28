@@ -29,6 +29,8 @@ class EmployeeController extends Controller
             $user->password = bcrypt($request->phone);
         }
         $user->name = $request->name;
+
+        $user->name = $request->name;
         $user->address = $request->address;
         $user->save();
 
@@ -36,6 +38,8 @@ class EmployeeController extends Controller
         $emp->user_id = $user->id;
         $emp->salary = $request->salary;
         $emp->acc = $request->acc;
+        $emp->start = $request->filled('start')?str_replace("-","", $request->start):null;
+        $emp->enddate = $request->filled('end')?str_replace("-","", $request->end):null;
         $emp->save();
         $emp->user = $user;
 
@@ -49,11 +53,14 @@ class EmployeeController extends Controller
         $user->name = $request->name;
         $user->address = $request->address;
         $user->role = 4;
+
         $user->password = bcrypt($request->phone);
         $user->save();
         $emp = Employee::where('user_id', $user->id)->first();
         $emp->salary = $request->salary;
         $emp->acc = $request->acc;
+        $emp->start = $request->filled('start')?str_replace("-","", $request->start):null;
+        $emp->enddate = $request->filled('end')?str_replace("-","", $request->end):null;
         $emp->save();
         $emp->user = $user;
         return view('admin.emp.single', compact('emp'));
@@ -160,7 +167,7 @@ class EmployeeController extends Controller
     public function advance()
     {
         $emps = Employee::with('user')->get();
-        dd($emps);
+        // dd($emps);
         return view('admin.emp.advance.index', compact('emps'));
     }
 
@@ -247,6 +254,7 @@ class EmployeeController extends Controller
 
         $employee = Employee::where('id', $request->emp_id)->first();
         $user = $employee->user;
+        $salary=NepaliDate::calculateSalary($request->year, $request->month,$employee);
         $range = NepaliDate::getDateMonth($request->year, $request->month);
         $prev = Ledger::where('date', '<', $range[1])->where('type', 2)->where('user_id', $user->id)->sum('amount') - Ledger::where('date', '<', $range[1])->where('type', 1)->where('user_id', $user->id)->sum('amount');
         $ledgers = Ledger::where('date', '>=', $range[1])->where('date', '<=', $range[2])->where('user_id', $user->id)->get();
@@ -274,9 +282,9 @@ class EmployeeController extends Controller
         $lastdate = NepaliDate::getDateMonthLast($request->year, $request->month);
 
         if(env('acc_system','old')=='old'){
-            return view('admin.emp.salarypay.data_new', compact('track','arr', 'user', 'employee', 'empSession', 'prev','salaryLoaded','lastdate'));
+            return view('admin.emp.salarypay.data_new', compact('track','arr', 'user', 'employee', 'empSession', 'prev','salaryLoaded','lastdate','salary'));
         }else{
-            return view('admin.emp.salarypay.data_new_new', compact('track','arr', 'user', 'employee', 'empSession', 'prev','salaryLoaded','lastdate'));
+            return view('admin.emp.salarypay.data_new_new', compact('track','arr', 'user', 'employee', 'empSession', 'prev','salaryLoaded','lastdate','salary'));
         }
 
 

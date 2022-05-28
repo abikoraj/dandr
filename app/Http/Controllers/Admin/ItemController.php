@@ -136,6 +136,9 @@ class ItemController extends Controller
         if($request->filled('rettype')){
             return response()->json($item);
         }else{
+            if (env('multi_package',false)){
+                $item->cunit=DB::selectOne('select name from conversions where id=?',[$item->conversion_id])->name;
+            }
             return view('admin.item.single',compact('item'));
         }
     }
@@ -207,7 +210,9 @@ class ItemController extends Controller
             $item->stock=$newstock;
             $item->save();
         }
-
+        if (env('multi_package',false)){
+            $item->cunit=DB::selectOne('select name from conversions where id=?',[$item->conversion_id])->name;
+        }
         return view('admin.item.single',compact('item'));
     }
 

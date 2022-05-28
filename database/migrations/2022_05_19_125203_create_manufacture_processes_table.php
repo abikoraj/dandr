@@ -17,7 +17,7 @@ class CreateManufactureProcessesTable extends Migration
             $table->id();
             $table->unsignedBigInteger('manufactured_product_id');
             $table->foreign('manufactured_product_id')->references('id')->on('manufactured_products');
-            $table->unsignedBigInteger('conversion_id');
+            $table->unsignedBigInteger('conversion_id')->nullable();
             $table->foreign('conversion_id')->references('id')->on('conversions');
             $table->decimal('expected',18,3)->default(1);
             $table->decimal('actual',18,3)->default(1);

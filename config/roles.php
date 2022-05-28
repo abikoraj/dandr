@@ -105,6 +105,14 @@ return [
         ]
     ],
 
+    "Manufacture" => [
+        'code' => '13',
+        'children' => [
+            'product_list' => ['code' => '08.01'],
+            'payment' => ['code' => '08.02'],
+        ]
+    ],
+
     "POS" => [
         'code' => '09',
         'children' => [
@@ -122,6 +130,7 @@ return [
             'Day Management' => ['code' => '10.01'],
             'Counters' => ['code' => '10.02'],
             'Offers' => ['code' => '10.03'],
+            'Reward_Point_setting' => ['code' => '10.03'],
         ]
     ],
 

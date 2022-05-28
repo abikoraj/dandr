@@ -24,7 +24,7 @@
 
     </style>
 @endsection
-@section('head-title', 'Distributer Milk Sell')
+@section('head-title', 'Distributer SNF FAT')
 @section('toobar')
 
 @endsection

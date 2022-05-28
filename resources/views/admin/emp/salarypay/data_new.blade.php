@@ -58,7 +58,7 @@
                             --
                         </td>
                 @endif
-               
+
             </tr>
         @endif
         @foreach ($arr as $l)
@@ -82,11 +82,11 @@
                         Dr. {{ (float) $l->amt }}
                 @elseif ($l->amt<0) Cr. {{ (float) (-1 * $l->amt) }} @else -- @endif
             </td>
-           
+
         </tr>
     @endforeach
     @php
-        $remaning = $employee->salary + $track;
+        $remaning = $salary + $track;
     @endphp
     @if ($salaryLoaded)
         @php
@@ -95,7 +95,7 @@
     @else
 
         @if ($empSession == null)
-            
+
             <tr>
                 <td></td>
                 <td>
@@ -105,7 +105,7 @@
 
                 </td>
                 <td>
-                    {{ $employee->salary }}
+                    {{ $salary }}
                 </td>
                 <td>
                     @if ($remaning == 0)
@@ -133,7 +133,7 @@
             </div>
             <div class="col-md-4">
                 <label for="total"> Monthly Salary </label>
-                <input type="text" id="salary" class="form-control" value="{{ $employee->salary }}" readonly>
+                <input type="text" id="salary" class="form-control" value="{{ $salary }}" readonly>
             </div>
             <div class="col-md-4">
                 <label for="pay">Pay Salary </label>

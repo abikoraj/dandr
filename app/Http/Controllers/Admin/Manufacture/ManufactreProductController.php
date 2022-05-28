@@ -38,16 +38,22 @@ class ManufactreProductController extends Controller
     public function templateIndex($id)
     {
         $product=DB::table('manufactured_products')
-        ->join('items','items.id','=','manufactured_products.item_id')
-        ->join('conversions','conversions.id','=','items.conversion_id')
-        ->where('manufactured_products.id',$id)
-        ->select(DB::raw( 'items.title,manufactured_products.id,conversions.name as unit'))->first();
-        $items=DB::select('select i.id,i.title,c.name as unit from items i join conversions c on i.conversion_id=c.id');
+        ->join('items','items.id','=','manufactured_products.item_id');
         $manufaturedProductItems=DB::table('manufactured_product_items')
-        ->join('items','items.id','=','manufactured_product_items.item_id')
-        ->join('conversions','conversions.id','=','items.conversion_id')
-        ->where('manufactured_product_items.manufactured_product_id',$id)
-        ->select(DB::raw( 'concat(items.title,\'(\',conversions.name ,\')\') as title,manufactured_product_items.amount,manufactured_product_items.id'))
+        ->join('items','items.id','=','manufactured_product_items.item_id');
+        if(env('multi_package',false)){
+
+            $product=$product->join('conversions','conversions.id','=','items.conversion_id');
+            $items=DB::select('select i.id,i.title,c.name as unit from items i join conversions c on i.conversion_id=c.id');
+            $manufaturedProductItems=$manufaturedProductItems->join('conversions','conversions.id','=','items.conversion_id');
+        }else{
+            $items=DB::select('select i.id,i.title,i.unit as unit from items i');
+        }
+        $product=$product->where('manufactured_products.id',$id)
+        ->select(DB::raw( 'items.title,manufactured_products.id,'.(env('multi_package',false)?'conversions.name as unit':'items.unit')))->first();
+
+        $manufaturedProductItems=$manufaturedProductItems->where('manufactured_product_items.manufactured_product_id',$id)
+        ->select(DB::raw( 'concat(items.title,\'(\','.(env('multi_package',false)?'conversions.name ':'items.unit').',\')\') as title,manufactured_product_items.amount,manufactured_product_items.id'))
         ->get();
         return view('admin.manufacture.product.template',compact('product','items','manufaturedProductItems'));
 
