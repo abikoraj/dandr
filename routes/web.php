@@ -493,6 +493,7 @@ Route::name('admin.')->group(function () {
                 Route::post('employee/changeSession', [ReportController::class, 'employeeSession'])->name('emp.session');
                 Route::match(['GET', 'POST'], 'expenses', [ReportController::class, 'expense'])->name('expense');
                 Route::match(['GET', 'POST'], 'bonus', [ReportController::class, 'bonus'])->name('bonus');
+                Route::match(['GET', 'POST'], 'stock', [ReportController::class, 'stock'])->name('stock');
             });
         });
 

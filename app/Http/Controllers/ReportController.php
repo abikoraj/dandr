@@ -795,4 +795,31 @@ class ReportController extends Controller
             return 0;
         }
     }
+
+    public function stock(Request $request)
+    {
+        if($request->getMethod()=="POST"){
+            $datas=[];
+            $center='';
+            if($request->center_id==-1){
+
+                $datas=DB::select('select id,title,
+                (select sum(amount) from center_stocks where center_stocks.item_id=items.id) as qty,
+                greatest((select sum(amount*rate) from center_stocks where center_stocks.item_id=items.id),0) as current_stock
+                from items');
+            }else{
+                $datas=DB::select('select id,title,
+                (select sum(amount) from center_stocks where center_stocks.item_id=items.id and center_stocks.center_id='.$request->center_id.') as qty,
+                greatest((select sum(amount*rate) from center_stocks where center_stocks.item_id=items.id and center_stocks.center_id='.$request->center_id.'),0) as current_stock
+                from items');
+                $center==Center::where('id',$request->center_id)->first(['name'])->name;
+            }
+
+            // dd($datas);
+
+            return view('admin.report.stock.data',compact('datas','center'));
+        }else{
+            return view('admin.report.stock.index');
+        }
+    }
 }

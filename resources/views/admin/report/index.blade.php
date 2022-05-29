@@ -40,13 +40,24 @@
             Sales Report
         </span>
     </div> --}}
-    <div class="col-md-2 section href" data-target="{{route('admin.report.pos.sales')}}">
+    @if (env('use_pos'))
+        <div class="col-md-2 section href" data-target="{{route('admin.report.pos.sales')}}">
+            <span class="icon">
+                <i class="zmdi zmdi-money-box"></i>
+            </span>
+            <span class="divider"></span>
+            <span class="text">
+            POS Sales Report
+            </span>
+        </div>
+    @endif
+    <div class="col-md-2 section href" data-target="{{route('admin.report.stock')}}">
         <span class="icon">
             <i class="zmdi zmdi-money-box"></i>
         </span>
         <span class="divider"></span>
         <span class="text">
-           POS Sales Report
+           Stock Report
         </span>
     </div>
 
