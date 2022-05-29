@@ -158,6 +158,8 @@
         }
 
         function saveProcess(ele){
+
+            showProgress('Adding Manufacturing Process');
             axios.post('{{ route('admin.manufacture.process.add') }}',new FormData(ele))
                 .then((res) => {
                    window.location.reload();
@@ -177,7 +179,12 @@
         function addProcess(e,ele){
             removeStockMessage();
             e.preventDefault();
-                showProgress('Adding Manufacturing Process');
+            if($('#stage-1')[0].checked){
+                saveProcess(ele);
+
+            }else{
+
+                showProgress('checking Manufacturing Process Raw Material Stock');
                 axios.post('{{ route('admin.manufacture.process.check.stock') }}',new FormData(ele))
                 .then((res) => {
                     const data=res.data;
@@ -188,12 +195,12 @@
                             $('#stock_check_'+msg.id).html('Not Enough Stock');
                         });
                         hideProgress();
-
                     }
                 })
                 .catch((err) => {
                     hideProgress();
                 });
+            }
         }
 
         function loadTemplate() {
