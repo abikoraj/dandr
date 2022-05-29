@@ -11,7 +11,7 @@
 @section('toobar')
 @endsection
 @section('content')
-<form action="{{ route('admin.manufacture.process.edit',['id'=>$process->id]) }}" method="post" onsubmit="return addProcess(event,this);">
+<form action="{{ route('admin.manufacture.process.edit',['id'=>$process->id]) }}" method="post">
     <div class="row">
         <div class="col-md-4">
             <div class="shadow p-2">
@@ -83,7 +83,7 @@
                             {{$item->title}}
                         </div>
                         <div class="col-md-4">
-                            <input type="hidden" name="item_id" value="{{$item->id}}">
+                            <input type="hidden" name="item_ids[]" value="{{$item->id}}">
                             <input type="number" step="0.001" value="{{$item->amount}}" name="item_{{$item->id}}" id="item_{{$item->id}}" class="form-control" required >
                         </div>
                         <div class="col-md-4">

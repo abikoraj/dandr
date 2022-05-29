@@ -24,9 +24,27 @@ class ManufactureProcessController extends Controller
 
     public function edit( $id,Request $request)
     {
+        if(DB::table('manufacture_processes')->where('id',$id)->where('stage',1)->count()==0){
+            return redirect()->route('admin.manufacture.process.detail',['id'=>$id]);
+
+        }
         $multiStock=env('multi_stock',false);
         if($request->getMethod()=="POST"){
+            // dd($request->all());
+            $process=ManufactureProcess::where('id',$id)->first();
+            $process->expected=$request->expected;
+            $process->start=$request->start;
+            $process->expected_end=$request->expected_end;
+            $process->save();
+            foreach ($request->item_ids as $key => $item_id) {
+                if($request->filled('item_'.$item_id)){
 
+                    DB::table('manufacture_process_items')->where('id',$item_id)->update(
+                        ['amount'=>$request->input('item_'.$item_id)]
+                    );
+                }
+            }
+            return redirect()->route('admin.manufacture.process.detail',['id'=>$id]);
         }else{
 
             $details=$this->getDetail($id);

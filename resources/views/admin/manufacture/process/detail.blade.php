@@ -123,7 +123,10 @@
         </table>
     @endif
 
+    @if ($process->stage==1)
+        <a href="{{route('admin.manufacture.process.edit',['id'=>$process->id])}}" class="btn btn-primary">Edit Process</a>
 
+    @endif
     @if ($process->stage < 3)
     <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#modal-next-{{$process->stage}}">
         {{$process->stage==1?"Start Manufacturing Process":"Finish Manufacturing Process"}}
