@@ -397,6 +397,7 @@ Route::name('admin.')->group(function () {
             Route::get('',[ManufactureProcessController::class,'index'])->name('index');
             Route::match(['get', 'post'], 'add',[ManufactureProcessController::class,'add'])->name('add');
             Route::get('detail/{id}',[ManufactureProcessController::class,'detail'])->name('detail');
+            Route::get('edit/{id}',[ManufactureProcessController::class,'edit'])->name('edit');
             Route::post('start-process/{id}',[ManufactureProcessController::class,'startProcess'])->name('start.process');
             Route::post('finish-process/{id}',[ManufactureProcessController::class,'finishProcess'])->name('finish.process');
 
