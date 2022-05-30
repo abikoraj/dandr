@@ -181,7 +181,7 @@
     @include('admin.search.item')
     <script>
         const items={!! json_encode($items) !!};
-        const units={!! json_encode($units) !!};
+        // const units={!! json_encode($units) !!};
 
         $(document).ready(function () {
 
