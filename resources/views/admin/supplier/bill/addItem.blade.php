@@ -7,7 +7,7 @@
                 <h4 class="title" id="createItem">Create New Item</h4>
             </div>
             <hr>
-            <form id="add-bill" onsubmit="return saveData(event);">
+            <form id="add-item" onsubmit="return saveData(event);">
                 <div class="card mb-0">
                     <div class="body" id="add-step1">
                         @csrf
