@@ -32,15 +32,15 @@
                                 $w = env('use_wholesale', false);
                                 $r = $w ? 4 : 6;
                             @endphp
-                            @if (!env('multi_stock', false))
                                 <div class="col-lg-{{ $r }}">
-                                    <label for="cprice">{{ $w ? 'Cost' : 'Sale' }} Price</label>
+                                    <label for="cprice">Cost Price</label>
                                     <div class="form-group">
                                         <input type="number" step="0.01" id="cprice" name="cost_price" min="0"
                                             class="form-control next" data-next="{{ $w ? 'wprice' : 'sprice' }}"
-                                            placeholder="Enter {{ $w ? 'cost' : 'sale' }} price" required>
+                                            placeholder="Enter Cost price" required>
                                     </div>
                                 </div>
+                            @if (!env('multi_stock', false))
                                 @if ($w)
                                     <div class="col-lg-{{ $r }}">
                                         <label for="wprice">WholeSale Price</label>

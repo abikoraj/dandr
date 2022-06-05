@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\LedgerManage;
+use App\Models\CenterStock;
 use App\Models\Item;
 use App\Models\Milkdata;
 use App\Models\Product;
@@ -64,11 +65,32 @@ class MilkController extends Controller
                 $milkData->e_amount += $request->milk_amount;
             }
         }
+
         if($product != null){
+            if(env('multi_stock')){
+
+                $centerStock=$product->stock($request->center_id);
+                $new=false;
+                if($centerStock==null){
+                    $centerStock=new CenterStock();
+                    $centerStock->item_id=$product->id;
+                    $centerStock->center_id=$request->center_id;
+                    $centerStock->amount=0;
+                    $centerStock->save();
+                    $new=true;
+                }
+            }
             if($type==0){
                 $product->stock -= $oldmilk;
+                if(!$new && env('multi_stock')){
+                    $centerStock->amount-=$oldmilk;
+                }
             }
             $product->stock += $request->milk_amount;
+            if(env('multi_stock')){
+                $centerStock->amount += $request->milk_amount;
+                $centerStock->save();
+            }
             $product->save();
         }
         $milkData->save();

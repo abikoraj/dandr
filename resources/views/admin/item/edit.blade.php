@@ -24,16 +24,16 @@
                     $w = env('use_wholesale', false);
                     $r = $w ? 4 : 6;
                 @endphp
+                <div class="col-lg-3">
+                    <label for="cprice">Cost Price</label>
+                    <div class="form-group">
+                        <input type="number" id="ecprice" step="0.01" value="{{ $item->cost_price }}" name="cost_price"
+                            min="0" class="form-control next" data-next="esprice" placeholder="Enter cost price"
+                            required>
+                    </div>
+                </div>
                 @if (!env('multi_stock',false))
 
-                    <div class="col-lg-3">
-                        <label for="cprice">{{ $w ? 'Cost' : 'Sale' }} Price</label>
-                        <div class="form-group">
-                            <input type="number" id="ecprice" step="0.01" value="{{ $item->cost_price }}" name="cost_price"
-                                min="0" class="form-control next" data-next="esprice" placeholder="Enter cost price"
-                                required>
-                        </div>
-                    </div>
                     @if ($w)
                         <div class="col-lg-3">
                             <label for="wprice">WholeSale Price</label>

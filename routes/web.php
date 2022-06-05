@@ -18,6 +18,7 @@ use App\Http\Controllers\Admin\ItemStockController;
 use App\Http\Controllers\Admin\Manufacture\ManufactreProductController;
 use App\Http\Controllers\Admin\Manufacture\ManufactureProcessController;
 use App\Http\Controllers\Admin\OfferController;
+use App\Http\Controllers\Admin\PackagingController;
 use App\Http\Controllers\Admin\PointController;
 use App\Http\Controllers\Admin\PosBillingController;
 use App\Http\Controllers\Admin\SellitemController;
@@ -410,6 +411,16 @@ Route::name('admin.')->group(function () {
             Route::get( 'check-stock-saved/{id}',[ManufactureProcessController::class,'checkStockSaved'])->name('check.stock.saved');
 
         });
+
+        //XXX packaging
+        Route::prefix('packaging')->name('packaging.')->group(function () {
+            Route::match(['GET','POST'],'',[PackagingController::class,'index'])->name('index');
+            Route::match(['GET','POST'],'add',[PackagingController::class,'add'])->name('add');
+            Route::match(['GET','POST'],'edit',[PackagingController::class,'edit'])->name('edit');
+            Route::post('del',[PackagingController::class,'del'])->name('del');
+        });
+
+
 
 
         //XXX backup
