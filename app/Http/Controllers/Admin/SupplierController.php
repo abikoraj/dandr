@@ -113,8 +113,17 @@ class SupplierController extends Controller
                         $billItem->remaning = $request->input('qty_' . $value);
                     }else{
                         $conversion=DB::table('conversions')->where('id',$billItem->conversion_id)->first();
-                        $billItem->qty=$conversion->main/$conversion->local * $billItem->conversion_qty ;
-                        $billItem->rate= $conversion->local/$conversion->main * $billItem->conversion_rate ;
+                        $local=DB::table('conversions')->where('id',$item->conversion_id)->first();
+                        if($conversion->parent_id!=0){
+                            $ratio1=$conversion->main/$conversion->local;
+                            $ratio2=$local->main/$local->local;
+                            $ratio=$ratio1/$ratio2;
+                            $billItem->qty=$ratio * $billItem->conversion_qty ;
+                            $billItem->rate= (1/$ratio) * $billItem->conversion_rate ;
+                        }else{
+                            $billItem->qty=$local->local/$local->main * $billItem->conversion_qty ;
+                            $billItem->rate= $local->main/$local->local * $billItem->conversion_rate ;
+                        }
                     }
                 }else{
                     $billItem->rate = $request->input('rate_' . $value);

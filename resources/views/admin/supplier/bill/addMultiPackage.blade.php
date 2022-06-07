@@ -218,7 +218,14 @@
                     if(conversion_id!=item.conversion_id){
                         conversion_id=item.conversion_id;
                         conversions=[units.find(o=>o.id==conversion_id)];
-                        conversions=conversions.concat(units.filter(o=>o.parent_id==conversion_id));
+                        if(conversions[0].parent_id!=0){
+                            const parent_id=conversions[0].parent_id;
+                            conversions.push(units.find(o=>o.id=parent_id));
+                            conversions=conversions.concat(units.filter(o=>o.parent_id==parent_id && o.id!=conversion_id));
+                        }else{
+
+                            conversions=conversions.concat(units.filter(o=>o.parent_id==conversion_id));
+                        }
                         const conversionOptions=conversions.map(o=>"<option value='"+o.id+"'>"+o.name+"</option>").join('');
                         $('#cid').html(conversionOptions);
                         $('#cid').select2();

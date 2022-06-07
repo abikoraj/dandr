@@ -146,7 +146,7 @@ class ItemController extends Controller
     public function edit(Request $request){
         $item=Item::where('id',$request->id)->first();
         $centers=DB::table('centers')->get(['id','name']);
-        $units=DB::table('conversions')->where('is_base',1)->get(['id','name']);
+        $units=DB::table('conversions')->get(['id','name']);
         // dd($item);
         return view('admin.item.edit',compact('item','centers','units'));
     }
