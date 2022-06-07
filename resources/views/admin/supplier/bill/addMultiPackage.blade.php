@@ -257,19 +257,19 @@
                         hideProgress();
                         showNotification('bg-success', 'Supplier bill added successfully!');
 
-                        // $('#add-bill').trigger("reset")
-                        // $('#supplierBillData').prepend(response.data);
-                        // $('#item_table').empty();
-                        // $('#expense-items').empty();
-                        // $('#addBill').removeClass('shown');
-                        // $('#itotal').val(0);
-                        // $('#itax').val(0);
-                        // $('#itaxable').val(0);
-                        // $('#idiscount').val(0);
-                        // $('#igrandtotal').val(0);
-                        // $('#ipaid').val(0);
-                        // $('#idue').val(0);
-                        // $('#supplier').val('').change();;
+                        $('#add-bill').trigger("reset")
+                        $('#supplierBillData').prepend(response.data);
+                        $('#item_table').empty();
+                        $('#expense-items').empty();
+                        $('#addBill').removeClass('shown');
+                        $('#itotal').val(0);
+                        $('#itax').val(0);
+                        $('#itaxable').val(0);
+                        $('#idiscount').val(0);
+                        $('#igrandtotal').val(0);
+                        $('#ipaid').val(0);
+                        $('#idue').val(0);
+                        $('#supplier').val('').change();;
                         itemKeys=[];
                         suffle();
                     })
