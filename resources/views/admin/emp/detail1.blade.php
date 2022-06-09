@@ -10,7 +10,7 @@
 @endsection
 @section('content')
 <div >
-    <div class="row">
+    {{-- <div class="row">
         <div class="col-md-3 ">
             <label for="type">
                 Report Duration
@@ -61,7 +61,9 @@
             <label for="Date1">Date2</label>
             <input type="text" id="date2" class="form-control calender">
         </div>
-    </div>
+    </div> --}}
+
+    @include('admin.layouts.daterange')
     <div class="row">
         <div class="col-md-3">
             <span class="btn btn-primary" onclick="loadData()"> Load </span>
@@ -76,27 +78,26 @@
 @endsection
 @section('js')
 <script src="{{ asset('backend/plugins/select2/select2.min.js') }}"></script>
-<script src="{{ asset('calender/nepali.datepicker.v3.2.min.js') }}"></script>
 <script>
     function manageDisplay(element){
         type=$(element).val();
         $('.ct').addClass('d-none');
         $('.ct-'+type).removeClass('d-none');
     }
-    var month = Array.from(NepaliFunctions.GetBsMonths());
-    var i =1;
-    month.forEach(element => {
-        $('#month').append('<option value="'+i+'">'+element+'</option>');
-        i++;
-    });
+    // var month = Array.from(NepaliFunctions.GetBsMonths());
+    // var i =1;
+    // month.forEach(element => {
+    //     $('#month').append('<option value="'+i+'">'+element+'</option>');
+    //     i++;
+    // });
 
-    var start_y = 2070;
-    var now_yr = NepaliFunctions.GetCurrentBsYear();
-    var now_yr1 = now_yr;
-    for (let index = start_y; index < now_yr; index++) {
-        $('#year').append('<option value="'+now_yr1+'">'+now_yr1+'</option>');
-        now_yr1--;
-    }
+    // var start_y = 2070;
+    // var now_yr = NepaliFunctions.GetCurrentBsYear();
+    // var now_yr1 = now_yr;
+    // for (let index = start_y; index < now_yr; index++) {
+    //     $('#year').append('<option value="'+now_yr1+'">'+now_yr1+'</option>');
+    //     now_yr1--;
+    // }
 
 
 
@@ -129,24 +130,19 @@
 
     window.onload = function() {
 
-        var month = NepaliFunctions.GetCurrentBsDate().month;
-        var year = NepaliFunctions.GetCurrentBsDate().year;
-        var day =  NepaliFunctions.GetCurrentBsDate().day;
+        // var month = NepaliFunctions.GetCurrentBsDate().month;
+        // var year = NepaliFunctions.GetCurrentBsDate().year;
+        // var day =  NepaliFunctions.GetCurrentBsDate().day;
 
-        $('#year').val(year).change();
-        $('#month').val(month).change();
-        if(day>15){
-            $('#session').val(2).change();
-        }else{
-            $('#session').val(1).change();
-        }
-        $('#type').val(0).change();
-        $('.calender').each(function(){
-            this.nepaliDatePicker();
-            var month = ('0'+ NepaliFunctions.GetCurrentBsDate().month).slice(-2);
-            var day = ('0' + NepaliFunctions.GetCurrentBsDate().day).slice(-2);
-            $(this).val(NepaliFunctions.GetCurrentBsYear() + '-' + month + '-' + day);
-        });
+        // $('#year').val(year).change();
+        // $('#month').val(month).change();
+        // if(day>15){
+        //     $('#session').val(2).change();
+        // }else{
+        //     $('#session').val(1).change();
+        // }
+        // $('#type').val(0).change();
+
         loadData();
     };
 
