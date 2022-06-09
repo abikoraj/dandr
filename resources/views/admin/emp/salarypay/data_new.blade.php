@@ -121,40 +121,42 @@
 </table>
 </div>
 <hr>
+@if($empSession!=null){
 
-
-@if ($remaning > 0)
-    <div class="p-2">
-        <div class="row">
-            <div class="col-md-4">
-                <label for="date">Date</label>
-                <input readonly type="text" name="date" id="nepali-datepicker" class="form-control"
-                    placeholder="Date" value="{{_nepalidate($lastdate)}}">
-            </div>
-            <div class="col-md-4">
-                <label for="total"> Monthly Salary </label>
-                <input type="text" id="salary" class="form-control" value="{{ $salary }}" readonly>
-            </div>
-            <div class="col-md-4">
-                <label for="pay">Pay Salary </label>
-                <input type="text" class="form-control" id="p_amt" name="salary" min="0" step="0.001"
-                    value="{{ $remaning }}">
-            </div>
-            <div class="col-md-9 mt-1">
-                <label for="detail">Payment Detail</label>
-                <input type="text" class="form-control" id="p_detail" placeholder="Payment details">
-            </div>
-            <div class="col-md-3">
-                <span class="btn btn-primary btn-block" style="margin-top:35px;" onclick="salaryPayment();"> Pay Now
-                </span>
+    @if ($remaning > 0)
+        <div class="p-2">
+            <div class="row">
+                <div class="col-md-4">
+                    <label for="date">Date</label>
+                    <input readonly type="text" name="date" id="nepali-datepicker" class="form-control"
+                        placeholder="Date" value="{{_nepalidate($lastdate)}}">
+                </div>
+                <div class="col-md-4">
+                    <label for="total"> Monthly Salary </label>
+                    <input type="text" id="salary" class="form-control" value="{{ $salary }}" readonly>
+                </div>
+                <div class="col-md-4">
+                    <label for="pay">Pay Salary </label>
+                    <input type="text" class="form-control" id="p_amt" name="salary" min="0" step="0.001"
+                        value="{{ $remaning }}">
+                </div>
+                <div class="col-md-9 mt-1">
+                    <label for="detail">Payment Detail</label>
+                    <input type="text" class="form-control" id="p_detail" placeholder="Payment details">
+                </div>
+                <div class="col-md-3">
+                    <span class="btn btn-primary btn-block" style="margin-top:35px;" onclick="salaryPayment();"> Pay Now
+                    </span>
+                </div>
             </div>
         </div>
-    </div>
-    @if (!$salaryLoaded)
-    <div class="p-2">
-        <hr>
-        <button class="btn btn-primary w-25" onclick="closeMonth()">Close Month</button>
-    </div>
+        @if (!$salaryLoaded)
+        <div class="p-2">
+            <hr>
+            <button class="btn btn-primary w-25" onclick="closeMonth()">Close Month</button>
+        </div>
+        @endif
     @endif
-@endif
+}
+
 
