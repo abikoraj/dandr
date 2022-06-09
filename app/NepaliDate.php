@@ -117,6 +117,9 @@ class NepaliDate
         if($end==0){
             $end=$_end;
         }
+        if($start==0){
+            $start=$_start;
+        }
         $extra=0;
         if($_start>$end){
             // dd($start,$end,$_start,$_end,$days,$extra);
