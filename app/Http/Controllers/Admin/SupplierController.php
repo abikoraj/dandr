@@ -135,6 +135,7 @@ class SupplierController extends Controller
                 //XXX Add Stock
                 if ($item->trackstock) {
                     $item->stock += $billItem->qty;
+                    $item->cost_price=$billItem->rate;
                     $item->save();
                 }
                 $center_id = env('maincenter', -1);
