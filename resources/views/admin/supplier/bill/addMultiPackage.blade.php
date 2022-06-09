@@ -225,7 +225,7 @@
                         conversions=[units.find(o=>o.id==conversion_id)];
                         if(conversions[0].parent_id!=0){
                             const parent_id=conversions[0].parent_id;
-                            conversions.push(units.find(o=>o.id=parent_id));
+                            conversions.push(units.find(o=>o.id==parent_id));
                             conversions=conversions.concat(units.filter(o=>o.parent_id==parent_id && o.id!=conversion_id));
                         }else{
 
