@@ -28,8 +28,7 @@ class EmployeeController extends Controller
             $user->role = 4;
             $user->password = bcrypt($request->phone);
         }
-        $user->name = $request->name;
-
+        $user->phone = $request->phone;
         $user->name = $request->name;
         $user->address = $request->address;
         $user->save();
