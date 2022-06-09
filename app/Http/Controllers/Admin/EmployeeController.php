@@ -259,7 +259,8 @@ class EmployeeController extends Controller
         $ledgers = Ledger::where('date', '>=', $range[1])->where('date', '<=', $range[2])->where('user_id', $user->id)->get();
         $empSession = EmployeeSession::where('year', $request->year)->where('month', $request->month)->where('user_id', $user->id)->first();
         // dd($ledgers);
-
+        $year=$request->year;
+        $month=$request->month;
         $arr = [];
         $base = $prev;
         $salaryLoaded=false;
@@ -282,7 +283,7 @@ class EmployeeController extends Controller
         if(env('acc_system','old')=='old'){
             return view('admin.emp.salarypay.data_new', compact('track','arr', 'user', 'employee', 'empSession', 'prev','salaryLoaded','lastdate','salary'));
         }else{
-            return view('admin.emp.salarypay.data_new_new', compact('track','arr', 'user', 'employee', 'empSession', 'prev','salaryLoaded','lastdate','salary'));
+            return view('admin.emp.salarypay.data_new_new', compact('track','arr', 'user', 'employee', 'empSession', 'prev','salaryLoaded','lastdate','salary','year','month'));
         }
 
 
