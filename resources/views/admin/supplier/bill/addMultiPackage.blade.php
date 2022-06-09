@@ -212,11 +212,16 @@
 
             $('#ptr').change(function(){
                 const item_id=$('#ptr').val();
+
                 console.log(item_id);
+
                 if(item_id!='' && item_id!=undefined){
+
                     item=items.find(o=>o.id==item_id);
-                    if(conversion_id!=item.conversion_id){
-                        conversion_id=item.conversion_id;
+                    conversion_id=item.conversion_id;
+
+                    if(item.conversion_id!=null && item.conversion_id!=undefined){
+
                         conversions=[units.find(o=>o.id==conversion_id)];
                         if(conversions[0].parent_id!=0){
                             const parent_id=conversions[0].parent_id;
@@ -230,6 +235,7 @@
                         $('#cid').html(conversionOptions);
                         $('#cid').select2();
                     }
+
                 }
             });
         });
