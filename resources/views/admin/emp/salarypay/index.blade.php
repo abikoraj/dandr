@@ -2,7 +2,7 @@
 @section('title', 'Salary Pay')
 @section('css')
     <link rel="stylesheet" href="{{ asset('backend/plugins/select2/select2.css') }}" />
-    
+
 @endsection
 @section('head-title', 'Employee Salary Payment')
 @section('toobar')
@@ -45,7 +45,7 @@
                         </select>
                     </div>
 
-                   
+
 
                     <div class="col-lg-3">
                         <span class="btn btn-primary" onclick="loadEmployeeData();" style="margin-top:30px;">Load
@@ -56,16 +56,16 @@
             </form>
             <div class="table-responsive">
                 <div id="paid">
-        
+
                 </div>
                 <div id="employeeData">
-        
+
                 </div>
             </div>
         </div>
     </div>
 
-   
+
 
 
 
@@ -99,7 +99,7 @@
             loadEmployeeData();
         }
         function loadEmployeeData() {
-           
+
             var year = $('#year').val();
             var month = $('#month').val();
             if (emp_id == -1) {
@@ -149,7 +149,8 @@
                                 'year': year,
                                 'month': month,
                                 'pay': pay,
-                                'desc': desc
+                                'desc': desc,
+
                             }
                         })
                         .then(function(response) {

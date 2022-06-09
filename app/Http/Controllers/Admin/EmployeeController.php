@@ -295,6 +295,8 @@ class EmployeeController extends Controller
         $employee = Employee::where('id', $request->emp_id)->first();
         $np = new NepaliDate($date);
         $range = NepaliDate::getDateMonth($request->year, $request->month);
+        $salary=NepaliDate::calculateSalary($request->year, $request->month,$employee);
+
         $salaryLoaded = Ledger::where('date', '>=', $range[1])->where('date', '<=', $range[2])->where('user_id', $employee->user_id)->where('identifire',129)->count()>0;
         if (!($employee->sessionClosed($np->year, $np->month))) {
             return response('previous Month Not Closed', 500);
@@ -303,9 +305,9 @@ class EmployeeController extends Controller
 
             if(!$salaryLoaded){
                 if(env('acc_system','old')=='old'){
-                    $ledger->addLedger('salary For (' . $request->year . "-" . ($request->month < 10 ? "0" . $request->month : $request->month) . ")", 2, $employee->salary, $date, 129);
+                    $ledger->addLedger('salary For (' . $request->year . "-" . ($request->month < 10 ? "0" . $request->month : $request->month) . ")", 2, $salary, $date, 129);
                 }else{
-                    $ledger->addLedger('salary For (' . $request->year . "-" . ($request->month < 10 ? "0" . $request->month : $request->month) . ")", 1, $employee->salary, $date, 129);
+                    $ledger->addLedger('salary For (' . $request->year . "-" . ($request->month < 10 ? "0" . $request->month : $request->month) . ")", 1, $salary, $date, 129);
                 }
 
             }
