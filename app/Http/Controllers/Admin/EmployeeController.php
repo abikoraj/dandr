@@ -292,14 +292,14 @@ class EmployeeController extends Controller
     public function storeSalary(Request $request)
     {
         // dd($request->all());
-        $date = str_replace('-', '', $request->date);
+        $date =(int) (str_replace('-', '', $request->date));
         $employee = Employee::where('id', $request->emp_id)->first();
-        $np = new NepaliDate($date);
+        // $np = new NepaliDate($date);
         $range = NepaliDate::getDateMonth($request->year, $request->month);
         $salary=NepaliDate::calculateSalary($request->year, $request->month,$employee);
 
         $salaryLoaded = Ledger::where('date', '>=', $range[1])->where('date', '<=', $range[2])->where('user_id', $employee->user_id)->where('identifire',129)->count()>0;
-        if (!($employee->sessionClosed($np->year, $np->month))) {
+        if (!($employee->sessionClosed($request->year, $request->month))) {
             return response('previous Month Not Closed', 500);
         } else {
             $ledger = new LedgerManage($employee->user_id);

@@ -151,7 +151,7 @@
     </div>
 
     @endif
-    @if (!($employee->sessionClosed($year, $month)))
+    @if (($employee->sessionClosed($year, $month)))
         <div class="p-2">
             <hr>
             <button class="btn btn-primary w-25" onclick="closeMonth()">Close Month</button>

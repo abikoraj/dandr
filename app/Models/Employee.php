@@ -21,6 +21,7 @@ class Employee extends Model
             $y=$y-1;
         }
         $range=NepaliDate::getDateMonth($y,$m);
+
         if(Ledger::where('date','<=',$range[2])->where('user_id',$this->user_id)->count()<=0){
             return true;
         }else{
