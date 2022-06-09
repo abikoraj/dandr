@@ -108,10 +108,15 @@ class NepaliDate
         }
 
         $start=$employee->start??0;
+
         $end=$employee->enddate??0;
+
         $days=self::$_bs[$year-2000][$month];
         $_start=$year*10000+$month*100+1;
         $_end=$year*10000+$month*100+$days;
+        if($end==0){
+            $end=$_end;
+        }
         $extra=0;
         if($_start>$end){
             // dd($start,$end,$_start,$_end,$days,$extra);

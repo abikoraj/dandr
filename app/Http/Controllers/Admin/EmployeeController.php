@@ -279,7 +279,6 @@ class EmployeeController extends Controller
         }
         $track=$base;
         $lastdate = NepaliDate::getDateMonthLast($request->year, $request->month);
-
         if(env('acc_system','old')=='old'){
             return view('admin.emp.salarypay.data_new', compact('track','arr', 'user', 'employee', 'empSession', 'prev','salaryLoaded','lastdate','salary'));
         }else{
