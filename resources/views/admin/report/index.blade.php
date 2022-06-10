@@ -74,7 +74,7 @@
         </span>
     </div>
     @endif
-    {{-- <div class="col-md-2 section href" data-target="{{route('admin.report.emp')}}">
+    <div class="col-md-2 section href" data-target="{{route('admin.report.emp')}}">
         <span class="icon">
             <i class="zmdi zmdi-truck"></i>
         </span>
@@ -82,7 +82,7 @@
         <span class="text">
             Employee <br> Report
         </span>
-    </div> --}}
+    </div>
     {{-- <div class="col-md-2 section href" data-target="{{route('admin.report.credit')}}">
         <span class="icon">
             <i class="zmdi zmdi-money-off"></i>

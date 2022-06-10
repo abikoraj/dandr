@@ -121,8 +121,7 @@
 </div>
 <hr>
 
-
-@if ($remaning < 0)
+@if ($remaning < 0 && $empSession==null)
     <div class="p-2">
         <div class="row">
             <div class="col-md-4">
@@ -150,11 +149,11 @@
         </div>
     </div>
 
-    @endif
     @if (($employee->sessionClosed($year, $month)))
         <div class="p-2">
             <hr>
-            <button class="btn btn-primary w-25" onclick="closeMonth()">Close Month</button>
+            <button class="btn btn-primary w-25" onclick="closeMonth({{$salaryLoaded?0:$salary}})">Close Month</button>
         </div>
     @endif
+@endif
 

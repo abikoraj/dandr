@@ -4,7 +4,9 @@
     <link rel="stylesheet" href="{{ asset('backend/plugins/select2/select2.css') }}" />
 
 @endsection
-@section('head-title', 'Employee Salary Payment')
+@section('head-title')
+<a href="{{route('admin.employee.index')}}">Employees</a> / Employee Salary Payment
+@endsection
 @section('toobar')
 @endsection
 @section('content')
@@ -79,8 +81,8 @@
 
 
 
-        function closeMonth(){
-            data={"emp_id":emp_id,"year":$('#year').val(),"month":$('#month').val()};
+        function closeMonth(amount){
+            data={"emp_id":emp_id,"year":$('#year').val(),"month":$('#month').val(),"amount":amount};
             if(confirm("Do You Want To Close Month")){
 
                 axios.post('{{route('admin.employee.account.close')}}',data)

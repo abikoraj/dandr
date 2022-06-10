@@ -548,10 +548,11 @@ class ReportController extends Controller
     {
         if ($request->getMethod() == "POST") {
             // dd($request->all());
-            $range = NepaliDate::getDateMonth($request->year, $request->month);
+
             $year = $request->year;
             $month = $request->month;
-            $employees = Employee::all();
+            $range = NepaliDate::getDateMonth($year, $month);
+            $employees = DB::table('employees')->where('enddate','<=',$range[2])->orWhereNull('enddate')->get();
             $data = [];
             foreach ($employees as $employee) {
                 if (EmployeeReport::where('employee_id', $employee->id)->where('year', $request->year)->where('month', $request->month)->count() > 0) {
@@ -561,8 +562,12 @@ class ReportController extends Controller
                     $employee->salary = $report->salary;
                     $employee->old = true;
                 } else {
-                    $employee->prevbalance = Ledger::where('user_id', $employee->user_id)->where('identifire', '101')->where('date', '>=', $range[1])->where('date', '<=', $range[2])->sum('amount');
+                    $employee->prevbalance = $prev = Ledger::where('date', '<', $range[1])->where('type', 2)->where('user_id', $employee->user_id)->sum('amount')
+                                             - Ledger::where('date', '<', $range[1])->where('type', 1)->where('user_id', $employee->user_id)->sum('amount');
                     $employee->advance = EmployeeAdvance::where('employee_id', $employee->id)->where('date', '>=', $range[1])->where('date', '<=', $range[2])->sum('amount');
+                    $employee->salary=NepaliDate::calculateSalary($year,$month,$employee);
+                    $employee->paid=Ledger::where('date', '>=', $range[1])->where('date', '<=', $range[2])->where('user_id', $employee->user_id)->where('identifire',124)->sum('amount');
+
                     $employee->old = false;
                 }
                 array_push($data, $employee);

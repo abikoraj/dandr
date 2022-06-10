@@ -4,7 +4,7 @@
 <link rel="stylesheet" href="{{ asset('calender/nepali.datepicker.v3.2.min.css') }}" />
 @endsection
 @section('head-title')
-    <a href="{{route('report.home')}}">Report</a> / Distributor
+    <a href="{{route('admin.report.home')}}">Report</a> / Distributor
 
 @endsection
 @section('toobar')
@@ -64,7 +64,7 @@
             'month':$('#month').val(),
 
         };
-        axios.post("{{route('report.emp')}}",d)
+        axios.post("{{route('admin.report.emp')}}",d)
         .then(function(response){
             $('#allData').html(response.data);
 

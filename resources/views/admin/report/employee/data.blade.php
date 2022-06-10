@@ -22,7 +22,7 @@
         Month : {{$month}}
     </span>
 </div>
-<form action="{{route('report.emp.session')}}" method="POST">
+<form action="{{route('admin.report.emp.session')}}" method="POST">
     @csrf
 
     <table>
@@ -38,16 +38,23 @@
                 Prev Advance
             </th>
             <th>
-                Advance
+                Prev Salary
             </th>
             <th>
                 Salary
             </th>
             <th>
+                Salary Paid
+            </th>
+            <th>
+                Advance
+            </th>
+
+            <th>
                 Remaning Salary
             </th>
             <th>
-                Remaning Balance
+                Remaning Advance
             </th>
             <th>
                 Bank Detail
@@ -57,10 +64,12 @@
     @php
         $i=0;
         $_prevbalance=0;
+        $_prevSalary=0;
         $_advance=0;
         $_salary=0;
+        $_paid=0;
         $_totalsalary=0;
-        $_totalbalance=0;
+        $_totaladvance=0;
     @endphp
     <tbody>
         @foreach ($data as $employee)
@@ -73,16 +82,44 @@
             <td>
                 {{++$i}}
                 @if (!$employee->old)
-                    <input type="hidden" name="employees[]" value="{{$employee->toJson()}}">
+                    <input type="hidden" name="employees[]" value="{{$employee->id}}">
                 @endif
             </td>
             <td>
                 {{$user->name}}
             </td>
             <td>
-                {{$employee->prevbalance}}
+                @if ($employee->prevbalance>0)
+
+                    {{$employee->prevbalance}}
+                    @php
+                        $_prevbalance+=$employee->prevbalance;
+                    @endphp
+                @else
+                0
+                @endif
+            </td>
+            <td>
+                @if ($employee->prevbalance<0)
+
+                    {{-1*$employee->prevbalance}}
+                    @php
+                        $_prevSalary+=(-1*$employee->prevbalance);
+                    @endphp
+                @else
+                0
+                @endif
+            </td>
+            <td>
+                {{$employee->salary}}
                 @php
-                    $_prevbalance+=$employee->prevbalance;
+                    $_salary+=$employee->salary;
+                @endphp
+            </td>
+            <td>
+                {{$employee->paid}}
+                @php
+                    $_paid+=$employee->paid;
                 @endphp
             </td>
             <td>
@@ -91,26 +128,22 @@
                     $_advance+=$employee->advance;
                 @endphp
             </td>
-            <td>
-                {{$employee->salary}}
-                @php
-                    $_salary+=$employee->salary;
-                @endphp
-            </td>
+
             @php
 
-                $t=$employee->salary-$employee->prevbalance-$employee->advance;
+                $t=$employee->prevbalance-($employee->salary-$employee->advance-$employee->paid);
             @endphp
-            <td>
-                {{$t>0?$t:0}}
-                @php
-                    $_totalsalary+=$t>0?$t:0;
-                @endphp
-            </td>
             <td>
                 {{$t<0?(-1*$t):0}}
                 @php
-                    $_totalbalance+$t<0?(-1*$t):0;
+                    $_totalsalary+=$t<0?(-1*$t):0;
+                @endphp
+
+            </td>
+            <td>
+                {{$t>0?$t:0}}
+                @php
+                    $_totaladvance+=$t>0?$t:0;
                 @endphp
             </td>
 
@@ -130,16 +163,23 @@
 
             </td>
             <td>
-                {{$_advance}}
+                {{$_prevSalary}}
+
             </td>
             <td>
                 {{$_salary}}
             </td>
             <td>
+                {{$_paid}}
+            </td>
+            <td>
+                {{$_advance}}
+            </td>
+            <td>
                 {{$_totalsalary}}
             </td>
             <td>
-                {{$_totalbalance}}
+                {{$_totaladvance}}
             </td>
             <td>------</td>
         </tr>
