@@ -12,7 +12,15 @@
                 <input type="text" name="date" id="date" class="form-control calender">
             </div>
             <div class="">
-                <label for="center_id">Branch</label>
+                <label for="from_center_id">Out Center </label>
+                <select name="from_center_id" id="from_center_id" class="form-control ms">
+                    @foreach ($centers as $center)
+                        <option value="{{ $center->id }}">{{ $center->name }}</option>
+                    @endforeach
+                </select>
+            </div>
+            <div class="">
+                <label for="center_id">In Center</label>
                 <select name="center_id" id="center_id" class="form-control ms">
                     @foreach ($centers as $center)
                         <option value="{{ $center->id }}">{{ $center->name }}</option>
@@ -245,6 +253,7 @@
                     info:{
                         date:$('#date').val(),
                         center_id:$('#center_id').val(),
+                        from_center_id:$('#from_center_id').val(),
                     },
                     items:selectedItems
                 };

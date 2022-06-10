@@ -268,7 +268,8 @@ class ItemController extends Controller
         }else{
             $sout=new StockOut();
             $date = str_replace('-', '', $request->info['date']);
-            $center_id = str_replace('-', '', $request->info['center_id']);
+            $center_id =  $request->info['center_id'];
+            $from_center_id =  $request->info['from_center_id'];
             // dd($request->items);
             $ids=[];
             try {
@@ -285,6 +286,7 @@ class ItemController extends Controller
                     ]);
                     array_push($ids,$sout_item->id);
                     $item=DB::table('items')->where('id',$sout_item->item_id)->first(['sell_price','wholesale']);
+                    $outstock=CenterStock::where('item_id',$sout_item->item_id)->where('center_id',$from_center_id)->first();
                     $instock=CenterStock::where('item_id',$sout_item->item_id)->where('center_id',$center_id)->first();
                     if($instock==null){
                         $instock=new CenterStock();
@@ -298,9 +300,6 @@ class ItemController extends Controller
 
                     }
                     $instock->save();
-
-                    $outstock=CenterStock::where('item_id',$sout_item->item_id)->where('center_id',env('maincenter'))->first();
-
                     if($outstock==null){
                         $outstock=new CenterStock();
                         $outstock->item_id=$sout_item->item_id;
