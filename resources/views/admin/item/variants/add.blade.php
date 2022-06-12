@@ -55,8 +55,8 @@
                 @foreach ($centers as $center)
                     <tr>
                         <td>{{$center->name}} <input type="hidden" name="centers[]" value="{{$center->id}}"> </td>
-                        <td> <input type="number" step="0.01" name="wholesale_{{$center->id}}" id="wholesale_{{$center->id}}" class="form-control"> </td>
-                        <td> <input type="number" step="0.01" name="price_{{$center->id}}" id="price_{{$center->id}}" class="form-control"> </td>
+                        <td> <input type="number" step="0.01" name="wholesale_{{$center->id}}" id="wholesale_{{$center->id}}" class="form-control" required> </td>
+                        <td> <input type="number" step="0.01" name="price_{{$center->id}}" id="price_{{$center->id}}" class="form-control" required> </td>
                     </tr>
                 @endforeach
             </table>
