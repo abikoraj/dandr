@@ -25,92 +25,125 @@ class ItemVariantController extends Controller
             } else {
                 $variant_prices = [];
             }
-            return view('admin.item.variants.index', compact('item', 'variants', 'variant_prices','centers'));
+            return view('admin.item.variants.index', compact('item', 'variants', 'variant_prices', 'centers'));
         }
     }
 
-    public function update($id,Request $request)
+    public function update($id, Request $request)
     {
-            $variant =ItemVariant::where('id', $id)->first();
-            if(!env('multi_package',false)){
-                $variant->unit=$request->unit;
+        $variant = ItemVariant::where('id', $id)->first();
+        if (!env('multi_package', false)) {
+            $variant->unit = $request->unit;
+        }
+
+        if (!env('multi_stock', false)) {
+            $variant->wholesale = $request->wholesale ?? 0;
+            $variant->price = $request->price ?? 0;
+        }
+        if (env('multi_package', false)) {
+
+            $item = DB::table('items')->where('id', $variant->item_id)->first(['conversion_id']);
+            // dd($item);/
+            $main = DB::table('conversions')->where('id', $item->conversion_id)->first();
+            $local = DB::table('conversions')->where('id', $variant->conversion_id)->first();
+            if ($local->parent_id == 0) {
+                $ratio = $main->local / $main->main;
+            } else {
+                $ratio1 = $main->local / $main->main;
+                $ratio2 = $local->local / $local->main;
+                $ratio = $ratio1 / $ratio2;
             }
+            $variant->ratio = $ratio;
+        } else {
+            $variant->ratio = $request->ratio;
+        }
+        $variant->save();
 
-            if(!env('multi_stock',false)){
-                $variant->wholesale=$request->wholesale??0;
-                $variant->price=$request->price??0;
-            }
-            $variant->save();
+        if (env('multi_stock', false)) {
+            if ($request->filled('centers')) {
+                foreach ($request->centers as $key => $center_id) {
+                    $price = $request->input('price_' . $center_id);
+                    $wholesale = $request->input('wholesale_' . $center_id);
 
-            if(env('multi_stock',false)){
-                if($request->filled('centers')){
-                    foreach ($request->centers as $key => $center_id) {
-                        $price=$request->input('price_'.$center_id);
-                        $wholesale=$request->input('wholesale_'.$center_id);
-
-                        $variantPrice=ItemVariantPrice::where('center_id',$center_id)->where('item_variant_id',$variant->id)->first();
-                        if($variantPrice==null){
-                            $variantPrice=new ItemVariantPrice();
-                            $variantPrice->center_id=$center_id;
-                            $variantPrice->item_variant_id=$variant->id;
-                        }
-                        $variantPrice->wholesale=$wholesale;
-                        $variantPrice->price=$price;
-                        $variantPrice->save();
-                        if($center_id==env('maincenter',-1)){
-                            $variant->price=$price;
-                            $variant->wholesale=$wholesale;
-                            $variant->save();
-                        }
+                    $variantPrice = ItemVariantPrice::where('center_id', $center_id)->where('item_variant_id', $variant->id)->first();
+                    if ($variantPrice == null) {
+                        $variantPrice = new ItemVariantPrice();
+                        $variantPrice->center_id = $center_id;
+                        $variantPrice->item_variant_id = $variant->id;
+                    }
+                    $variantPrice->wholesale = $wholesale;
+                    $variantPrice->price = $price;
+                    $variantPrice->save();
+                    if ($center_id == env('maincenter', -1)) {
+                        $variant->price = $price;
+                        $variant->wholesale = $wholesale;
+                        $variant->save();
                     }
                 }
             }
+        }
 
-            return redirect()->back()->with('message','Varaint Updated sucessfully');
-
+        return redirect()->back()->with('message', 'Varaint Updated sucessfully');
     }
 
 
-    public function del($id){
+    public function del($id)
+    {
         DB::delete('delete from item_variant_prices where item_variant_id = ?', [$id]);
         DB::delete('delete from item_variants where id = ?', [$id]);
-        return redirect()->back()->with('message','Varaint deleted sucessfully');
-
+        return redirect()->back()->with('message', 'Varaint deleted sucessfully');
     }
     public function add($id, Request $request)
     {
         if ($request->getMethod() == "POST") {
-            $variant=new ItemVariant();
-            $variant->item_id=$id;
-            $variant->unit=$request->unit??'';
-            $variant->wholesale=$request->wholesale??0;
-            $variant->price=$request->price??0;
-            if($request->filled('conversion_id')){
-                $variant->conversion_id=$request->conversion_id;
-                $variant->unit=DB::table('conversions')->where('id',$request->conversion_id)->first(['name'])->name;
+            $variant = new ItemVariant();
+            $variant->item_id = $id;
+            $variant->unit = $request->unit ?? '';
+            $variant->wholesale = $request->wholesale ?? 0;
+            $variant->price = $request->price ?? 0;
+            if ($request->filled('conversion_id')) {
+                $variant->conversion_id = $request->conversion_id;
+                $variant->unit = DB::table('conversions')->where('id', $request->conversion_id)->first(['name'])->name;
             }
+
+            if (env('multi_package', false)) {
+
+                $item = DB::table('items')->where('id', $id)->first(['conversion_id']);
+                $main = DB::table('conversions')->where('id', $item->conversion_id)->first();
+                $local = DB::table('conversions')->where('id', $variant->conversion_id)->first();
+                if ($local->parent_id == 0) {
+                    $ratio = $main->local / $main->main;
+                } else {
+                    $ratio1 = $main->local / $main->main;
+                    $ratio2 = $local->local / $local->main;
+                    $ratio = $ratio1 / $ratio2;
+                }
+                $variant->ratio = $ratio;
+            } else {
+                $variant->ratio = $request->ratio;
+            }
+
             $variant->save();
-            if(env('multi_stock',false)){
-                if($request->filled('centers')){
+            if (env('multi_stock', false)) {
+                if ($request->filled('centers')) {
                     foreach ($request->centers as $key => $center_id) {
-                        $price=$request->input('price_'.$center_id);
-                        $wholesale=$request->input('wholesale_'.$center_id);
-                        $variantPrice=new ItemVariantPrice();
-                        $variantPrice->center_id=$center_id;
-                        $variantPrice->wholesale=$wholesale;
-                        $variantPrice->price=$price;
-                        $variantPrice->item_variant_id=$variant->id;
+                        $price = $request->input('price_' . $center_id);
+                        $wholesale = $request->input('wholesale_' . $center_id);
+                        $variantPrice = new ItemVariantPrice();
+                        $variantPrice->center_id = $center_id;
+                        $variantPrice->wholesale = $wholesale;
+                        $variantPrice->price = $price;
+                        $variantPrice->item_variant_id = $variant->id;
                         $variantPrice->save();
-                        if($center_id==env('maincenter',-1)){
-                            $variant->price=$price;
-                            $variant->wholesale=$wholesale;
+                        if ($center_id == env('maincenter', -1)) {
+                            $variant->price = $price;
+                            $variant->wholesale = $wholesale;
                             $variant->save();
                         }
                     }
                 }
             }
             return response('ok');
-
         } else {
 
 
@@ -128,7 +161,7 @@ class ItemVariantController extends Controller
                         $query->where('id', $main->parent_id);
                         $query->orWhere('parent_id', $main->parent_id);
                     })
-                    ->where('id', '<>', $item->conversion_id);
+                        ->where('id', '<>', $item->conversion_id);
                 } else {
                     $units = DB::table('conversions')->Where('parent_id', $main->id);
                 }

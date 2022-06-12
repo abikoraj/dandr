@@ -19,6 +19,14 @@
                     @endif
                 </div>
             </div>
+            @if(!env('multi_package'))
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label for="ratio">Per unit of item</label>
+                        <input type="number" step="0.00001" class="form-control" name="ratio" id="ratio">
+                    </div>
+                </div>
+            @endif
             @if (!env('multi_stock',false))
             <div class="col-md-3">
                 <div class="form-group">

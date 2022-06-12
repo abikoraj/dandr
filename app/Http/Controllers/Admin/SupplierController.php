@@ -389,7 +389,6 @@ class SupplierController extends Controller
         if(env('multi_package',false)){
             $billItem = DB::select("select concat(title,' (',(select name from conversions where id=supplierbillitems.conversion_id),')') as title,conversion_qty as qty,conversion_rate as rate from supplierbillitems where supplierbill_id=?",[$request->bill_id] );
         }else{
-
             $billItem = DB::table('supplierbillitems')->where('supplierbill_id', $request->bill_id)->get(['title','rate','qty']);
         }
         // dd($billItem);
