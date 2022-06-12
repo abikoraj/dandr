@@ -46,12 +46,18 @@ class ItemVariantController extends Controller
             // dd($item);/
             $main = DB::table('conversions')->where('id', $item->conversion_id)->first();
             $local = DB::table('conversions')->where('id', $variant->conversion_id)->first();
-            if ($local->parent_id == 0) {
-                $ratio = $main->local / $main->main;
-            } else {
-                $ratio1 = $main->local / $main->main;
-                $ratio2 = $local->local / $local->main;
-                $ratio = $ratio1 / $ratio2;
+            if($main->parent_id==0){
+                $ratio = $local->local / $local->main;
+                $ratio=1/$ratio;
+            }else{
+
+                if ($local->parent_id == 0) {
+                    $ratio = $main->local / $main->main;
+                } else {
+                    $ratio1 = $main->local / $main->main;
+                    $ratio2 = $local->local / $local->main;
+                    $ratio = $ratio1 / $ratio2;
+                }
             }
             $variant->ratio = $ratio;
         } else {
@@ -111,12 +117,18 @@ class ItemVariantController extends Controller
                 $item = DB::table('items')->where('id', $id)->first(['conversion_id']);
                 $main = DB::table('conversions')->where('id', $item->conversion_id)->first();
                 $local = DB::table('conversions')->where('id', $variant->conversion_id)->first();
-                if ($local->parent_id == 0) {
-                    $ratio = $main->local / $main->main;
-                } else {
-                    $ratio1 = $main->local / $main->main;
-                    $ratio2 = $local->local / $local->main;
-                    $ratio = $ratio1 / $ratio2;
+                if($main->parent_id==0){
+                    $ratio = $local->local / $local->main;
+                    $ratio=1/$ratio;
+                }else{
+
+                    if ($local->parent_id == 0) {
+                        $ratio = $main->local / $main->main;
+                    } else {
+                        $ratio1 = $main->local / $main->main;
+                        $ratio2 = $local->local / $local->main;
+                        $ratio = $ratio1 / $ratio2;
+                    }
                 }
                 $variant->ratio = $ratio;
             } else {

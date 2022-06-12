@@ -35,7 +35,7 @@ class ItemController extends Controller
 
     public function variants(Request $request){
         $variants=DB::select('select * from item_variants');
-        $variantsPrices=DB::select('select v.unit,v.conversion_id,vp.wholesale,vp.price,vp.id,v.item_id,i.title
+        $variantsPrices=DB::select('select v.ratio,v.unit,vp.wholesale,vp.price,vp.id,v.item_id
         from item_variant_prices vp
         join item_variants v on vp.item_variant_id=v.id
         join items i on v.item_id=i.id

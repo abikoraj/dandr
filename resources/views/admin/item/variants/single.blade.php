@@ -27,13 +27,13 @@
             <div class="col-md-3">
                 <div class="form-group">
                     <label for="wholesale">Wholesale</label>
-                    <input type="number" name="wholesale" id="wholesale" class="form-control" value="{{$variant->wholesale}}" required>
+                    <input type="number" step="0.01" name="wholesale" id="wholesale" class="form-control" value="{{$variant->wholesale}}" required>
                 </div>
             </div>
             <div class="col-md-3">
                 <div class="form-group">
                     <label for="price">Price</label>
-                    <input type="number" name="price" id="price" class="form-control" value="{{$variant->price}}"  required>
+                    <input type="number" step="0.01" name="price" id="price" class="form-control" value="{{$variant->price}}"  required>
                 </div>
             </div>
             @else
