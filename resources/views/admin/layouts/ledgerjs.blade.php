@@ -9,18 +9,21 @@
             win.shown=true;
             console.log(win);
         },
-        showGet:(title,URL)=>{
+        showGet:(title,URL,callback)=>{
             $('#wt').html(title);
             axios.get(URL)
             .then((res)=>{
                 $('#wc').html(res.data);
                 $(win.id).addClass('shown');
                 win.shown=true;
+                if(callback!=undefined){
+                    callback();
+                }
             });
-        
+
             console.log(win);
         },
-        showPost:(title,URL,data)=>{
+        showPost:(title,URL,data,callback)=>{
             $('#wt').html(title);
             data._token="{{ csrf_token() }}";
             axios.post(URL,data)
@@ -28,8 +31,11 @@
                 $('#wc').html(res.data);
                 $(win.id).addClass('shown');
                 win.shown=true;
+                if(callback!=undefined){
+                    callback();
+                }
             });
-        
+
             console.log(win);
         },
         hide:()=>{
@@ -90,5 +96,5 @@
         }
     }
 
-    
+
 </script>

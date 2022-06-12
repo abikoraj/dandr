@@ -194,7 +194,7 @@ class FarmerController extends Controller
         $farmer->usecc = $request->usecc ?? 0;
         $farmer->usetc = $request->usetc ?? 0;
         $farmer->userate = $request->userate ?? 0;
-        $farmer->rate = $request->f_rate;
+        $farmer->rate = $request->f_rate??0;
         $farmer->no = $max;
         $farmer->save();
 

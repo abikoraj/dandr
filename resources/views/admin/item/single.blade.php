@@ -12,6 +12,8 @@
     @endif
     {{-- <td>{{$item->reward_percentage}}</td> --}}
     <td>
+        <a href="{{route('admin.item.variants.index',['item'=>$item->id])}}" class="btn btn-primary">Variants</a>
+
         @if (auth_has_per('03.02'))
         <button  class="btn btn-primary btn-sm"  onclick="initEdit({{$item->id}});" >Edit</button>
         @endif

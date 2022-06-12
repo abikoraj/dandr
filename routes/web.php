@@ -15,6 +15,7 @@ use App\Http\Controllers\Admin\GatewayController;
 use App\Http\Controllers\Admin\ImportController;
 use App\Http\Controllers\Admin\ItemController;
 use App\Http\Controllers\Admin\ItemStockController;
+use App\Http\Controllers\Admin\ItemVariantController;
 use App\Http\Controllers\Admin\Manufacture\ManufactreProductController;
 use App\Http\Controllers\Admin\Manufacture\ManufactureProcessController;
 use App\Http\Controllers\Admin\OfferController;
@@ -245,6 +246,13 @@ Route::name('admin.')->group(function () {
             Route::match(['GET', 'POST'], 'item-center-stock/{id}', [ItemController::class, 'centerStock'])->name('center-stock')->middleware('permmission:03.05');
             Route::get('item-delete/{id}', [ItemController::class, 'delete'])->name('delete')->middleware('authority')->middleware('permmission:03.03');
             Route::post('item-update', [ItemController::class, 'update'])->name('update')->middleware('authority')->middleware('permmission:03.02');
+            //XXX variants
+               Route::prefix('variants')->name('variants.')->group(function () {
+                    Route::match(['GET','POST'],'list/{item}',[ItemVariantController::class,'index'])->name('index');
+                    Route::match(['GET','POST'],'add/{id}',[ItemVariantController::class,'add'])->name('add');
+                    Route::match(['POST'],'update/{id}',[ItemVariantController::class,'update'])->name('update');
+                    Route::match(['POST','GET'],'del/{id}',[ItemVariantController::class,'del'])->name('del');
+               });
         });
 
         Route::prefix('sell-items')->name('sell.item.')->middleware('permmission:01.08')->group(function () {
