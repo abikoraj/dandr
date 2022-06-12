@@ -60,6 +60,7 @@ Route::middleware(['auth:api'])->group(function () {
         Route::post('sync-ledger', [ItemController::class,'syncLedger']);
     });
 });
+Route::match(['GET',"POST"],'variants', [ItemController::class,'variants']);
 Route::match(['GET',"POST"],'show-ledger', [ItemController::class,'showLedger']);
 
 // Route::get('json/{table}',function($table){

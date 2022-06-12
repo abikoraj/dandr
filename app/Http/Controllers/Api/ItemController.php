@@ -24,13 +24,24 @@ class ItemController extends Controller
     //
     public function index(Request $request)
     {
-        $items = DB::select('select id,title,sell_price,wholesale,stock ,number as barcode,unit,taxable,tax,
+        $items = DB::select('select id,title,sell_price,wholesale,stock ,number as barcode,unit,taxable,tax,conversion_id,
         (select IFNULL(sum(amount),0) from center_stocks where item_id=items.id and center_id=?) as center_stock,
         (select IFNULL(sum(rate),0) from center_stocks where item_id=items.id and center_id=?) as center_rate,
         (select IFNULL(sum(wholesale),0) from center_stocks where item_id=items.id and center_id=?) as center_wholesale
         from items ', [$request->center_id, $request->center_id, $request->center_id]);
 
         return response(json_encode($items, JSON_PRESERVE_ZERO_FRACTION));
+    }
+
+    public function variants(Request $request){
+        $variants=DB::select('select * from item_variants');
+        $variantsPrices=DB::select('select v.unit,v.conversion_id,vp.wholesale,vp.price,vp.id,v.item_id,i.title
+        from item_variant_prices vp
+        join item_variants v on vp.item_variant_id=v.id
+        join items i on v.item_id=i.id
+        where vp.center_id=?',[$request->center_id]);
+        return response(json_encode($variantsPrices, JSON_PRESERVE_ZERO_FRACTION));
+
     }
 
     public function syncBills(Request $request)

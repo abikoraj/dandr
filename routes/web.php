@@ -253,6 +253,11 @@ Route::name('admin.')->group(function () {
                     Route::match(['POST'],'update/{id}',[ItemVariantController::class,'update'])->name('update');
                     Route::match(['POST','GET'],'del/{id}',[ItemVariantController::class,'del'])->name('del');
                });
+
+               Route::prefix('packaging')->name('packaging.')->group(function () {
+
+               });
+
         });
 
         Route::prefix('sell-items')->name('sell.item.')->middleware('permmission:01.08')->group(function () {

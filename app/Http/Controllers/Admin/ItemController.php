@@ -85,11 +85,16 @@ class ItemController extends Controller
         $item->cost_price = $request->cost_price??0;
         $item->sell_price = $request->sell_price??0;
         $item->stock = $request->stock??0;
-        $item->unit = $request->unit??'--';
+        if($request->filled('unit')){
+            $item->unit = $request->unit??'--';
+        }
         $item->wholesale = $request->wholesale??0;
         $item->reward_percentage = $request->reward;
         $item->points = $request->points;
-        $item->conversion_id = $request->conversion_id;
+        if($request->filled('conversion_id')){
+            $item->conversion_id = $request->conversion_id;
+            $item->unit=DB::table('conversions')->where('id',$request->conversion_id)->select('name')->first()->name;
+        }
         if($request->hasFile('image')){
             $item->image=$request->image->store('uploads/item');
         }
@@ -160,10 +165,16 @@ class ItemController extends Controller
         if($request->filled('stock')){
             $item->stock = $request->stock??0;
         }
-        $item->unit = $request->unit??'--';
+        if($request->filled('unit')){
+
+            $item->unit = $request->unit??'--';
+        }
         $item->reward_percentage = $request->reward;
         $item->points = $request->points;
-        $item->conversion_id = $request->conversion_id;
+        if($request->filled('conversion_id')){
+            $item->conversion_id = $request->conversion_id;
+            $item->unit=DB::table('conversions')->where('id',$request->conversion_id)->select('name')->first()->name;
+        }
 
         if($request->hasFile('image')){
             $item->image=$request->image->store('uploads/item');
