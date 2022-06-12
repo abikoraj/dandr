@@ -1,7 +1,7 @@
 @extends('admin.layouts.app')
 @section('title', 'Items')
 @section('head-title')
-<a href="{{route('admin.item.index')}}">Items</a> / {{$item->name}} / Variants
+<a href="{{route('admin.item.index')}}">Items</a> / {{$item->title}} / Variants
 @endsection
 
 @section('toobar')
