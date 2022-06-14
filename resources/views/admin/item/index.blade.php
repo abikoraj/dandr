@@ -138,10 +138,12 @@
 
         // delete item
         function removeData(id) {
+            let url="{{route('admin.item.delete',['id'=>'xxx_id'])}}";
+            url=url.replace('xxx_id',id);
             if (confirm('Are you sure?')) {
                 axios({
                         method: 'get',
-                        url: '/admin/item-delete/' + id,
+                        url: url,
                     })
                     .then(function(response) {
                         showNotification('bg-danger', 'Item deleted successfully!');

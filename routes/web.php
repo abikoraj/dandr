@@ -244,7 +244,7 @@ Route::name('admin.')->group(function () {
             Route::post('edit', [ItemController::class, 'edit'])->name('edit')->middleware('permmission:03.02');
             Route::post('add', [ItemController::class, 'save'])->name('save')->middleware('permmission:03.01');
             Route::match(['GET', 'POST'], 'item-center-stock/{id}', [ItemController::class, 'centerStock'])->name('center-stock')->middleware('permmission:03.05');
-            Route::get('item-delete/{id}', [ItemController::class, 'delete'])->name('delete')->middleware('authority')->middleware('permmission:03.03');
+            Route::get('item-delete/{id}', [ItemController::class, 'delete'])->name('delete')->middleware('permmission:03.03');
             Route::post('item-update', [ItemController::class, 'update'])->name('update')->middleware('authority')->middleware('permmission:03.02');
             //XXX variants
                Route::prefix('variants')->name('variants.')->group(function () {
