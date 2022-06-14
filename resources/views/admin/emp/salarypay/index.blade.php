@@ -53,6 +53,9 @@
                         <span class="btn btn-primary" onclick="loadEmployeeData();" style="margin-top:30px;">Load
                             Data</span>
                     </div>
+                    <div class="col-lg-3">
+                        <span class="btn btn-success" onclick="printDiv('data');" style="margin-top:30px;">Print</span>
+                    </div>
 
                 </div>
             </form>
