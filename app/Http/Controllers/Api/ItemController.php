@@ -46,6 +46,7 @@ class ItemController extends Controller
 
     public function syncBills(Request $request)
     {
+
         $pointSetting=getSetting('point')??(object)([
             'type'=>0,
             'point'=>0,
@@ -131,6 +132,9 @@ class ItemController extends Controller
             if($pointSetting->type==1){
                 $point=$bill->grandtotal/$pointSetting->per*$pointSetting->point;
             }
+            $item_ids=[];
+            $variants=[];
+
             foreach ($request->items as $key => $_bi) {
                 if ($_bi != null) {
                     $bi = new PosBillItem();
@@ -146,18 +150,24 @@ class ItemController extends Controller
                     $bi->tax_per = $_bi['tax_per'];
                     $bi->total = $_bi['total'];
                     $bi->use_tax = $_bi['use_tax'];
+                    $bi->item_variant_id=$_bi['variant_id'];
+                    $soldQty=$bi->qty;
+                    if($bi->item_variant_id!=null){
+
+                        $soldQty=(DB::table('item_variants')->where('id',$bi->item_variant_id)->first(['ratio'])->ratio)*$soldQty;
+                    }
                     $item = Item::where('id', $_bi['item_id'])->select('id', 'title', 'wholesale', 'sell_price', 'stock', 'trackstock','points')->first();
                     if ($item->trackstock == 1) {
-                        $item->stock -= $bi->qty;
+                        $item->stock -= $soldQty;
                         $item->save();
                         if($pointSetting->type==2){
-                            $point+=$bi->qty*$item->points;
+                            $point+=$soldQty*$item->points;
                         }
                         array_push(
                             $items,
                             [
                                 'item' => $item,
-                                'qty' => $bi->qty
+                                'qty' => $soldQty
                             ]
                         );
                         $center_stock = CenterStock::where('center_id', $request->center_id)->where('item_id', $item->id)->first();
@@ -167,21 +177,23 @@ class ItemController extends Controller
                             $center_stock->item_id = $item->id;
                             $center_stock->wholesale = $item->wholesale;
                             $center_stock->rate = $item->sell_price;
-                            $center_stock->amount = -1 * $bi->qty;
+                            $center_stock->amount = -1 * $soldQty;
                             $center_stock->save();
                         } else {
-                            $center_stock->amount -= $bi->qty;
+                            $center_stock->amount -= $soldQty;
                             $center_stock->save();
                         }
                         array_push($centers, [
                             'stock' => $center_stock,
-                            'qty' => $bi->qty
+                            'qty' => $soldQty
                         ]);
                     }
                     $bi->save();
                     array_push($bis, $bi);
                 }
             }
+
+
 
             $bill->points=$point;
             $bill->save();
