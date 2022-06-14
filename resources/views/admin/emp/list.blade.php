@@ -7,7 +7,11 @@
     <td>{{ $emp->salary??'--' }}</td>
     <td>
         @if (auth_has_per('05.03'))
-        <button  type="button" data-employee="{{$emp->user->toJson()}}" data-acc="{{ $emp->acc??'--' }}" data-salary="{{ $emp->salary??'--' }}" class="btn btn-primary btn-sm" onclick="initEdit(this);" >Edit</button>
+        <button  type="button" data-employee="{{$emp->user->toJson()}}"
+            data-start="{{$emp->start!=null?_nepalidate( $emp->start):'' }}"
+            data-end="{{ $emp->enddate!=null?_nepalidate( $emp->enddate):'' }}"
+            data-acc="{{ $emp->acc??'--' }}"
+            data-salary="{{ $emp->salary??'--' }}" class="btn btn-primary btn-sm" onclick="initEdit(this);" >Edit</button>
         @endif
         |
         <a href="{{ route('admin.employee.detail',$emp->user->id) }}" class="btn btn-primary btn-sm" target="_blank">View</a>

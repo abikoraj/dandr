@@ -346,6 +346,12 @@ Route::name('admin.')->group(function () {
             Route::match(['get', 'post'], 'account-add', [EmployeeController::class, 'accountAdd'])->name('account.add');
             //XXX Employee Month Closing
             Route::post('account-closing', [EmployeeController::class, 'closeSession'])->name('account.close');
+               //XXX Employee Advance Management
+            Route::get('ret', [EmployeeController::class,'ret'])->name('ret');
+            Route::post('addret', [EmployeeController::class,'addRet'])->name('ret.add');
+            Route::post('getret', [EmployeeController::class,'getRet'])->name('ret.list');
+            Route::post('delret', [EmployeeController::class,'delRet'])->name('ret.del')->middleware('authority');;
+            Route::post('updateret', [EmployeeController::class,'updateRet'])->name('ret.update')->middleware('authority');
         });
 
 

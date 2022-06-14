@@ -49,6 +49,9 @@
             <th>
                 Advance
             </th>
+            <th>
+                Returned
+            </th>
 
             <th>
                 Remaning Salary
@@ -70,13 +73,10 @@
         $_paid=0;
         $_totalsalary=0;
         $_totaladvance=0;
+        $_returned=0;
     @endphp
     <tbody>
         @foreach ($data as $employee)
-        @php
-            $user = \App\Models\User::where('id',$employee->user_id)->first();
-        @endphp
-        @if ($user!=null)
 
         <tr>
             <td>
@@ -86,7 +86,7 @@
                 @endif
             </td>
             <td>
-                {{$user->name}}
+                {{$employee->name}}
             </td>
             <td>
                 @if ($employee->prevbalance>0)
@@ -128,10 +128,16 @@
                     $_advance+=$employee->advance;
                 @endphp
             </td>
+            <td>
+                {{$employee->returned}}
+                @php
+                    $_returned+=$employee->returned;
+                @endphp
+            </td>
 
             @php
 
-                $t=$employee->prevbalance-($employee->salary-$employee->advance-$employee->paid);
+                $t=$employee->prevbalance-($employee->salary-$employee->advance-$employee->paid+$employee->returned);
             @endphp
             <td>
                 {{$t<0?(-1*$t):0}}
@@ -152,7 +158,6 @@
             </td>
 
         </tr>
-        @endif
         @endforeach
         <tr class="font-weight-bold">
             <td colspan="2">
@@ -175,6 +180,10 @@
             <td>
                 {{$_advance}}
             </td>
+            <td>
+                {{$_returned}}
+            </td>
+
             <td>
                 {{$_totalsalary}}
             </td>

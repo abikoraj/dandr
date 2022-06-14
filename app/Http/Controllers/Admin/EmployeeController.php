@@ -448,4 +448,42 @@ class EmployeeController extends Controller
         $ledger->name = User::where('id', $request->employee)->select('name')->first()->name;
         return view('admin.emp.account.single', compact('ledger'));
     }
+
+    public function ret(){
+        return view('admin.emp.ret.index');
+    }
+    public function addRet(Request $request){
+        $date = str_replace('-', '', $request->date);
+        $np = new NepaliDate($date);
+        $employee = Employee::where('id', $request->employee_id)->first();
+        $ledger = new LedgerManage($employee->user_id);
+        $advance=$ledger->addLedger( $request->title , 1, $request->amount, $date, '140', );
+        return view('admin.emp.ret.single', compact('advance'));
+    }
+    public function getRet(Request $request)
+    {
+        $date = str_replace('-', '', $request->date);
+        $advances = Ledger::where('date', $date)->where('identifire',140)->get();
+        // dd($advances);
+        return view('admin.emp.ret.list', compact('advances'));
+    }
+
+    public function delRet(Request $request)
+    {
+        $date = str_replace('-', '', $request->date);
+
+        $ledger = Ledger::where('id',$request->id)->delete();
+
+        return response()->json(['status' => 'success']);
+    }
+
+    public function updateRet(Request $request)
+    {
+        $advance = Ledger::find($request->id);
+        $advance->title = $request->title;
+        $advance->amount = $request->amount;
+        $advance->save();
+        return response()->json(['status' => 'success']);
+
+    }
 }

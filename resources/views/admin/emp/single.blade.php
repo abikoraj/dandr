@@ -4,8 +4,11 @@
     <td>{{ $emp->user->address }}</td>
     <td>{{ $emp->salary??'--' }}</td>
     <td>
-        <button  type="button" data-employee="{{$emp->user->toJson()}}"  data-start="{{ $emp->start??'--' }}"  data-end="{{ $emp->end??'--' }}" data-acc="{{ $emp->acc??'--' }}" data-salary="{{ $emp->salary??'--' }}" class="btn btn-primary btn-sm" onclick="initEdit(this);" >Edit</button>
-        |
+        <button  type="button" data-employee="{{$emp->user->toJson()}}"
+            data-start="{{$emp->start!=null?_nepalidate( $emp->start):'' }}"
+            data-end="{{ $emp->enddate!=null?_nepalidate( $emp->enddate):'' }}"
+            data-acc="{{ $emp->acc??'--' }}"
+            data-salary="{{ $emp->salary??'--' }}" class="btn btn-primary btn-sm" onclick="initEdit(this);" >Edit</button>        |
         <a href="{{ route('admin.employee.detail',$emp->user->id) }}" class="btn btn-primary btn-sm" target="_blank">View</a>
         |
         <button class="btn btn-danger btn-sm" onclick="removeData({{$emp->user->id}});">Delete</button></td>

@@ -40,13 +40,16 @@
 @section('js')
 <script>
     function initEdit(ele) {
+        console.log(ele.dataset);
         var employee = JSON.parse(ele.dataset.employee);
-        console.log(employee);
         $('#ename').val(employee.name);
         $('#ephone').val(employee.phone);
         $('#eaddress').val(employee.address);
         $('#esalary').val(ele.dataset.salary);
         $('#eid').val(employee.id);
+        $('#eid').val(employee.id);
+        $('#estart').val(ele.dataset.start);
+        $('#eend').val(ele.dataset.end);
         $('#eacc').val(ele.dataset.acc);
         $('#editModal').modal('show');
     }

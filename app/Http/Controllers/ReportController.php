@@ -107,14 +107,14 @@ class ReportController extends Controller
         $nextdate = NepaliDate::getNextDate($request->year, $request->month, $request->session);
         $lastdate = $lastdate = str_replace('-', '', $request->date);;
         $ledger = new LedgerManage($request->id);
-        if(env('acc_system',"old")=="old"){
+        if (env('acc_system', "old") == "old") {
             if (env('hasextra', 0) == 1) {
                 $ledger->addLedger("Bonus", 1, $request->bonus, $lastdate, '124');
             }
             if ($request->grandtotal > 0) {
                 $ledger->addLedger("Payment for milk (" . ($request->milk) . "l)", 2, $request->grandtotal, $lastdate, '108');
             }
-        }else{
+        } else {
             if (env('hasextra', 0) == 1) {
                 $ledger->addLedger("Bonus", 2, $request->bonus, $lastdate, '124');
             }
@@ -161,11 +161,10 @@ class ReportController extends Controller
             $ledger = new LedgerManage($data->id);
             $grandtotal = $data->grandtotal ?? 0;
             if ($data->grandtotal > 0) {
-                if(env('acc_system',"old")=="old"){
+                if (env('acc_system', "old") == "old") {
                     $ledger->addLedger("Payment for milk (" . ($data->milk) . "l X " . ($data->rate ?? 0) . ")", 2, $data->grandtotal ?? 0, $lastdate, '108');
-                }else{
+                } else {
                     $ledger->addLedger("Payment for milk (" . ($data->milk) . "l X " . ($data->rate ?? 0) . ")", 1, $data->grandtotal ?? 0, $lastdate, '108');
-
                 }
             }
 
@@ -350,10 +349,10 @@ class ReportController extends Controller
             $type = $request->type;
             $range = [];
             $bill = PosBill::orderBy('id', 'asc');
-            $bill_items = PosBillItem::join('pos_bills','pos_bills.id','=','pos_bill_items.pos_bill_id');
-            $salesReturn_query=CreditNote::orderBy('id', 'asc');
+            $bill_items = PosBillItem::join('pos_bills', 'pos_bills.id', '=', 'pos_bill_items.pos_bill_id');
+            $salesReturn_query = CreditNote::orderBy('id', 'asc');
             if ($type == 0) {
-                $range = NepaliDate::getDate($request->year, $request->month,$request->session);
+                $range = NepaliDate::getDate($request->year, $request->month, $request->session);
                 $bill = $bill->where('date', '>=', $range[1])->where('date', '<=', $range[2]);
                 $salesReturn_query = $salesReturn_query->where('date', '>=', $range[1])->where('date', '<=', $range[2]);
                 $bill_items = $bill_items->where('pos_bills.date', '>=', $range[1])->where('pos_bills.date', '<=', $range[2]);
@@ -384,9 +383,9 @@ class ReportController extends Controller
                 $salesReturn_query = $salesReturn_query->where('date', '>=', $range[1])->where('date', '<=', $range[2]);
                 $bill_items = $bill_items->where('pos_bills.date', '>=', $range[1])->where('pos_bills.date', '<=', $range[2]);
             } elseif ($type == 6) {
-                $fiscalYear=FiscalYear::find($request->fiscalYear);
-                $range[1]=$fiscalYear->startdate;
-                $range[2]=$fiscalYear->enddate;
+                $fiscalYear = FiscalYear::find($request->fiscalYear);
+                $range[1] = $fiscalYear->startdate;
+                $range[2] = $fiscalYear->enddate;
                 $bill = $bill->where('date', '>=', $range[1])->where('date', '<=', $range[2]);
                 $salesReturn_query = $salesReturn_query->where('date', '>=', $range[1])->where('date', '<=', $range[2]);
                 $bill_items = $bill_items->where('pos_bills.date', '>=', $range[1])->where('pos_bills.date', '<=', $range[2]);
@@ -397,36 +396,36 @@ class ReportController extends Controller
                 DB::raw('pos_bill_items.*,pos_bills.bill_no')
             )->get();
 
-            $saleReturn=$salesReturn_query->select('id','bill_no','date','total')->get();
-            $ddd=$billitems->groupBy('item_id');
-            $billItemDatas=[];
+            $saleReturn = $salesReturn_query->select('id', 'bill_no', 'date', 'total')->get();
+            $ddd = $billitems->groupBy('item_id');
+            $billItemDatas = [];
 
-            foreach ($ddd as $key=>$b) {
-                $billItemData=[];
-                $billItemData['item_id']=$key;
-                $billItemData['item_name']=$b->first()->name;
-                $billItemData['value']=[];
-                $ssd=$b->groupBy('rate');
+            foreach ($ddd as $key => $b) {
+                $billItemData = [];
+                $billItemData['item_id'] = $key;
+                $billItemData['item_name'] = $b->first()->name;
+                $billItemData['value'] = [];
+                $ssd = $b->groupBy('rate');
                 foreach ($ssd as $key1 => $b1) {
-                    $sd=[];
-                    $sd['rate']=$key1;
-                    $sd['qty']=$b1->sum('qty');
-                    $sd['amount']=$b1->sum('amount');
-                    $sd['discount']=$b1->sum('discount');
-                    $sd['taxable']=$b1->sum('taxable');
-                    $sd['tax']=$b1->sum('tax');
-                    $sd['total']=$b1->sum('total');
+                    $sd = [];
+                    $sd['rate'] = $key1;
+                    $sd['qty'] = $b1->sum('qty');
+                    $sd['amount'] = $b1->sum('amount');
+                    $sd['discount'] = $b1->sum('discount');
+                    $sd['taxable'] = $b1->sum('taxable');
+                    $sd['tax'] = $b1->sum('tax');
+                    $sd['total'] = $b1->sum('total');
                     // $sd['bi']=$b1;
-                    array_push($billItemData['value'],$sd);
+                    array_push($billItemData['value'], $sd);
                 }
                 array_push($billItemDatas, $billItemData);
             }
 
 
             // dd($billItemDatas);
-            $groupData = json_encode(ReportManager::makeGroup($type,$request),JSON_NUMERIC_CHECK );
+            $groupData = json_encode(ReportManager::makeGroup($type, $request), JSON_NUMERIC_CHECK);
             // dd($groupData);
-            return view('admin.report.billingsale.data', compact('bills', 'billItemDatas','type','groupData','saleReturn'));
+            return view('admin.report.billingsale.data', compact('bills', 'billItemDatas', 'type', 'groupData', 'saleReturn'));
         } else {
 
             return view('admin.report.billingsale.index');
@@ -474,12 +473,12 @@ class ReportController extends Controller
                     $range[2] = str_replace('-', '', $request->date2);;
                     $data = $data->where('date', '>=', $range[1])->where('date', '<=', $range[2]);
                 }
-                $element=$distributer->toArray();
-                $data1=clone $data;
-                $data2=clone $data;
-                $element['milk']=$data->where('identifire','132')->sum('amount');
-                $element['total']=$data1->where('identifire','103')->sum('amount');
-                $element['paid']=$data2->where('identifire','114')->sum('amount');
+                $element = $distributer->toArray();
+                $data1 = clone $data;
+                $data2 = clone $data;
+                $element['milk'] = $data->where('identifire', '132')->sum('amount');
+                $element['total'] = $data1->where('identifire', '103')->sum('amount');
+                $element['paid'] = $data2->where('identifire', '114')->sum('amount');
 
                 $element['due'] = 0;
                 $element['advance'] = 0;
@@ -494,10 +493,10 @@ class ReportController extends Controller
 
                 if (env('acc_system', 'old') == 'old') {
                     $prev = Ledger::where('date', '<', $range[1])->where('user_id', $element['user_id'])->where('type', 2)->sum('amount') -
-                    Ledger::where('date', '<', $range[1])->where('user_id', $element['user_id'])->where('type', 1)->sum('amount');
+                        Ledger::where('date', '<', $range[1])->where('user_id', $element['user_id'])->where('type', 1)->sum('amount');
                 } else {
                     $prev = Ledger::where('date', '<', $range[1])->where('user_id', $element['user_id'])->where('type', 2)->sum('amount') -
-                    Ledger::where('date', '<', $range[1])->where('user_id', $element['user_id'])->where('type', 1)->sum('amount');
+                        Ledger::where('date', '<', $range[1])->where('user_id', $element['user_id'])->where('type', 1)->sum('amount');
                 }
 
                 if (env('acc_system', 'old') == 'old') {
@@ -523,7 +522,7 @@ class ReportController extends Controller
                     $element['prevdue'] = (-1) * $prev;
                 }
 
-                $element['total']=$element['total']+$element['milk'];
+                $element['total'] = $element['total'] + $element['milk'];
                 $balance = $prev - $element['total'] + $element['paid'];
 
                 if ($balance > 0) {
@@ -552,28 +551,30 @@ class ReportController extends Controller
             $year = $request->year;
             $month = $request->month;
             $range = NepaliDate::getDateMonth($year, $month);
-            $employees = DB::table('employees')->where('enddate','<=',$range[2])->orWhereNull('enddate')->get();
+            $employees=DB::select("select e.id,e.user_id,u.name,e.salary,e.start,e.enddate,e.acc
+            from employees e
+            join users u on e.user_id=u.id
+            where e.enddate>={$range[1]} or e.enddate is null");
+            // dd($employees);
+            // $employees = DB::table('employees')
+            // ->where('enddate', '<=', $range[2])->orWhereNull('enddate')->get();
+            // dd($employees,DB::table('employees')->where('enddate', '<=', $range[2])->orWhereNull('enddate')->toSql());
             $data = [];
             foreach ($employees as $employee) {
-                if (EmployeeReport::where('employee_id', $employee->id)->where('year', $request->year)->where('month', $request->month)->count() > 0) {
-                    $report = EmployeeReport::where('employee_id', $employee->id)->where('year', $request->year)->where('month', $request->month)->first();
-                    $employee->prevbalance = $report->prevbalance;
-                    $employee->advance = $report->advance;
-                    $employee->salary = $report->salary;
-                    $employee->old = true;
-                } else {
-                    $employee->prevbalance = $prev = Ledger::where('date', '<', $range[1])->where('type', 2)->where('user_id', $employee->user_id)->sum('amount')
-                                             - Ledger::where('date', '<', $range[1])->where('type', 1)->where('user_id', $employee->user_id)->sum('amount');
-                    $employee->advance = EmployeeAdvance::where('employee_id', $employee->id)->where('date', '>=', $range[1])->where('date', '<=', $range[2])->sum('amount');
-                    $employee->salary=NepaliDate::calculateSalary($year,$month,$employee);
-                    $employee->paid=Ledger::where('date', '>=', $range[1])->where('date', '<=', $range[2])->where('user_id', $employee->user_id)->where('identifire',124)->sum('amount');
 
-                    $employee->old = false;
-                }
+                $employee->prevbalance = $prev = Ledger::where('date', '<', $range[1])->where('type', 2)->where('user_id', $employee->user_id)->sum('amount')
+                    - Ledger::where('date', '<', $range[1])->where('type', 1)->where('user_id', $employee->user_id)->sum('amount');
+                $employee->advance = EmployeeAdvance::where('employee_id', $employee->id)->where('date', '>=', $range[1])->where('date', '<=', $range[2])->sum('amount');
+                $employee->salary = NepaliDate::calculateSalary($year, $month, $employee);
+                $employee->paid = Ledger::where('date', '>=', $range[1])->where('date', '<=', $range[2])->where('user_id', $employee->user_id)->where('identifire', 124)->sum('amount');
+                $employee->returned = Ledger::where('date', '>=', $range[1])->where('date', '<=', $range[2])->where('user_id', $employee->user_id)->where('identifire', 140)->sum('amount');
+
+                $employee->old = false;
+
                 array_push($data, $employee);
 
-                // dd($data);
             }
+            // dd($data);
             // $advance=EmployeeAdvance::where
             return view('admin.report.employee.data', compact('data', 'year', 'month'));
         } else {
@@ -647,113 +648,112 @@ class ReportController extends Controller
         }
     }
 
-    public function bonus(Request $request){
-        if($request->getMethod()=="POST"){
+    public function bonus(Request $request)
+    {
+        if ($request->getMethod() == "POST") {
             $farmers = Farmer::join('users', 'users.id', '=', 'farmers.user_id')->where('farmers.center_id', $request->center_id)->select('users.id', 'users.name', 'users.no', 'farmers.center_id')->orderBy('users.no', 'asc')->get();
 
-            $year1=$request->year1;
-            $year2=$request->year2;
-            $month1=$request->month1;
-            $month2=$request->month2;
-            $f_data=[];
-            $timer=1;
+            $year1 = $request->year1;
+            $year2 = $request->year2;
+            $month1 = $request->month1;
+            $month2 = $request->month2;
+            $f_data = [];
+            $timer = 1;
 
             foreach ($farmers as $key => $farmer) {
-                $timer=1;
-                $semi=true;
-                $_year1=$year1;
-                $_year2=$year2;
-                $_month1=$month1;
-                $_month2=$month2;
-                $data=[];
-                $session=1;
-                $sum=0;
+                $timer = 1;
+                $semi = true;
+                $_year1 = $year1;
+                $_year2 = $year2;
+                $_month1 = $month1;
+                $_month2 = $month2;
+                $data = [];
+                $session = 1;
+                $sum = 0;
                 while ($semi) {
-                    $_bonus=FarmerReport::where([
-                        ['year',$_year1],
-                        ['month',$_month1],
-                        ['session',$session],
-                        ['user_id',$farmer->id]
-                        ])->sum('bonus');
-                    array_push($data,[$_year1,$_month1,$session,$_bonus]);
-                    $sum+=$_bonus;
-                    $session+=1;
-                    $timer+=1;
-                    if($session>2){
-                        $_month1+=1;
-                        $session=1;
+                    $_bonus = FarmerReport::where([
+                        ['year', $_year1],
+                        ['month', $_month1],
+                        ['session', $session],
+                        ['user_id', $farmer->id]
+                    ])->sum('bonus');
+                    array_push($data, [$_year1, $_month1, $session, $_bonus]);
+                    $sum += $_bonus;
+                    $session += 1;
+                    $timer += 1;
+                    if ($session > 2) {
+                        $_month1 += 1;
+                        $session = 1;
                     }
-                    if($_month1>12){
-                        $_year1+=1;
-                        $_month1=1;
+                    if ($_month1 > 12) {
+                        $_year1 += 1;
+                        $_month1 = 1;
                     }
-                    $semi=(($_year1*10000)+($_month1)*100)<=(($_year2*10000)+($_month2)*100);
+                    $semi = (($_year1 * 10000) + ($_month1) * 100) <= (($_year2 * 10000) + ($_month2) * 100);
                 }
-                $farmer->data=$data;
-                $farmer->sum=$sum;
-                array_push($f_data,$farmer);
+                $farmer->data = $data;
+                $farmer->sum = $sum;
+                array_push($f_data, $farmer);
             }
             // dd($f_data);
-            return view('admin.report.bonus.data',['farmers'=>$f_data,'detailed'=>$request->detailed,'times'=>$timer]);
-
-
-        }else{
+            return view('admin.report.bonus.data', ['farmers' => $f_data, 'detailed' => $request->detailed, 'times' => $timer]);
+        } else {
             return view('admin.report.bonus.index');
         }
     }
 
-    public function bonus1(Request $request){
-        if($request->getMethod()=="POST"){
+    public function bonus1(Request $request)
+    {
+        if ($request->getMethod() == "POST") {
             $farmers = Farmer::join('users', 'users.id', '=', 'farmers.user_id')->where('farmers.center_id', $request->center_id)->select('users.id', 'users.name', 'users.no', 'farmers.center_id')->orderBy('users.no', 'asc')->get();
 
-            $year1=$request->year1;
-            $year2=$request->year2;
-            $month1=$request->month1;
-            $month2=$request->month2;
-            $f_data=[];
-            $timer=1;
+            $year1 = $request->year1;
+            $year2 = $request->year2;
+            $month1 = $request->month1;
+            $month2 = $request->month2;
+            $f_data = [];
+            $timer = 1;
 
             foreach ($farmers as $key => $farmer) {
-                $timer=1;
-                $semi=true;
-                $_year1=$year1;
-                $_year2=$year2;
-                $_month1=$month1;
-                $_month2=$month2;
-                $data=[];
-                $session=1;
-                $sum=0;
+                $timer = 1;
+                $semi = true;
+                $_year1 = $year1;
+                $_year2 = $year2;
+                $_month1 = $month1;
+                $_month2 = $month2;
+                $data = [];
+                $session = 1;
+                $sum = 0;
                 while ($semi) {
-                    $range=$range = NepaliDate::getDate($_year1,$_month1,$session);
-                    $_bonus=$this->getBonus($farmer->id,$range);
+                    $range = $range = NepaliDate::getDate($_year1, $_month1, $session);
+                    $_bonus = $this->getBonus($farmer->id, $range);
                     // array_push($data,[$_year1,$_month1,$session,$_bonus]);
-                    $sum+=$_bonus;
-                    $session+=1;
-                    $timer+=1;
-                    if($session>2){
-                        $_month1+=1;
-                        $session=1;
+                    $sum += $_bonus;
+                    $session += 1;
+                    $timer += 1;
+                    if ($session > 2) {
+                        $_month1 += 1;
+                        $session = 1;
                     }
-                    if($_month1>12){
-                        $_year1+=1;
-                        $_month1=1;
+                    if ($_month1 > 12) {
+                        $_year1 += 1;
+                        $_month1 = 1;
                     }
-                    $semi=(($_year1*10000)+($_month1)*100)<=(($_year2*10000)+($_month2)*100);
+                    $semi = (($_year1 * 10000) + ($_month1) * 100) <= (($_year2 * 10000) + ($_month2) * 100);
                 }
                 // $farmer->data=$data;
-                $farmer->sum=$sum;
-                array_push($f_data,$farmer);
+                $farmer->sum = $sum;
+                array_push($f_data, $farmer);
             }
             // dd($f_data);
-            return view('admin.report.bonus.data',['farmers'=>$f_data,'detailed'=>$request->detailed,'times'=>$timer]);
-
-
-        }else{
+            return view('admin.report.bonus.data', ['farmers' => $f_data, 'detailed' => $request->detailed, 'times' => $timer]);
+        } else {
             return view('admin.report.bonus.index');
         }
     }
 
-    public function getBonus($user_id, $range){
+    public function getBonus($user_id, $range)
+    {
         $farmer1 = User::find($user_id);
 
 
@@ -796,34 +796,34 @@ class ReportController extends Controller
         if (env('hasextra', 0) == 1) {
             $farmer1->bonus = (int)($farmer1->grandtotal * $center->bonus / 100);
             return $farmer1->bonus;
-        }else{
+        } else {
             return 0;
         }
     }
 
     public function stock(Request $request)
     {
-        if($request->getMethod()=="POST"){
-            $datas=[];
-            $center='';
-            if($request->center_id==-1){
+        if ($request->getMethod() == "POST") {
+            $datas = [];
+            $center = '';
+            if ($request->center_id == -1) {
 
-                $datas=DB::select('select id,title,
+                $datas = DB::select('select id,title,
                 (select sum(amount) from center_stocks where center_stocks.item_id=items.id) as qty,
                 greatest((select sum(amount*rate) from center_stocks where center_stocks.item_id=items.id),0) as current_stock
                 from items');
-            }else{
-                $datas=DB::select('select id,title,
-                (select sum(amount) from center_stocks where center_stocks.item_id=items.id and center_stocks.center_id='.$request->center_id.') as qty,
-                greatest((select sum(amount*rate) from center_stocks where center_stocks.item_id=items.id and center_stocks.center_id='.$request->center_id.'),0) as current_stock
+            } else {
+                $datas = DB::select('select id,title,
+                (select sum(amount) from center_stocks where center_stocks.item_id=items.id and center_stocks.center_id=' . $request->center_id . ') as qty,
+                greatest((select sum(amount*rate) from center_stocks where center_stocks.item_id=items.id and center_stocks.center_id=' . $request->center_id . '),0) as current_stock
                 from items');
-                $center==Center::where('id',$request->center_id)->first(['name'])->name;
+                $center == Center::where('id', $request->center_id)->first(['name'])->name;
             }
 
             // dd($datas);
 
-            return view('admin.report.stock.data',compact('datas','center'));
-        }else{
+            return view('admin.report.stock.data', compact('datas', 'center'));
+        } else {
             return view('admin.report.stock.index');
         }
     }
