@@ -76,12 +76,13 @@
                 <tr>
                     <td>
                         {{ $item->title }}
+                        ({{ $item->unit }})
                         <div id="stock_check_{{ $item->id }}" class="stock_check text-danger">
 
                         </div>
                     </td>
                     <td>
-                        {{ $item->amount }} {{ $item->unit }}
+                        {{ $item->amount }}
                     </td>
                     @if ($multiStock)
                         <td>{{ $item->center }}</td>
@@ -104,6 +105,41 @@
             </thead>
             <tbody>
                 @foreach ($wastages as $item)
+                    <tr>
+                        <td>
+                            {{ $item->title }}
+                            <div id="stock_check_{{ $item->id }}" class="stock_check text-danger">
+
+                            </div>
+                        </td>
+                        <td>
+                            {{ $item->amount }} {{ $item->unit }}
+                        </td>
+                        {{-- @if ($multiStock)
+                            <td>{{ $item->center }}</td>
+                        @endif --}}
+                    </tr>
+                @endforeach
+            </tbody>
+        </table>
+        <hr>
+
+    @endif
+    @if ($process->stage > 2 && count($unused) > 0)
+
+        <h4 class="m-0">Unused/Returned Raw Material </h4>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Item Name</th>
+                    <th>qty</th>
+                    {{-- @if ($multiStock)
+                        <th>Center</th>
+                    @endif --}}
+                </tr>
+            </thead>
+            <tbody>
+                @foreach ($unused as $item)
                     <tr>
                         <td>
                             {{ $item->title }}
@@ -197,15 +233,22 @@
                                         <th>
                                             Wastage Amount
                                         </th>
+                                        <th>
+                                            Unused Amount
+                                        </th>
+
                                     </tr>
 
                                     @foreach ($items as $item)
                                         <tr>
                                             <td>
-                                                {{ $item->title }}
+                                                {{ $item->title }} {{ $item->unit }}
                                             </td>
                                             <td>
-                                                <input type="number" value="0" name="amount_{{ $item->id }}"> {{ $item->unit }}
+                                                <input type="number" step="0.001" value="0" name="amount_{{ $item->id }}">
+                                            </td>
+                                            <td>
+                                                <input type="number" step="0.001" value="0" name="unused_amount_{{ $item->id }}">
                                             </td>
                                         </tr>
                                     @endforeach

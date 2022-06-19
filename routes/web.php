@@ -66,9 +66,9 @@ Route::get('/pass', function () {
     // $arr=str_split($data,3);
     // echo implode('/',$arr);
 
-    $i = ((int)50.75) / 50;
-    $t = fmod(51.75, 50);
-    dd($i, $t, $i * 50);
+    $i =1;
+    $i-=-1;
+    dd($i);
 });
 
 
