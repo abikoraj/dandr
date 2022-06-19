@@ -8,4 +8,6 @@ use Illuminate\Database\Eloquent\Model;
 class RepackageItem extends Model
 {
     use HasFactory;
+
+
 }

@@ -255,7 +255,10 @@ Route::name('admin.')->group(function () {
                });
 
                Route::prefix('packaging')->name('packaging.')->group(function () {
-
+                    Route::get('',[PackagingController::class,'index'])->name('index');
+                    Route::match(['GET','POST'],'add',[PackagingController::class,'add'])->name('add');
+                    Route::match(['GET','POST'],'cancel/{id}',[PackagingController::class,'cancel'])->name('cancel');
+                    Route::match(['GET','POST'],'view/{id}',[PackagingController::class,'view'])->name('view');
                });
 
         });

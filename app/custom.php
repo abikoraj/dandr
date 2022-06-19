@@ -1,5 +1,8 @@
 <?php
 
+use App\Models\Center;
+use App\Models\CenterStock;
+use App\Models\Item;
 use App\Models\Setting;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Config;
@@ -175,3 +178,73 @@ function setSetting($key,$value,$direct=false){
     return $s;
 }
 // function
+
+function maintainStockCenter($item_id,$qty,$center_id,$dir='in'){
+
+    if(CenterStock::where('item_id',$item_id)->where('center_id',$center_id)->count()>0){
+        if($dir=='in'){
+            DB::update('update center_stocks set amount = amount+? where item_id = ? and center_id=?', [$qty,$item_id,$center_id]);
+        }else{
+            DB::update('update center_stocks set amount = amount-? where item_id = ? and center_id=?', [$qty,$item_id,$center_id]);
+        }
+    }else{
+        $item=Item::where('id',$item_id)->select('id','stock','wholesale','sell_price')->first();
+        $centerStock=new CenterStock();
+        $centerStock->item_id=$item_id;
+        $centerStock->center_id=$center_id;
+        $centerStock->wholesale=$item->wholesale;
+        $centerStock->rate=$item->sell_price;
+        if($dir=='in'){
+
+            $centerStock->amount=$qty;
+        }else{
+            $centerStock->amount=-1*$qty;
+
+        }
+        $centerStock->save();
+    }
+}
+function maintainStock($item_id,$qty,$center_id=null,$dir='in')
+{
+    $item=Item::where('id',$item_id)->select('id','stock','wholesale','sell_price')->first();
+    if($dir=='in'){
+       $item->stock+=$qty;
+    }else{
+       $item->stock-=$qty;
+
+    }
+    $item->save();
+
+    if(env('multi_stock',false)){
+
+        if($center_id==null){
+            $center=Center::first(['id']);
+            if($center==null){
+                return;
+            }
+            $center_id=$center->id;
+        }
+    }
+
+    if(CenterStock::where('item_id',$item_id)->where('center_id',$center_id)->count()>0){
+        if($dir=='in'){
+            DB::update('update center_stocks set amount = amount+? where item_id = ? and center_id=?', [$qty,$item_id,$center_id]);
+        }else{
+            DB::update('update center_stocks set amount = amount-? where item_id = ? and center_id=?', [$qty,$item_id,$center_id]);
+        }
+    }else{
+        $centerStock=new CenterStock();
+        $centerStock->item_id=$item_id;
+        $centerStock->center_id=$center_id;
+        $centerStock->wholesale=$item->wholesale;
+        $centerStock->rate=$item->sell_price;
+        if($dir=='in'){
+            $centerStock->amount=$qty;
+        }else{
+            $centerStock->amount=-1*$qty;
+
+        }
+        $centerStock->save();
+    }
+
+}
