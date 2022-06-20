@@ -451,9 +451,9 @@ class ManufactureProcessController extends Controller
 
         // dd($request->all());
         $process = ManufactureProcess::where('id', $id)->first();
-        if ($process->stage == 3) {
-            return redirect()->back();
-        }
+        // if ($process->stage == 3) {
+        //     return redirect()->back();
+        // }
         $process->end = $request->end;
         $process->actual = $request->actual;
         $process->stage = 3;
@@ -463,11 +463,16 @@ class ManufactureProcessController extends Controller
         mp.id,
         m.item_id,
         mp.center_id,
-        mp.amount
+        mp.amount,
+        i.cost_price,
+        i.sell_price
         from manufactured_product_items m
         join manufacture_process_items mp
         on mp.manufactured_product_item_id=m.id
+        join items i on  i.id=m.item_id
+
         where mp.manufacture_process_id = ?', [$id]);
+        // dd($items);
         foreach ($items as $key => $item) {
             $amount=0;
             $center_id = $item->center_id;
@@ -475,10 +480,10 @@ class ManufactureProcessController extends Controller
             if ($request->filled('amount_' . $item->id)) {
                 $amount = $request->input('amount_' . $item->id);
                 if ($amount > 0) {
-
                     $wastage = new ManufactureWastage();
                     $wastage->item_id = $item->item_id;
                     $wastage->manufacture_process_id = $process->id;
+                    $wastage->rate=$item->cost_price;
                     $wastage->amount = $amount;
                     $wastage->center_id = $center_id;
                     $wastage->save();
@@ -536,7 +541,7 @@ class ManufactureProcessController extends Controller
             }
             $centerStock->save();
         }
-        return redirect()->back();
+        // return redirect()->back();
     }
 
 
