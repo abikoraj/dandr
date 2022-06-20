@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller;
 use App\Models\Item;
 use App\Models\Repackage;
 use App\Models\RepackageItem;
+use App\Models\RepackagingCost;
+use App\Models\RepackagingMaterial;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -41,9 +43,11 @@ class PackagingController extends Controller
 
     public function add(Request $request){
         if($request->getMethod()=="POST"){
+            // dd($request->all());
             $date=str_replace('-','',$request->date);
             $center_id=$request->center_id;
             $datas=$request->datas;
+
             $repackage=new Repackage();
             $repackage->date=$date;
             if(env('multi_stock',false)){
@@ -51,7 +55,7 @@ class PackagingController extends Controller
                 $repackage->center_id=$center_id;
             }
             $repackage->save();
-            foreach ($datas as $key => $data) {
+            foreach ($request->datas as $key => $data) {
                 $repackageItem=new RepackageItem();
                 $repackageItem->from_item_id=$data['from_item_id'];
                 $repackageItem->to_item_id=$data['to_item_id'];
@@ -61,6 +65,24 @@ class PackagingController extends Controller
                 $repackageItem->save();
                 maintainStock($repackageItem->from_item_id,$repackageItem->from_amount,$center_id,'out');
                 maintainStock($repackageItem->to_item_id,$repackageItem->to_amount,$center_id,'in');
+            }
+            foreach ($request->costs as $key => $cost) {
+                $newCost=new RepackagingCost();
+                $newCost->title=$cost['title'];
+                $newCost->amount=$cost['amount'];
+                $newCost->repackage_id=$repackage->id;
+                $newCost->save();
+            }
+            foreach ($request->materials as $key => $material) {
+                $newMaterial=new RepackagingMaterial();
+                $newMaterial->item_id=$material['item_id'];
+                $item=Item::where('id',$newMaterial->item_id)->select('cost_price')->first();
+                $newMaterial->qty=$material['qty'];
+                $newMaterial->rate=$item->cost_price;
+                $newMaterial->repackage_id=$repackage->id;
+                $newMaterial->center_id=$center_id;
+                $newMaterial->save();
+                maintainStock($newMaterial->item_id,$newMaterial->qty,$center_id,'out');
             }
             return response()->json(['status'=>true]);
         }else{

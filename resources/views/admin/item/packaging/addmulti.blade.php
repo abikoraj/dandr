@@ -87,7 +87,16 @@
                 </tbody>
             </table>
             <hr>
-            <div><button class="btn btn-primary" onclick="save();">Add Repackaging</button></div>
+            <div class="row">
+                @include('admin.item.packaging.material')
+                @include('admin.item.packaging.cost')
+
+            </div>
+            <hr>
+            <div>
+                <button class="btn btn-primary" onclick="save();">Add Repackaging</button>
+                <button class="btn btn-danger" onclick="reset(1);">Clear</button>
+            </div>
         </div>
     </div>
 
@@ -99,16 +108,20 @@
         const items = {!! json_encode($items) !!};
         const units = {!! json_encode($units, JSON_NUMERIC_CHECK) !!};
         var datas = [];
+        var costs = [];
+        var materials = [];
         var ratio = 1;
         var i = 1;
-        var toids=[];
+        var toids = [];
         console.log(items, units);
         $(document).ready(function() {
             const items_options = items.map(o => '<option value="' + o.id + '">' + o.title + '</option>').join("");
             $('#from_item_id').html('<option></option>' + items_options);
             $('#to_item_id').html('<option><a/option>' + items_options);
+            $('#material_id').html('<option><a/option>' + items_options);
             $('#from_item_id').select2();
             $('#to_item_id').select2();
+            $('#material_id').select2();
             $('#ismanual').change(function() {
                 if (this.checked) {
                     $('#to_amount').removeAttr('readonly');
@@ -116,19 +129,19 @@
                     $('#to_amount').attr('readonly', 'true');
                 }
             });
-            $('#from_amount').keydown(function(e){
-                if(e.which==13){
-                    if(this.value!=0 && this.value!=''){
+            $('#from_amount').keydown(function(e) {
+                if (e.which == 13) {
+                    if (this.value != 0 && this.value != '') {
                         $('#to_item_id').select2('open');
 
                     }
                 }
             });
-            $('#to_amount').keydown(function(e){
-                if(e.which==13){
-                    const from_amount=$('#from_amount').val();
-                    if(this.value!=0 && this.value!='' && from_amount!=0 && from_amount!=''){
-                            $('#addbtn').click();
+            $('#to_amount').keydown(function(e) {
+                if (e.which == 13) {
+                    const from_amount = $('#from_amount').val();
+                    if (this.value != 0 && this.value != '' && from_amount != 0 && from_amount != '') {
+                        $('#addbtn').click();
                     }
                 }
             });
@@ -148,14 +161,15 @@
                         toids = todos.concat(units.filter(o => o.parent_id == unit.id));
                     } else {
                         toids.push(units.find(o => o.id == unit.parent_id).id);
-                        toids = toids.concat(units.filter(o => o.parent_id == unit.parent_id).map(o => o.id));
+                        toids = toids.concat(units.filter(o => o.parent_id == unit.parent_id).map(o => o
+                            .id));
                     }
 
 
                 } catch (error) {
                     console.log(error);
                 }
-                $('#ismanual')[0].checked=true;
+                $('#ismanual')[0].checked = true;
                 $('#to_amount').removeAttr('readonly');
                 $('#from_amount').focus();
             });
@@ -173,7 +187,7 @@
 
                     const to = items.find(o => o.id == $('#to_item_id').val());
                     const from = items.find(o => o.id == $('#from_item_id').val());
-                    if(toids.includes(to.conversion_id)){
+                    if (toids.includes(to.conversion_id)) {
                         if (to != undefined && from != undefined) {
                             const tounit = units.find(o => o.id == to.conversion_id);
                             const fromunit = units.find(o => o.id == from.conversion_id);
@@ -186,12 +200,12 @@
                             }
                             console.log(tounit, fromunit, ratio);
 
-                            $('#ismanual')[0].checked=false;
-                            $('#to_amount').arr('readonly','true');
+                            $('#ismanual')[0].checked = false;
+                            $('#to_amount').arr('readonly', 'true');
                             $('#to_amount').val(ratio * $('#from_amount').val());
                         }
-                    }else{
-                        $('#ismanual')[0].checked=true;
+                    } else {
+                        $('#ismanual')[0].checked = true;
                         $('#to_amount').removeAttr('readonly');
                     }
                 } catch (error) {
@@ -241,7 +255,7 @@
         function remove(id) {
             const index = datas.findIndex(o => o.identifire == id);
             if (index != -1) {
-                data.splice(index, 1);
+                datas.splice(index, 1);
             }
             renderHtml();
         }
@@ -273,22 +287,50 @@
                     to_amount: o.to_amount,
                 }
             });
-            axios.post('{{ route('admin.item.packaging.add') }}', {
-                datas:extractedDatas,
-                center_id:$('#center_id').val(),
-                date:$('#date').val(),
+            const extractedCosts = costs.map((o) => {
+                return {
+                    title: o.title,
+                    amount: o.amount,
+                }
             })
+            const extractedMaterials = materials.map((o) => {
+                return {
+                    item_id: o.item_id,
+                    qty: o.qty,
+                }
+            })
+
+            axios.post('{{ route('admin.item.packaging.add') }}', {
+                    datas: extractedDatas,
+                    costs: extractedCosts,
+                    materials: extractedMaterials,
+                    center_id: $('#center_id').val(),
+                    date: $('#date').val(),
+                })
                 .then((res) => {
                     console.log(res);
-                    datas = [];
-                    renderHtml();
-                    showNotification('bg-success','Successfully repackaged');
+                    reset(0);
+                    showNotification('bg-success', 'Successfully repackaged');
                 })
                 .catch((err) => {
                     console.log(err);
-                    showNotification('bg-danger','Error while repackaging');
+                    showNotification('bg-danger', 'Error while repackaging');
 
                 });
+        }
+
+        function reset(type) {
+            if(type==1){
+                if(!(confirm('Do want to reset the process?'))){
+                    return;
+                }
+            }
+            datas = [];
+            costs = [];
+            materials = [];
+            renderHtml();
+            renderMaterialHtml();
+            renderCostHtml();
         }
     </script>
 @endsection
