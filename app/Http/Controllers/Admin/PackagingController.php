@@ -38,7 +38,12 @@ class PackagingController extends Controller
         join items ti on ri.to_item_id=ti.id
         where ri.repackage_id=?
         ',[$id]);
-        return view('admin.item.packaging.view',compact('repackage','repackageItems'));
+        $costs=DB::select('select title,amount from repackaging_costs where repackage_id=?',[$id] );
+        $materials=DB::select('select i.title,m.qty from repackaging_materials m
+        join items i on i.id=m.item_id
+         where m.repackage_id=?',[$id] );
+
+        return view('admin.item.packaging.view',compact('repackage','repackageItems','costs','materials'));
     }
 
     public function add(Request $request){
@@ -104,9 +109,14 @@ class PackagingController extends Controller
             return redirect()->back();
         }
         $repackageItems=RepackageItem::where('repackage_id',$id)->get();
+        $materials=RepackagingMaterial::where('repackage_id',$id)->get();
         foreach ($repackageItems as $key => $repackageItem) {
             maintainStock($repackageItem->from_item_id,$repackageItem->from_amount,$repackage->center_id,'in');
             maintainStock($repackageItem->to_item_id,$repackageItem->to_amount,$repackage->center_id,'out');
+        }
+        foreach ($materials as $key => $material) {
+            maintainStock($material->item_id,$material->qty,$repackage->center_id,'in');
+
         }
         $repackage->canceled=1;
         $repackage->save();

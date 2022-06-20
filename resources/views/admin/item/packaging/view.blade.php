@@ -9,7 +9,7 @@
 @section('toobar')
 @endsection
 @section('content')
-    <div class="row">
+    <div class="row mb-3">
         <div class="col-md-3">
             <strong>Ref ID</strong> <br>
             #{{$repackage->id}}
@@ -28,7 +28,11 @@
             <a href="{{route('admin.item.packaging.cancel',['id'=>$repackage->id])}}" class="btn btn-danger" onclick="return prompt('Enter yes to continue')=='yes';">Cancel</a>
         </div>
     </div>
-    <hr>
+    <div class="shadow mb-3">
+        <h5 class="p-2 mb-0">
+            Repackaged Items
+        </h5>
+        <div class="px-2 pb-2">
     <table class="table table-bordered">
         <thead>
 
@@ -55,6 +59,51 @@
 
         </tbody>
     </table>
+        </div>
+    </div>
+    @if (count($costs)>0)
+        <div class="shadow mb-3">
+            <h5 class="p-2 mb-0">
+                Repackaging Costs
+            </h5>
+            <div class="px-2 pb-2">
+
+                <table class="table table-bordered">
+                    <tr>
+                        <th>Title</th>
+                        <th>Amount</th>
+                    </tr>
+                    @foreach ($costs as $cost)
+                        <tr>
+                            <td>{{$cost->title}}</td>
+                            <td>{{$cost->amount}}</td>
+                        </tr>
+                    @endforeach
+                </table>
+            </div>
+        </div>
+    @endif
+    @if (count($materials)>0)
+    <div class="shadow">
+        <h5 class="p-2 mb-0">
+            Repackaging Material Used
+        </h5>
+        <div class="px-2 pb-2">
+            <table class="table table-bordered">
+                <tr>
+                    <th>Title</th>
+                    <th>Qty</th>
+                </tr>
+                @foreach ($materials as $material)
+                    <tr>
+                        <td>{{$material->title}}</td>
+                        <td>{{$material->qty}}</td>
+                    </tr>
+                @endforeach
+            </table>
+        </div>
+    </div>
+@endif
 @endsection
 @section('js')
     <script>
