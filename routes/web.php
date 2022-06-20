@@ -26,6 +26,7 @@ use App\Http\Controllers\Admin\SellitemController;
 use App\Http\Controllers\Admin\Setting\ConversionController;
 use App\Http\Controllers\Admin\SupplierController;
 use App\Http\Controllers\Admin\UserController;
+use App\Http\Controllers\Admin\WastageController;
 use App\Http\Controllers\BackupController;
 use App\Http\Controllers\HomeController as ControllersHomeController;
 use App\Http\Controllers\POS\BillingController;
@@ -414,6 +415,14 @@ Route::name('admin.')->group(function () {
 
             });
         });
+
+
+        //XXX item expire wastage
+        Route::prefix('wastage')->name('wastage.')->group(function () {
+            Route::match(['get', 'post'], '', [WastageController::class,'index'])->name('index');
+            Route::match([ 'post'], 'add', [WastageController::class,'add'])->name('add');
+        });
+
 
         //XXX maufacture process
         Route::prefix('manufacture-process')->name('manufacture.process.')->group(function () {

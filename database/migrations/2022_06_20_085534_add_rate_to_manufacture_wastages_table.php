@@ -15,6 +15,7 @@ class AddRateToManufactureWastagesTable extends Migration
     {
         Schema::table('manufacture_wastages', function (Blueprint $table) {
             $table->decimal('rate',12,2)->default(0);
+            $table->integer('date')->nullable();
         });
     }
 
@@ -27,6 +28,7 @@ class AddRateToManufactureWastagesTable extends Migration
     {
         Schema::table('manufacture_wastages', function (Blueprint $table) {
             $table->dropColumn('rate');
+            $table->dropColumn('date');
         });
     }
 }

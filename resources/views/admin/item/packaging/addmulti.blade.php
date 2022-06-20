@@ -45,7 +45,7 @@
                     <input type="number" step="0.0001" class="form-control" id="to_amount" readonly>
                 </div>
                 <div class="col-12 pt-2">
-                    <button class="btn btn-primary" id="addbtn">Add </button>
+                    <button class="btn btn-primary focusable" id="addbtn">Add </button>
                 </div>
 
             </div>
@@ -101,11 +101,14 @@
         var datas = [];
         var ratio = 1;
         var i = 1;
+        var toids=[];
         console.log(items, units);
         $(document).ready(function() {
             const items_options = items.map(o => '<option value="' + o.id + '">' + o.title + '</option>').join("");
             $('#from_item_id').html('<option></option>' + items_options);
+            $('#to_item_id').html('<option><a/option>' + items_options);
             $('#from_item_id').select2();
+            $('#to_item_id').select2();
             $('#ismanual').change(function() {
                 if (this.checked) {
                     $('#to_amount').removeAttr('readonly');
@@ -113,32 +116,47 @@
                     $('#to_amount').attr('readonly', 'true');
                 }
             });
-            $('#from_item_id').change(function() {
-                console.log(this.value);
-                $(this).val();
-                const item = items.find(o => o.id == this.value);
-                if (item == undefined) {
-                    return;
-                }
-                const unit = units.find(o => o.id == item.conversion_id);
-                console.log(item, unit);
-                let toids = [unit.id];
-                if (unit.parent_id == 0) {
-                    toids = todos.concat(units.filter(o => o.parent_id == unit.id));
-                } else {
-                    toids.push(units.find(o => o.id == unit.parent_id).id);
-                    toids = toids.concat(units.filter(o => o.parent_id == unit.parent_id).map(o => o.id));
-                }
-                console.log(toids);
-                const minitems = items.filter(o => toids.includes(o.conversion_id) && o.id != item.id);
-                try {
-                    $('#to_item_id').select2('destroy');
-                } catch (error) {
+            $('#from_amount').keydown(function(e){
+                if(e.which==13){
+                    if(this.value!=0 && this.value!=''){
+                        $('#to_item_id').select2('open');
 
+                    }
                 }
-                $('#to_item_id').html("<option></option>" + (minitems.map(o => '<option value="' + o.id +
-                    '">' + o.title + '</option>').join("")));
-                $('#to_item_id').select2();
+            });
+            $('#to_amount').keydown(function(e){
+                if(e.which==13){
+                    const from_amount=$('#from_amount').val();
+                    if(this.value!=0 && this.value!='' && from_amount!=0 && from_amount!=''){
+                            $('#addbtn').click();
+                    }
+                }
+            });
+
+            $('#from_item_id').change(function() {
+                try {
+                    console.log(this.value);
+
+                    const item = items.find(o => o.id == this.value);
+                    if (item == undefined) {
+                        return;
+                    }
+                    const unit = units.find(o => o.id == item.conversion_id);
+                    console.log(item, unit);
+                    toids = [unit.id];
+                    if (unit.parent_id == 0) {
+                        toids = todos.concat(units.filter(o => o.parent_id == unit.id));
+                    } else {
+                        toids.push(units.find(o => o.id == unit.parent_id).id);
+                        toids = toids.concat(units.filter(o => o.parent_id == unit.parent_id).map(o => o.id));
+                    }
+
+
+                } catch (error) {
+                    console.log(error);
+                }
+                $('#ismanual')[0].checked=true;
+                $('#to_amount').removeAttr('readonly');
                 $('#from_amount').focus();
             });
 
@@ -149,24 +167,37 @@
                     $('#to_amount').val(ratio * $('#from_amount').val());
                 }
             });
+
             $('#to_item_id').change(function() {
-                const to = items.find(o => o.id == $('#to_item_id').val());
-                const from = items.find(o => o.id == $('#from_item_id').val());
-                if (to != undefined && from != undefined) {
-                    const tounit = units.find(o => o.id == to.conversion_id);
-                    const fromunit = units.find(o => o.id == from.conversion_id);
-                    if (tounit.parent_id == 0) {
-                        ratio = fromunit.main / fromunit.local;
-                    } else {
-                        const fromratio = fromunit.main / fromunit.local;
-                        const toratio = tounit.main / tounit.local;
-                        ratio = fromratio / toratio;
+                try {
+
+                    const to = items.find(o => o.id == $('#to_item_id').val());
+                    const from = items.find(o => o.id == $('#from_item_id').val());
+                    if(toids.includes(to.conversion_id)){
+                        if (to != undefined && from != undefined) {
+                            const tounit = units.find(o => o.id == to.conversion_id);
+                            const fromunit = units.find(o => o.id == from.conversion_id);
+                            if (tounit.parent_id == 0) {
+                                ratio = fromunit.main / fromunit.local;
+                            } else {
+                                const fromratio = fromunit.main / fromunit.local;
+                                const toratio = tounit.main / tounit.local;
+                                ratio = fromratio / toratio;
+                            }
+                            console.log(tounit, fromunit, ratio);
+
+                            $('#ismanual')[0].checked=false;
+                            $('#to_amount').arr('readonly','true');
+                            $('#to_amount').val(ratio * $('#from_amount').val());
+                        }
+                    }else{
+                        $('#ismanual')[0].checked=true;
+                        $('#to_amount').removeAttr('readonly');
                     }
-                    console.log(tounit, fromunit, ratio);
-                    if (!($('#ismanual')[0].checked)) {
-                        $('#to_amount').val(ratio * $('#from_amount').val());
-                    }
+                } catch (error) {
+
                 }
+                $('#to_amount').focus();
             });
 
             $('#addbtn').click(function() {
@@ -195,11 +226,12 @@
 
                 $('#to_amount').val('0');
                 $('#from_amount').val('0');
-
-                $('#to_item_id').select2('destroy');
-                $('#to_item_id').html('');
                 $('#from_item_id').val(null).trigger('change');
-                console.log(datas);
+                $('#to_item_id').val(null).trigger('change');
+                $('#from_item_id').focus();
+                $('#from_item_id').select2('open');
+
+
                 renderHtml();
 
             });
