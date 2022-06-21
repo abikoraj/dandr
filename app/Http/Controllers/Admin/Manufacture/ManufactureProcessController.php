@@ -451,9 +451,9 @@ class ManufactureProcessController extends Controller
 
         // dd($request->all());
         $process = ManufactureProcess::where('id', $id)->first();
-        // if ($process->stage == 3) {
-        //     return redirect()->back();
-        // }
+        if ($process->stage == 3) {
+            return redirect()->back();
+        }
         $process->end = $request->end;
         $process->actual = $request->actual;
         $process->stage = 3;
@@ -541,7 +541,7 @@ class ManufactureProcessController extends Controller
             }
             $centerStock->save();
         }
-        // return redirect()->back();
+        return redirect()->back();
     }
 
 

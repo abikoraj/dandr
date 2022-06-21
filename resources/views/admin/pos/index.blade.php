@@ -8,8 +8,8 @@
 
 @endsection
 @section('content')
-    
-   
+
+
 
     <div class="pt-2 pb-2">
         @include('admin.layouts.daterange')
@@ -28,6 +28,7 @@
     <div class="pt-2 pb-2">
         <input type="text" id="sid" placeholder="Search">
     </div>
+
     <div class="table-responsive">
         <table id="" class="table table-bordered table-striped table-hover js-basic-example dataTable">
             <thead>
