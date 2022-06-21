@@ -61,6 +61,7 @@
                     <li><a href="{{ route('admin.item.stockout-list') }}" class="waves-effect waves-block">Stock Out</a></li>
                     <li><a href="{{ route('admin.item.items-center-stock') }}" class="waves-effect waves-block">Branch Stock </a></li>
                     <li><a href="{{ route('admin.item.packaging.index') }}" class="waves-effect waves-block">Repackaging</a></li>
+                    <li><a href="{{ route('admin.wastage.index') }}" class="waves-effect waves-block">Wastage</a></li>
                 </ul>
             </li>
             {{-- @if (env('tier',1)==1) --}}
