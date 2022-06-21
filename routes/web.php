@@ -421,6 +421,7 @@ Route::name('admin.')->group(function () {
         Route::prefix('wastage')->name('wastage.')->group(function () {
             Route::match(['get', 'post'], '', [WastageController::class,'index'])->name('index');
             Route::match([ 'post'], 'add', [WastageController::class,'add'])->name('add');
+            Route::match([ 'post'], 'del', [WastageController::class,'del'])->name('del');
         });
 
 

@@ -48,11 +48,11 @@
     </div>
     <div class="col-md-3 ct ct-1 ct-5 d-none">
         <label for="Date1">Date1</label>
-        <input type="text" id="date1" class="form-control calender">
+        <input type="text" name="date1" id="date1" class="form-control calender">
     </div>
     <div class="col-md-3 ct ct-5 d-none">
         <label for="date2">Date2</label>
-        <input type="text" id="date2" class="form-control calender">
+        <input type="text" name="date2" id="date2" class="form-control calender">
     </div>
     @if (env('use_pos',false))
     @php
