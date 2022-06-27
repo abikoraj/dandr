@@ -94,17 +94,50 @@ class AccountingController extends Controller
 
 
             $plac=(object)[];
+            $plac->dr=0;
+            $plac->cr=0;
             $plac->salary=DB::selectOne('select sum(amount) as amount from ledgers where identifire=129 and (date>=? and date<=?)',[$range[1],$range[2]])->amount;
             $plac->expenses=DB::select("select e.amount,etype.name,e.expcategory_id from
             (select expcategory_id,sum(amount) as amount from expenses  where date>={$range[1]} and date <={$range[2]} group by expcategory_id) e
             join expcategories etype on etype.id=e.expcategory_id");
-            $plac->dr=0;
-            $plac->cr=0;
+            $plac->incomes=DB::select("select ei.amount,eic.name from
+            (select sum(amount) as amount,extra_income_category_id from extra_incomes  where date>={$range[1]} and date <={$range[2]} group by extra_income_category_id)  ei
+            join extra_income_categories eic on eic.id=ei.extra_income_category_id");
+            if($trading->status=='loss'){
+                $plac->dr+=$trading->loss;
+            }else if($trading->status=="profit"){
+                $plac->cr+=$trading->profit;
+            }
+
+            $plac->dr+=$plac->salary;
+
+            foreach ($plac->expenses as $key => $expense) {
+                $plac->dr+=$expense->amount;
+            }
+            foreach ($plac->incomes as $key => $income) {
+                $plac->cr+=$income->amount;
+            }
+
+            $plac->status=($plac->cr==$plac->dr)?'none':($plac->cr>$plac->dr?'profit':'loss');
+            if($plac->status=='profit'){
+                $plac->profit=$plac->cr-$plac->dr;
+                $plac->loss=null;
+                $plac->total=$plac->cr;
+            }else if($plac->status=='loss'){
+                $plac->loss=$plac->dr-$plac->cr;
+                $plac->profit=null;
+                $plac->total=$plac->dr;
+
+            }else{
+                $plac->loss=null;
+                $plac->profit=null;
+                $plac->total=$plac->cr;
+            }
 
 
             // dd($trading,$plac);
 
-            return view('admin.accounting.final.trading',compact('trading','opening','closing','showDetail','range','plac'));
+            return view('admin.accounting.final.index',compact('trading','opening','closing','showDetail','range','plac'));
         } else {
             $fys = DB::table('fiscal_years')->get(['id', 'name', 'startdate', 'enddate']);
             return view('admin.accounting.final.result', compact('fys'));
