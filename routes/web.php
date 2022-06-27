@@ -485,7 +485,7 @@ Route::name('admin.')->group(function () {
                 Route::match(['get', 'post'], '', [ExtraIncomeController::class,'index'])->name('index');
                 Route::match(['get', 'post'], 'add', [ExtraIncomeController::class,'add'])->name('add');
                 Route::match(['get', 'post'], 'update/{id}', [ExtraIncomeController::class,'update'])->name('update');
-                Route::match(['get', 'post'], 'del/{id}', [ExtraIncomeController::class,'del'])->name('del');
+                Route::match(['get', 'post'], 'del', [ExtraIncomeController::class,'del'])->name('del');
 
                 Route::match(['get', 'post'], 'category', [ExtraIncomeController::class,'category'])->name('category');
                 Route::match(['get', 'post'], 'category-add', [ExtraIncomeController::class,'categoryAdd'])->name('category.add');

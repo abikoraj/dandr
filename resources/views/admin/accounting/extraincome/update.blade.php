@@ -9,7 +9,7 @@
 @endsection
 @section('content')
     {!! renderEmpList()!!}
-    <form action="{{route('admin.accounting.extra.income.update',['id'=>$income->id])}}" method="post" id="addExtraIncomeForm">
+    <form action="{{route('admin.accounting.extra.income.update',['id'=>$income->id])}}" method="post" id="updateExtraIncomeForm">
         @csrf
         <div class="row">
             <div class="col-md-3">
@@ -39,14 +39,14 @@
 @section('js')
     <script>
         $(document).ready(function () {
-            $('#addExtraIncomeForm').submit(function (e) {
+            $('#updateExtraIncomeForm').submit(function (e) {
                 e.preventDefault();
-                showProgress('Adding Extra income');
+                showProgress('Updating Extra income');
                 axios.post(this.action,new FormData(this))
                 .then((res)=>{
                     hideProgress();
                     this.reset();
-                    showNotification('bg-success','Extra Income Addded Successfully');
+                    showNotification('bg-success','Extra Income updated Successfully');
                 })
                 .catch((err)=>{
                     showNotification('bg-danger','Some Error Occured Please Try again');

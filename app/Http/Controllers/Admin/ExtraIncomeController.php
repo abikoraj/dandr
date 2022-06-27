@@ -16,7 +16,7 @@ class ExtraIncomeController extends Controller
             $query=DB::table('extra_incomes as ei')
             ->join('extra_income_categories as eic','eic.id','=','ei.extra_income_category_id');
             $query=rangeSelector($request,$query);
-            $incomes=$query->select(DB::raw('ei.amount,ei.title,ei.date,eic.name as category'))->get();
+            $incomes=$query->select(DB::raw('ei.id,ei.amount,ei.title,ei.date,eic.name as category,ei.received_by'))->get();
             return response()->json($incomes);
 
         }else{
@@ -59,7 +59,7 @@ class ExtraIncomeController extends Controller
             $cats=DB::select('select
             id,name
             from extra_income_categories');
-            return view('admin.accounting.extraincome.add',compact('cats','income'));
+            return view('admin.accounting.extraincome.update',compact('cats','income'));
         }
     }
 
