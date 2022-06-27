@@ -807,7 +807,6 @@ class ReportController extends Controller
             $datas = [];
             $center = '';
             if ($request->center_id == -1) {
-
                 $datas = DB::select('select id,title,
                 (select sum(amount) from center_stocks where center_stocks.item_id=items.id) as qty,
                 greatest((select sum(amount*rate) from center_stocks where center_stocks.item_id=items.id),0) as current_stock

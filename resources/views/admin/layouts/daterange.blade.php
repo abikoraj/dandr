@@ -2,10 +2,10 @@
 <div class="row">
     <div class="col-md-3 ">
         <label for="type">
-            Report Duration
+            {{isset($reporttitle)?$reporttitle:"Report Duration"}}
         </label>
         <select name="type" id="type" onchange="manageDisplay(this)" class="form-control show-tick ms ">
-            <option value="-1" >All</option>
+            <option value="-1" >{{isset($alltext)?$alltext:'All'}}</option>
             <option value="0">Session</option>
             <option value="1" >Daily</option>
             <option value="2">Weekly</option>
@@ -60,7 +60,7 @@
 
     @endphp
     <div class="col-md-3 ct ct-6 d-none">
-        <label for="fy">Fiscal Year {{$ps->date}}</label>
+        <label for="fy">Fiscal Year </label>
 
         <select name="fiscalyear" id="fiscalyear" class="form-control show-tick ms ">
             @foreach (App\Models\FiscalYear::all() as $fy)

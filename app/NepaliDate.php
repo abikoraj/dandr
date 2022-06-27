@@ -251,7 +251,7 @@ class NepaliDate
         $data = [];
         $date = $year * 10000 + $month * 100;
         $data[1] = $date + 1;
-        $data[2] = $date + 32;
+        $data[2] = $date + self::$_bs[$year-2000][$month];
         return $data;
     }
 
@@ -260,7 +260,7 @@ class NepaliDate
         $data = [];
         $date = $year * 10000;
         $data[1] = $date + 101;
-        $data[2] = $date + 1232;
+        $data[2] = $date + 1200+ self::$_bs[$year-2000][12];
         return $data;
     }
 

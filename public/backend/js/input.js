@@ -218,7 +218,7 @@ $(".checkitem").focusout(function () {
     console.log("running", id);
     if (id != "") {
         if (!exists("#item-" + id)) {
-            alert("Farmer with farmer no-" + id + " doesnot exist;");
+            alert("Item with item no-" + id + " doesnot exist;");
             $(this).focus();
             $(this).val('');
             $(this).select();

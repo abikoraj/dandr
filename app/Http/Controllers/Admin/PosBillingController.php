@@ -79,6 +79,9 @@ class PosBillingController extends Controller
             if(!$request->filled('bill_no')){
                 $bills_query=$bills_query->whereRaw('(select count(*) from credit_notes where credit_notes.ref_id=pos_bills.id )=0');
             }
+            if($request->filled('center_id')){
+
+            }
             $bills = $bills_query->where('is_canceled', 0)->select('date', 'customer_name', 'id', 'bill_no', 'grandtotal')->get();
             // dd($bills);
             return view('admin.pos.list', compact('bills', 'print', 'return', 'cancel'));

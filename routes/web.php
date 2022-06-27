@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AccountingController;
 use App\Http\Controllers\Admin\BankController;
 use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\CounterController;
@@ -24,6 +25,7 @@ use App\Http\Controllers\Admin\PointController;
 use App\Http\Controllers\Admin\PosBillingController;
 use App\Http\Controllers\Admin\SellitemController;
 use App\Http\Controllers\Admin\Setting\ConversionController;
+use App\Http\Controllers\Admin\StockController;
 use App\Http\Controllers\Admin\SupplierController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\WastageController;
@@ -38,6 +40,7 @@ use App\Http\Controllers\Sahakari\Member\MemberController;
 use App\Http\Controllers\SMSController;
 use App\Models\Item;
 use App\Models\Sahakari\HomeCntroller;
+use App\NepaliDate;
 
 /*
 |--------------------------------------------------------------------------
@@ -67,10 +70,12 @@ Route::get('/pass', function () {
     // $arr=str_split($data,3);
     // echo implode('/',$arr);
 
-    $i =1;
-    $i-=-1;
-    dd($i);
+    dd(currentStock()->sum);
 });
+
+Route::post('cuurent-stock', function () {
+    return response(currentStock()->sum);
+})->name('current-stock');
 
 
 
@@ -231,6 +236,11 @@ Route::name('admin.')->group(function () {
         Route::prefix('items')->name('item.')->group(function () {
             Route::match(['GET', 'POST'], '', [ItemController::class, 'index'])->name('index')->middleware('permmission:03.04');
             Route::match(['GET', 'POST'], 'all', [ItemController::class, 'all'])->name('all');
+            Route::post('edit', [ItemController::class, 'edit'])->name('edit')->middleware('permmission:03.02');
+            Route::post('add', [ItemController::class, 'save'])->name('save')->middleware('permmission:03.01');
+            Route::match(['GET', 'POST'], 'item-center-stock/{id}', [ItemController::class, 'centerStock'])->name('center-stock')->middleware('permmission:03.05');
+            Route::get('item-delete/{id}', [ItemController::class, 'delete'])->name('delete')->middleware('permmission:03.03');
+            Route::post('item-update', [ItemController::class, 'update'])->name('update')->middleware('authority')->middleware('permmission:03.02');
             //xxx stock
             Route::match(['GET', 'POST'], 'stockout', [ItemController::class, 'stockOut'])->name('stockout')->middleware('permmission:03.05');;
             Route::get('stockout-list', [ItemController::class, 'stockOutList'])->name('stockout-list')->middleware('permmission:03.05');
@@ -242,11 +252,6 @@ Route::name('admin.')->group(function () {
             Route::match(['GET', 'POST'], 'barcode', [ItemController::class, 'barcode'])->name('barcode');
             Route::match(['GET', 'POST'], 'product', [ItemController::class, 'product'])->name('product');
             Route::match(['GET', 'POST'], 'product-barcode', [ItemController::class, 'productBarcode'])->name('product-barcode');
-            Route::post('edit', [ItemController::class, 'edit'])->name('edit')->middleware('permmission:03.02');
-            Route::post('add', [ItemController::class, 'save'])->name('save')->middleware('permmission:03.01');
-            Route::match(['GET', 'POST'], 'item-center-stock/{id}', [ItemController::class, 'centerStock'])->name('center-stock')->middleware('permmission:03.05');
-            Route::get('item-delete/{id}', [ItemController::class, 'delete'])->name('delete')->middleware('permmission:03.03');
-            Route::post('item-update', [ItemController::class, 'update'])->name('update')->middleware('authority')->middleware('permmission:03.02');
             //XXX variants
                Route::prefix('variants')->name('variants.')->group(function () {
                     Route::match(['GET','POST'],'list/{item}',[ItemVariantController::class,'index'])->name('index');
@@ -466,6 +471,18 @@ Route::name('admin.')->group(function () {
         });
 
 
+        //XXX accounting
+        Route::prefix('accounting')->name('accounting.')->group(function(){
+            Route::prefix('stock')->name('stock.')->group(function(){
+                Route::match(['GET','POST'],'',[StockController::class,'index'])->name('index');
+                Route::post('add',[StockController::class,'add'])->name('add');
+                Route::post('del',[StockController::class,'del'])->name('del');
+            });
+
+            Route::get('',[AccountingController::class,'index'] )->name('index');
+            Route::match(['GET','POST'],'final',[AccountingController::class,'final'] )->name('final');
+        });
+
 
         // XXX Ledgers
         Route::group(['prefix' => 'ledger'], function () {
@@ -645,11 +662,8 @@ Route::name('admin.')->group(function () {
                 Route::post('update', [ConversionController::class, 'update'])->name('update');
                 Route::post('del', [ConversionController::class, 'del'])->name('del');
                 // Route::get('dell', [ConversionController::class, 'del'])->name('dell');
-
             });
         });
-
-
 
         Route::group(['prefix' => 'user'], function () {
             Route::name('user.')->group(function () {

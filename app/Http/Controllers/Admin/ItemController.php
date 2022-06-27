@@ -126,10 +126,10 @@ class ItemController extends Controller
                 foreach ($request->centers as $key => $center_id) {
                     $amount = $request->input('qty_' . $center_id);
                     $rate = $request->input('rate_' . $center_id) ?? 0;
+                    $wholesale = $request->input('wholesale_' . $center_id) ?? 0;
                     $stock = new CenterStock();
                     $stock->item_id = $item->id;
                     $stock->center_id = $center_id;
-                    $wholesale = $request->input('wholesale_' . $center_id) ?? 0;
                     $stock->amount = $amount;
                     $stock->rate = $rate;
                     $stock->wholesale = $wholesale;

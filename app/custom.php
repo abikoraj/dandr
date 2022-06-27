@@ -4,6 +4,7 @@ use App\Models\Center;
 use App\Models\CenterStock;
 use App\Models\Item;
 use App\Models\Setting;
+use App\NepaliDate;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\DB;
@@ -14,7 +15,7 @@ define('employee', 3);
 define('supplier', 4);
 define('customer', 5);
 
-$xxx_per="data";
+$xxx_per = "data";
 
 function _nepalidate($date)
 {
@@ -71,7 +72,8 @@ function userDir($id)
     $arr = str_split($data, 3);
     return implode('/', $arr);
 }
-function getOffers(){
+function getOffers()
+{
     return [
         'Flat Discount',
         'percentage',
@@ -117,134 +119,178 @@ function numberTowords(float $amount)
     return ($implode_to_Rupees ? $implode_to_Rupees . 'Rupees ' : '') . $get_paise;
 }
 
-function coll_sum($collection,$column){
+function coll_sum($collection, $column)
+{
     return $collection->sum($column);
 }
 
-function backup_path(): string{
-  return  public_path('backup');
+function backup_path(): string
+{
+    return  public_path('backup');
 }
 
-function has_per($per,$list): bool{
-    return $list->where('code',$per)->count()>0;
+function has_per($per, $list): bool
+{
+    return $list->where('code', $per)->count() > 0;
 }
 
-function isSuper(){
-    return Auth::check()?((Auth::user()->phone)==env('authphone','')):false;
+function isSuper()
+{
+    return Auth::check() ? ((Auth::user()->phone) == env('authphone', '')) : false;
 }
 
-function auth_has_per($per){
+function auth_has_per($per)
+{
     try {
-        $user=Auth::user();
-        if($user->phone == env('authphone', "9852059171")){
+        $user = Auth::user();
+        if ($user->phone == env('authphone', "9852059171")) {
             return true;
-        }else{
-            return Config::get('per.per')->where('enable',1)->where('code',$per)->count()>0;
+        } else {
+            return Config::get('per.per')->where('enable', 1)->where('code', $per)->count() > 0;
         }
         //code...
     } catch (\Throwable $th) {
         //throw $th;
         return false;
     }
-
 }
 
-function xxx_per_func() {
+function xxx_per_func()
+{
     Config::set('per.per', ['database']);
 }
 
-function roleToWord($key){
-    return str_replace('_',' ',$key);
+function roleToWord($key)
+{
+    return str_replace('_', ' ', $key);
 }
 
-function getSetting($key,$direct=false){
-    $s=DB::table('settings')->where('key',$key)->select('value')->first();
-    return $direct?($s!=null?$s->value:null):($s!=null?json_decode($s->value):null);
+function getSetting($key, $direct = false)
+{
+    $s = DB::table('settings')->where('key', $key)->select('value')->first();
+    return $direct ? ($s != null ? $s->value : null) : ($s != null ? json_decode($s->value) : null);
 }
 
-function setSetting($key,$value,$direct=false){
-    $s=Setting::where('key',$key)->first();
-    if($s==null){
-        $s=new Setting();
-        $s->key=$key;
+function setSetting($key, $value, $direct = false)
+{
+    $s = Setting::where('key', $key)->first();
+    if ($s == null) {
+        $s = new Setting();
+        $s->key = $key;
     }
-    if($direct){
-        $s->value=$value;
-    }else{
+    if ($direct) {
+        $s->value = $value;
+    } else {
 
-        $s->value=json_encode($value);
+        $s->value = json_encode($value);
     }
     $s->save();
     return $s;
 }
 // function
 
-function maintainStockCenter($item_id,$qty,$center_id,$dir='in'){
+function maintainStockCenter($item_id, $qty, $center_id, $dir = 'in')
+{
 
-    if(CenterStock::where('item_id',$item_id)->where('center_id',$center_id)->count()>0){
-        if($dir=='in'){
-            DB::update('update center_stocks set amount = amount+? where item_id = ? and center_id=?', [$qty,$item_id,$center_id]);
-        }else{
-            DB::update('update center_stocks set amount = amount-? where item_id = ? and center_id=?', [$qty,$item_id,$center_id]);
+    if (CenterStock::where('item_id', $item_id)->where('center_id', $center_id)->count() > 0) {
+        if ($dir == 'in') {
+            DB::update('update center_stocks set amount = amount+? where item_id = ? and center_id=?', [$qty, $item_id, $center_id]);
+        } else {
+            DB::update('update center_stocks set amount = amount-? where item_id = ? and center_id=?', [$qty, $item_id, $center_id]);
         }
-    }else{
-        $item=Item::where('id',$item_id)->select('id','stock','wholesale','sell_price')->first();
-        $centerStock=new CenterStock();
-        $centerStock->item_id=$item_id;
-        $centerStock->center_id=$center_id;
-        $centerStock->wholesale=$item->wholesale;
-        $centerStock->rate=$item->sell_price;
-        if($dir=='in'){
+    } else {
+        $item = Item::where('id', $item_id)->select('id', 'stock', 'wholesale', 'sell_price')->first();
+        $centerStock = new CenterStock();
+        $centerStock->item_id = $item_id;
+        $centerStock->center_id = $center_id;
+        $centerStock->wholesale = $item->wholesale;
+        $centerStock->rate = $item->sell_price;
+        if ($dir == 'in') {
 
-            $centerStock->amount=$qty;
-        }else{
-            $centerStock->amount=-1*$qty;
-
+            $centerStock->amount = $qty;
+        } else {
+            $centerStock->amount = -1 * $qty;
         }
         $centerStock->save();
     }
 }
-function maintainStock($item_id,$qty,$center_id=null,$dir='in')
+function maintainStock($item_id, $qty, $center_id = null, $dir = 'in')
 {
-    $item=Item::where('id',$item_id)->select('id','stock','wholesale','sell_price')->first();
-    if($dir=='in'){
-       $item->stock+=$qty;
-    }else{
-       $item->stock-=$qty;
-
+    $item = Item::where('id', $item_id)->select('id', 'stock', 'wholesale', 'sell_price')->first();
+    if ($dir == 'in') {
+        $item->stock += $qty;
+    } else {
+        $item->stock -= $qty;
     }
     $item->save();
 
-    if(env('multi_stock',false)){
+    if (env('multi_stock', false)) {
 
-        if($center_id==null){
-            $center=Center::first(['id']);
-            if($center==null){
+        if ($center_id == null) {
+            $center = Center::first(['id']);
+            if ($center == null) {
                 return;
             }
-            $center_id=$center->id;
+            $center_id = $center->id;
         }
     }
 
-    if(CenterStock::where('item_id',$item_id)->where('center_id',$center_id)->count()>0){
-        if($dir=='in'){
-            DB::update('update center_stocks set amount = amount+? where item_id = ? and center_id=?', [$qty,$item_id,$center_id]);
-        }else{
-            DB::update('update center_stocks set amount = amount-? where item_id = ? and center_id=?', [$qty,$item_id,$center_id]);
+    if (CenterStock::where('item_id', $item_id)->where('center_id', $center_id)->count() > 0) {
+        if ($dir == 'in') {
+            DB::update('update center_stocks set amount = amount+? where item_id = ? and center_id=?', [$qty, $item_id, $center_id]);
+        } else {
+            DB::update('update center_stocks set amount = amount-? where item_id = ? and center_id=?', [$qty, $item_id, $center_id]);
         }
-    }else{
-        $centerStock=new CenterStock();
-        $centerStock->item_id=$item_id;
-        $centerStock->center_id=$center_id;
-        $centerStock->wholesale=$item->wholesale;
-        $centerStock->rate=$item->sell_price;
-        if($dir=='in'){
-            $centerStock->amount=$qty;
-        }else{
-            $centerStock->amount=-1*$qty;
-
+    } else {
+        $centerStock = new CenterStock();
+        $centerStock->item_id = $item_id;
+        $centerStock->center_id = $center_id;
+        $centerStock->wholesale = $item->wholesale;
+        $centerStock->rate = $item->sell_price;
+        if ($dir == 'in') {
+            $centerStock->amount = $qty;
+        } else {
+            $centerStock->amount = -1 * $qty;
         }
         $centerStock->save();
     }
+}
 
+function currentStock()
+{
+    return DB::selectOne('select round(sum(stock * ( case when sell_price = 0   then cost_price when sell_price<cost_price then cost_price else sell_price end)),2) as sum from items');
+}
+
+function rangeSelector($request,$query){
+    $year = $request->year;
+    $month = $request->month;
+    $week = $request->week;
+    $session = $request->session;
+    $type = $request->type;
+    $range = [];
+    $data = [];
+    $date = 1;
+    if ($type == 0) {
+        $range = NepaliDate::getDate($year, $month, $session);
+        $query = $query->where('date', '>=', $range[1])->where('date', '<=', $range[2]);
+    } elseif ($type == 1) {
+        $date = $date = str_replace('-', '', $request->date1);
+        $query = $query->where('date', '=', $date);
+    } elseif ($type == 2) {
+        $range = NepaliDate::getDateWeek($year, $month, $week);
+        $query = $query->where('date', '>=', $range[1])->where('date', '<=', $range[2]);
+
+    } elseif ($type == 3) {
+        $range = NepaliDate::getDateMonth($year, $month);
+        $query = $query->where('date', '>=', $range[1])->where('date', '<=', $range[2]);
+
+    } elseif ($type == 4) {
+        $range = NepaliDate::getDateYear($year);
+        $query = $query->where('date', '>=', $range[1])->where('date', '<=', $range[2]);
+    } elseif ($type == 5) {
+        $range[1] = str_replace('-', '', $request->date1);;
+        $range[2] = str_replace('-', '', $request->date2);;
+        $query = $query->where('date', '>=', $range[1])->where('date', '<=', $range[2]);
+    }
+    return $query;
 }

@@ -451,7 +451,7 @@ class ManufactureProcessController extends Controller
 
         // dd($request->all());
         $process = ManufactureProcess::where('id', $id)->first();
-        if ($process->stage == 3) {
+        if ($process->stage >= 3) {
             return redirect()->back();
         }
         $process->end = $request->end;
