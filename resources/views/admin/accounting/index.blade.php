@@ -19,5 +19,14 @@
                Final Accounts
             </span>
         </div>
+        <div class="col-md-2 section href" data-target="{{route('admin.accounting.extra.income.index')}}">
+            <span class="icon">
+                <i class="zmdi zmdi-accounts"></i>
+            </span>
+            <span class="divider"></span>
+            <span class="text">
+               Extra incomes
+            </span>
+        </div>
     </div>
 @endsection
