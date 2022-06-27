@@ -82,7 +82,7 @@
                         </td>
                     </tr>
                 @endif
-                @if ($tradingStatus=='profit')
+                @if ($trading->status=='profit')
                     <tr class="main">
                         <td>
                             To Gross Profit
@@ -168,7 +168,7 @@
                         </tr>
                     @endif
                 @endif
-                @if ($tradingStatus=='loss')
+                @if ($trading->status=='loss')
                     <tr class="main">
                         <td>By Gross Loss</td>
                         <td>
@@ -225,23 +225,33 @@
                 @if ($trading->status=="loss")
                     <tr class="main">
                         <td>
-                            To Gross Losss
+                            To Gross Loss
                         </td>
                         <td>
-                            {{$tradingTotal}}
+                            {{$trading->loss}}
                         </td>
                     </tr>
                 @endif
-                @if ($salary)
+                @if ($plac->salary)
                     <tr class="main">
                         <td>
                             To Salaries
                         </td>
                         <td>
-                            {{}}
+                            {{$plac->salary}}
                         </td>
                     </tr>
                 @endif
+                @foreach ($plac->expenses as $expense)
+                    <tr class="main">
+                        <td>
+                            To {{$expense->name}}
+                        </td>
+                        <td>
+                            {{$expense->amount}}
+                        </td>
+                    </tr>
+                @endforeach
             </tbody>
         </table>
     </div>
@@ -256,13 +266,13 @@
                 </tr>
             </thead>
             <tbody id="plAccDataCR">
-                @if ($trading->status=="loss")
+                @if ($trading->status=="profit")
                 <tr class="main">
                     <td>
-                        To Gross Losss
+                        By Gross Profits
                     </td>
                     <td>
-                        {{$tradingTotal}}
+                        {{$trading->profit}}
                     </td>
                 </tr>
             @endif

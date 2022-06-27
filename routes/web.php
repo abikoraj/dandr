@@ -11,6 +11,7 @@ use App\Http\Controllers\Admin\DistributersellController;
 use App\Http\Controllers\Admin\DistributerSnfFatController;
 use App\Http\Controllers\Admin\DistributorPaymentController;
 use App\Http\Controllers\Admin\EmployeeController;
+use App\Http\Controllers\Admin\ExtraIncomeController;
 use App\Http\Controllers\Admin\FarmerController;
 use App\Http\Controllers\Admin\GatewayController;
 use App\Http\Controllers\Admin\ImportController;
@@ -38,6 +39,8 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Sahakari\HomeController;
 use App\Http\Controllers\Sahakari\Member\MemberController;
 use App\Http\Controllers\SMSController;
+use App\Models\ExtraIncome;
+use App\Models\ExtraIncomeCategory;
 use App\Models\Item;
 use App\Models\Sahakari\HomeCntroller;
 use App\NepaliDate;
@@ -477,6 +480,17 @@ Route::name('admin.')->group(function () {
                 Route::match(['GET','POST'],'',[StockController::class,'index'])->name('index');
                 Route::post('add',[StockController::class,'add'])->name('add');
                 Route::post('del',[StockController::class,'del'])->name('del');
+            });
+            Route::prefix('extra-income')->name('extra.income.')->group(function(){
+                Route::match(['get', 'post'], '', [ExtraIncomeController::class,'index'])->name('index');
+                Route::match(['get', 'post'], 'add', [ExtraIncomeController::class,'add'])->name('add');
+                Route::match(['get', 'post'], 'update/{id}', [ExtraIncomeController::class,'update'])->name('update');
+                Route::match(['get', 'post'], 'del/{id}', [ExtraIncomeController::class,'del'])->name('del');
+
+                Route::match(['get', 'post'], 'category', [ExtraIncomeController::class,'category'])->name('category');
+                Route::match(['get', 'post'], 'category-add', [ExtraIncomeController::class,'categoryAdd'])->name('category.add');
+                Route::match(['get', 'post'], 'category-update', [ExtraIncomeController::class,'categoryUpdate'])->name('category.update');
+                Route::match(['get', 'post'], 'category-del/{id}', [ExtraIncomeController::class,'categoryDel'])->name('category.del');
             });
 
             Route::get('',[AccountingController::class,'index'] )->name('index');

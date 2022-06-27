@@ -13,6 +13,11 @@
     tr.sub>td:first-child{
         padding-left: 15px;
     }
+
+    .table-bordered{
+        margin-bottom: 0 !important;
+
+    }
 </style>
 @endsection
 @section('content')

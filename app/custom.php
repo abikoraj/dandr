@@ -291,6 +291,19 @@ function rangeSelector($request,$query){
         $range[1] = str_replace('-', '', $request->date1);;
         $range[2] = str_replace('-', '', $request->date2);;
         $query = $query->where('date', '>=', $range[1])->where('date', '<=', $range[2]);
+    }else if($type==6){
+        $fy=DB::selectOne('select startdate,enddate from fiscal_years where id=?',[$request->fiscalyear]);
+        $query = $query->where('date', '>=', $fy->startdate)->where('date', '<=', $fy->emddate);
     }
     return $query;
+}
+
+function renderEmpList(){
+    $emps=DB::select('select u.name from employees e join users u on e.user_id=u.id');
+    $html="<datalist id='emp_datalist'>";
+    foreach ($emps as $key => $emp) {
+        $html.="<option value='{$emp->name}'>{$emp->name}</option>";
+    }
+    $html.="</datalist>";
+    return $html;
 }
