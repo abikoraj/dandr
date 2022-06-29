@@ -53,6 +53,9 @@
                         </select>
                     </div>
                     <div class="col-12 pt-2">
+                        <div class="p-2">
+                            <input type="checkbox" name="detail" id="detail"> <label for="detail">Show Detail</label>
+                        </div>
                         <button class="btn btn-primary">Load Data</button>
                     </div>
                 </div>

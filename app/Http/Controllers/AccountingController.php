@@ -21,7 +21,7 @@ class AccountingController extends Controller
         if ($request->getMethod() == "POST") {
             $opening = 500000;
             $closing = 510000;
-            $showDetail=$request->detail??false;
+            $showDetail=$request->filled('detail');
             $range = [];
             $type = $request->type;
             $fy = FiscalYear::where('id', $request->fy)->first();
