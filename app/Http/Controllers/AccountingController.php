@@ -19,8 +19,7 @@ class AccountingController extends Controller
     public function final(Request $request)
     {
         if ($request->getMethod() == "POST") {
-            $opening = 500000;
-            $closing = 510000;
+
             $showDetail=$request->filled('detail');
             $range = [];
             $type = $request->type;
@@ -49,6 +48,9 @@ class AccountingController extends Controller
                 }
             }
 
+            $opening = DB::selectOne("select id,opening from stocks where date>={$range[1]} and date <={$range[2]} and opening is not null order by date,id asc limit 1")->opening;
+            $closing = DB::selectOne("select id,closing from stocks where date>={$range[1]} and date <={$range[2]} and closing is not null order by date,id desc limit 1")->closing;
+            // dd($opening,$closing);
             $queries=[
                 'milk'=>" select sum(amount) from ledgers where identifire=108 ",
                 'supplier'=>"select sum(total) from supplierbills where canceled=0 ",

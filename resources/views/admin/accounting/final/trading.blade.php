@@ -1,5 +1,5 @@
 <h4 class="text-center mb-1">
-    Trading Account <br> from {{_nepalidate($range[1])}} to {{_nepalidate($range[2])}}
+    Trading Account <br> from {{ _nepalidate($range[1]) }} to {{ _nepalidate($range[2]) }}
 </h4>
 <div class="d-flex justify-content-between">
     <strong>Dr</strong>
@@ -21,17 +21,17 @@
             <tbody id="tradingAccDataDR">
                 <tr class="main">
                     <td>
-                        To Opening b/d
+                        To Opening Stock
                     </td>
                     <td>
-                        {{$opening}}
+                        {{ $opening }}
                     </td>
                 </tr>
-                @if ($trading->purchase>0)
+                @if ($trading->purchase > 0)
 
                     @if ($showDetail)
                         <tr class="main">
-                            <td >
+                            <td>
                                 To Purchase
                             </td>
                             <td></td>
@@ -41,16 +41,16 @@
                                 Milk Purchase
                             </td>
                             <td>
-                                {{$trading->milk??0}}
+                                {{ $trading->milk ?? 0 }}
 
                             </td>
                         </tr>
                         <tr class="sub">
                             <td>
-                            Stock Purchase
+                                Goods Purchase
                             </td>
                             <td>
-                                {{$trading->supplier??0}}
+                                {{ $trading->supplier ?? 0 }}
                             </td>
                         </tr>
                         <tr class="main">
@@ -58,7 +58,7 @@
                                 Total Purchase
                             </td>
                             <td>
-                                {{$trading->purchase}}
+                                {{ $trading->purchase }}
                             </td>
                         </tr>
                     @else
@@ -67,28 +67,28 @@
                                 To Purchase
                             </td>
                             <td>
-                                {{$trading->purchase}}
+                                {{ $trading->purchase }}
                             </td>
                         </tr>
                     @endif
                 @endif
-                @if ($trading->purchaseExpense>0)
+                @if ($trading->purchaseExpense > 0)
                     <tr class="main">
                         <td>
                             To Purchase Expenses
                         </td>
                         <td>
-                            {{$trading->purchaseExpense}}
+                            {{ $trading->purchaseExpense }}
                         </td>
                     </tr>
                 @endif
-                @if ($trading->status=='profit')
+                @if ($trading->status == 'profit')
                     <tr class="main">
                         <td>
                             To Gross Profit
                         </td>
                         <td>
-                            {{$trading->profit}}
+                            {{ $trading->profit }}
                         </td>
                     </tr>
                 @endif
@@ -109,7 +109,7 @@
                 @php
 
                 @endphp
-                @if ($trading->sales>0)
+                @if ($trading->sales > 0)
                     @if ($showDetail)
                         <tr class="main">
                             <td>
@@ -122,7 +122,7 @@
                                 Counter Sales
                             </td>
                             <td>
-                                {{$trading->counter}}
+                                {{ $trading->counter }}
                             </td>
                         </tr>
                         <tr class="sub">
@@ -130,7 +130,7 @@
                                 Sales to Farmer
                             </td>
                             <td>
-                                {{$trading->farmer??0}}
+                                {{ $trading->farmer ?? 0 }}
                             </td>
                         </tr>
                         <tr class="sub">
@@ -138,7 +138,7 @@
                                 Sales to Distributer
                             </td>
                             <td>
-                                {{$trading->distributer??0}}
+                                {{ $trading->distributer ?? 0 }}
                             </td>
                         </tr>
                         <tr class="main">
@@ -146,7 +146,7 @@
                                 Total Sales
                             </td>
                             <td>
-                                {{$trading->sales}}
+                                {{ $trading->sales }}
                             </td>
                         </tr>
                     @else
@@ -155,24 +155,27 @@
                                 By Sales
                             </td>
                             <td>
-                                {{$trading->sales}}
-                            </td>
-                        </tr>
-                        <tr class="main">
-                            <td>
-                                By Closing Stock
-                            </td>
-                            <td>
-                                {{$closing}}
+                                {{ $trading->sales }}
                             </td>
                         </tr>
                     @endif
                 @endif
-                @if ($trading->status=='loss')
+                @if ($closing>0)
+                    <tr class="main">
+                        <td>
+                            By Closing Stock
+                        </td>
+                        <td>
+                            {{ $closing }}
+                        </td>
+                    </tr>
+
+                @endif
+                @if ($trading->status == 'loss')
                     <tr class="main">
                         <td>By Gross Loss</td>
                         <td>
-                            {{$trading->loss}}
+                            {{ $trading->loss }}
                         </td>
                     </tr>
                 @endif
@@ -184,16 +187,16 @@
     <div style="flex:1">
         <table class="table table-bordered">
             <tr class="main">
-                <td class="w-40"></td>
-                <td class="w-10">{{$trading->total}}</td>
+                <td class="w-40">Total</td>
+                <td class="w-10">{{ $trading->total }}</td>
             </tr>
         </table>
     </div>
     <div style="flex:1">
         <table class="table table-bordered">
             <tr class="main">
-                <td class="w-40"></td>
-                <td class="w-10">{{$trading->total}}</td>
+                <td class="w-40">Total</td>
+                <td class="w-10">{{ $trading->total }}</td>
             </tr>
         </table>
     </div>

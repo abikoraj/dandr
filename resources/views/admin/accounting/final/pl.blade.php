@@ -100,7 +100,7 @@
     <div style="flex:1">
         <table class="table table-bordered">
             <tr class="main">
-                <td class="w-40"></td>
+                <td class="w-40">Total</td>
                 <td class="w-10">{{$plac->total}}</td>
             </tr>
         </table>
@@ -108,7 +108,7 @@
     <div style="flex:1">
         <table class="table table-bordered">
             <tr class="main">
-                <td class="w-40"></td>
+                <td class="w-40">Total</td>
                 <td class="w-10">{{$plac->total}}</td>
             </tr>
         </table>

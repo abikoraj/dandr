@@ -293,7 +293,8 @@ function rangeSelector($request,$query){
         $query = $query->where('date', '>=', $range[1])->where('date', '<=', $range[2]);
     }else if($type==6){
         $fy=DB::selectOne('select startdate,enddate from fiscal_years where id=?',[$request->fiscalyear]);
-        $query = $query->where('date', '>=', $fy->startdate)->where('date', '<=', $fy->emddate);
+        // dd($fy);
+        $query = $query->where('date', '>=', $fy->startdate)->where('date', '<=', $fy->enddate);
     }
     return $query;
 }
