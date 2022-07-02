@@ -45,7 +45,6 @@
             </li>
             @endif
             @if (env('use_milk',false))
-
                 <li><a href="javascript:void(0);" class="waves-effect waves-block menu-toggle"><i class="zmdi zmdi-shopping-cart"></i><span>Milk Collection</span></a>
                     <ul class="ml-menu">
                         <li><a href="{{ route('admin.center.index') }}" class="waves-effect waves-block">Manage Collection Center</a></li>
@@ -77,7 +76,6 @@
                     @if (env('dis_snffat',0)==1)
                     <li><a href="{{ route('admin.distributer.snffat.index') }}" class="waves-effect waves-block">SNF FAT</a></li>
                     <li><a href="{{ route('admin.distributer.MilkData.index') }}" class="waves-effect waves-block">Milk Data</a></li>
-
                     @endif
                 </ul>
             </li>
@@ -140,12 +138,12 @@
                     <li><a href="{{ route('admin.point.index') }}" class="waves-effect waves-block">Reward Points </a></li>
                 </ul>
             </li>
-            <li><a href="javascript:void(0);" class="waves-effect waves-block menu-toggle"><i class="zmdi zmdi-shopping-cart"></i><span>Payment Setting</span></a>
+            {{-- <li><a href="javascript:void(0);" class="waves-effect waves-block menu-toggle"><i class="zmdi zmdi-shopping-cart"></i><span>Payment Setting</span></a>
                 <ul class="ml-menu">
                     <li><a href="{{ route('admin.bank.index') }}" class="waves-effect waves-block">Banks </a></li>
                     <li><a href="{{ route('admin.gateway.index') }}" class="waves-effect waves-block">Payment Gateways</a></li>
                 </ul>
-            </li>
+            </li> --}}
             @endif
             <li><a href="javascript:void(0);" class="waves-effect waves-block menu-toggle"><i class="zmdi zmdi-shopping-cart"></i><span> Setting</span></a>
                 <ul class="ml-menu">

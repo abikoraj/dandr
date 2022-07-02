@@ -5,6 +5,8 @@ use App\Models\CenterStock;
 use App\Models\Item;
 use App\Models\Setting;
 use App\NepaliDate;
+use App\NepaliDateHelper;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\DB;
@@ -307,4 +309,19 @@ function renderEmpList(){
     }
     $html.="</datalist>";
     return $html;
+}
+
+
+function getFiscalYear(){
+    $name=env('fiscal_year',null);
+    if($name!=null){
+        $fy=DB::table('fiscal_years')->where('name',$name)->first();
+    }else{
+       $nepaliDateHelper=new NepaliDateHelper();
+       $date=Carbon::now();
+       $currentdate=$nepaliDateHelper->eng_to_nepInt($date->year,$date->month,$date->day);
+       $fy=DB::table('fiscal_years')->where('startdate','>=',$currentdate)->where('enddate','<=',$currentdate)->first();
+
+    }
+    return $fy;
 }

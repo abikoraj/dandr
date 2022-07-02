@@ -10,8 +10,9 @@
                     <form id="addBank" method="POST" onsubmit="return saveData(event);">
                         @csrf
                         <div class="row">
+                            <input type="hidden" name="account_id" value="{{$account->id}}">
                             <div class="col-lg-6">
-                                <label for="name">Name</label>
+                                <label for="name">Bank Name</label>
                                 <div class="form-group">
                                     <input type="text" id="name" name="name" class="form-control next" data-next="phone" placeholder="Enter Bank Name" required>
                                 </div>
@@ -21,19 +22,25 @@
                                 <div class="form-group">
                                     <input type="text" id="phone" name="phone" class="form-control next" data-next="phone" placeholder="Enter Bank Phone No" required>
                                 </div>
-                            </div>    
+                            </div>
                             <div class="col-lg-12">
                                 <label for="address">Address</label>
                                 <div class="form-group">
                                     <input type="text" id="address" name="address" class="form-control next" data-next="phone" placeholder="Enter Bank Address" required>
                                 </div>
-                            </div> 
+                            </div>
                             <div class="col-lg-6">
                                 <label for="accno">Account No</label>
                                 <div class="form-group">
                                     <input type="text" id="accno" name="accno" class="form-control next" data-next="phone" placeholder="Enter Bank Account No" required>
                                 </div>
-                            </div>                                     
+                            </div>
+                            <div class="col-lg-6">
+                                <label for="balance">Balance</label>
+                                <div class="form-group">
+                                    <input type="number" min="0"  id="balance" name="balance" class="form-control next" data-next="phone" placeholder="Enter Bank Account No" required>
+                                </div>
+                            </div>
                         </div>
                 </div>
             </div>
@@ -47,7 +54,7 @@
 </div>
 
 @section('js1')
-    
+
 
     <script>
         function saveData(e) {

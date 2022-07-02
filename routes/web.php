@@ -130,6 +130,7 @@ Route::name('admin.')->group(function () {
             Route::get('advances', 'Admin\AdvanceController@index')->name('advance')->middleware('permmission:01.10');
             Route::post('advance-add', 'Admin\AdvanceController@add')->name('advance.add')->middleware('permmission:01.10');
             Route::post('advance-list', 'Admin\AdvanceController@list')->name('advance.list')->middleware('permmission:01.10');
+
             // Route::post('advance-update', 'Admin\AdvanceController@update')->name('advance.update')->middleware('authority');
             Route::post('advance-delete', 'Admin\AdvanceController@delete')->name('advance.delete')->middleware('permmission:01.10');
             Route::post('advance-update', 'Admin\AdvanceController@update')->name('advance.update')->middleware('permmission:01.10');
@@ -494,6 +495,10 @@ Route::name('admin.')->group(function () {
             });
 
             Route::get('',[AccountingController::class,'index'] )->name('index');
+            Route::match(['GET','POST'],'accounts',[AccountingController::class,'accounts'] )->name('accounts');
+            Route::match(['GET','POST'],'accounts/edit/{id}',[AccountingController::class,'accountsEdit'] )->name('accounts.edit');
+            Route::match(['GET','POST'],'accounts/add/{type}/{parent_id}',[AccountingController::class,'accountsAdd'] )->name('accounts.add');
+            Route::get('subaccounts/{id}',[AccountingController::class,'subAccounts'] )->name('subaccounts');
             Route::match(['GET','POST'],'final',[AccountingController::class,'final'] )->name('final');
         });
 
@@ -638,7 +643,7 @@ Route::name('admin.')->group(function () {
 
         Route::group(['prefix' => 'bank'], function () {
             Route::name('bank.')->middleware('permmission:11.01')->group(function () {
-                Route::get('', [BankController::class, 'index'])->name('index');
+                Route::get('index/{account}', [BankController::class, 'index'])->name('index');
                 Route::post('add', [BankController::class, 'add'])->name('add');
                 Route::post('update', [BankController::class, 'update'])->name('update');
                 Route::post('delete', [BankController::class, 'delete'])->name('delete');

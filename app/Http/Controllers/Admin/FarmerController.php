@@ -112,6 +112,7 @@ class FarmerController extends Controller
         $previousMonth = Ledger::where('user_id', $r->user_id)->where('date', '>=', $range[1])->where('date', '<=', $range[2])->where('identifire', '101')->sum('amount');
         // $previousMonth1 = Ledger::where('user_id', $r->user_id)->where('date', '>=', $range[1])->where('date', '<=', $range[2])->where('identifire', '120')->where('type', 1)->sum('amount');
         // $previousBalance = Ledger::where('user_id', $r->user_id)->where('date', '>=', $range[1])->where('date', '<=', $range[2])->where('identifire', '120')->where('type', 2)->sum('amount');
+
         $previousMonth1 = 0;
         $previousBalance = 0;
         $base = 0;
@@ -137,9 +138,9 @@ class FarmerController extends Controller
         }
         $farmer1->ledger = $arr;
         if ($prev < 0) {
-            $previousMonth1 = -1 * $prev;
+            $previousBalance = -1 * $prev;
         } else {
-            $previousBalance = $prev;
+            $previousMonth1 = $prev;
         }
 
         $farmer1->advance = (float)(Advance::where('user_id', $r->user_id)->where('date', '>=', $range[1])->where('date', '<=', $range[2])->sum('amount'));

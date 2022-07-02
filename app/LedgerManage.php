@@ -236,6 +236,7 @@ class LedgerManage
     }
 
 
+
     public static function farmerReport($user_id, $range, $needledger = false)
     {
         $farmer1 = User::find($user_id);
@@ -285,13 +286,13 @@ class LedgerManage
         $previousMonth = Ledger::where('user_id', $user_id)->where('date', '>=', $range[1])->where('date', '<=', $range[2])->where('identifire', '101')->sum('amount');
         // $previousMonth1 = Ledger::where('user_id', $user_id)->where('date', '>=', $range[1])->where('date', '<=', $range[2])->where('identifire', '120')->where('type', 1)->sum('amount');
         // $previousBalance = Ledger::where('user_id', $user_id)->where('date', '>=', $range[1])->where('date', '<=', $range[2])->where('identifire', '120')->where('type', 2)->sum('amount');
-        $n3 = Ledger::where('user_id', $user_id)->where('date', '>=', $range[1])->where('date', '<=', $range[2])->where('identifire', '120')->get();
         // $previousMonth1 = Ledger::where('user_id', $user_id)->where('date', '>=', $range[1])->where('date', '<=', $range[2])->where('identifire', '120')->where('type', 1)->sum('amount');
         // $ledgers= Ledger::where('user_id',$user_id)->where('date','<',$range[1])->where('identifire','!=',109)->where('identifire','!=',120)->orderBy('date','asc')->orderBy('id','asc')->get();
         $previousMonth1 = 0;
         $previousBalance = 0;
         // $n1=Ledger::where('user_id',$user_id)->where('date','<',$range[1])->where('identifire','!=',109)->where('identifire','!=',120)->where('type',1)->sum('amount');
         // $n2=Ledger::where('user_id',$user_id)->where('date','<',$range[1])->where('identifire','!=',109)->where('identifire','!=',120)->where('type',2)->sum('amount');
+        $n3 = Ledger::where('user_id', $user_id)->where('date', '>=', $range[1])->where('date', '<=', $range[2])->where('identifire', '120')->get();
         $n1 = Ledger::where('user_id', $user_id)->where('date', '<', $range[1])->where('type', 1)->sum('amount');
         $n2 = Ledger::where('user_id', $user_id)->where('date', '<', $range[1])->where('type', 2)->sum('amount');
 
@@ -306,9 +307,9 @@ class LedgerManage
 
 
         if ($prev < 0) {
-            $previousMonth1 = -1 * $prev;
+            $previousBalance = -1 * $prev;
         } else {
-            $previousBalance = $prev;
+            $previousMonth1  = $prev;
         }
 
         $farmer1->advance = (float)(Advance::where('user_id', $user_id)->where('date', '>=', $range[1])->where('date', '<=', $range[2])->sum('amount'));
