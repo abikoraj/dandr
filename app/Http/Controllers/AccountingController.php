@@ -135,9 +135,26 @@ class AccountingController extends Controller
             }
 
 
+            $bs=(object)[];
             // dd($trading,$plac);
 
-            return view('admin.accounting.final.index', compact('trading', 'opening', 'closing', 'showDetail', 'range', 'plac'));
+            if($type==1){
+                $accounts=DB::table('accounts')->where('fiscal_year_id',$fy->id)->whereNull('parent_id')->get()->groupBy('type');
+                foreach ($accounts[1] as $key => $acc) {
+                    if($acc->identifire=='1.2'){
+                        $acc->amount=DB::table('banks')->where('account_id',$acc->id)->sum('balance');
+                    }else if($acc->identifire=='1.4'){
+                        $acc->amount=DB::table('fixed_assets')->where('account_id',$acc->id)->sum('amount');
+                    }
+                }
+                $empaccounts=DB::select('select sum(amount),user_id,type from ledgers where user_id in (select user_id from users u join employees e on e.user_id=u.id)  group by user_id,type');
+                dd($empaccounts);
+                dd($accounts);
+
+
+            }
+
+            return view('admin.accounting.final.index', compact('trading', 'opening', 'closing', 'showDetail', 'range', 'plac','bs'));
         } else {
             $fys = DB::table('fiscal_years')->get(['id', 'name', 'startdate', 'enddate']);
             return view('admin.accounting.final.result', compact('fys'));
@@ -149,7 +166,6 @@ class AccountingController extends Controller
         if($request->getMethod()=="POST"){
 
             if($request->parent_id==0){
-
                 $accounts = Account::whereNull('parent_id')->where('fiscal_year_id',$request->fiscal_year_id)->get()->groupBy('type');
             }else{
                 $accounts = Account::where('parent_id',$request->parent_id)->get()->groupBy('type');
@@ -166,11 +182,13 @@ class AccountingController extends Controller
     {
         if ($request->getMethod() == "POST") {
             $parent = Account::where('id', $parent_id)->first();
+
             if ($parent_id == 0) {
                 $fy = getFiscalYear();
             } else {
                 $fy = DB::table('fiscal_years')->where('id', $parent->fiscal_year_id)->first();
             }
+
             if ($fy == null) {
                 throw new \Exception("Cannot Find Current Fiscal Year");
             }
@@ -188,6 +206,9 @@ class AccountingController extends Controller
             $account->amount = $request->amount;
             $account->fiscal_year_id = $fy->id;
             $account->save();
+            if($account->parent_id!=null){
+                $this->manageAccounts($account);
+            }
         } else {
             $parent = Account::where('id', $parent_id)->first();
             return view('admin.accounting.accounts.add', compact('type', 'parent_id', 'parent'));
@@ -211,6 +232,9 @@ class AccountingController extends Controller
                     $account->amount=$request->amount;
                 }
                 $account->save();
+                if($account->parent_id!=null){
+                    $this->manageAccounts($account);
+                }
                 return response()->json(['status'=>true]);
             }
         }else{
@@ -225,11 +249,22 @@ class AccountingController extends Controller
         while($parent_id!=null){
             $acc=Account::where('id',$parent_id)->first();
             $parent_id=$acc->parent_id;
-            array_push($parent,$acc);
+            array_push($parents,$acc);
         }
         array_reverse($parents);
         $accounts=DB::table('accounts')->where('parent_id',$id)->get();
         // dd($accounts);
         return view('admin.accounting.accounts.subaccounts',compact('accounts','parents','account'));
+    }
+
+    private function manageAccounts($account){
+        $parent_id=$account->parent_id;
+        while ($parent_id!=null) {
+            $parentacc=Account::where('id',$parent_id)->first(['parent_id','id','amount']);
+            $parentacc->amount=DB::table('accounts')->where('parent_id',$parent_id)->sum('amount');
+            $parent_id=$parentacc->parent_id;
+            $parentacc->save();
+        }
+
     }
 }

@@ -10,6 +10,15 @@
                Stocks
             </span>
         </div>
+        <div class="col-md-2 section href" data-target="{{route('admin.accounting.accounts.index')}}">
+            <span class="icon">
+                <i class="zmdi zmdi-accounts"></i>
+            </span>
+            <span class="divider"></span>
+            <span class="text">
+               Assets & <br> Libilities
+            </span>
+        </div>
         <div class="col-md-2 section href" data-target="{{route('admin.accounting.final')}}">
             <span class="icon">
                 <i class="zmdi zmdi-accounts"></i>

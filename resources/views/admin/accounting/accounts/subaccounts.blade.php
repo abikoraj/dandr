@@ -3,7 +3,7 @@
     <a href="{{ route('admin.accounting.index') }}">Accounting</a>
     / <a href="{{ route('admin.accounting.accounts.index') }}">Accounts ({{ $account->fiscalyear->name }})</a>
     @foreach ($parents as $parent)
-        / <a href="{{ route('admin.accounting.subaccounts', ['id', $parent->id]) }}">{{ $parent->name }}</a>
+        / <a href="{{ route('admin.accounting.subaccounts', ['id'=> $parent->id]) }}">{{ $parent->name }}</a>
     @endforeach
     / {{ $account->name }}
 @endsection
@@ -23,18 +23,18 @@
             </tr>
         </thead>
         <tbody >
-            @foreach ($accounts as $account)
+            @foreach ($accounts as $acc)
                 <tr>
-                    <td>{{ $account->identifire }}</td>
+                    <td>{{ $acc->identifire }}</td>
                     <td>
-                        {{ $account->name }}
+                        {{ $acc->name }}
                     </td>
                     <td>
-                        {{ $account->amount }}
+                        {{ $acc->amount }}
                     </td>
                     <td>
-                        <button class="btn btn-primary " onclick="initUpdate({{ $account->id }});"> Edit </button>
-                        <a href="{{ route('admin.accounting.subaccounts', ['id' => $account->id]) }}" target="blank"
+                        <button class="btn btn-primary " onclick="initUpdate({{ $acc->id }});"> Edit </button>
+                        <a href="{{ route('admin.accounting.subaccounts', ['id' => $acc->id]) }}" target="blank"
                             class="btn btn-success">Manage Sub Accounts</a>
                     </td>
                 </tr>
@@ -76,7 +76,7 @@
                 axios.post(ele.action,new FormData(ele))
                 .then((res)=>{
                     hideProgress();
-                    loadAccounts();
+                    window.location.reload();
                     win.hide();
                 })
                 .catch((err)=>{
