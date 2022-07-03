@@ -18,7 +18,7 @@ class CreateFixedAssetsTable extends Migration
             $table->string('name',100);
             $table->decimal('amount',18,2);
             $table->integer('startdate');
-            $table->decimal('depretiation');
+            $table->decimal('depreciation');
             $table->unsignedBigInteger('account_id')->nullable();
             $table->foreign('account_id')->references('id')->on('accounts');
             $table->timestamps();

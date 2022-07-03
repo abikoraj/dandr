@@ -4,7 +4,7 @@
 @endsection
 @section('head-title')
 <a href="{{route('admin.accounting.index')}}">Accounting</a>
-/ <a href="{{route('admin.accounting.accounts')}}">Accounts</a>
+/ <a href="{{route('admin.accounting.accounts.index')}}">Accounts</a>
 / Bank Ac ( {{$account->fiscalyear->name}} ) / Accounts
 @endsection
 @section('toobar')

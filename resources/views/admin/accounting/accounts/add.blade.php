@@ -8,7 +8,7 @@
                 <div class="d-flex align-items-center">
                     <div class=" text-right  pr-0">
                         @if ($parent_id!=0)
-                        {{$parent->identifire}}
+                        {{$parent->identifire}}.
                         @else
                         {{$type}}.
                         @endif

@@ -175,7 +175,7 @@ class AccountingController extends Controller
                 throw new \Exception("Cannot Find Current Fiscal Year");
             }
 
-            $identifire = ($parent_id != 0 ? $parent_id->identifire : $type) . "." . $request->identifire;
+            $identifire = ($parent_id != 0 ? $parent->identifire : $type) . "." . $request->identifire;
             if (DB::table('accounts')->where('identifire', $identifire)->where('fiscal_year_id', $fy->id)->count() > 0) {
                 throw new \Exception("Account with identifire {$identifire} already exists");
             }
@@ -192,5 +192,44 @@ class AccountingController extends Controller
             $parent = Account::where('id', $parent_id)->first();
             return view('admin.accounting.accounts.add', compact('type', 'parent_id', 'parent'));
         }
+    }
+
+    public function accountsEdit(Request $request,$id)
+    {
+        $calculated=['1.2','1.4'];
+        $nameEdit=['1.1','1.2','1.3','1.4','2.1','2.2','2.3'];
+        $account=Account::where('id',$id)->first();
+        if($request->getMethod()=="POST"){
+            if (in_array($account->identifire,$nameEdit) && in_array($account->identifire,$calculated)){
+                throw new \Exception("Cannot Update Account.");
+            }
+            else{
+                if (!in_array($account->identifire,$nameEdit) ){
+                    $account->name=$request->name;
+                }
+                if (!in_array($account->identifire,$calculated) ){
+                    $account->amount=$request->amount;
+                }
+                $account->save();
+                return response()->json(['status'=>true]);
+            }
+        }else{
+            return view('admin.accounting.accounts.edit',compact('account','calculated','nameEdit'));
+        }
+    }
+
+    public function subAccounts(Request $request,$id){
+        $account=Account::where('id',$id)->first();
+        $parent_id=$account->parent_id;
+        $parents=[];
+        while($parent_id!=null){
+            $acc=Account::where('id',$parent_id)->first();
+            $parent_id=$acc->parent_id;
+            array_push($parent,$acc);
+        }
+        array_reverse($parents);
+        $accounts=DB::table('accounts')->where('parent_id',$id)->get();
+        // dd($accounts);
+        return view('admin.accounting.accounts.subaccounts',compact('accounts','parents','account'));
     }
 }

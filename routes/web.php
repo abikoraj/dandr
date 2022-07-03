@@ -31,6 +31,7 @@ use App\Http\Controllers\Admin\SupplierController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\WastageController;
 use App\Http\Controllers\BackupController;
+use App\Http\Controllers\FixedAssetController;
 use App\Http\Controllers\HomeController as ControllersHomeController;
 use App\Http\Controllers\POS\BillingController;
 use App\Http\Controllers\POS\POSController;
@@ -495,9 +496,18 @@ Route::name('admin.')->group(function () {
             });
 
             Route::get('',[AccountingController::class,'index'] )->name('index');
-            Route::match(['GET','POST'],'accounts',[AccountingController::class,'accounts'] )->name('accounts');
-            Route::match(['GET','POST'],'accounts/edit/{id}',[AccountingController::class,'accountsEdit'] )->name('accounts.edit');
-            Route::match(['GET','POST'],'accounts/add/{type}/{parent_id}',[AccountingController::class,'accountsAdd'] )->name('accounts.add');
+            Route::prefix('accounts')->name('accounts.')->group(function(){
+                Route::match(['GET','POST'],'',[AccountingController::class,'accounts'] )->name('index');
+                Route::match(['GET','POST'],'edit/{id}',[AccountingController::class,'accountsEdit'] )->name('edit');
+                Route::match(['GET','POST'],'add/{type}/{parent_id}',[AccountingController::class,'accountsAdd'] )->name('add');
+                Route::prefix('fixed-assets')->name('fixed.assets.')->group(function(){
+                    Route::get('index/{account}',[FixedAssetController::class,'index'])->name('index');
+                    Route::match(['GET','POST'],'add',[FixedAssetController::class,'add'])->name('add');
+                    Route::match(['GET','POST'],'update/{id}',[FixedAssetController::class,'update'])->name('update');
+                    Route::match(['POST'],'del',[FixedAssetController::class,'del'])->name('del');
+                });
+            });
+
             Route::get('subaccounts/{id}',[AccountingController::class,'subAccounts'] )->name('subaccounts');
             Route::match(['GET','POST'],'final',[AccountingController::class,'final'] )->name('final');
         });

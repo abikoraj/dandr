@@ -34,7 +34,7 @@
 
         function loadAccounts() {
             showProgress("Loading Accounts");
-            axios.post("{{route('admin.accounting.accounts')}}",{fiscal_year_id:$('#fical_year_id').val()})
+            axios.post("{{route('admin.accounting.accounts.index')}}",{fiscal_year_id:$('#fical_year_id').val()})
             .then((res)=>{
                 $('#data').html(res.data);
                 hideProgress();
@@ -62,6 +62,30 @@
         $(document).ready(function () {
             loadAccounts();
         });
+
+        function initUpdate(id){
+            const updateURL="{{route('admin.accounting.accounts.edit',['id'=>'xxx_id'])}}";
+            win.showGet('Update Account',updateURL.replace('xxx_id',id));
+        }
+
+        function updateAccount(e,ele){
+            e.preventDefault();
+            if(prompt("Enter yes to continue")=='yes'){
+                showProgress("Updating account");
+                axios.post(ele.action,new FormData(ele))
+                .then((res)=>{
+                    hideProgress();
+                    loadAccounts();
+                    win.hide();
+                })
+                .catch((err)=>{
+                    hideProgress();
+                    if(err.response){
+                        showNotification("bg-danger","Error : "+err.response.data.message);
+                    }
+                });
+            }
+        }
     </script>
 
 @endsection

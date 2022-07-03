@@ -17,26 +17,31 @@
         <tbody>
             @foreach ($accounts[1] as $account)
                 <tr>
-                    <td>{{$account->identifire}}</td>
+                    <td>{{ $account->identifire }}</td>
                     <td>
-                        {{$account->name}}
+                        {{ $account->name }}
                     </td>
                     <td>
-                        @if ($account->identifire=="1.2")
-                        {{$account->bankbalance()}}
-
+                        @if ($account->identifire == '1.2')
+                            {{ $account->bankbalance() }}
+                        @elseif ($account->identifire == '1.4')
+                            {{ $account->fixedAssetTotal() }}
                         @else
-                        {{$account->amount}}
+                            {{ $account->amount }}
                         @endif
 
                     </td>
                     <td>
-                        @if ($account->identifire=="1.1")
-
-                        @elseif ($account->identifire=="1.2")
-                            <a href="{{route('admin.bank.index',['account'=>$account->id])}}" class="btn btn-success">Manage Bank Accounts</a>
+                        <button class="btn btn-primary " onclick="initUpdate({{$account->id}});"> Edit </button>
+                        @if ($account->identifire == '1.1')
+                        @elseif ($account->identifire == '1.2')
+                            <a href="{{ route('admin.bank.index', ['account' => $account->id]) }}"
+                                class="btn btn-success">Manage Bank Accounts</a>
+                        @elseif ($account->identifire == '1.4')
+                            <a href="{{route('admin.accounting.accounts.fixed.assets.index',['account'=>$account->id])}}" class="btn btn-success">Manage Sub Accounts</a>
                         @else
-                            <a href="{{route('admin.accounting.subaccounts',['id'=>$account->id])}}" target="blank" class="btn btn-success">Manage Sub Accounts</a>
+                            <a href="{{ route('admin.accounting.subaccounts', ['id' => $account->id]) }}" target="blank"
+                                class="btn btn-success">Manage Sub Accounts</a>
                         @endif
                     </td>
                 </tr>
@@ -58,16 +63,17 @@
         <tbody>
             @foreach ($accounts[2] as $account)
                 <tr>
-                    <td>{{$account->identifire}}</td>
+                    <td>{{ $account->identifire }}</td>
                     <td>
-                        {{$account->name}}
+                        {{ $account->name }}
                     </td>
                     <td>
-                        {{$account->amount}}
+                        {{ $account->amount }}
                     </td>
                     <td>
-
-                        <a href="{{route('admin.accounting.subaccounts',['id'=>$account->id])}}" target="blank" class="btn btn-success">Manage Sub Accounts</a>
+                        <button class="btn btn-primary " onclick="initUpdate({{$account->id}});"> Edit </button>
+                        <a href="{{ route('admin.accounting.subaccounts', ['id' => $account->id]) }}" target="blank"
+                            class="btn btn-success">Manage Sub Accounts</a>
                     </td>
                 </tr>
             @endforeach
