@@ -139,17 +139,94 @@ class AccountingController extends Controller
             // dd($trading,$plac);
 
             if($type==1){
+                $parties=[
+                    "Farmer"=>'farmers',
+                    "Employee"=>'employees',
+                    "Distributor"=>'distributers',
+                    "Customer"=>'customers',
+                    "Supplier"=>'suppliers'
+                ];
+                $partyDatas=[];
+                foreach ($parties as $key => $party) {
+                    $partyDatas[$key]=$this->getPayableReceivable("select (dr-cr) as amount,user_id from
+                    (
+                    select
+                    ifnull(( select sum(amount) from ledgers where user_id=emp.user_id and type=1 and date>={$range[1]} and date <={$range[2]}),0) as cr,
+                    ifnull(( select sum(amount) from ledgers where user_id=emp.user_id and type=2 and date>={$range[1]} and date <={$range[2]}),0) as dr,
+                    emp.user_id
+                     from
+                    (select user_id from users u join {$party} e on e.user_id=u.id)  as emp
+                    ) as l where cr-dr<>0");
+                }
+                $bs->parties=(object)$parties;
+                $bs->partyDatas=(object)$partyDatas;
+                $bs->receivable=[];
+                $bs->payable=[];
+                $bs->receivableAmount=0;
+                $bs->payableAmount=0;
+                foreach ($partyDatas as $key => $partyData) {
+                    if($partyData['receivable']>0){
+                        $bs->receivableAmount+=$partyData['receivable'];
+                        array_push($bs->receivable,[
+                            "title"=>"Receivable from ".$key,
+                            'amount'=>$partyData['receivable']
+                        ]);
+                    }
+                    if($partyData['payable']>0){
+                        $bs->payableAmount+=$partyData['payable'];
+                        array_push($bs->payable,[
+                            "title"=>"Payable To ".$key,
+                            'amount'=>$partyData['payable']
+                        ]);
+                    }
+                }
+
                 $accounts=DB::table('accounts')->where('fiscal_year_id',$fy->id)->whereNull('parent_id')->get()->groupBy('type');
-                foreach ($accounts[1] as $key => $acc) {
+                $bs->assets=$accounts[1];
+                $bs->liabilites=$accounts[2];
+                foreach ($bs->assets as $key => $acc) {
                     if($acc->identifire=='1.2'){
                         $acc->amount=DB::table('banks')->where('account_id',$acc->id)->sum('balance');
                     }else if($acc->identifire=='1.4'){
-                        $acc->amount=DB::table('fixed_assets')->where('account_id',$acc->id)->sum('amount');
+                        $fixedAssets=DB::table('fixed_assets')->where('account_id',$acc->id)->get();
+                        $acc->amount=0;
+                        $acc->depreciation=0;
+                        foreach ($fixedAssets as $key => $asset) {
+                            $acc->amount+=$asset->amount;
+                            $acc->depreciation+= $asset->full_amount*$asset->depreciation/100;
+                        }
+
                     }
                 }
-                $empaccounts=DB::select('select sum(amount),user_id,type from ledgers where user_id in (select user_id from users u join employees e on e.user_id=u.id)  group by user_id,type');
-                dd($empaccounts);
-                dd($accounts);
+                foreach ($bs->liabilites as $key => $acc) {
+                    if($acc->identifire=='2.1'){
+                        $acc->status=$plac->status;
+                        if ($plac->status == 'profit') {
+                            $acc->profit=$plac->profit;
+                        }else if($plac->status=='loss'){
+                            $acc->losss=$plac->losss;
+                        }
+                    }
+                }
+
+                // array_push($bs->assets,(object)=>)
+
+
+
+
+
+
+
+
+
+
+                dd($bs);
+
+
+
+
+
+
 
 
             }
@@ -266,5 +343,22 @@ class AccountingController extends Controller
             $parentacc->save();
         }
 
+    }
+
+    private function getPayableReceivable($query)
+    {
+        // dd($query);
+        $receivable=0;
+        $payable=0;
+        $rows=DB::select($query);
+        for ($i=0; $i < count($rows); $i++) {
+            $row=$rows[$i];
+            if($row->amount<0){
+                $payable+=(-1)* $row->amount;
+            }else{
+                $receivable+=$row->amount;
+            }
+        }
+        return compact('receivable','payable');
     }
 }

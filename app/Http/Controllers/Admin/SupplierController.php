@@ -8,6 +8,7 @@ use App\Models\BillExpenses;
 use App\Models\CenterStock;
 use App\Models\Item;
 use App\Models\Ledger;
+use App\Models\Supplier;
 use App\Models\Supplierbill;
 use App\Models\Supplierbillitem;
 use App\Models\Supplierpayment;
@@ -38,24 +39,28 @@ class SupplierController extends Controller
         $user->role = 3;
         $user->password = bcrypt($request->phone);
         $user->save();
+        $supplier=new Supplier();
+        $supplier->user_id=$user->id;
+        $supplier->save();
         return view('admin.supplier.single', compact('user'));
     }
 
     public function update(Request $request)
     {
-        $user = User::where('id', $request->id)->where('role', 3)->first();
+        $user = User::where('id', $request->id)->first();
         $user->phone = $request->phone;
         $user->name = $request->name;
         $user->address = $request->address;
         $user->role = 3;
-        $user->password = bcrypt($request->phone);
         $user->save();
         return view('admin.supplier.single', compact('user'));
     }
 
     public function delete(Request $request)
     {
-        $user = User::where('id', $request->id)->where('role', 3)->first();
+        $user = User::where('id', $request->id)->first();
+        $supplier=Supplier::where('user_id',$request->id)->first();
+        $supplier->delete();
         $user->delete();
         return response()->json('Delete successfully !');
     }
