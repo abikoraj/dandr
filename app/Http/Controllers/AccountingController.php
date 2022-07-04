@@ -174,8 +174,14 @@ class AccountingController extends Controller
                     }
                     if($partyData['payable']>0){
                         $bs->payableAmount+=$partyData['payable'];
+                        $title="Payable To ".$key;
+                        if($key=="Employee"){
+                            $title="Salary Payable";
+                        }else if($key=="Supplier"){
+                            $title="Supplier Due";
+                        }
                         array_push($bs->payable,[
-                            "title"=>"Payable To ".$key,
+                            "title"=>$title,
                             'amount'=>$partyData['payable']
                         ]);
                     }
@@ -183,14 +189,18 @@ class AccountingController extends Controller
 
                 $accounts=DB::table('accounts')->where('fiscal_year_id',$fy->id)->whereNull('parent_id')->get()->groupBy('type');
                 $bs->assets=$accounts[1];
-                $bs->liabilites=$accounts[2];
+                $bs->liabilities=$accounts[2];
                 foreach ($bs->assets as $key => $acc) {
                     if($acc->identifire=='1.2'){
                         $acc->amount=DB::table('banks')->where('account_id',$acc->id)->sum('balance');
+                        $acc->banks=DB::table('banks')->where('account_id',$acc->id)->get(['name','balance']);
                     }else if($acc->identifire=='1.4'){
                         $fixedAssets=DB::table('fixed_assets')->where('account_id',$acc->id)->get();
                         $acc->amount=0;
                         $acc->depreciation=0;
+                        $acc->assets=DB::select("select name ,amount from(
+                            select sum(amount) as amount,fixed_asset_category_id from fixed_assets where account_id=? group by fixed_asset_category_id
+                            ) fd join fixed_asset_categories cat on fd.fixed_asset_category_id =cat.id ", [$acc->id]);
                         foreach ($fixedAssets as $key => $asset) {
                             $acc->amount+=$asset->amount;
                             $acc->depreciation+= $asset->full_amount*$asset->depreciation/100;
@@ -198,37 +208,19 @@ class AccountingController extends Controller
 
                     }
                 }
-                foreach ($bs->liabilites as $key => $acc) {
+                foreach ($bs->liabilities as $key => $acc) {
                     if($acc->identifire=='2.1'){
                         $acc->status=$plac->status;
+                        $acc->totalCapital=$acc->amount;
                         if ($plac->status == 'profit') {
                             $acc->profit=$plac->profit;
+                            $acc->totalCapital+=$acc->profit;
                         }else if($plac->status=='loss'){
-                            $acc->losss=$plac->losss;
+                            $acc->loss=$plac->loss;
+                            $acc->totalCapital-=$acc->loss;
                         }
                     }
                 }
-
-                // array_push($bs->assets,(object)=>)
-
-
-
-
-
-
-
-
-
-
-                dd($bs);
-
-
-
-
-
-
-
-
             }
 
             return view('admin.accounting.final.index', compact('trading', 'opening', 'closing', 'showDetail', 'range', 'plac','bs'));

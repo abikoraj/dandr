@@ -478,17 +478,19 @@ Route::name('admin.')->group(function () {
 
         //XXX accounting
         Route::prefix('accounting')->name('accounting.')->group(function(){
+            // XXX Manage Stock
             Route::prefix('stock')->name('stock.')->group(function(){
                 Route::match(['GET','POST'],'',[StockController::class,'index'])->name('index');
                 Route::post('add',[StockController::class,'add'])->name('add');
                 Route::post('del',[StockController::class,'del'])->name('del');
             });
+            // XXX Extra Income
             Route::prefix('extra-income')->name('extra.income.')->group(function(){
                 Route::match(['get', 'post'], '', [ExtraIncomeController::class,'index'])->name('index');
                 Route::match(['get', 'post'], 'add', [ExtraIncomeController::class,'add'])->name('add');
                 Route::match(['get', 'post'], 'update/{id}', [ExtraIncomeController::class,'update'])->name('update');
                 Route::match(['get', 'post'], 'del', [ExtraIncomeController::class,'del'])->name('del');
-
+                // XXX Extra Income Cateories
                 Route::match(['get', 'post'], 'category', [ExtraIncomeController::class,'category'])->name('category');
                 Route::match(['get', 'post'], 'category-add', [ExtraIncomeController::class,'categoryAdd'])->name('category.add');
                 Route::match(['get', 'post'], 'category-update', [ExtraIncomeController::class,'categoryUpdate'])->name('category.update');
@@ -496,15 +498,25 @@ Route::name('admin.')->group(function () {
             });
 
             Route::get('',[AccountingController::class,'index'] )->name('index');
+
+            // XXX Manage Accounts
             Route::prefix('accounts')->name('accounts.')->group(function(){
                 Route::match(['GET','POST'],'',[AccountingController::class,'accounts'] )->name('index');
                 Route::match(['GET','POST'],'edit/{id}',[AccountingController::class,'accountsEdit'] )->name('edit');
                 Route::match(['GET','POST'],'add/{type}/{parent_id}',[AccountingController::class,'accountsAdd'] )->name('add');
+                // XXX Fixed assets
                 Route::prefix('fixed-assets')->name('fixed.assets.')->group(function(){
                     Route::get('index/{account}',[FixedAssetController::class,'index'])->name('index');
                     Route::match(['GET','POST'],'add',[FixedAssetController::class,'add'])->name('add');
                     Route::match(['GET','POST'],'update/{id}',[FixedAssetController::class,'update'])->name('update');
                     Route::match(['POST'],'del',[FixedAssetController::class,'del'])->name('del');
+                    Route::prefix('categories')->name('categories.')->group(function(){
+                        Route::get('',[FixedAssetController::class,'CategoryIndex'])->name('index');
+                        Route::post('add',[FixedAssetController::class,'CategoryAdd'])->name('add');
+                        Route::post('update',[FixedAssetController::class,'CategoryUpdate'])->name('update');
+                        Route::post('del',[FixedAssetController::class,'CategoryDel'])->name('del');
+                    });
+
                 });
             });
 

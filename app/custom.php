@@ -325,3 +325,17 @@ function getFiscalYear(){
     }
     return $fy;
 }
+
+function subAccounts($id){
+    return DB::table('accounts')->where('parent_id',$id)->get(['name','amount']);
+}
+
+function assetCategory($id){
+    if($id==null){
+        return null;
+    }else{
+        return DB::table('fixed_asset_categories')->where('id',$id)->first(['name'])->name;
+    }
+
+}
+

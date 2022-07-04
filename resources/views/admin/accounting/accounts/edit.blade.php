@@ -15,7 +15,7 @@
                         {{$account->name}}
                     </div>
                     @else
-                    <input type="text" name="name" id="name" class="form-control" required value="{{$account->name}}">
+                    <input type="text" name="name" id="ename" class="form-control" required value="{{$account->name}}">
                     @endif
                 </div>
                 <div class="col-md-4">
@@ -25,7 +25,7 @@
                         {{$account->amount}}
                     </div>
                     @else
-                    <input type="number" min="0" name="amount" id="amount" class="form-control" required value="{{$account->amount}}">
+                    <input type="number" min="0" name="amount" id="eamount" class="form-control" required value="{{$account->amount}}">
                     @endif
                 </div>
                 <div class="col-md-4 pt-4">

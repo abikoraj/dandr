@@ -1,5 +1,8 @@
 <tr id="fixedAsset-{{$fixedAsset->id}}">
     <td>
+        {{$fixedAsset->category}}
+    </td>
+    <td>
         {{$fixedAsset->name}}
     </td>
     <td>
@@ -13,6 +16,9 @@
     </td>
     <td>
         {{$fixedAsset->depreciation}}
+    </td>
+    <td>
+        {{$fixedAsset->salvage_amount}}
     </td>
     <td>
         <a onclick="initUpdateFixedAsset({{$fixedAsset->id}})"  class="text-success">Update</a> |

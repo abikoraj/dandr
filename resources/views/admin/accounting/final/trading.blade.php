@@ -15,7 +15,7 @@
                     <th class="w-40">
                         Particular
                     </th>
-                    <th class="w-10">Rs</th>
+                    <th class="w-10">Amount</th>
                 </tr>
             </thead>
             <tbody id="tradingAccDataDR">
@@ -102,7 +102,7 @@
                     <th class="w-40">
                         Particular
                     </th>
-                    <th class="w-10">Rs</th>
+                    <th class="w-10">Amount</th>
                 </tr>
             </thead>
             <tbody id="tradingAccDataCR">

@@ -3,6 +3,9 @@
 <br>
 <hr>
 @include('admin.accounting.final.pl')
+<br>
+<hr>
+@include('admin.accounting.final.bs')
 
 
 
