@@ -124,7 +124,7 @@ $_fpaidtotal = 0;
             </tr>
         </thead>
         <tbody>
-            @foreach ($data as $farmer)
+            @foreach ($data['farmers'] as $farmer)
                 <tr>
                     <td>
                         {{ $farmer->no }}
@@ -322,6 +322,9 @@ $_fpaidtotal = 0;
         </tbody>
 
     </table>
+    @if ($data['full'])
+        <div class="fs"></div>
+    @endif
     @php
         $_tctotal += $tctotal;
         $_cctotal += $cctotal;

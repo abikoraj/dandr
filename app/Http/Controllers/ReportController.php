@@ -213,20 +213,26 @@ class ReportController extends Controller
                 $index+=1;
                 if($firstLoaded){
                     if($index==$secondPage){
-                        array_push($datas,$minList);
+                        array_push($datas,['farmers'=>$minList,'full'=>true,'count'=>count($minList)]);
                         $index=1;
                         $minList=[];
                     }
                 }else{
                     if($index==$firstPage){
-                        array_push($datas,$minList);
+                        array_push($datas,['farmers'=>$minList,'full'=>true,'count'=>count($minList)]);
                         $firstLoaded=true;
                         $index=1;
                         $minList=[];
 
                     }
                 }
+
             }
+
+            if(count($minList)>0){
+                array_push($datas,['farmers'=>$minList,'full'=>false,'count'=>count($minList)]);
+            }
+
 
             $t2=time();
             // dd($t2-$t1,$datas);

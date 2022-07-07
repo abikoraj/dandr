@@ -155,7 +155,7 @@
                             <strong>Snf Average : {{ round($farmer1->snfavg,2) }}</strong> <br>
                             <strong>Milk Total : {{ $farmer1->milkamount }} </strong><br>
                             <strong>Per Liter Rate : {{ $rate_ }} </strong> <br>
-                                <strong>Amount : {{ $farmer1->totalamount }} </strong><br>
+                                <strong>Amount : {{ $farmer1->total }} </strong><br>
                                 @if ($farmer1->farmer()->usetc)
                                     <strong>+TS Commission ({{(float)($center->tc)}}%) : {{ $farmer1->tc }}</strong> <br>
                                 @endif
@@ -313,7 +313,7 @@
                         </td>
                         @if ($farmer1->cc>0 || $farmer1->tc>0)
                             <th>
-                                {{$farmer1->totalamount}}
+                                {{$farmer1->total}}
                             </th>
                             @if($farmer1->farmer()->usetc)
                             <th>
