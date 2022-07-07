@@ -1,90 +1,96 @@
 <style>
-    td,th{
-        border:1px solid black;
+    td,
+    th {
+        border: 1px solid black;
     }
+
     @media print {
-        td{
-            font-weight:700;
+        td {
+            font-weight: 700;
         }
     }
-    table{
-        width:100%;
+
+    table {
+        width: 100%;
         border-collapse: collapse;
     }
-    thead {display: table-header-group;}
-    tfoot {display: table-header-group;}
 
+    thead {
+        display: table-header-group;
+    }
 
+    tfoot {
+        display: table-header-group;
+    }
 </style>
 <h2 style="text-align: center;margin-bottom:0px;font-weight:800;font-size:2rem;">
-    {{env('APP_NAME','Dairy')}}
+    {{ env('APP_NAME', 'Dairy') }}
 </h2>
 
 <div style="display: flex;justify-content: space-between;font-weight:800;">
     <span>
-        Year : {{$year}}
+        Year : {{ $year }}
 
     </span>
     <span>
-        Month : {{$month}}
+        Month : {{ $month }}
     </span>
     <span>
-        Session : {{$session}}
+        Session : {{ $session }}
     </span>
     <span>
-        Center : {{$center->name}}
+        Center : {{ $center->name }}
     </span>
 </div>
 @if ($newsession)
-<form action="{{route('admin.report.farmer.session')}}" method="POST">
-    <input type="hidden" name="year" value="{{$year}}" >
-    <input type="hidden" name="month" value="{{$month}}" >
-    <input type="hidden" name="session" value="{{$session}}" >
-    <input type="hidden" name="center_id" value="{{$center->id}}" >
+    <form action="{{ route('admin.report.farmer.session') }}" method="POST">
+        <input type="hidden" name="year" value="{{ $year }}">
+        <input type="hidden" name="month" value="{{ $month }}">
+        <input type="hidden" name="session" value="{{ $session }}">
+        <input type="hidden" name="center_id" value="{{ $center->id }}">
 @endif
-    @php
-        $i=1;
-        $d=0;
-        $start=true;
-        $point=false;
+@php
+$i = 1;
+$d = 0;
+$start = true;
+$point = false;
 
-        $tctotal=0;
-        $cctotal=0;
-        $grandtotal=0;
-        $milktotal=0;
-        $bonustotal=0;
-        $totaltotal=0;
-        $duetotal=0;
-        $advancetotal=0;
-        $prevduetotal=0;
-        $nettotaltotal=0;
-        $balancetotal=0;
-        $prevbalancetotal=0;
-        $paidamounttotal=0;
-        $fpaidtotal = 0;
+$tctotal = 0;
+$cctotal = 0;
+$grandtotal = 0;
+$milktotal = 0;
+$bonustotal = 0;
+$totaltotal = 0;
+$duetotal = 0;
+$advancetotal = 0;
+$prevduetotal = 0;
+$nettotaltotal = 0;
+$balancetotal = 0;
+$prevbalancetotal = 0;
+$paidamounttotal = 0;
+$fpaidtotal = 0;
 
-                $_tctotal=0;
-                $_cctotal=0;
-                $_grandtotal=0;
-                $_milktotal=0;
-                $_bonustotal=0;
-                $_totaltotal=0;
-                $_duetotal=0;
-                $_advancetotal=0;
-                $_prevduetotal=0;
-                $_nettotaltotal=0;
-                $_balancetotal=0;
-                $_prevbalancetotal=0;
-                $_paidamounttotal=0;
-                $_fpaidtotal = 0;
+$_tctotal = 0;
+$_cctotal = 0;
+$_grandtotal = 0;
+$_milktotal = 0;
+$_bonustotal = 0;
+$_totaltotal = 0;
+$_duetotal = 0;
+$_advancetotal = 0;
+$_prevduetotal = 0;
+$_nettotaltotal = 0;
+$_balancetotal = 0;
+$_prevbalancetotal = 0;
+$_paidamounttotal = 0;
+$_fpaidtotal = 0;
 
-    @endphp
+@endphp
 
 
-    @csrf
-    @foreach ($data as $farmer)
-    @if ($start)
+@csrf
 
+@foreach ($datas as $data)
     <table class="table">
         <thead>
             <tr>
@@ -100,14 +106,14 @@
                     <th>Cooling Cost</th>
                 @endif
                 <th>Total</th>
-                @if (env('hasextra',0)==1)
-                    <th>Bonus({{ round($center->bonus,2) }}%)</th>
+                @if (env('hasextra', 0) == 1)
+                    <th>Bonus({{ round($center->bonus, 2) }}%)</th>
                 @endif
                 <th>Purchase</th>
                 <th>Purchase Paid</th>
                 <th>Advance</th>
                 <th>Prev Due</th>
-                @if(env('tier',0)==1)
+                @if (env('tier', 0) == 1)
                     <th>Prev Balance</th>
                     <th>Paid Amount</th>
                 @endif
@@ -118,146 +124,139 @@
             </tr>
         </thead>
         <tbody>
-            @php
-                $start=false;
-                $d+=1;
-            @endphp
-    @endif
-
-
+            @foreach ($data as $farmer)
                 <tr>
                     <td>
-                        {{$farmer->no}}
-                        @if ($farmer->old==false &&  $newsession)
-
-                            <input type="hidden" name="farmers[]" value="{{$farmer->toJson()}}" >
+                        {{ $farmer->no }}
+                        @if ($farmer->old == false && $newsession)
+                            <input type="hidden" name="farmers[]" value="{!! json_encode($farmer) !!}">
                         @endif
                     </td>
                     @php
-                        $t='farmer-'.$farmer->id;
+                        $t='farmer-' . $farmer->id;
                     @endphp
 
                     <td>
-                        {{$farmer->name}}
+                        {{ $farmer->name }}
                     </td>
                     <td>
-                        {{($farmer->milk)}}
+                        {{ $farmer->milk }}
                         @php
-                            $milktotal+=$farmer->milk;
+                            $milktotal += $farmer->milk;
                         @endphp
                         {{-- <input type="hidden" name="milk[{{$t}}]" value="{{($farmer->m_milk+$farmer->e_milk)}}" > --}}
 
                     </td>
                     <td>
-                        {{$farmer->snf}}
+                        {{ $farmer->snf }}
                         {{-- <input type="hidden" name="snf[{{$t}}]" value="{{($farmer->snf)}}" > --}}
 
                     </td>
                     <td>
-                        {{$farmer->fat}}
+                        {{ $farmer->fat }}
                         {{-- <input type="hidden" name="fat[{{$t}}]" value="{{($farmer->fat)}}" > --}}
 
                     </td>
                     <td>
-                        {{$farmer->rate}}
+                        {{ $farmer->rate }}
                         {{-- <input type="hidden" name="rate[{{$t}}]" value="{{($farmer->rate)}}" > --}}
 
                     </td>
                     @if ($usecc || $usetc)
                         <td>
-                            {{$farmer->total}}
+                            {{ $farmer->total }}
                             @php
-                                $totaltotal+=$farmer->total;
+                                $totaltotal += $farmer->total;
                             @endphp
                         </td>
                         <td>
-                            {{$farmer->tc}}
+                            {{ $farmer->tc }}
                             @php
-                                $tctotal+=$farmer->tc;
+                                $tctotal += $farmer->tc;
                             @endphp
                         </td>
                         <td>
-                            {{$farmer->cc}}
+                            {{ $farmer->cc }}
 
                             @php
-                                $cctotal+=$farmer->cc;
+                                $cctotal += $farmer->cc;
                             @endphp
                         </td>
                     @endif
                     <td>
-                        {{$farmer->grandtotal}}
+                        {{ $farmer->grandtotal }}
                         @php
-                            $grandtotal+=$farmer->grandtotal;
+                            $grandtotal += $farmer->grandtotal;
                         @endphp
                         {{-- <input type="hidden" name="total[{{$t}}]" value="{{($farmer->total)}}" > --}}
 
                     </td>
-                    @if(env('hasextra',0)==1)
+                    @if (env('hasextra', 0) == 1)
                         <td>
-                             {{ $farmer->bonus??0}}
-                             @php
-                                $bonustotal+=$farmer->bonus;
+                            {{ $farmer->bonus ?? 0 }}
+                            @php
+                                $bonustotal += $farmer->bonus;
                             @endphp
                         </td>
                     @endif
                     <td>
-                        {{$farmer->due}}
+                        {{ $farmer->purchase }}
                         {{-- <input type="hidden" name="due[{{$t}}]" value="{{($farmer->due)}}" > --}}
                         @php
-                            $duetotal+=$farmer->due;
+                            $duetotal += $farmer->purchase;
                         @endphp
                     </td>
                     <td>
-                        {{$farmer->fpaid}}
+                        {{ $farmer->fpaid }}
                         @php
-                          $fpaidtotal += $farmer->fpaid;
+                            $fpaidtotal += $farmer->fpaid;
                         @endphp
                     </td>
 
                     <td>
-                        {{$farmer->advance}}
+                        {{ $farmer->advance }}
                         {{-- <input type="hidden" name="advance[{{$t}}]" value="{{($farmer->advance)}}" > --}}
                         @php
-                            $advancetotal+=$farmer->advance;
+                            $advancetotal += $farmer->advance;
                         @endphp
                     </td>
                     <td>
-                        {{$farmer->prevdue}}
+                        {{ $farmer->prevdue }}
                         {{-- <input type="hidden" name="prevdue[{{$t}}]" value="{{($farmer->prevdue)}}" > --}}
                         @php
-                            $prevduetotal+=$farmer->prevdue;
+                            $prevduetotal += $farmer->prevdue;
+                        @endphp
+                    </td>
+                    @if (env('tier', 0) == 1)
+                        <td>
+                            {{ $farmer->prevbalance }}
+                            @php
+                                $prevbalancetotal += $farmer->prevbalance;
                             @endphp
-                    </td>
-                    @if(env('tier',0)==1)
-                    <td>
-                        {{$farmer->prevbalance}}
-                        @php
-                            $prevbalancetotal+=$farmer->prevbalance;
-                        @endphp
-                    </td>
-                    <td>
-                        {{$farmer->paidamount}}
-                        @php
-                            $paidamounttotal+=$farmer->paidamount;
-                        @endphp
-                    </td>
+                        </td>
+                        <td>
+                            {{ $farmer->paidamount }}
+                            @php
+                                $paidamounttotal += $farmer->paidamount;
+                            @endphp
+                        </td>
                     @endif
                     <td>
-                        {{$farmer->nettotal}}
+                        {{ $farmer->nettotal }}
                         {{-- <input type="hidden" name="nettotal[{{$t}}]" value=" {{$tt>0?$tt:0}}" > --}}
                         @php
-                            $nettotaltotal+=$farmer->nettotal;
+                            $nettotaltotal += $farmer->nettotal;
                         @endphp
                     </td>
                     <td>
-                        {{$farmer->balance}}
+                        {{ $farmer->balance }}
                         @php
-                            $balancetotal+=$farmer->balance;
+                            $balancetotal += $farmer->balance;
                         @endphp
                         {{-- <input type="hidden" name="balance[{{$t}}]" value=" {{$tt<0?(-1*$tt):0}}" > --}}
                     </td>
 
-                    @if (env('paywhenupdate',0)==1)
+                    @if (env('paywhenupdate', 0) == 1)
                         <td>
 
                         </td>
@@ -267,285 +266,105 @@
                     </td>
 
                 </tr>
-            @php
-                $i+=1;
-                $pb=31;
-                if($d==1){
-                    $pb=env('firstpage',31);
-                }else{
-                    $pb=env('secondpage',34);
-                }
-                if($i==$pb){
-                    $point=true;
-                    $start=true;
-                    $i=1;
-
-                }
-            @endphp
-        @if( $point)
-                <tr>
-                    <td colspan="2">Total</td>
-                    <td>{{$milktotal}}</td>
-                    <td>--</td>
-                    <td>--</td>
-                    <td>--</td>
-                    @if ($usecc || $usetc)
-                        <td>
-                            {{$totaltotal}}
-
-                        </td>
-                        <td>
-                            {{$tctotal}}
-
-                        </td>
-                        <td>
-                            {{$cctotal}}
-
-                        </td>
-                    @endif
-                    <td>{{$grandtotal}}</td>
-                    @if(env('hasextra',0)==1)
-                        <td>{{$bonustotal}}</td>
-                    @endif
-                    <td>
-                        {{$duetotal}}
-                    </td>
-                    <td>
-                        {{$fpaidtotal}}
-                    </td>
-                    <td>
-                        {{$advancetotal}}
-                    </td>
-                    <td>
-                        {{$prevduetotal}}
-                    </td>
-                    @if(env('tier',0)==1)
-                    <td>
-                        {{$prevbalancetotal}}
-                    </td>
-                    <td>
-                        {{$paidamounttotal}}
-                    </td>
-                    @endif
-                    <td>
-                        {{$nettotaltotal}}
-                    </td>
-                    <td>
-                        {{$balancetotal}}
-                    </td>
-                    <td></td>
-                </tr>
-            @php
-                $_tctotal+=$tctotal;
-                $_cctotal+=$cctotal;
-                $_grandtotal+=$grandtotal;
-                $_milktotal+=$milktotal;
-                $_bonustotal+=$bonustotal;
-                $_totaltotal+=$totaltotal;
-                $_duetotal+=$duetotal;
-                $_advancetotal+=$advancetotal;
-                $_prevduetotal+=$prevduetotal;
-                $_nettotaltotal+=$nettotaltotal;
-                $_balancetotal+=$balancetotal;
-                $_prevbalancetotal+=$prevbalancetotal;
-                $_paidamounttotal+=$paidamounttotal;
-                $_fpaidtotal += $fpaidtotal;
-
-                $point=false;
-                $tctotal=0;
-                $cctotal=0;
-                $grandtotal=0;
-                $milktotal=0;
-                $bonustotal=0;
-                $totaltotal=0;
-                $duetotal=0;
-                $advancetotal=0;
-                $prevduetotal=0;
-                $nettotaltotal=0;
-                $balancetotal=0;
-                $prevbalancetotal=0;
-                $paidamounttotal=0;
-                $fpaidtotal =0;
-            @endphp
-            </tbody>
-        </table>
-        <div class="fs"></div>
-        @endif
-
-
-    @endforeach
-
-        @if ($i<env('secondpage',32))
-        @if( $start)
-        <table class="table">
-            <thead>
-                <tr>
-                    <th>No</th>
-                    <th>Name</th>
-                    <th>Milk (l)</th>
-                    <th>Snf%</th>
-                    <th>Fat%</th>
-                    <th>Price/l</th>
-                    @if ($usecc || $usetc)
-                        <th>MilK Total</th>
-                        <th>TS</th>
-                        <th>Cooling Cost</th>
-                    @endif
-                    <th>Total</th>
-                    @if (env('hasextra',0)==1)
-                        <th>Bonus({{ round($center->bonus,2) }}%)</th>
-                    @endif
-                    <th>Purchase</th>
-                    <th>Purchase Paid</th>
-                    <th>Advance</th>
-                    <th>Prev Due</th>
-                    @if(env('tier',0)==1)
-                        <th>Prev Balance</th>
-                        <th>Paid Amount</th>
-                    @endif
-                    <th>Net Total</th>
-                    <th>Due Balance</th>
-                    <th>Signature</th>
-
-                </tr>
-            </thead>
-            <tbody>
-        @else
-            @php
-                $_tctotal+=$tctotal;
-                    $_cctotal+=$cctotal;
-                    $_grandtotal+=$grandtotal;
-                    $_milktotal+=$milktotal;
-                    $_bonustotal+=$bonustotal;
-                    $_totaltotal+=$totaltotal;
-                    $_duetotal+=$duetotal;
-                    $_advancetotal+=$advancetotal;
-                    $_prevduetotal+=$prevduetotal;
-                    $_nettotaltotal+=$nettotaltotal;
-                    $_balancetotal+=$balancetotal;
-                    $_prevbalancetotal+=$prevbalancetotal;
-                    $_paidamounttotal+=$paidamounttotal;
-                    $_fpaidtotal += $fpaidtotal;
-
-            @endphp
+            @endforeach
             <tr>
                 <td colspan="2">Total</td>
-                <td>{{$milktotal}}</td>
+                <td>{{ $milktotal }}</td>
                 <td>--</td>
                 <td>--</td>
                 <td>--</td>
                 @if ($usecc || $usetc)
-                            <td>
-                                {{$totaltotal}}
+                    <td>
+                        {{ $totaltotal }}
 
-                            </td>
-                            <td>
-                                {{$tctotal}}
+                    </td>
+                    <td>
+                        {{ $tctotal }}
 
-                            </td>
-                            <td>
-                                {{$cctotal}}
+                    </td>
+                    <td>
+                        {{ $cctotal }}
 
-                            </td>
+                    </td>
                 @endif
-                <td>{{$grandtotal}}</td>
-                @if(env('hasextra',0)==1)
-                    <td>{{$bonustotal}}</td>
+                <td>{{ $grandtotal }}</td>
+                @if (env('hasextra', 0) == 1)
+                    <td>{{ $bonustotal }}</td>
                 @endif
                 <td>
-                    {{$duetotal}}
+                    {{ $duetotal }}
                 </td>
                 <td>
-                    {{$fpaidtotal}}
+                    {{ $fpaidtotal }}
                 </td>
                 <td>
-                    {{$advancetotal}}
+                    {{ $advancetotal }}
                 </td>
                 <td>
-                    {{$prevduetotal}}
+                    {{ $prevduetotal }}
+                </td>
+                @if (env('tier', 0) == 1)
+                    <td>
+                        {{ $prevbalancetotal }}
+                    </td>
+                    <td>
+                        {{ $paidamounttotal }}
+                    </td>
+                @endif
+                <td>
+                    {{ $nettotaltotal }}
                 </td>
                 <td>
-                    {{$prevbalancetotal}}
-                </td>
-                <td>
-                    {{$paidamounttotal}}
-                </td>
-                <td>
-                    {{$nettotaltotal}}
-                </td>
-                <td>
-                    {{$balancetotal}}
+                    {{ $balancetotal }}
                 </td>
                 <td></td>
             </tr>
-        @endif
-        <tr>
-            <td colspan="2">Grand Total</td>
-            <td>{{$_milktotal}}</td>
-            <td>--</td>
-            <td>--</td>
-            <td>--</td>
-            @if ($usecc || $usetc)
-                        <td>
-                            {{$_totaltotal}}
+        </tbody>
 
-                        </td>
-                        <td>
-                            {{$_tctotal}}
+    </table>
+    @php
+        $_tctotal += $tctotal;
+        $_cctotal += $cctotal;
+        $_grandtotal += $grandtotal;
+        $_milktotal += $milktotal;
+        $_bonustotal += $bonustotal;
+        $_totaltotal += $totaltotal;
+        $_duetotal += $duetotal;
+        $_advancetotal += $advancetotal;
+        $_prevduetotal += $prevduetotal;
+        $_nettotaltotal += $nettotaltotal;
+        $_balancetotal += $balancetotal;
+        $_prevbalancetotal += $prevbalancetotal;
+        $_paidamounttotal += $paidamounttotal;
+        $_fpaidtotal += $fpaidtotal;
 
-                        </td>
-                        <td>
-                            {{$_cctotal}}
+        $point = false;
+        $tctotal = 0;
+        $cctotal = 0;
+        $grandtotal = 0;
+        $milktotal = 0;
+        $bonustotal = 0;
+        $totaltotal = 0;
+        $duetotal = 0;
+        $advancetotal = 0;
+        $prevduetotal = 0;
+        $nettotaltotal = 0;
+        $balancetotal = 0;
+        $prevbalancetotal = 0;
+        $paidamounttotal = 0;
+        $fpaidtotal = 0;
+    @endphp
+@endforeach
 
-                        </td>
-            @endif
-            <td>{{$_grandtotal}}</td>
-            @if(env('hasextra',0)==1)
-                <td>{{$_bonustotal}}</td>
-            @endif
-            <td>
-                {{$_duetotal}}
-            </td>
-            <td>
-                {{ $_fpaidtotal }}
-            </td>
-            <td>
-                {{$_advancetotal}}
-            </td>
-            <td>
-                {{$_prevduetotal}}
-            </td>
-            @if(env('tier',0)==1)
-            <td>
 
-                {{$_prevbalancetotal}}
-            </td>
-            <td>
-                {{$_paidamounttotal}}
-            </td>
-            @endif
-            <td>
-                {{$_nettotaltotal}}
-            </td>
-            <td>
-                {{$_balancetotal}}
-            </td>
-            <td></td>
-        </tr>
-            </tbody>
-        </table>
-        @endif
 
-    @if ($newsession)
-        <div class="py-2 d-print-none">
-            <label for=>Session Close Date</label>
-            <input type="text" name="date" id="closedate" readonly required>
-        </div>
-        <div class="py-2 d-print-none">
-            <input type="submit" value="Update Session Data" class="btn btn-success">
-        </div>
-        @endif
+@if ($newsession)
+    <div class="py-2 d-print-none">
+        <label for=>Session Close Date</label>
+        <input type="text" name="date" id="closedate" readonly required>
+    </div>
+    <div class="py-2 d-print-none">
+        <input type="submit" value="Update Session Data" class="btn btn-success">
+    </div>
+@endif
 </form>
-
-
-

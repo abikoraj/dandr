@@ -42,7 +42,7 @@ class ReportController extends Controller
         return view('admin.report.index');
     }
 
-    public function farmer(Request $request)
+    public function farmerOLD(Request $request)
     {
         if ($request->getMethod() == "POST") {
             // dd($request->all());
@@ -51,14 +51,17 @@ class ReportController extends Controller
             } else {
                 $farmers = Farmer::join('users', 'users.id', '=', 'farmers.user_id')->where('farmers.center_id', $request->center_id)->select('users.id', 'users.name', 'users.no', 'farmers.center_id')->orderBy('users.no', 'asc')->get();
             }
+
             $center = Center::find($request->center_id);
             $year = $request->year;
             $month = $request->month;
             $session = $request->session;
             $usetc = (env('usetc', 0) == 1) && ($center->tc > 0);
             $usecc = (env('usecc', 0) == 1) && ($center->cc > 0);
+
             $range = NepaliDate::getDate($request->year, $request->month, $request->session);
             $newsession = SessionWatch::where(['year' => $year, 'month' => $month, 'session' => $session, 'center_id' => $center->id])->count() == 0;
+
             // if(SessionWatch::where(['year'=>$year,'month'=>$month,'session'=>$session,'center_id'=>$center->id])->count()>0){
             //     $data=FarmerReport::where(['year'=>$year,'month'=>$month,'session'=>$session,'center_id'=>$center->id])->get();
             //     return view('admin.report.farmer.data1',compact('usecc','usetc','data','year','month','session','center'));
@@ -69,7 +72,6 @@ class ReportController extends Controller
             foreach ($farmers as $farmer) {
                 if (FarmerReport::where(['year' => $year, 'month' => $month, 'session' => $session, 'user_id' => $farmer->id])->count() > 0) {
                     $_data = FarmerReport::where(['year' => $year, 'month' => $month, 'session' => $session, 'user_id' => $farmer->id])->first();
-
                     $farmer->old = true;
                 } else {
                     $_data = LedgerManage::farmerReport($farmer->id, $range);
@@ -96,6 +98,140 @@ class ReportController extends Controller
             }
             return view('admin.report.farmer.data', compact('newsession', 'usetc', 'usecc', 'data', 'year', 'month', 'session', 'center'));
             // }
+        } else {
+
+            return view('admin.report.farmer.index');
+        }
+    }
+    public function farmer(Request $request)
+    {
+        if ($request->getMethod() == "POST") {
+
+            $t1=time();
+            $farmerRange=($request->s_number != null && $request->e_number != null)?" and iu.no>= {$request->s_number} and iu.no<= {$request->e_number}   ":"";
+            $range = NepaliDate::getDate($request->year,$request->month,$request->session);
+            $center=Center::find($request->center_id);
+            $year=$request->year;
+            $month=$request->month;
+            $session=$request->session;
+            $usetc=(env('usetc',0)==1)&& ($center->tc>0);
+            $usecc=(env('usecc',0)==1)&& ($center->cc>0);
+            $newsession = SessionWatch::where(['year' => $year, 'month' => $month, 'session' => $session, 'center_id' => $center->id])->count() == 0;
+
+
+            $query ="select  u.id,u.no,u.name,u.usecc,u.rate,u.usetc,u.userate,
+            (select sum(m_amount) + sum(e_amount) from milkdatas where user_id= u.id and date>={$range[1]} and date<={$range[2]}) as milk,
+            (select avg(snf) from snffats where user_id= u.id and date>={$range[1]} and date<={$range[2]}) as snf,
+            (select avg(fat) from snffats where user_id= u.id and date>={$range[1]} and date<={$range[2]}) as fat,
+            (select sum(amount) from advances where user_id= u.id and date>={$range[1]} and date<={$range[2]}) as advance,
+            (select sum(amount) from ledgers where user_id= u.id and date>={$range[1]} and date<={$range[2]} and identifire=121) as paidamount,
+            (select sum(amount) from ledgers where user_id= u.id and date>={$range[1]} and date<={$range[2]} and (identifire=106 or identifire=107)) as fpaid,
+            (select sum(amount) from ledgers where user_id= u.id and date>={$range[1]} and date<={$range[2]} and identifire=103) as purchase,
+            (select sum(amount) from ledgers where user_id= u.id and date<{$range[1]} and type=1) as prevcr,
+            (select sum(amount) from ledgers where user_id= u.id and date<{$range[1]} and type=2) as prevdr,
+            (select sum(amount) from ledgers where user_id= u.id and date>={$range[1]} and date<={$range[2]} and (identifire=101 or identifire=102) and type=1) as openingcr,
+            (select sum(amount) from ledgers where user_id= u.id and date>={$range[1]} and date<={$range[2]} and (identifire=101 or identifire=102) and type=2) as openingdr,
+            (select sum(amount) from ledgers where user_id= u.id and date>={$range[1]} and date<={$range[2]} and identifire=120 and type=1) as closingcr,
+            (select sum(amount) from ledgers where user_id= u.id and date>={$range[1]} and date<={$range[2]} and identifire=120  and type=2) as closingdr
+            from (select iu.name,iu.id,iu.no,f.usecc,f.rate,f.usetc,f.userate from users iu join farmers f on iu.id=f.user_id where f.center_id={$center->id}  {$farmerRange}) u order by u.no asc";
+            $reports=DB::table('farmer_reports')->where(['year'=>$year,'month'=>$month,'session'=>$session])->get();
+
+            $farmers=DB::select($query);
+
+            $firstPage=env('firstpage',31);
+            $secondPage=env('secondpage',34);
+            $firstLoaded=false;
+            $datas=[];
+            $minList=[];
+            $index=1;
+
+            foreach ($farmers as $key => $farmer) {
+                $farmer->old=$reports->where('user_id',$farmer->id)->count()>0;
+                $farmer->fat=truncate_decimals($farmer->fat);
+                $farmer->snf=truncate_decimals($farmer->snf);
+                $fatAmount = ($farmer->fat * $center->fat_rate);
+                $snfAmount = ($farmer->snf * $center->snf_rate);
+                if ($farmer->userate == 1) {
+
+                    $farmer->rate = $farmer->rate;
+                } else {
+
+                    $farmer->rate = truncate_decimals($fatAmount + $snfAmount);
+                }
+
+                $farmer->total = truncate_decimals(($farmer->rate * $farmer->milk), 2);
+
+                $farmer->tc = 0;
+                $farmer->cc = 0;
+
+                if ($farmer->usetc == 1 && $farmer->total > 0) {
+                    $farmer->tc = truncate_decimals((($center->tc * ($farmer->snf + $farmer->fat) / 100) * $farmer->milk), 2);
+                }
+                if ($farmer->usecc == 1 && $farmer->total > 0) {
+                    $farmer->cc = truncate_decimals($center->cc * $farmer->milk, 2);
+                }
+                $farmer->bonus = 0;
+                if (env('hasextra', 0) == 1) {
+                    $farmer->bonus = (int)($farmer->grandtotal * $center->bonus / 100);
+                }
+
+                $farmer->grandtotal = (int)($farmer->total + $farmer->tc + $farmer->cc);
+                $prev = $farmer->prevdr - $farmer->prevcr;
+                $opening=$farmer->openingdr-$farmer->openingcr;
+                $farmer->prevTotal=$prev+$opening;
+
+
+
+                if($farmer->prevTotal>0){
+                    $farmer->prevdue=$farmer->prevTotal;
+                    $farmer->prevbalance=0;
+                }else{
+                    $farmer->prevdue=0;
+                    $farmer->prevbalance=(-1)*$farmer->prevTotal;
+                }
+
+                $farmer->balance = 0;
+                $farmer->nettotal = 0;
+
+                $balance = $farmer->grandtotal
+                + $farmer->fpaid
+                + $farmer->prevbalance
+                - $farmer->prevdue
+                - $farmer->advance
+                - $farmer->purchase
+                - $farmer->paidamount
+                - $farmer->bonus;
+
+                if ($balance < 0) {
+                    $farmer->balance = (-1) * $balance;
+                }
+                if ($balance > 0) {
+                    $farmer->nettotal = $balance;
+                }
+
+                array_push($minList,$farmer);
+                $index+=1;
+                if($firstLoaded){
+                    if($index==$secondPage){
+                        array_push($datas,$minList);
+                        $index=1;
+                        $minList=[];
+                    }
+                }else{
+                    if($index==$firstPage){
+                        array_push($datas,$minList);
+                        $firstLoaded=true;
+                        $index=1;
+                        $minList=[];
+
+                    }
+                }
+            }
+
+            $t2=time();
+            // dd($t2-$t1,$datas);
+            return view('admin.report.farmer.data', compact('newsession', 'usetc', 'usecc', 'datas', 'year', 'month', 'session', 'center'));
+
         } else {
 
             return view('admin.report.farmer.index');

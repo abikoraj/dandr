@@ -50,7 +50,6 @@
                     <td>{{$prev>0?$prev:""}}</td>
                     <td>
                         {{$prev>0?"Dr.".$prev:($prev<0?"Cr.".(-1*$prev):"--")}}
-
                     </td>
                     <td></td>
                 </tr>
@@ -75,10 +74,10 @@
                            {{$l->amt>0?"Dr.".$l->amt:($l->amt<0?"Cr.".(-1*$l->amt):"--")}}
                         </td>
                         <td class="d-print-none">
-                            
+
                             <button  onclick="initEditLedger('{{$l->title}}',{{$l->id}});">Edit</button>
                             <button  onclick="deleteLedger({{$l->id}},loadData);">Delete</button>
-                               
+
                         </td>
                     </tr>
                 @endforeach

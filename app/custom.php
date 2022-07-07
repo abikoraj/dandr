@@ -18,7 +18,6 @@ define('supplier', 4);
 define('customer', 5);
 
 $xxx_per = "data";
-
 function _nepalidate($date)
 {
     $year = (int)($date / 10000);
@@ -339,3 +338,45 @@ function assetCategory($id){
 
 }
 
+
+function getBanks(){
+    $fy=getFiscalYear();
+    $banks= DB::select("select name,id from banks where account_id = (select id from accounts where identifire='1.2' and fiscal_year_id={$fy->id} limit 1) ");
+    // dd($banks);
+    return $banks;
+}
+
+function getCashAcc(){
+    getFiscalYear();
+}
+
+
+function hasPay(){
+    return env('xpay',false);
+}
+
+function ledgerPrev($id,$date,$type=null,$identifire=null){
+    $query = DB::table('ledgers')->where('user_id',$id)->where('date','<',$date);
+    if($type!=null){
+        $query=$query->where('type',$type);
+    }
+    if($identifire!=null){
+        $query=$query->where('identifire',$identifire);
+    }
+    return $query->sum('amount')??0;
+}
+function ledgerSum($id,$identifire,$range=null,$type=null){
+    $query = DB::table('ledgers')->where('user_id',$id)->where('identifire',$identifire);
+    if($range!=null){
+        $query=$query->where('date', '>=', $range[1])->
+        where('date', '<=', $range[2]);
+    }
+    if($type!=null){
+        $query=$query->where('type',$type);
+    }
+    return $query->sum('amount')??0;
+}
+
+function randomChance($min=0,$max=1,$no=1){
+    return mt_rand($min,$max)==$no;
+}

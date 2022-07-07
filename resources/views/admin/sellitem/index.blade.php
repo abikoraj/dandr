@@ -77,7 +77,7 @@
 
                 <div class="col-md-3">
                     <label for="paid">Paid</label>
-                    <input type="number" name="paid" onkeyup="paidTotal();" id="paid" step="0.001" placeholder="Paid" value="0" class="form-control" min="0.001">
+                    <input type="number" name="paid" onkeyup="paidTotal();" id="paid" step="0.001" placeholder="Paid" value="0" class="form-control xpay_handle" min="0.001">
                 </div>
 
                 <div class="col-md-3">
@@ -89,7 +89,7 @@
                     <input type="button" value="Save" class="btn btn-primary btn-block" onclick="saveData();" id="save">
                     {{-- <span class="btn btn-primary btn-block" >Save</span> --}}
                 </div>
-
+                @includeWhen(hasPay(),('admin.payment.take'))
             </div>
         </form>
         <div class="row">
@@ -188,6 +188,7 @@
                     $('#paid').val(0);
                     $('#due').val(0);
                     $('#u_id').focus();
+                    resetXPayment();
                 })
                 .catch(function(error) {
                     showNotification('bg-danger', error.response.data);
@@ -300,7 +301,7 @@
 
     //XXX Select Item From Search
     function itemSelected(data) {
-       
+
         @if($large)
             $('#item_id').closeSearch();
         @endif
@@ -338,15 +339,15 @@
 
 
 
-   
+
     $('#nepali-datepicker').on('changed',function(){
         loadData();
     })
         // list
-    
+
 
     window.onload = function() {
-        
+
         bigScreen();
         $('#u_id').focus();
         // loaddata();

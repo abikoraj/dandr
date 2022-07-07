@@ -15,7 +15,7 @@ class CreateFixedAssetCategoriesTable extends Migration
     {
         Schema::create('fixed_asset_categories', function (Blueprint $table) {
             $table->id();
-            $table->string('name',100);
+             $table->string('name',100);
             $table->decimal('depreciation',5,2);
             $table->timestamps();
         });

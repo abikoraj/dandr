@@ -146,6 +146,7 @@
     <script src="{{ asset('backend/js/input.js') }}"></script>
     <script src="{{ asset('backend/js/jquery.hotkeys.js') }}"></script>
     @include('admin.layouts.ledgerjs')
+    @include('admin.layouts.xpayjs')
     <script>
         @if($errors->any())
             @foreach ($errors->all() as $error)

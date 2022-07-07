@@ -339,7 +339,7 @@
 
                         @endif
                         <td>
-                            {{$farmer1->purchase}}
+                            {{$farmer1->due}}
                         </td>
                         <td>
                             {{$farmer1->fpaid}}
