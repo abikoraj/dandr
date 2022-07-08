@@ -122,6 +122,9 @@
             </thead>
             <tbody>
                 @foreach ($bs->assets as $acc)
+                    @php
+                        $bsa+=$acc->amount;
+                    @endphp
                     @if ($acc->amount>0)
                         <tr class="main">
                             <td>
@@ -169,6 +172,9 @@
                 @endforeach
 
                 @if ($bs->receivableAmount>0)
+                    @php
+                        $bsa+=$bs->receivableAmount;
+                    @endphp
                     <tr class="main">
                         <td>Accounts Receivable</td>
                         <td>
@@ -192,7 +198,7 @@
         <table class="table table-bordered">
             <tr class="main">
                 <td class="w-40">Total</td>
-                <td class="w-10">{{$plac->total}}</td>
+                <td class="w-10">{{$bsl}}</td>
             </tr>
         </table>
     </div>
@@ -200,7 +206,7 @@
         <table class="table table-bordered">
             <tr class="main">
                 <td class="w-40">Total</td>
-                <td class="w-10">{{$plac->total}}</td>
+                <td class="w-10">{{$bsa}}</td>
             </tr>
         </table>
     </div>
