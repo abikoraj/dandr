@@ -34,6 +34,11 @@ return [
             'delete' => ['code' => '03.03'],
             'list' => ['code' => '03.04'],
             'stock' => ['code' => '03.05'],
+            // 'stock_out' => ['code' => '03.06'],
+            'branch_stock' => ['code' => '03.07'],
+            'repackaging' => ['code' => '03.08'],
+            'wastage' => ['code' => '03.09'],
+            'manage_variants' => ['code' => '03.10'],
         ]
     ],
     "distributer" => [
@@ -63,10 +68,11 @@ return [
             'account opening' => ['code' => '05.05'],
             'advance' => ['code' => '05.06'],
             'salary' => ['code' => '05.07'],
+            'advance return' => ['code' => '05.08'],
         ]
     ],
 
-    "manage expense" => [
+    "manage_expense" => [
         'code' => '06',
         'children' => [
             'category list' => ['code' => '06.01'],
@@ -124,7 +130,7 @@ return [
         ]
     ],
 
-    "POS Setting" => [
+    "POS_Setting" => [
         'code' => '10',
         'children' => [
             'Day Management' => ['code' => '10.01'],
@@ -134,7 +140,7 @@ return [
         ]
     ],
 
-    "Payment Setting" => [
+    "Payment_Setting" => [
         'code' => '11',
         'children' => [
             'Banks' => ['code' => '11.01'],

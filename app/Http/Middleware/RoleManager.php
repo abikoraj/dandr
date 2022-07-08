@@ -22,8 +22,9 @@ class RoleManager
             return redirect()->route('login');
         }
         $user=Auth::user();
+
         if($user->getRole()==$role){
-            Config::set('per.per',$user->permissions);
+            Config::set('per.per',$user->permissions());
             return $next($request);
         }else{
             return redirect()->route($user->getRole().".dashboard");

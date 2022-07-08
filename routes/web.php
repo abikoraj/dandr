@@ -253,19 +253,19 @@ Route::name('admin.')->group(function () {
             Route::get('stockout-cancel/{id}', [ItemController::class, 'stockOutCancel'])->name('stockout-cancel')->middleware('permmission:03.05');
             Route::get('stockout-print/{id}', [ItemController::class, 'stockOutPrint'])->name('stockout-print')->middleware('permmission:03.05');
             //stock view
-            Route::match(["GET", "POST"], 'items-center-stock', [ItemStockController::class, 'index'])->name('items-center-stock');
+            Route::match(["GET", "POST"], 'items-center-stock', [ItemStockController::class, 'index'])->name('items-center-stock')->middleware('permmission:03.07');
             Route::match(['GET', 'POST'], 'barcode', [ItemController::class, 'barcode'])->name('barcode');
             Route::match(['GET', 'POST'], 'product', [ItemController::class, 'product'])->name('product');
             Route::match(['GET', 'POST'], 'product-barcode', [ItemController::class, 'productBarcode'])->name('product-barcode');
             //XXX variants
-               Route::prefix('variants')->name('variants.')->group(function () {
+               Route::prefix('variants')->name('variants.')->middleware('permmission:03.10')->group(function () {
                     Route::match(['GET','POST'],'list/{item}',[ItemVariantController::class,'index'])->name('index');
                     Route::match(['GET','POST'],'add/{id}',[ItemVariantController::class,'add'])->name('add');
                     Route::match(['POST'],'update/{id}',[ItemVariantController::class,'update'])->name('update');
                     Route::match(['POST','GET'],'del/{id}',[ItemVariantController::class,'del'])->name('del');
                });
 
-               Route::prefix('packaging')->name('packaging.')->group(function () {
+               Route::prefix('packaging')->name('packaging.')->middleware('permmission:03.08')->group(function () {
                     Route::get('',[PackagingController::class,'index'])->name('index');
                     Route::match(['GET','POST'],'add',[PackagingController::class,'add'])->name('add');
                     Route::match(['GET','POST'],'cancel/{id}',[PackagingController::class,'cancel'])->name('cancel');
@@ -318,15 +318,16 @@ Route::name('admin.')->group(function () {
             Route::post('due-pay', [SupplierController::class, 'duePay'])->name('due.pay')->middleware('permmission:07.09');
             Route::post('payment-delete', [SupplierController::class, 'delPayment'])->name('delete.pay')->middleware('permmission:07.11');
 
+
             // XXX supplier bills
             Route::get('bills', [SupplierController::class, 'indexBill'])->name('bill')->middleware('permmission:07.05');
-            Route::match(['GET', 'POST'], 'bill-add', [SupplierController::class, 'addBill'])->name('bill.add');
-            Route::post('bill-list', [SupplierController::class, 'listBill'])->name('bill.list');
-            Route::post('bill-update', [SupplierController::class, 'updateBill'])->name('bill.update');
-            Route::get('bill-delete', [SupplierController::class, 'deleteBill'])->name('bill.delete')->middleware('authority');
-            Route::post('bill-item', [SupplierController::class, 'billItems'])->name('bill.item.list');
-            Route::get('bill-detail/{bill}', [SupplierController::class, 'billDetail'])->name('bill.item.detail');
-            Route::post('bill-cancel', [SupplierController::class, 'cancelBill'])->name('bill.item.cancel');
+            Route::match(['GET', 'POST'], 'bill-add', [SupplierController::class, 'addBill'])->name('bill.add')->middleware('permmission:07.06');
+            Route::post('bill-list', [SupplierController::class, 'listBill'])->name('bill.list')->middleware('permmission:07.05');
+            Route::post('bill-update', [SupplierController::class, 'updateBill'])->name('bill.update')->middleware('permmission:07.07');
+            Route::get('bill-delete', [SupplierController::class, 'deleteBill'])->name('bill.delete')->middleware('permmission:07.08');
+            Route::post('bill-item', [SupplierController::class, 'billItems'])->name('bill.item.list')->middleware('permmission:07.05');
+            Route::get('bill-detail/{bill}', [SupplierController::class, 'billDetail'])->name('bill.item.detail')->middleware('permmission:07.05');
+            Route::post('bill-cancel', [SupplierController::class, 'cancelBill'])->name('bill.item.cancel')->middleware('permmission:07.08');;
 
             // XXX supplier previous
             Route::get('previous-balance', [SupplierController::class, 'previousBalance'])->name('previous.balance')->middleware('permmission:07.10');
@@ -361,13 +362,15 @@ Route::name('admin.')->group(function () {
             //XXX Employee Month Closing
             Route::post('account-closing', [EmployeeController::class, 'closeSession'])->name('account.close');
                //XXX Employee Advance Management
-            Route::get('ret', [EmployeeController::class,'ret'])->name('ret');
-            Route::post('addret', [EmployeeController::class,'addRet'])->name('ret.add');
-            Route::post('getret', [EmployeeController::class,'getRet'])->name('ret.list');
-            Route::post('delret', [EmployeeController::class,'delRet'])->name('ret.del')->middleware('authority');;
-            Route::post('updateret', [EmployeeController::class,'updateRet'])->name('ret.update')->middleware('authority');
-        });
+            Route::middleware(['permmission:05.08'])->group(function () {
 
+                Route::get('ret', [EmployeeController::class,'ret'])->name('ret');
+                Route::post('addret', [EmployeeController::class,'addRet'])->name('ret.add');
+                Route::post('getret', [EmployeeController::class,'getRet'])->name('ret.list');
+                Route::post('delret', [EmployeeController::class,'delRet'])->name('ret.del');
+                Route::post('updateret', [EmployeeController::class,'updateRet'])->name('ret.update');
+            });
+        });
 
         Route::prefix('sms')->name('sms.')->group(function () {
             Route::post('distributer-credit', [SMSController::class, 'distributerCredit'])->name('distributer.credit');
@@ -428,7 +431,7 @@ Route::name('admin.')->group(function () {
 
 
         //XXX item expire wastage
-        Route::prefix('wastage')->name('wastage.')->group(function () {
+        Route::prefix('wastage')->name('wastage.')->middleware('permmission:03.09')->group(function () {
             Route::match(['get', 'post'], '', [WastageController::class,'index'])->name('index');
             Route::match([ 'post'], 'add', [WastageController::class,'add'])->name('add');
             Route::match([ 'post'], 'del', [WastageController::class,'del'])->name('del');

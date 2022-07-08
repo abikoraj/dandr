@@ -37,7 +37,12 @@
                 </tr>
             </thead>
             <tbody id="itemData">
-
+                @php
+                    $variantPer=auth_has_per('03.10');
+                    $editPer=auth_has_per('03.02');
+                    $stockPer=auth_has_per('03.05');
+                    $delPer=auth_has_per('03.03');
+                @endphp
                 @foreach ($items as $item)
                     @include('admin.item.single',['item'=>$item])
                 @endforeach

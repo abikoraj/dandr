@@ -39,6 +39,9 @@ class Menu
                 'children' => [
                     ["Items", '03.04', route('admin.item.index')],
                     ["Stock Out", '03.05', route('admin.item.stockout-list')],
+                    ["Branch Stock", '03.07', route('admin.item.items-center-stock')],
+                    ["Repackaging", '03.08', route('admin.item.packaging.index')],
+                    ["Wastage", '03.09', route('admin.wastage.index')],
                 ],
             ],
             "distributer" => [
@@ -66,6 +69,7 @@ class Menu
                     ["Account Opening", '05.05', route('admin.employee.account.index')],
                     ["Advance", '05.06', route('admin.employee.advance')],
                     ["Salary Pay", '05.07', route('admin.salary.pay')],
+                    ["Advance Return", '05.08', route('admin.employee.ret')],
                 ],
             ],
 
@@ -137,7 +141,6 @@ class Menu
                 'icon' => 'apps',
                 'text' => "Payment Setting",
                 'children' => [
-                    ["Banks", '11.01', route('admin.bank.index')],
                     ["Payment Gateways", '11.02', route('admin.gateway.index')],
                 ],
             ],

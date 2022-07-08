@@ -1,7 +1,10 @@
 <h4 class="text-center mb-1">
     Balance Sheet <br> from {{_nepalidate($range[1])}} to {{_nepalidate($range[2])}}
 </h4>
-
+@php
+    $bsl=0;
+    $bsa=0;
+@endphp
 <div class="d-flex">
     <div style="flex: 1">
         <table class="table table-bordered mb-0">
@@ -15,6 +18,9 @@
             </thead>
             <tbody id="bsliabilities">
                 @foreach ($bs->liabilities as $acc)
+                    @php
+                        $bsl+=$acc->amount;
+                    @endphp
                     @if ($acc->amount>0)
 
                         @if ($acc->identifire=='2.1')
@@ -77,6 +83,9 @@
                     @endif
                 @endforeach
                 @if($bs->payableAmount>0)
+                    @php
+                        $bsl+=$bs->payableAmount;
+                    @endphp
                     <tr class="main">
                         <td>
                             Accounts Payable
@@ -158,6 +167,7 @@
                         @endif
                     @endif
                 @endforeach
+
                 @if ($bs->receivableAmount>0)
                     <tr class="main">
                         <td>Accounts Receivable</td>

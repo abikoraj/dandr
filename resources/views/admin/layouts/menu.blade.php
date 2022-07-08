@@ -22,8 +22,11 @@
             @php
                 $blocks = \App\Menu::get();
                 $pers=Config::get('per.per', []);
-                // print_r($pers);
+
             @endphp
+            <script>
+                console.log({!! json_encode($pers) !!})
+            </script>
             @foreach ($blocks as $block)
                 @include('admin.layouts.menu_block',['block'=>$block,'pers'=>$pers])
             @endforeach

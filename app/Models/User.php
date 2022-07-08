@@ -6,6 +6,7 @@ use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Facades\DB;
 use Laravel\Passport\HasApiTokens;
 class User extends Authenticatable
 {
@@ -47,7 +48,7 @@ class User extends Authenticatable
 
 
     public function permissions(){
-        return $this->hasMany(UserPermission::class);
+        return DB::table('user_permissions')->where('user_id',$this->id)->get(['id','code','enable']);
     }
 
     /**

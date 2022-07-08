@@ -158,7 +158,12 @@
     @yield('js1')
     @yield('js2')
     @yield('js3')
+    @if (env('APP_DEBUG',false))
+        <script>
+            console.log({{memory_get_usage(true)}});
+        </script>
 
+    @endif
 
 </body>
 

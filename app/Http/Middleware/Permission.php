@@ -6,6 +6,7 @@ use App\Models\UserPermission;
 use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use League\CommonMark\Inline\Element\Code;
 
 class Permission
@@ -23,7 +24,7 @@ class Permission
         if ($user->phone == env('authphone', "9800916365")) {
             return $next($request);
         } else {
-            if (UserPermission::where('user_id', $user->id)->where('code', $code)->where('enable', 1)->count() > 0) {
+            if (DB::table('user_permissions')->where('user_id', $user->id)->where('code', $code)->where('enable', 1)->count() > 0) {
                 return $next($request);
             } else {
                 if ($request->ajax() || $request->wantsJson()) {

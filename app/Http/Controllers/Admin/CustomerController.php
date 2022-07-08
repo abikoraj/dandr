@@ -87,6 +87,8 @@ class CustomerController extends Controller
         $customer = new Customer();
         $customer->user_id = $user->id;
         $customer->panvat = $request->panvat;
+        $customer->center_id = $request->center_id??env('maincenter');
+        $customer->foreign_id = 0;
         $customer->save();
 
         $customer->name = $user->name;

@@ -146,6 +146,7 @@ class AccountingController extends Controller
                     "Customer"=>'customers',
                     "Supplier"=>'suppliers'
                 ];
+
                 $partyDatas=[];
                 foreach ($parties as $key => $party) {
                     $partyDatas[$key]=$this->getPayableReceivable("select (dr-cr) as amount,user_id from
@@ -158,6 +159,9 @@ class AccountingController extends Controller
                     (select user_id from users u join {$party} e on e.user_id=u.id)  as emp
                     ) as l where cr-dr<>0");
                 }
+                // dd($partyDatas);
+                $bs->extras=["liablilty"=>[],"asset"=>[]];
+
                 $bs->parties=(object)$parties;
                 $bs->partyDatas=(object)$partyDatas;
                 $bs->receivable=[];
@@ -166,11 +170,23 @@ class AccountingController extends Controller
                 $bs->payableAmount=0;
                 foreach ($partyDatas as $key => $partyData) {
                     if($partyData['receivable']>0){
-                        $bs->receivableAmount+=$partyData['receivable'];
-                        array_push($bs->receivable,[
-                            "title"=>"Receivable from ".$key,
-                            'amount'=>$partyData['receivable']
-                        ]);
+
+
+                            $bs->receivableAmount+=$partyData['receivable'];
+                            $title="Receivable from ".$key;
+
+                            if($key=="Farmer"){
+                                $title="Farmer Due";
+                            }else if($key=="Employee"){
+                                $title="Employee Advance";
+                            }else if($key=="Distributor"){
+                                $title="Distributor Due";
+                            }
+                            array_push($bs->receivable,[
+                                "title"=>$title,
+                                'amount'=>$partyData['receivable']
+                            ]);
+
                     }
                     if($partyData['payable']>0){
                         $bs->payableAmount+=$partyData['payable'];
