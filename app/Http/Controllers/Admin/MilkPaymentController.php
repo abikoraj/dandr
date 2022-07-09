@@ -12,6 +12,7 @@ use App\Models\User;
 use App\NepaliDate;
 use App\PaymentManager;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class MilkPaymentController extends Controller
 {
@@ -81,7 +82,10 @@ class MilkPaymentController extends Controller
             // $l->date=$date;
             $l->save();
             PaymentManager::update($payment->id,121,$request);
-            return response('ok');
+            $user=DB::table('users')->where('id',$payment->user_id)->first(['no','name']);
+            $payment->no=$user->no;
+            $payment->name=$user->name;
+            return view('admin.milk.payment.single',compact('payment'));
         }else{
             $payment=MilkPayment::find($request->id);
             $paymentSave=paymentSave::where(
