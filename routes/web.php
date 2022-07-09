@@ -33,6 +33,7 @@ use App\Http\Controllers\Admin\WastageController;
 use App\Http\Controllers\BackupController;
 use App\Http\Controllers\FixedAssetController;
 use App\Http\Controllers\HomeController as ControllersHomeController;
+use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\POS\BillingController;
 use App\Http\Controllers\POS\POSController;
 use App\Http\Controllers\ReportController;
@@ -142,7 +143,7 @@ Route::name('admin.')->group(function () {
                     Route::match(['GET', 'POST'], '', 'Admin\MilkPaymentController@index')->name('index');
                     // Route::post('load','Admin\ProductController@index')->name('load');
                     Route::post('add', 'Admin\MilkPaymentController@add')->name('add');
-                    Route::post('update', 'Admin\MilkPaymentController@update')->name('update')->middleware('authority');
+                    Route::get('update', 'Admin\MilkPaymentController@update')->name('update')->middleware('authority');
                     Route::post('delete', 'Admin\MilkPaymentController@delete')->name('delete')->middleware('authority');
                     // Route::post('del','Admin\ProductController@del')->name('del')->middleware('authority');
                 });
@@ -464,6 +465,8 @@ Route::name('admin.')->group(function () {
             Route::match(['GET','POST'],'edit',[PackagingController::class,'edit'])->name('edit');
             Route::post('del',[PackagingController::class,'del'])->name('del');
         });
+
+        Route::get('xpay/{id}/{identifire}',[PaymentController::class,'index'])->name('xpay');
 
 
 

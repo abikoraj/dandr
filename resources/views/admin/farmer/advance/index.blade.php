@@ -44,11 +44,17 @@
 
             <div class="col-lg-3">
                 <label for="amount">Advance Amount</label>
-                <input type="number" id="amount" min="0" name="amount" class="form-control next" data-next="save" placeholder="Enter advance amount" value="0" required>
+                <input type="number" id="amount" min="0" name="amount" class="form-control next xpay_handle" data-next="save" placeholder="Enter advance amount" value="0" required>
             </div>
             <div class="col-lg-2">
                 <input type="submit" id="save" class="btn btn-raised btn-primary waves-effect btn-block" value="Add" style="margin-top:30px;">
             </div>
+            <div class="col-12"></div>
+            @if (hasPay())
+
+                @include('admin.payment.take',['xpay_type'=>2])
+            @endif
+
 
         </div>
     </form>
@@ -109,12 +115,17 @@
         console.log(adv);
         $('#eid').val(adv.id);
         $('#eamount').val(adv.amount);
+        $('#expay_amount').val(adv.amount);
         $('#editModal').modal('show');
+        loadXPayEdit(adv.id,104);
 
     }
 
     function saveData(e) {
         e.preventDefault();
+        if(!xpayVerifyData()){
+            return;
+        }
         var bodyFormData = new FormData(document.getElementById('form_validation'));
         axios({
                 method: 'post',
@@ -136,6 +147,7 @@
                 $('#u_id').val('');
                 $('#amount').val(0);
                 $('#u_id').focus();
+                resetXPayment();
             })
             .catch(function(response) {
                 //handle error
@@ -148,6 +160,9 @@
     function editData(e) {
         e.preventDefault();
         var rowid = $('#eid').val();
+        if(!expayVerifyData()){
+            return;
+        }
         var bodyFormData = new FormData(document.getElementById('editform'));
         axios({
                 method: 'post',
@@ -199,12 +214,12 @@
    })
 
     window.onload = function() {
-       
+
         $('#u_id').focus();
         // loadAdvance();
     };
 
- 
+
     function farmerSelected(id){
         $('#u_id').val(id);
         $('#farmermodal').modal('hide');

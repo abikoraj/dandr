@@ -9,6 +9,7 @@ use App\Models\Ledger;
 use App\Models\MilkPayment;
 use App\Models\User;
 use App\NepaliDate;
+use App\PaymentManager;
 use Illuminate\Http\Request;
 
 class MilkPaymentController extends Controller
@@ -53,6 +54,7 @@ class MilkPaymentController extends Controller
             }else{
                 $ledger->addLedger('Payment Milk Payment Given To Farmer',2,$request->amount,$date,'121',$payment->id);
             }
+            new PaymentManager($request,$payment->id,121);
             return view('admin.milk.payment.single',compact('payment'));
         }else{
             return '<tr class="text-center"><td colspan="4"> <strong> <span class="text-danger">Your payment has been failed due to Session is not closed yet !</span></strong></td></tr>';
@@ -90,7 +92,7 @@ class MilkPaymentController extends Controller
                 ['foreign_key','=',$request->id]
             ]
         )->first();
-
+        PaymentManager::remove($request->id,121);
         $l->delete();
         return response('ok');
     }

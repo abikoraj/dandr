@@ -8,6 +8,7 @@ use App\Models\Advance;
 use App\Models\Ledger;
 use App\Models\User;
 use App\NepaliDate;
+use App\PaymentManager;
 use Illuminate\Http\Request;
 
 class AdvanceController extends Controller
@@ -42,6 +43,7 @@ class AdvanceController extends Controller
         }else{
             $ledger->addLedger('Advance to Farmer',2,$request->amount,$date,'104',$adv->id);
         }
+        new PaymentManager($request,$adv->id,104);
         return view('admin.farmer.advance.single',compact('adv'));
     }
 
@@ -85,6 +87,7 @@ class AdvanceController extends Controller
         // }
         $ledger->delete();
         $adv->delete();
+        PaymentManager::remove($request->id,104);
         return response('Advance Deleted Sucessfully');
     }
     public function update(Request $request){
@@ -97,6 +100,7 @@ class AdvanceController extends Controller
         //     LedgerManage::updateLedger($ledger,$request->amount);
         // }
         $adv->save();
+        PaymentManager::update($adv->id,104,$request);
         return view('admin.farmer.advance.single',compact('adv'));
 
     }

@@ -16,10 +16,14 @@
                         <div class="row">
                             <div class="col-lg-6">
                                 <label for="amount">Advance Amount</label>
-                                <input type="number" id="eamount" min="0" name="amount" class="form-control" placeholder="Enter advance amount" value="0" required>
+                                <input type="number" id="eamount" min="0" name="amount" class="form-control expay_handle" placeholder="Enter advance amount" value="0" required>
                             </div>
                             <div class="col-lg-6 pt-4">
                                 <button class="btn btn-raised btn-primary waves-effect btn-block" type="submit">Submit Data</button>
+                            </div>
+                            <input type="hidden" name="expay_amount" id="expay_amount">
+                            <div class="col-12 pt-2" id="expay_edit">
+
                             </div>
                         </div>
                     </form>

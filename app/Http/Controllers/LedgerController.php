@@ -31,12 +31,12 @@ class LedgerController extends Controller
     * "110" = "Automatic payment Given to famer when closing" --
     * "116" = "Farmer item return"
     * "117" = "Farmer item return paid cancel"
-    * "121" = "Farmer paid for milk" -- 
+    * "121" = "Farmer paid for milk" --
     * "124" = "Farmer Bonus" --
 
     * "114" = "distributer Payment" --
     * "115" = "distributer sell cancel" --
-    * "118" = "Account Adjustment" 
+    * "118" = "Account Adjustment"
     * "119" = "Distributor opening balance"
     * "120" = ""
 
@@ -92,6 +92,8 @@ class LedgerController extends Controller
             $advance=Farmerpayment::where('id',$key)->first();
             $advance->amount=$request->amount;
             $advance->save();
+
+
         }else if($i==121){
             $type=1;
             $payment=MilkPayment::where('id',$key)->first();
@@ -113,86 +115,15 @@ class LedgerController extends Controller
             $payment->amount=$request->amount;
             $payment->save();
         }
-        $ledgers=Ledger::where('id','>',$request->id)->where('user_id',$ledger->user_id)->orderBy('id','asc')->get();
-        $track=0;
 
-        //find first point
-        if($ledger->cr>0){
-            $track=(-1)*$ledger->cr;
-        }
-        if($ledger->dr>0){
-            $track=$ledger->dr;
-        }
 
-        echo 'first'.$track."<br>";
-
-        //find old data
-
-        if($ledger->type==1){
-            $track+=$ledger->amount;
-        }else{
-            $track-=$ledger->amount;
-        }
-
-        echo 'second'.$track."<br>";
-
-        //set new data
-        if($type==1){
-            $track-=$request->amount;
-        }else{
-            $track+=$request->amount;
-        }
-
-        echo 'third'.$track."<br>";
-
-        
         $ledger->type=$type;
         $ledger->amount=$request->amount;
         $ledger->title=$title;
-        if($track<0){
-            $ledger->cr=(-1)*$track;
-            $ledger->dr=0;
-        }else{
-            $ledger->dr=$track;
-            $ledger->cr=0;
-        }
         $ledger->save();
 
-        foreach($ledgers as $l){
-
-            if($l->type==1){
-                $track-=$l->amount;
-            }else{
-                $track+=$l->amount;
-            }
-
-            if($track<0){
-                $l->cr=(-1)*$track;
-                $l->dr=0;
-            }else{
-                $l->dr=$track;
-                $l->cr=0;
-            }
-            $l->save();
-
-            echo $l->title . ",".$track."<br>";
-        }
-
-        $t=0;
-        if($track>0){
-            $t=2;
-
-        }else if($track<0){
-            $t=1;
-            $track=(-1)*$track;
 
 
-        }
-
-
-        $user->amount=$track;
-        $user->amounttype=$t;
-        $user->save();
     }
 
     public function del(Request $request){
@@ -204,88 +135,34 @@ class LedgerController extends Controller
         if($i==103){
             $foreign=Sellitem::where('id',$key)->first();
         }else if($i==104){
-            
+
             $foreign=Advance::where('id',$key)->first();
-      
+
         }else if($i==107){
-          
+
             $foreign=Farmerpayment::where('id',$key)->first();
-           
+
         }else if($i==121){
-          
+
            $foreign=MilkPayment::where('id',$key)->first();
-         
+
         }else if($i==112){
-         
+
             $foreign=EmployeeAdvance::where('id',$key)->first();
-             
+
          }else if($i==114){
-         
+
            $foreign=DistributorPayment::where('id',$key)->first();
-            
+
         }else if($i==127){
-            
+
            $foreign=Supplierpayment::where('id',$key)->first();
-           
+
         }
         if($foreign!=null){
             $foreign->delete();
         }
-        $ledgers=Ledger::where('id','>',$request->id)->where('user_id',$ledger->user_id)->orderBy('id','asc')->get();
-        $track=0;
-
-        //find first point
-        if($ledger->cr>0){
-            $track=(-1)*$ledger->cr;
-        }
-        if($ledger->dr>0){
-            $track=$ledger->dr;
-        }
-        echo 'first'.$track."<br>";
-
-        //find old data
-
-        if($ledger->type==1){
-            $track+=$ledger->amount;
-        }else{
-            $track-=$ledger->amount;
-        }
         $ledger->delete();
-
-
-        foreach($ledgers as $l){
-
-            if($l->type==1){
-                $track-=$l->amount;
-            }else{
-                $track+=$l->amount;
-            }
-
-            if($track<0){
-                $l->cr=(-1)*$track;
-                $l->dr=0;
-            }else{
-                $l->dr=$track;
-                $l->cr=0;
-            }
-            $l->save();
-
-            echo $l->title . ",".$track."<br>";
-        }
-
-        $t=0;
-        if($track>0){
-            $t=2;
-
-        }else if($track<0){
-            $t=1;
-            $track=(-1)*$track;
-
-        }
-
-        $user->amount=$track;
-        $user->amounttype=$t;
-        $user->save();
         return response('ok');
     }
 }

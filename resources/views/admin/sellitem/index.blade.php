@@ -167,6 +167,9 @@
             $('#nepali-datepicker').focus();
             return false;
         } else {
+            if(!xpayVerifyData()){
+                return;
+            }
             var bodyFormData = new FormData(document.getElementById('sellitemData'));
             axios({
                     method: 'post',

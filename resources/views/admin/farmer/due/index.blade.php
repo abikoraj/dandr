@@ -63,6 +63,7 @@
         .then(function(response) {
             $('#allData').html(response.data);
             setDate('nepali-datepicker',true);
+            addXPayHandle();
         })
         .catch(function(response) {
             //handle error
@@ -115,18 +116,22 @@
             alert('please enter valid data!');
             return false;
         }else{
+            if(!xpayVerifyData()){
+                return;
+            }
             var date = $('#nepali-datepicker').val();
             var amt = $('#p_amt').val();
             var detail = $('#p_detail').val();
             var user_no = $('#u_no').val();
             var center_id = $('#center_id').val();
-            var data = {
+            var data =loadXPay( {
                 'date':date,
                 'pay':amt,
                 'detail':detail,
                 'no':user_no,
                 'center_id':center_id
-            }
+            });
+
 
             axios({
                     method: 'post',
@@ -136,6 +141,7 @@
             .then(function(response) {
                 showNotification('bg-success', 'Payment has been successed!');
                 $('#p_amt').val(0);
+                resetXPayment();
                 loadData();
             })
             .catch(function(response) {

@@ -74,14 +74,17 @@
         </div>
         <div class="col-md-4">
             <label for="pay">Pay Amount </label>
-            <input type="text" class="form-control" id="p_amt" name="pay" min="0" step="0.001" value="0">
+            <input type="text" class="form-control xpay_handle" id="p_amt" name="pay" min="0" step="0.001" value="0">
         </div>
         <div class="col-md-12 mt-1">
             <label for="detail">Payment Detail</label>
             <textarea type="text" class="form-control" id="p_detail" placeholder="Payment details"></textarea>
         </div>
+
         <div class="col-md-3">
             <span class="btn btn-primary btn-block" onclick="duePayment();"> Pay Now </span>
         </div>
+        <div class="col-12"></div>
+        @includeWhen(hasPay(),'admin.payment.take')
     </div>
 </div>

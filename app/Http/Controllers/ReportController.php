@@ -299,7 +299,7 @@ class ReportController extends Controller
 
         foreach ($request->farmers as $farmer) {
             $data = json_decode($farmer);
-
+            // dd($data);
             $ledger = new LedgerManage($data->id);
             $grandtotal = $data->grandtotal ?? 0;
             if ($data->grandtotal > 0) {
@@ -312,7 +312,7 @@ class ReportController extends Controller
 
             $farmerreport = new FarmerReport();
             $farmerreport->user_id = $data->id;
-            $farmerreport->milk = $data->milk;
+            $farmerreport->milk = $data->milk??0;
             $farmerreport->snf = $data->snf ?? 0;
             $farmerreport->fat = $data->fat ?? 0;
             $farmerreport->rate = $data->rate ?? 0;
@@ -328,7 +328,7 @@ class ReportController extends Controller
             $farmerreport->cc = $data->cc ?? 0;
             $farmerreport->grandtotal = $data->grandtotal ?? ($data->total ?? 0);
             $farmerreport->paidamount = $data->paidamount ?? 0;
-            $farmerreport->prevbalance = $data->prevbalance;
+            $farmerreport->prevbalance = $data->prevbalance??0;
             $farmerreport->year = $request->year;
             $farmerreport->month = $request->month;
             $farmerreport->session = $request->session;

@@ -10,6 +10,7 @@ use App\Models\Ledger;
 use App\Models\Sellitem;
 use App\Models\User;
 use App\NepaliDate;
+use App\PaymentManager;
 use Illuminate\Http\Request;
 
 class SellitemController extends Controller
@@ -99,6 +100,11 @@ class SellitemController extends Controller
                     $manager->addLedger('Paid amount',1,$request->paid,$date,'106',$sell_item->id);
                 }
             }
+
+            if($sell_item->paid>0){
+                new PaymentManager($request,$sell_item->id,106);
+            }
+
             return view('admin.sellitem.single', compact('sell_item'));
         } else {
             return response('item Stock is not available', 500);
@@ -182,6 +188,7 @@ class SellitemController extends Controller
         $ledger[0] = Ledger::where('identifire', '103')->where('foreign_key', $request->id)->first();
         if ($paid > 0) {
             $ledger[1] = Ledger::where('identifire', '106')->where('foreign_key', $request->id)->first();
+            PaymentManager::remove($request->id,106);
         }
         // $ledger[0] = Ledger::where('identifire','106')->where('foreign_key',$request->id);
         LedgerManage::delLedger($ledger);
@@ -196,6 +203,7 @@ class SellitemController extends Controller
     public function multidel(Request $request)
     {
         // dd($request->ids);
+        $paymentRemoveArr=[];
         foreach ($request->ids as $id) {
 
 
@@ -222,14 +230,17 @@ class SellitemController extends Controller
             echo "step1 <br>";
 
             if ($paid > 0) {
+                array_push($paymentRemoveArr,$id);
                 $ledger2 = Ledger::where('user_id', $user_id)->where('identifire', '106')->where('foreign_key', $id)->first();
                 if ($ledger2 != null) {
                     array_push($ledger, $ledger1);
+
                 }
                 echo "step2 <br>";
             }
             // $ledger[0] = Ledger::where('identifire','106')->where('foreign_key',$request->id);
             LedgerManage::delLedger($ledger);
+            PaymentManager::removeMultiple($paymentRemoveArr,106);
         }
     }
 }

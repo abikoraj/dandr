@@ -3,9 +3,11 @@
 <br>
 <hr>
 @include('admin.accounting.final.pl')
-<br>
-<hr>
-@include('admin.accounting.final.bs')
+@if (if($type==1))
+    <br>
+    <hr>
+    @include('admin.accounting.final.bs')
+@endif
 
 
 

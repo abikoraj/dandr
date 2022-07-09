@@ -21,6 +21,7 @@ use App\Models\Sellitem;
 use App\Models\Snffat;
 use App\Models\User;
 use App\NepaliDate;
+use App\PaymentManager;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -391,6 +392,7 @@ class FarmerController extends Controller
     {
         DB::delete('delete from farmerpayments where id = ?', [$request->id]);
         DB::delete('delete from ledgers where foreign_key = ? and identifire=107', [$request->id]);
+        PaymentManager::remove($request->id,107);
         return response('ok');
     }
 
@@ -412,6 +414,7 @@ class FarmerController extends Controller
         } else {
             $ledger->addLedger('Paid by farmer amount', 1, $request->pay, $date, '107', $farmerPay->id);
         }
+        new PaymentManager($request,$farmerPay->id,107);
         return response('Payment Added Sucessfully');
     }
 

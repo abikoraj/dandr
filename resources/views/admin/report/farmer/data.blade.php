@@ -129,7 +129,7 @@ $_fpaidtotal = 0;
                     <td>
                         {{ $farmer->no }}
                         @if ($farmer->old == false && $newsession)
-                            <input type="hidden" name="farmers[]" value="{!! json_encode($farmer) !!}">
+                            <input type="hidden" name="farmers[]" value='{!! json_encode($farmer) !!}'>
                         @endif
                     </td>
                     @php

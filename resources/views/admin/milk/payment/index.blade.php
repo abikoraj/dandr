@@ -79,11 +79,15 @@
                 <input type="number" id="no" placeholder="Farmer No" class="form-control next checkfarmer"  data-next="amount">
             </div>
             <div class="col-md-3">
-                <input type="number" id="amount" placeholder="Payment Amount" class="form-control" min="1">
+                <input type="number" id="amount" placeholder="Payment Amount" class="form-control xpay_handle" min="1">
             </div>
             <div class="col-md-3 ">
                 <button class="btn btn-success" onclick="saveDate();">Save</button>
             </div>
+            @if (hasPay())
+
+                @include('admin.payment.take',['xpay_type'=>2])
+            @endif
             <div class="col-md-12 pt-4">
                 <div class="shadow py-4 px-2">
 
@@ -176,7 +180,10 @@
                 $('#amount').focus();
                 return ;
             }
-            var d={
+            if(!xpayVerifyData()){
+                return;
+            }
+            var d=loadXPay({
                 'year':$('#year').val(),
                 'month':$('#month').val(),
                 'session':$('#session').val(),
@@ -184,7 +191,7 @@
                 'no':$('#no').val(),
                 'amount':$('#amount').val(),
                 'date':$('#currentdate').val()
-            };
+            });
 
             axios.post("{{route('admin.farmer.milk.payment.add')}}",d)
             .then(function(response){
@@ -192,8 +199,8 @@
                 // Toogle();
                 $('#no').val('');
                 $('#amount').val('');
+                resetXPayment();
                 $('#no').focus();
-
             })
             .catch(function(error){
                 alert('some error occured');
@@ -298,7 +305,7 @@
 
             axios.post("{{route('admin.farmer.milk.payment.delete')}}",{
                 'id':id,
-               
+
             })
                 .then(function(response){
                     showNotification('bg-success', 'Deleted successfully!');
@@ -307,14 +314,14 @@
                 .catch(function(error){
                     if(error.response){
                         if(error.response.status==401){
-    
+
                             alert(error.response.data);
                         }else{
                             alert('some error occured');
-    
+
                         }
                     }else{
-    
+
                         alert('some error occured');
                     }
                 });
