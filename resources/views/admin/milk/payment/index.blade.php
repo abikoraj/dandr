@@ -84,10 +84,8 @@
             <div class="col-md-3 ">
                 <button class="btn btn-success" onclick="saveDate();">Save</button>
             </div>
-            @if (hasPay())
+            @include('admin.payment.take',['xpay_type'=>2])
 
-                @include('admin.payment.take',['xpay_type'=>2])
-            @endif
             <div class="col-md-12 pt-4">
                 <div class="shadow py-4 px-2">
 
@@ -274,30 +272,28 @@
         });
     })
 
-    function updateData(id,value,date){
-        console.log(id,value);
-        axios.post("{{route('admin.farmer.milk.payment.update')}}",{
-            'id':id,
-            'amount':value,
-            'date':date
+    function initUpdate(url){
+        win.showGet("Update Milk Payment",url,addEXPayHandle);
+    }
+
+    function update(ele,e,id){
+        e.preventDefault();
+        if(!expayVerifyData()){
+                return;
+        }
+        showProgress('Updating Payment');
+        axios.post(ele.action,new FormData(ele))
+        .then((res)=>{
+            $('#payment-'+id).replaceWith(res.data);
+            showNotification('bg-success',"Payment Updated Sucessfully");
+            hideProgress();
+            win.hide();
         })
-            .then(function(response){
-                showNotification('bg-success', 'Updated successfully!');
-            })
-            .catch(function(error){
-                if(error.response){
-                    if(error.response.status==401){
+        .catch((err)=>{
+            showNotification('bg-danger',"Cannot Update Payment, Please try again");
+            hideProgress();
 
-                        alert(error.response.data);
-                    }else{
-                        alert('some error occured');
-
-                    }
-                }else{
-
-                    alert('some error occured');
-                }
-            });
+        });
     }
 
     function amountDelete(id){
@@ -334,27 +330,7 @@
     function farmerId(no){
         $('#no').val(no);
     }
-    function amountUpdate(id){
-        ele=document.getElementById('amount-'+id);
-        eledate=document.getElementById('date-'+id);
-        if( confirm('Do You Want To Update Data?')){
-                updateData(ele.dataset.id,ele.value,eledate.value);
-           }else{
-                ele.value=ele.dataset.amount;
-           }
-    }
-    function amountEnter(ele,event){
-        var key = (event.keyCode ? event.keyCode : event.which);
-        // console.log(key);
-        if(key=='13'){
-           if( confirm('Do You Want To Update Data?')){
-                eledate=document.getElementById('date-'+ele.dataset.id);
-                updateData(ele.dataset.id,ele.value,eledate.value);
-           }else{
-                ele.value=ele.dataset.amount;
-           }
-        }
-    }
+
 
 
 </script>

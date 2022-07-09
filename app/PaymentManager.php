@@ -17,6 +17,29 @@ class PaymentManager
     public $cashChecked = false;
     public $fyChecked = false;
 
+    public static function loadUpdate($payment)
+    {
+        if($payment!=null){
+            $method=$payment->method;
+            $detail=json_decode($payment->detail);
+            if($payment->method==3){
+                $banks=[];
+                foreach ($detail->b as $key => $bdetail) {
+                    array_push($banks,[
+                        'detail'=>DB::table('banks')->where('id',$bdetail[0])->first(['id','name']),
+                        'amount'=>$bdetail[1]
+                    ]);
+                }
+                return view('admin.payment.edit',compact('banks','detail','method'))->render();
+            }else if($payment->method==1){
+                return "Paid Via Cash";
+
+            }else if($payment->method==2){
+                return "Paid Via Bank - ".DB::table('banks')->where('id',$detail[0])->get['name']->name;
+            }
+        }
+    }
+
     public static function loadStaticFiscal()
     {
         self::$fiscal = getFiscalYear();
@@ -226,4 +249,6 @@ class PaymentManager
         $bank = Bank::where('id', $id)->first();
         DB::update("update banks set balance=balance- {$amount} where id={$id}");
     }
+
+
 }

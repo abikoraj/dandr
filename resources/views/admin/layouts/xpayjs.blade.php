@@ -2,6 +2,7 @@
     const xpayCustomData = [];
     var xpayHandle;
     var expayHandle;
+    var xpayLoad=false;
 
     function xpayMethodChange(ele) {
         if (ele.value == 2) {
@@ -57,6 +58,14 @@
     function expayHandleChange() {
         console.log(expayHandle.value);
         $('#expay_amount').val(expayHandle.value);
+    }
+
+    function addEXPayHandle() {
+        if (exists('.expay_handle')) {
+            expayHandle = $('.expay_handle')[0];
+            expayHandle.addEventListener('change', expayHandleChange, true);
+            expayHandle.addEventListener('input', expayHandleChange, true);
+        }
     }
 
     function addXPayHandle() {

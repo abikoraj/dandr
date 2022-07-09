@@ -21,10 +21,8 @@
                             <div class="col-lg-6 pt-4">
                                 <button class="btn btn-raised btn-primary waves-effect btn-block" type="submit">Submit Data</button>
                             </div>
-                            <input type="hidden" name="expay_amount" id="expay_amount">
-                            <div class="col-12 pt-2" id="expay_edit">
 
-                            </div>
+                            @include('admin.payment.editholder')
                         </div>
                     </form>
                 </div>

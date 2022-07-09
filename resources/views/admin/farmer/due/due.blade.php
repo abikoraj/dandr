@@ -85,6 +85,7 @@
             <span class="btn btn-primary btn-block" onclick="duePayment();"> Pay Now </span>
         </div>
         <div class="col-12"></div>
-        @includeWhen(hasPay(),'admin.payment.take')
+
+        @include('admin.payment.take')
     </div>
 </div>

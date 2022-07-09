@@ -143,7 +143,7 @@ Route::name('admin.')->group(function () {
                     Route::match(['GET', 'POST'], '', 'Admin\MilkPaymentController@index')->name('index');
                     // Route::post('load','Admin\ProductController@index')->name('load');
                     Route::post('add', 'Admin\MilkPaymentController@add')->name('add');
-                    Route::get('update', 'Admin\MilkPaymentController@update')->name('update')->middleware('authority');
+                    Route::match(['GET','POST'],'update/{id}', 'Admin\MilkPaymentController@update')->name('update')->middleware('authority');
                     Route::post('delete', 'Admin\MilkPaymentController@delete')->name('delete')->middleware('authority');
                     // Route::post('del','Admin\ProductController@del')->name('del')->middleware('authority');
                 });

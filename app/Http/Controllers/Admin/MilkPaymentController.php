@@ -7,6 +7,7 @@ use App\LedgerManage;
 use App\Models\FarmerReport;
 use App\Models\Ledger;
 use App\Models\MilkPayment;
+use App\Models\paymentSave;
 use App\Models\User;
 use App\NepaliDate;
 use App\PaymentManager;
@@ -63,21 +64,35 @@ class MilkPaymentController extends Controller
 
     public function update(Request $request){
         // dd($request->all());
-        $date = str_replace('-', '', $request->date);
-        $payment=MilkPayment::find($request->id);
-        $payment->date=$date;
-        $payment->amount=$request->amount;
-        $payment->save();
-        $l=Ledger::where(
-            [
-                ['identifire','=',121],
-                ['foreign_key','=',$request->id]
-            ]
-        )->first();
-        $l->amount=$request->amount;
-        $l->date=$date;
-        $l->save();
-        return response('ok');
+        if($request->getMethod()=="POST"){
+
+            $date = str_replace('-', '', $request->date);
+            $payment=MilkPayment::find($request->id);
+            // $payment->date=$date;
+            $payment->amount=$request->amount;
+            $payment->save();
+            $l=Ledger::where(
+                [
+                    ['identifire','=',121],
+                    ['foreign_key','=',$request->id]
+                ]
+            )->first();
+            $l->amount=$request->amount;
+            // $l->date=$date;
+            $l->save();
+            PaymentManager::update($payment->id,121,$request);
+            return response('ok');
+        }else{
+            $payment=MilkPayment::find($request->id);
+            $paymentSave=paymentSave::where(
+                [
+                    ['identifire','=',121],
+                    ['foreign_id','=',$request->id]
+                ]
+            )->first();
+            $paymentData=PaymentManager::loadUpdate($paymentSave);
+            return view('admin.milk.payment.edit',compact('payment','paymentData'));
+        }
     }
 
     public function delete(Request $request){

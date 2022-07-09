@@ -89,7 +89,7 @@
                     <input type="button" value="Save" class="btn btn-primary btn-block" onclick="saveData();" id="save">
                     {{-- <span class="btn btn-primary btn-block" >Save</span> --}}
                 </div>
-                @includeWhen(hasPay(),('admin.payment.take'))
+                @include('admin.payment.take')
             </div>
         </form>
         <div class="row">

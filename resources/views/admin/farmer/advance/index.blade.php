@@ -50,10 +50,8 @@
                 <input type="submit" id="save" class="btn btn-raised btn-primary waves-effect btn-block" value="Add" style="margin-top:30px;">
             </div>
             <div class="col-12"></div>
-            @if (hasPay())
 
-                @include('admin.payment.take',['xpay_type'=>2])
-            @endif
+            @include('admin.payment.take',['xpay_type'=>2])
 
 
         </div>
