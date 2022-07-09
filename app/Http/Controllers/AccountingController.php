@@ -239,7 +239,7 @@ class AccountingController extends Controller
                 }
             }
 
-            return view('admin.accounting.final.index', compact('trading', 'opening', 'closing', 'showDetail', 'range', 'plac','bs'));
+            return view('admin.accounting.final.index', compact('type','trading', 'opening', 'closing', 'showDetail', 'range', 'plac','bs'));
         } else {
             $fys = DB::table('fiscal_years')->get(['id', 'name', 'startdate', 'enddate']);
             return view('admin.accounting.final.result', compact('fys'));
