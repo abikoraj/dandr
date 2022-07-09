@@ -17,6 +17,10 @@ class PaymentManager
     public $cashChecked = false;
     public $fyChecked = false;
 
+    public static function loadUpdateID($id,$identifire){
+        $payment = paymentSave::where('foreign_id', $id)->where('identifire', $identifire)->first();
+        return self::loadUpdate($payment);
+    }
     public static function loadUpdate($payment)
     {
         if($payment!=null){

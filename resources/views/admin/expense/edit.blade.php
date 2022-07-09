@@ -36,7 +36,7 @@
             <div class="col-lg-6">
                 <label for="name">Amount</label>
                 <div class="form-group">
-                    <input type="number" id="eamount" name="amount" min="0" class="form-control next"
+                    <input type="number" id="eamount" name="amount" min="0" class="form-control next expay_handle"
                         data-next="paid_by" placeholder="Enter expense amount" required value="{{ $exp->amount }}">
                 </div>
             </div>
@@ -69,6 +69,7 @@
                 <button class="btn btn-raised btn-primary waves-effect" type="submit">Update Expense</button>
                 <span class="btn btn-danger waves-effect" onclick="win.hide();">Close</span>
             </div>
+            @include('admin.payment.editholder')
         </div>
     </form>
 </div>

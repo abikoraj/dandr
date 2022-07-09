@@ -16,7 +16,7 @@
                                     placeholder="Date" required>
                             </div>
                         </div>
-        
+
                         <div class="col-lg-4">
                             <label for="name">Expense Category</label>
                             <div class="form-group">
@@ -29,7 +29,7 @@
                                 </select>
                             </div>
                         </div>
-        
+
                         <div class="col-lg-4">
                             <label for="name">Title</label>
                             <div class="form-group">
@@ -37,15 +37,15 @@
                                     placeholder="Enter expense title" required>
                             </div>
                         </div>
-        
+
                         <div class="col-lg-4">
                             <label for="name">Amount</label>
                             <div class="form-group">
-                                <input type="number" id="amount" name="amount" min="0" class="form-control next" data-next="paid_by"
+                                <input type="number" id="amount" name="amount" min="0" class="form-control next xpay_handle" data-next="paid_by"
                                     placeholder="Enter expense amount" required>
                             </div>
                         </div>
-        
+
                         <div class="col-lg-4">
                             <label for="name">Paid By</label>
                             <div class="form-group">
@@ -53,7 +53,7 @@
                                     placeholder="Enter name of paiyer" required>
                             </div>
                         </div>
-        
+
                         <div class="col-lg-4">
                             <label for="name">Payment Detail</label>
                             <div class="form-group">
@@ -61,7 +61,7 @@
                                     placeholder="Enter payment detail" required>
                             </div>
                         </div>
-        
+
                         <div class="col-lg-12">
                             <label for="remark">Remarks</label>
                             <div class="form-group">
@@ -76,6 +76,7 @@
                                 <input type="checkbox"  id="add_another"> <span>Add Another</span>
                             </div>
                         </div>
+                        @include('admin.payment.take',['xpay_type'=>2])
                     </div>
                 </form>
             </div>

@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Expcategory;
 use App\Models\Expense;
 use App\NepaliDate;
+use App\PaymentManager;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -62,11 +63,14 @@ class ExpenseController extends Controller
         $exp->expcategory_id = $request->cat_id;
         $exp->user_id = Auth::user()->id;
         $exp->save();
+        new PaymentManager($request,$exp->id,201);
         return view('admin.expense.single', compact('exp'));
     }
     public function edit(Request $request)
     {
-        return view('admin.expense.edit', ['exp' => Expense::where('id', $request->id)->first()]);
+        $exp=Expense::where('id', $request->id)->first();
+        $paymentData=PaymentManager::loadUpdateID($exp->id,201);
+        return view('admin.expense.edit', compact('exp','paymentData'));
     }
 
     public function update(Request $request)
@@ -82,6 +86,7 @@ class ExpenseController extends Controller
         $exp->expcategory_id = $request->cat_id;
         $exp->user_id = Auth::user()->id;
         $exp->save();
+        PaymentManager::update($exp->id,201,$request);
         return view('admin.expense.single', compact('exp'));
     }
 
@@ -95,6 +100,7 @@ class ExpenseController extends Controller
     public function delete(Request $request)
     {
         $exp = Expense::find($request->id);
+        PaymentManager::remove($request->id,201);
         $exp->delete();
     }
 

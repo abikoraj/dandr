@@ -57,11 +57,14 @@
         function initEdit(title, id) {
             win.showPost("Edit Expense - " + title, '{{ route('admin.expense.edit') }}', {
                 "id": id
-            })
+            }{{}},addEXPayHandle);
         }
 
         function saveData(e) {
             e.preventDefault();
+            if(!xpayVerifyData()){
+                return;
+            }
             var bodyFormData = new FormData(document.getElementById('form_validation'));
             axios({
                     method: 'post',
@@ -82,6 +85,7 @@
                     $('#form_validation').trigger("reset");
                     $('#expenseData').prepend(response.data);
                     document.getElementById('add_another').checked = add_another;
+                    resetXPayment()
 
                 })
                 .catch(function(response) {
@@ -94,6 +98,9 @@
         function editData(e) {
             e.preventDefault();
             var rowid = $('#eid').val();
+            if(!expayVerifyData()){
+                return;
+            }
             var bodyFormData = new FormData(document.getElementById('editform'));
             axios({
                     method: 'post',
