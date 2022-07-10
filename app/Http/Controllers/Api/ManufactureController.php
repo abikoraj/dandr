@@ -27,7 +27,8 @@ class ManufactureController extends Controller
                 manufacture_processes.expected_end'
             )
         )
-        ->get()->groupBy('stage');
+        ->where('manufacture_processes.stage',2)
+        ->get();
         return response()->json($processes);
     }
 }
