@@ -64,6 +64,7 @@ Route::middleware(['auth:api'])->group(function () {
 
     Route::prefix('manufacture')->group(function(){
         Route::post('list',[ManufactureController::class,'list'])->middleware('permmission:13.05');
+        Route::get('detail/{id}',[ManufactureController::class,'detail'])->middleware('permmission:13.05');
     });
 });
 Route::match(['GET',"POST"],'variants', [ItemController::class,'variants']);
