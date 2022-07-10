@@ -352,12 +352,16 @@ Route::name('admin.')->group(function () {
             Route::get('detail/{id}', [EmployeeController::class, 'detail'])->name('detail');
             Route::post('load/emp/data', [EmployeeController::class, 'loadData'])->name('load.data');
             //XXX Employee Advance Management
-            Route::get('advance', [EmployeeController::class, 'advance'])->name('advance')->middleware('permmission:05.06');
-            Route::post('addadvance', [EmployeeController::class, 'addAdvance'])->name('advance.add');
-            Route::post('getadvance', [EmployeeController::class, 'getAdvance'])->name('advance.list');
-            Route::post('deladvance', [EmployeeController::class, 'delAdvance'])->name('advance.del')->middleware('authority');;
-            Route::post('updateadvance', [EmployeeController::class, 'updateAdvance'])->name('advance.update')->middleware('authority');
-            Route::post('advance/transfer', [EmployeeController::class, 'amountTransfer'])->name('amount.transfer');
+            Route::middleware('permmission:05.06')->group(function(){
+
+                Route::get('advance', [EmployeeController::class, 'advance'])->name('advance');
+                Route::post('addadvance', [EmployeeController::class, 'addAdvance'])->name('advance.add');
+                Route::post('getadvance', [EmployeeController::class, 'getAdvance'])->name('advance.list');
+                Route::post('deladvance', [EmployeeController::class, 'delAdvance'])->name('advance.del')->middleware('authority');;
+                Route::post('updateadvance', [EmployeeController::class, 'updateAdvance'])->name('advance.update')->middleware('authority');
+                Route::post('editadvance', [EmployeeController::class, 'editAdvance'])->name('advance.edit')->middleware('authority');
+                Route::post('advance/transfer', [EmployeeController::class, 'amountTransfer'])->name('amount.transfer');
+            });
             //XXX Employee Account Opening
             Route::match(['get', 'post'], 'account', [EmployeeController::class, 'accountIndex'])->name('account.index')->middleware('permmission:05.05');
             Route::match(['get', 'post'], 'account-add', [EmployeeController::class, 'accountAdd'])->name('account.add');

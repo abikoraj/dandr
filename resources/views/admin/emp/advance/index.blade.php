@@ -42,10 +42,16 @@
 
             <div class="col-lg-3">
                 <label for="amount">Advance Amount</label>
-                <input type="number" id="amount" min="0" name="amount" class="form-control next" data-next="save" placeholder="Enter advance amount" value="0" required>
+                <input type="number" id="amount" min="0" name="amount" class="form-control next xpay_handle" data-next="save" placeholder="Enter advance amount" value="0" required>
             </div>
             <div class="col-lg-2">
                 <input type="submit" id="save" class="btn btn-raised btn-primary waves-effect btn-block" value="Add" style="margin-top:30px;">
+            </div>
+            <div class="col-12">
+                <hr>
+                <div class="row">
+                    @include('admin.payment.take',['xpay_type'=>2]);
+                </div>
             </div>
 
         </div>
@@ -99,7 +105,7 @@
 
                             <div class="col-lg-6">
                                 <label for="amount">Advance Amount</label>
-                                <input type="number" id="eamount" min="0" name="amount" class="form-control" placeholder="Enter advance amount" value="0" required>
+                                <input type="number" id="eamount" min="0" name="amount" class="form-control " placeholder="Enter advance amount" value="0" required>
                             </div>
                             <div class="col-lg-12">
                                 <button class="btn btn-raised btn-primary waves-effect btn-block" type="submit">Submit Data</button>
@@ -127,7 +133,7 @@
     $("input#nepali-datepicker").bind('changed', function (e) {
         loadAdvance();
     });
-    
+
     function loadAdvance(){
         var date = $('#nepali-datepicker').val();
 
@@ -146,6 +152,11 @@
                 console.log(err);
                 showNotification('bg-danger',err.response.data);
         });
+    }
+
+
+    function initUpdate(id){
+        win.showPost("Update Employee Advance","{{route('admin.employee.advance.edit')}}",addEXPayHandle);
     }
 
     function update(id){
@@ -204,6 +215,9 @@
             $('#title').focus();
             return false;
         }else{
+            if(!xpayVerifyData()){
+                return;
+            }
         var bodyFormData = new FormData(document.getElementById('form_validation'));
         axios({
                 method: 'post',

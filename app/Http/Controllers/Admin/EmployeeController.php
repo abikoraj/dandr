@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\LedgerManage;
+use App\Models\Advance;
 use App\Models\Employee;
 use App\Models\EmployeeAdvance;
 use App\Models\EmployeeSession;
@@ -11,6 +12,7 @@ use App\Models\Ledger;
 use App\Models\SalaryPayment;
 use App\Models\User;
 use App\NepaliDate;
+use App\PaymentManager;
 use Illuminate\Http\Request;
 
 class EmployeeController extends Controller
@@ -63,6 +65,7 @@ class EmployeeController extends Controller
         $emp->save();
         $emp->user = $user;
         return view('admin.emp.single', compact('emp'));
+
     }
 
     public function list()
@@ -217,7 +220,17 @@ class EmployeeController extends Controller
         }else{
             $ledger->addLedger('Advance Given-(' . $request->title . ')', 2, $request->amount, $date, '112', $advance->id);
         }
+        new PaymentManager($request,$advance->id,112);
         return view('admin.emp.advance.single', compact('advance'));
+    }
+
+    public function editAdvance(Request $request)
+    {
+        $advance=Advance::where('id',$request->id)->first();
+        $paymentData=PaymentManager::loadUpdateID($request->id,112);
+        dd($paymentData);
+        return view('admin.emp.advance.edit',compact('advance','paymentData'));
+
     }
 
     public function updateAdvance(Request $request)
@@ -237,6 +250,7 @@ class EmployeeController extends Controller
             $ledger->addLedger('Advance Updated-(' . $request->title . ')', 2, $request->amount, $date, '112', $advance->id);
 
         }
+
         return response()->json(['status' => 'success']);
     }
 

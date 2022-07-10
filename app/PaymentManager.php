@@ -190,7 +190,7 @@ class PaymentManager
                             if ($type == 1) {
                                 $this->receiveCash($cashAmount);
                             } else if ($type == 2) {
-                                $this->payCash($amount);
+                                $this->payCash($cashAmount);
                             }
                             $data['c'] = $cashAmount;
                         }
@@ -201,7 +201,7 @@ class PaymentManager
                                 if ($type == 1) {
                                     $this->receiveBank($bank_id, $bankAmount);
                                 } else if ($type == 2) {
-                                    $this->payBank($bank_id, $amount);
+                                    $this->payBank($bank_id, $bankAmount);
                                 }
                                 array_push($data['b'], [$bank_id, $bankAmount]);
                             }
