@@ -92,7 +92,7 @@ class PaymentManager
     }
 
     public static function update($id, $identifire, $request)
-    {
+{
         if(!hasPay()){
             return;
         }

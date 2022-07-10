@@ -57,7 +57,7 @@
         function initEdit(title, id) {
             win.showPost("Edit Expense - " + title, '{{ route('admin.expense.edit') }}', {
                 "id": id
-            }{{}},addEXPayHandle);
+            },addEXPayHandle);
         }
 
         function saveData(e) {
