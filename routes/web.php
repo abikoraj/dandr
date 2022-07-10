@@ -442,7 +442,7 @@ Route::name('admin.')->group(function () {
 
         //XXX maufacture process
         Route::prefix('manufacture-process')->name('manufacture.process.')->group(function () {
-            Route::get('',[ManufactureProcessController::class,'index'])->name('index')->middleware('permmission:13.03');
+            Route::get('',[ManufactureProcessController::class,'index'])->name('index')->middleware('permmission:13.02');
 
             Route::match(['get', 'post'], 'add',[ManufactureProcessController::class,'add'])->name('add')->middleware('permmission:13.03');
 

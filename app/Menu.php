@@ -107,6 +107,16 @@ class Menu
                     ["Payment", '08.02', route('admin.customer.payment.index')],
                 ],
             ],
+            "manufacture" => [
+                'code' => '08',
+                'link' => null,
+                'icon' => 'apps',
+                'text' => "Manufacture",
+                'children' => [
+                    ["Manage Products", '13.01', route('admin.manufacture.product.index')],
+                    ["Manage Process", '13.02', route('admin.manufacture.process.index')],
+                ],
+            ],
 
             "pos" => [
                 'code' => '09',
