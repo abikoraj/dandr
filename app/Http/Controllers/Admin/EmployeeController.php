@@ -226,9 +226,9 @@ class EmployeeController extends Controller
 
     public function editAdvance(Request $request)
     {
-        $advance=Advance::where('id',$request->id)->first();
+        $advance=EmployeeAdvance::where('id',$request->id)->first();
         $paymentData=PaymentManager::loadUpdateID($request->id,112);
-        dd($paymentData);
+        // dd($paymentData);
         return view('admin.emp.advance.edit',compact('advance','paymentData'));
 
     }
@@ -250,8 +250,11 @@ class EmployeeController extends Controller
             $ledger->addLedger('Advance Updated-(' . $request->title . ')', 2, $request->amount, $date, '112', $advance->id);
 
         }
+        PaymentManager::update($advance->id,112,$request);
 
-        return response()->json(['status' => 'success']);
+        // return response()->json(['status' => 'success']);
+        return view('admin.emp.advance.single', compact('advance'));
+
     }
 
     public function delAdvance(Request $request)
@@ -267,6 +270,7 @@ class EmployeeController extends Controller
             $ledger->addLedger('Advance Canceled', 1, $tempamount, $date, '113', $advance->id);
 
         }
+        PaymentManager::remove($request->id,112);
         return response()->json(['status' => 'success']);
     }
 

@@ -62,6 +62,7 @@
 
     function addEXPayHandle() {
         if (exists('.expay_handle')) {
+            console.log('epayhadle loaded');
             expayHandle = $('.expay_handle')[0];
             expayHandle.addEventListener('change', expayHandleChange, true);
             expayHandle.addEventListener('input', expayHandleChange, true);

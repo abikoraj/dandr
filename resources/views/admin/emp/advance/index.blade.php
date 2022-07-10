@@ -79,44 +79,7 @@
 </div>
 
 
-<!-- edit modal -->
 
-
-<div class="modal fade" id="editModal" tabindex="-1" role="dialog" data-ff="eamount">
-    <div class="modal-dialog modal-lg" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h4 class="title" id="largeModalLabel">Edit Farmer</h4>
-            </div>
-            <hr>
-            <div class="card">
-                <div class="body">
-                    <form id="editform" onsubmit="return editData(event);">
-                        @csrf
-                        <input type="hidden" name="id" id="eid">
-                        <div class="row">
-                            <div class="col-lg-6">
-                                <label for="u_number">Farmer Number</label>
-                                <input type="text" name="date" id="enepali-datepicker">
-                                <div class="form-group">
-                                    <input type="number" id="eu_id" name="user_id" min="0" class="form-control next" data-next="amount" placeholder="Enter farmer number" required readonly>
-                                </div>
-                            </div>
-
-                            <div class="col-lg-6">
-                                <label for="amount">Advance Amount</label>
-                                <input type="number" id="eamount" min="0" name="amount" class="form-control " placeholder="Enter advance amount" value="0" required>
-                            </div>
-                            <div class="col-lg-12">
-                                <button class="btn btn-raised btn-primary waves-effect btn-block" type="submit">Submit Data</button>
-                            </div>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
 
 @endsection
 @section('js')
@@ -156,31 +119,22 @@
 
 
     function initUpdate(id){
-        win.showPost("Update Employee Advance","{{route('admin.employee.advance.edit')}}",addEXPayHandle);
+        win.showPost("Update Employee Advance","{{route('admin.employee.advance.edit')}}",{id:id},addEXPayHandle);
     }
 
-    function update(id){
-        var date = $('#nepali-datepicker').val();
+    function update(ele,e,id){
+        e.preventDefault();
+        if(!expayVerifyData()){
+            return;
+        }
+        axios.post(ele.action,new FormData(ele))
+        .then((res)=>{
+            $('#advancerow-'+id).replaceWith(res.data);
+        })
+        .catch((err)=>{
+            showNotification('bg-danger',"Advance Not Updated");
+        });
 
-        axios({
-                method: 'post',
-                url: '{{ route("admin.employee.advance.update")}}',
-                data : {
-                    'date' : date,
-                    'id':id,
-                    'amount':$('#amount-'+id).val(),
-                    'title':$('#title-'+id).val()
-                }
-            })
-            .then(function(response) {
-                showNotification('bg-success', 'Updated successfully!');
-            })
-            .catch(function(err) {
-                //handle error
-                console.log(err);
-                showNotification('bg-danger',err.response.data);
-
-            });
     }
 
     function del(id){
