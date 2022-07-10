@@ -14,6 +14,7 @@ use App\Models\Supplierbillitem;
 use App\Models\Supplierpayment;
 use App\Models\User;
 use App\NepaliDate;
+use App\PaymentManager;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -187,6 +188,7 @@ class SupplierController extends Controller
             if ($request->ipaid > 0) {
                 $ledger->addLedger('Paid to supplier for bill no - ' . $bill->billno, 2, $bill->paid, $date, '126', $bill->id);
             }
+            new PaymentManager($request,$bill->id,126);
             return view('admin.supplier.bill.single', compact('bill'));
         } else {
             $centers=DB::table('centers')->get(['id','name']);
@@ -208,7 +210,7 @@ class SupplierController extends Controller
         $bill = Supplierbill::where('id', $request->bill_id)->first();
         $bill->canceled = 1;
         $bill->save();
-
+        DB::table('bill_expenses')->where('supplierbill_id',$request->bill_id)->delete();
         $billitems = Supplierbillitem::where('supplierbill_id', $bill->id)->get(['item_id','qty']);
         foreach ($billitems as $key => $bi) {
             # code...
@@ -476,7 +478,6 @@ class SupplierController extends Controller
         // $bills1=Distributorsell::where('distributer_id',$request->id)->where('deu','>',0)->get();
         $date = str_replace('-', '', $request->date);
         $amount = $request->amount;
-
         $payment = new Supplierpayment();
         // $paymentDatam
         $payment->amount = $request->amount;
@@ -484,11 +485,15 @@ class SupplierController extends Controller
         $payment->payment_detail = $request->method ?? "";
         $payment->user_id = $request->id;
         $payment->save();
+
         $ledger = new LedgerManage($request->id);
         $ledger->addLedger("Payment to supplier", 2, $request->amount, $date, '127', $payment->id);
+        new PaymentManager($request,$payment->id,127);
+
+
         $supplier = User::find($request->id);
         $id = $request->id;
-        $payments = Ledger::where('user_id', $supplier->id)->where('identifire', '127')->get(['date', 'amount']);
+        $payments = Ledger::where('user_id', $supplier->id)->where('identifire', '127')->get(['date', 'amount','foreign_key','id']);
         $supplier->balance = Ledger::where('user_id', $supplier->id)->where('type', 2)->sum('amount') - Ledger::where('user_id', $supplier->id)->where('type', 1)->sum('amount');
         return view('admin.supplier.pay.data', compact('supplier', 'id','payments'));
     }
@@ -498,6 +503,7 @@ class SupplierController extends Controller
 
         DB::table('supplierpayments')->where('id',$request->payment_id)->delete();
         DB::table('ledgers')->where('id',$request->id)->delete();
+        PaymentManager::remove($request->payment_id,127);
         return response('ok');
     }
 

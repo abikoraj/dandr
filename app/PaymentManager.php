@@ -18,11 +18,17 @@ class PaymentManager
     public $fyChecked = false;
 
     public static function loadUpdateID($id,$identifire){
+        if(!hasPay()){
+            return "";
+        }
         $payment = paymentSave::where('foreign_id', $id)->where('identifire', $identifire)->first();
         return self::loadUpdate($payment);
     }
     public static function loadUpdate($payment)
     {
+        if(!hasPay()){
+            return "";
+        }
         if($payment!=null){
             $method=$payment->method;
             $detail=json_decode($payment->detail);
@@ -50,6 +56,9 @@ class PaymentManager
     }
     public static function remove($id, $identifire)
     {
+        if(!hasPay()){
+            return;
+        }
         $payment = paymentSave::where('foreign_id', $id)->where('identifire', $identifire)->first();
         if ($payment != null) {
 
@@ -84,6 +93,9 @@ class PaymentManager
 
     public static function update($id, $identifire, $request)
     {
+        if(!hasPay()){
+            return;
+        }
         $payment = paymentSave::where('foreign_id', $id)->where('identifire', $identifire)->first();
         if ($payment != null) {
             if (self::$fiscal == null) {
@@ -144,6 +156,9 @@ class PaymentManager
 
     function __construct($request, $id, $identifire)
     {
+        if(!hasPay()){
+            return;
+        }
         $banks = collect([]);
         $data = [];
         if ($request->getMethod() == "POST") {

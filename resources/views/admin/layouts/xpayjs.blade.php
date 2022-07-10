@@ -72,6 +72,8 @@
         if (exists('#xpay')) {
             console.log('xpay loaded');
             if (exists('.xpay_handle')) {
+            console.log('xpay handle loaded');
+
                 xpayHandle = $('.xpay_handle')[0];
                 xpayHandle.addEventListener('change', xpayHandleChange, true);
                 xpayHandle.addEventListener('input', xpayHandleChange, true);
@@ -146,24 +148,28 @@
     window.addEventListener('load', addXPayHandle, true);
 
     function loadXPay(data) {
-        data.xpay_amount = $('#xpay_amount').val();
-        data.xpay_method = $('#xpay_method').val();
-        data.xpay = $('#xpay').val();
-        data.xpay_bank = $('#xpay_bank').val();
-        if (data.xpay_method == 3) {
-            data.xpay_custom_bank = [];
-            $('.xpay_custom_bank').each(function(index, element) {
-                const bank_id = $(element).val();
-                data.xpay_custom_bank.push(bank_id);
-                data['xpay_custom_bank_amount_' + bank_id] = $('#xpay_custom_bank_amount_' + bank_id).val();
-                data.xpay_custom_cash = $('#xpay_custom_cash').val();
-            });
+        if(exists('#xpay_amount')){
+
+            data.xpay_amount = $('#xpay_amount').val();
+            data.xpay_method = $('#xpay_method').val();
+            data.xpay = $('#xpay').val();
+            data.xpay_bank = $('#xpay_bank').val();
+            if (data.xpay_method == 3) {
+                data.xpay_custom_bank = [];
+                $('.xpay_custom_bank').each(function(index, element) {
+                    const bank_id = $(element).val();
+                    data.xpay_custom_bank.push(bank_id);
+                    data['xpay_custom_bank_amount_' + bank_id] = $('#xpay_custom_bank_amount_' + bank_id).val();
+                    data.xpay_custom_cash = $('#xpay_custom_cash').val();
+                });
+            }
         }
         return data;
     }
 
     const xpayEditURL="{{route('admin.xpay',['id'=>'xxx_id','identifire'=>'xxx_identifire'])}}";
     console.log(xpayEditURL);
+
     function loadXPayEdit(id,identifire){
         $('#expay_edit').html("No Payment Info");
         let url=xpayEditURL.replace('xxx_id',id);

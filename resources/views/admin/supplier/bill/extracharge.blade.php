@@ -24,7 +24,7 @@
         <div class="col-md-12">
             <span class="btn btn-primary" onclick="addExpense()">Add Expense</span>
         </div>
-        
+
     </div>
     <hr>
     <table class="table">
@@ -52,7 +52,7 @@
 
             </td>
         </tr>
-        
+
     </table>
 </div>
 @section('js3')
@@ -71,7 +71,7 @@
         }else{
             if(parseFloat(amount)<=0){
                 alert('Please Enter Expense Amount');
-                return; 
+                return;
             }
         }
 
@@ -99,6 +99,7 @@
         });
 
         $('#ei-total').text(eitotal);
+        calculateTotal();
     }
 </script>
 @endsection

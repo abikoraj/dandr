@@ -162,11 +162,16 @@
                         </div>
                     </div>
 
-
                 </div>
             </div>
             <div class="col-md-6 b-1">
                 @include('admin.supplier.bill.extracharge')
+            </div>
+            <div class="col-12 pt-2">
+
+                <div class="row">
+                    @include('admin.payment.take',['xpay_type'=>2])
+                </div>
             </div>
             <div class="col-md-12 text-right">
                 <button class="btn btn-primary">Add Bill</button>
@@ -203,6 +208,9 @@
                 $('#supplier').focus();
                 return false;
             } else {
+                if(!xpayVerifyData()){
+                    return;
+                }
                 showProgress('Adding Bill');
                 var bodyFormData = new FormData(document.getElementById('add-bill'));
                 axios({
@@ -310,9 +318,30 @@
             var igrandtotal=itaxable+itax;
             var ipaid =parseFloat( $('#ipaid').val());
             var idue=igrandtotal-ipaid;
+
             if(idue<0){
                 idue=0;
             }
+
+            try {
+
+                var xpaytotal=ipaid;
+
+                if(isNaN(xpaytotal)){
+                    xpaytotal=0;
+                }
+                $('.ei-amount').each(function (index, element) {
+                    const expenseAmount=parseFloat(element.value);
+                    if(!isNaN(expenseAmount)){
+                        xpaytotal+=expenseAmount;
+                    }
+
+                });
+                $('#xpay_amount').val(xpaytotal).trigger('change');
+            } catch (error) {
+                console.log(error);
+            }
+
             $('#itotal').val(itotal);
             $('#itaxable').val(itaxable);
             $('#igrandtotal').val(igrandtotal);

@@ -314,6 +314,7 @@ Route::name('admin.')->group(function () {
             //XXX supplier details
             Route::get('detail/{id}', [SupplierController::class, 'detail'])->name('detail');
             Route::post('load-detail', [SupplierController::class, 'loadDetail'])->name('load-detail');
+
             Route::get('payment', [SupplierController::class, 'payment'])->name('pay')->middleware('permmission:07.09');
             Route::post('due', [SupplierController::class, 'due'])->name('due')->middleware('permmission:07.09');;
             Route::post('due-pay', [SupplierController::class, 'duePay'])->name('due.pay')->middleware('permmission:07.09');
