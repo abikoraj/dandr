@@ -124,7 +124,7 @@ class ManufactureProcessController extends Controller
         $processes = $processes->select(
             DB::raw(
                 'items.title,' .
-                    (env('multi_package', false) ? 'conversions.name as unit,' : 'item.unit,')
+                    (env('multi_package', false) ? 'conversions.name as unit,' : 'items.unit,')
                     . 'manufacture_processes.id,
                     manufacture_processes.expected,
                     manufacture_processes.start,

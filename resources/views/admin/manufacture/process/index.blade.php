@@ -2,7 +2,9 @@
 @section('title', 'Manufacture Processes')
 @section('head-title', 'Manufacture Processes')
 @section('toobar')
-    <a href="{{route('admin.manufacture.process.add')}}" class="btn btn-primary">Add New Process</a>
+    @if (auth_has_per('13.03'))
+        <a href="{{route('admin.manufacture.process.add')}}" class="btn btn-primary">Add New Process</a>
+    @endif
 @endsection
 @section('content')
     @php
@@ -68,7 +70,9 @@
                 "<td>"+process.expected+ "("+process.unit+")</td>"+
                 "<td>"+process.start+ "</td>"+
                 "<td>"+process.expected_end+ "</td>"+
+                @if(auth_has_per('13.04'))
                 "<td><a href='"+processDetailURL.replace('xxx_id',process.id)+"'>Detail</a></td>"+
+                @endif
                 "</tr>"
         }
 

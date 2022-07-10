@@ -114,8 +114,11 @@ return [
     "Manufacture" => [
         'code' => '13',
         'children' => [
-            'product_list' => ['code' => '08.01'],
-            'payment' => ['code' => '08.02'],
+            'product_template' => ['code' => '13.01'],
+            'list_process'=> ['code' => '13.02'],
+            'add_process'=> ['code' => '13.03'],
+            'manage_process'=> ['code' => '13.04'],
+            'api_list_process_api'=> ['code' => '13.05'],
         ]
     ],
 

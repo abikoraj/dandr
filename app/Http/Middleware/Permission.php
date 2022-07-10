@@ -20,6 +20,7 @@ class Permission
      */
     public function handle(Request $request, Closure $next, $code)
     {
+
         $user = Auth::user();
         if ($user->phone == env('authphone', "9800916365")) {
             return $next($request);

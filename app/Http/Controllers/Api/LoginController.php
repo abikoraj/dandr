@@ -47,7 +47,7 @@ class LoginController extends Controller
                 'id'=>$user->id
             ]);
         } else {
-            abort(401, 'Credential do not match');
+           return response()->json(['message'=>'Login Failed'],401);
         }
     }
     public function addPosUser(Request $request)

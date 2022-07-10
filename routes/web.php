@@ -416,7 +416,7 @@ Route::name('admin.')->group(function () {
 
         //XXX Manufacture Product
         Route::group(['prefix' => 'manufacture-product'], function () {
-            Route::name('manufacture.product.')->group(function () {
+            Route::name('manufacture.product.')->middleware('permmission:13.01')->group(function () {
                Route::get('',[ManufactreProductController::class,'index'])->name('index');
                Route::post('add',[ManufactreProductController::class,'add'])->name('add');
                Route::post('del',[ManufactreProductController::class,'del'])->name('del');
@@ -442,16 +442,20 @@ Route::name('admin.')->group(function () {
 
         //XXX maufacture process
         Route::prefix('manufacture-process')->name('manufacture.process.')->group(function () {
-            Route::get('',[ManufactureProcessController::class,'index'])->name('index');
-            Route::match(['get', 'post'], 'add',[ManufactureProcessController::class,'add'])->name('add');
-            Route::get('detail/{id}',[ManufactureProcessController::class,'detail'])->name('detail');
-            Route::match(['GET','POST'],'edit/{id}',[ManufactureProcessController::class,'edit'])->name('edit');
-            Route::post('start-process/{id}',[ManufactureProcessController::class,'startProcess'])->name('start.process');
-            Route::post('finish-process/{id}',[ManufactureProcessController::class,'finishProcess'])->name('finish.process');
+            Route::get('',[ManufactureProcessController::class,'index'])->name('index')->middleware('permmission:13.03');
 
-            Route::post('cancel-process/{id}',[ManufactureProcessController::class,'cancelProcess'])->name('cancel.process');
-            Route::post('cancel-process-partial/{id}',[ManufactureProcessController::class,'cancelProcessPartial'])->name('cancel.process.partial');
-            Route::get('cancel-process-start/{id}',[ManufactureProcessController::class,'cancelProcessStart'])->name('cancel.process.start');
+            Route::match(['get', 'post'], 'add',[ManufactureProcessController::class,'add'])->name('add')->middleware('permmission:13.03');
+
+            Route::middleware(['permmission:13.04'])->group(function () {
+                Route::get('detail/{id}',[ManufactureProcessController::class,'detail'])->name('detail');
+                Route::match(['GET','POST'],'edit/{id}',[ManufactureProcessController::class,'edit'])->name('edit');
+                Route::post('start-process/{id}',[ManufactureProcessController::class,'startProcess'])->name('start.process');
+                Route::post('finish-process/{id}',[ManufactureProcessController::class,'finishProcess'])->name('finish.process');
+                Route::post('cancel-process/{id}',[ManufactureProcessController::class,'cancelProcess'])->name('cancel.process');
+                Route::post('cancel-process-partial/{id}',[ManufactureProcessController::class,'cancelProcessPartial'])->name('cancel.process.partial');
+                Route::get('cancel-process-start/{id}',[ManufactureProcessController::class,'cancelProcessStart'])->name('cancel.process.start');
+
+            });
 
             Route::post( 'load-template',[ManufactureProcessController::class,'loadTemplate'])->name('load.template');
             Route::post( 'check-stock',[ManufactureProcessController::class,'checkStock'])->name('check.stock');

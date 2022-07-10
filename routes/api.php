@@ -5,6 +5,7 @@ use App\Http\Controllers\Api\customerController;
 use App\Http\Controllers\Api\GeneralController;
 use App\Http\Controllers\Api\ItemController;
 use App\Http\Controllers\Api\LoginController;
+use App\Http\Controllers\Api\ManufactureController;
 use App\Models\Customer;
 use App\Models\PosBill;
 use Illuminate\Http\Request;
@@ -59,6 +60,11 @@ Route::middleware(['auth:api'])->group(function () {
         Route::post('sync-bill', [ItemController::class,'syncBills']);
         Route::post('sync-ledger', [ItemController::class,'syncLedger']);
     });
+
+
+    Route::prefix('manufacture')->group(function(){
+        Route::post('list',[ManufactureController::class,'list'])->middleware('permmission:13.05');
+    });
 });
 Route::match(['GET',"POST"],'variants', [ItemController::class,'variants']);
 Route::match(['GET',"POST"],'show-ledger', [ItemController::class,'showLedger']);
@@ -89,3 +95,5 @@ Route::get('send-sms/@{pass}',function($pass){
         return response('Authenticaton Failed');
     }
 });
+
+
