@@ -98,7 +98,7 @@
             }
         }
 
-        emp_id=-1;
+        emp_id=0;
         function setEmp(id){
             emp_id=id;
             loadEmployeeData();
@@ -107,6 +107,9 @@
 
             var year = $('#year').val();
             var month = $('#month').val();
+            if(emp_id==0){
+                return;
+            }
             if (emp_id == -1) {
                 alert('Please select employee first');
                 $('#employee_id').focus();
