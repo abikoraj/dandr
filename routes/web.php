@@ -375,6 +375,7 @@ Route::name('admin.')->group(function () {
                 Route::post('getret', [EmployeeController::class,'getRet'])->name('ret.list');
                 Route::post('delret', [EmployeeController::class,'delRet'])->name('ret.del');
                 Route::post('updateret', [EmployeeController::class,'updateRet'])->name('ret.update');
+                Route::post('editret', [EmployeeController::class,'editRet'])->name('ret.edit');
             });
         });
 

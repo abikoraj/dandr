@@ -135,7 +135,7 @@
             </div>
             <div class="col-md-4">
                 <label for="pay">Pay Salary </label>
-                <input type="text" class="form-control" id="p_amt" name="salary" min="0" step="0.001"
+                <input type="text" class="form-control xpay_handle" id="p_amt" name="salary" min="0" step="0.001"
                     value="{{ (-1*$remaning) }}">
             </div>
             <div class="col-md-9 mt-1">
@@ -145,6 +145,11 @@
             <div class="col-md-3">
                 <span class="btn btn-primary btn-block" style="margin-top:35px;" onclick="salaryPayment();"> Pay Now
                 </span>
+            </div>
+            <div class="col-12 pt-2">
+                <div class="row">
+                    @include('admin.payment.take',['xpay_type'=>2]);
+                </div>
             </div>
         </div>
     </div>

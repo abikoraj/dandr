@@ -365,6 +365,7 @@ class EmployeeController extends Controller
             }else{
                 $ledger->addLedger('Salary Paid for ' . $request->year . "-" . ($request->month < 10 ? "0" . $request->month : $request->month), 2, $request->pay, $date, '124', $salaryPay->id);
             }
+            new PaymentManager($request,$salaryPay->id,124);
             echo 'ok';
         }
     }
@@ -475,7 +476,8 @@ class EmployeeController extends Controller
         $np = new NepaliDate($date);
         $employee = Employee::where('id', $request->employee_id)->first();
         $ledger = new LedgerManage($employee->user_id);
-        $advance=$ledger->addLedger( $request->title , 1, $request->amount, $date, '140', );
+        $advance=$ledger->addLedger( $request->title , 1, $request->amount, $date, '140' );
+        new PaymentManager($request,$advance->id,140);
         return view('admin.emp.ret.single', compact('advance'));
     }
     public function getRet(Request $request)
@@ -488,20 +490,28 @@ class EmployeeController extends Controller
 
     public function delRet(Request $request)
     {
-        $date = str_replace('-', '', $request->date);
-
-        $ledger = Ledger::where('id',$request->id)->delete();
-
+        Ledger::where('id',$request->id)->delete();
+        PaymentManager::remove($request->id,140);
         return response()->json(['status' => 'success']);
+    }
+
+    public function editRet(Request $request){
+        $advance = Ledger::where('id',$request->id)->first();
+        $paymentData=PaymentManager::loadUpdateID($request->id,140);
+        return view('admin.emp.ret.edit',compact('advance','paymentData'));
     }
 
     public function updateRet(Request $request)
     {
-        $advance = Ledger::find($request->id);
-        $advance->title = $request->title;
-        $advance->amount = $request->amount;
-        $advance->save();
-        return response()->json(['status' => 'success']);
+
+            $advance = Ledger::find($request->id);
+            $advance->title = $request->title;
+            $advance->amount = $request->amount;
+            $advance->save();
+            PaymentManager::update($advance->id,140,$request);
+            return view('admin.emp.ret.single',compact('advance'));
+            // return response()->json(['status' => 'success']);
+
 
     }
 }

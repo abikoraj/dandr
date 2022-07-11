@@ -2,7 +2,7 @@
     const xpayCustomData = [];
     var xpayHandle;
     var expayHandle;
-    var xpayLoad=false;
+    var xpayLoad = false;
 
     function xpayMethodChange(ele) {
         if (ele.value == 2) {
@@ -64,6 +64,8 @@
         if (exists('.expay_handle')) {
             console.log('epayhadle loaded');
             expayHandle = $('.expay_handle')[0];
+            $('#expay_amount').val(expayHandle.value);
+
             expayHandle.addEventListener('change', expayHandleChange, true);
             expayHandle.addEventListener('input', expayHandleChange, true);
         }
@@ -73,9 +75,10 @@
         if (exists('#xpay')) {
             console.log('xpay loaded');
             if (exists('.xpay_handle')) {
-            console.log('xpay handle loaded');
+                console.log('xpay handle loaded');
 
                 xpayHandle = $('.xpay_handle')[0];
+                $('#xpay_amount').val(xpayHandle.value);
                 xpayHandle.addEventListener('change', xpayHandleChange, true);
                 xpayHandle.addEventListener('input', xpayHandleChange, true);
             }
@@ -84,6 +87,7 @@
 
         if (exists('.expay_handle')) {
             expayHandle = $('.expay_handle')[0];
+            $('#expay_amount').val(expayHandle.value);
             expayHandle.addEventListener('change', expayHandleChange, true);
             expayHandle.addEventListener('input', expayHandleChange, true);
         }
@@ -118,6 +122,7 @@
 
         }
     }
+
     function expayVerifyData() {
         if (exists('#expay_method')) {
             const method = $('#expay_method').val();
@@ -149,7 +154,7 @@
     window.addEventListener('load', addXPayHandle, true);
 
     function loadXPay(data) {
-        if(exists('#xpay_amount')){
+        if (exists('#xpay_amount')) {
 
             data.xpay_amount = $('#xpay_amount').val();
             data.xpay_method = $('#xpay_method').val();
@@ -168,19 +173,19 @@
         return data;
     }
 
-    const xpayEditURL="{{route('admin.xpay',['id'=>'xxx_id','identifire'=>'xxx_identifire'])}}";
+    const xpayEditURL = "{{ route('admin.xpay', ['id' => 'xxx_id', 'identifire' => 'xxx_identifire']) }}";
     console.log(xpayEditURL);
 
-    function loadXPayEdit(id,identifire){
+    function loadXPayEdit(id, identifire) {
         $('#expay_edit').html("No Payment Info");
-        let url=xpayEditURL.replace('xxx_id',id);
-        url=url.replace('xxx_identifire',identifire);
+        let url = xpayEditURL.replace('xxx_id', id);
+        url = url.replace('xxx_identifire', identifire);
         axios.get(url)
-        .then((res)=>{
-            $('#expay_edit').html(res.data);
-        })
-        .catch((err)=>{
+            .then((res) => {
+                $('#expay_edit').html(res.data);
+            })
+            .catch((err) => {
 
-        });
+            });
     }
 </script>

@@ -44,10 +44,15 @@
 
             <div class="col-lg-3">
                 <label for="amount">Return Amount</label>
-                <input type="number" id="amount" min="0" name="amount" class="form-control next" data-next="save" placeholder="Enter Return amount" value="0" required>
+                <input type="number" id="amount" min="0" name="amount" class="form-control next xpay_handle" data-next="save" placeholder="Enter Return amount" value="0" required>
             </div>
             <div class="col-lg-2">
                 <input type="submit" id="save" class="btn btn-raised btn-primary waves-effect btn-block" value="Add" style="margin-top:30px;">
+            </div>
+            <div class="col-12">
+                <div class="row">
+                    @include('admin.payment.take')
+                </div>
             </div>
 
         </div>
@@ -78,7 +83,7 @@
 <!-- edit modal -->
 
 
-<div class="modal fade" id="editModal" tabindex="-1" role="dialog" data-ff="eamount">
+{{-- <div class="modal fade" id="editModal" tabindex="-1" role="dialog" data-ff="eamount">
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
             <div class="modal-header">
@@ -101,7 +106,7 @@
 
                             <div class="col-lg-6">
                                 <label for="amount">Return Amount</label>
-                                <input type="number" id="eamount" min="0" name="amount" class="form-control" placeholder="Enter Return amount" value="0" required>
+                                <input type="number" id="eamount" min="0" name="amount" class="form-control xpay_handle" placeholder="Enter Return amount" value="0" required>
                             </div>
                             <div class="col-lg-12">
                                 <button class="btn btn-raised btn-primary waves-effect btn-block" type="submit">Submit Data</button>
@@ -112,7 +117,7 @@
             </div>
         </div>
     </div>
-</div>
+</div> --}}
 
 @endsection
 @section('js')
@@ -132,7 +137,7 @@
 
     function loadAdvance(){
         var date = $('#nepali-datepicker').val();
-
+        showProgress("Loading Advance Return");
         axios({
                 method: 'post',
                 url: '{{ route("admin.employee.ret.list")}}',
@@ -142,34 +147,41 @@
                 // console.log(response.data);
                 $('#advanceData').empty();
                 $('#advanceData').html(response.data);
+                hideProgress();
             })
             .catch(function(err) {
                 //handle error
                 console.log(err);
                 showNotification('bg-danger',err.response.data);
+                hideProgress();
+
         });
     }
 
-    function update(id){
+    function update(ele,e,id){
         var date = $('#nepali-datepicker').val();
-
+        e.preventDefault();
+        showProgress('Updating Advance Return');
         axios({
                 method: 'post',
-                url: '{{ route("admin.employee.ret.update")}}',
-                data : {
-                    'date' : date,
-                    'id':id,
-                    'amount':$('#amount-'+id).val(),
-                    'title':$('#title-'+id).val()
-                }
+                url: ele.action,
+                data : new FormData(ele)
             })
             .then(function(response) {
                 showNotification('bg-success', 'Updated successfully!');
+                $('#advancerow-'+id).replaceWith(response.data);
+                hideProgress();
+                win.hide();
             })
             .catch(function(err) {
                 //handle error
                 console.log(err);
-                showNotification('bg-danger',err.response.data);
+                if(err.response){
+
+                    showNotification('bg-danger',err.response.data.message);
+                }
+                hideProgress();
+
 
             });
     }
@@ -177,6 +189,7 @@
     function del(id){
         var date = $('#nepali-datepicker').val();
         if (confirm('Are you sure?')) {
+            showProgress('Deleting Advance Return');
         axios({
                 method: 'post',
                 url: '{{ route("admin.employee.ret.del")}}',
@@ -188,16 +201,26 @@
             .then(function(response) {
                 showNotification('bg-success', 'Deleted successfully!');
                 $('#advancerow-'+id).remove();
+                hideProgress();
             })
-            .catch(function(response) {
+            .catch(function(err) {
                 //handle error
-                console.log(response);
-                showNotification('bg-danger', 'You have no authority!');
+                console.log(err);
+                if(err.response){
+                    showNotification('bg-danger', 'error : '+err.response.data.message);
+                }
+
+                hideProgress();
+
             });
         }
     }
 
 
+
+    function initUpdate(id){
+        win.showPost('Update Advance Return',"{{route('admin.employee.ret.edit')}}",{id:id},addEXPayHandle );
+    }
 
     function saveData(e) {
         e.preventDefault();
@@ -218,10 +241,12 @@
             .then(function(response) {
                 console.log(response);
                 showNotification('bg-success', 'Employee Return added successfully!');
-                $('#largeModal').modal('toggle');
                 $('#advanceData').prepend(response.data);
                 $('#u_id').val('');
                 $('#amount').val(0);
+                $('#xpay_amount').val(0);
+                $('#title').val('');
+                $('#employee_id').val(null);
                 $('#u_id').focus();
             })
             .catch(function(err) {

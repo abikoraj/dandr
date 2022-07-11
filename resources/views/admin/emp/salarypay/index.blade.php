@@ -125,6 +125,7 @@
                         $('#employeeData').empty();
                         $('#employeeData').html(response.data);
                         setDate("nepali-datepicker",false);
+                        addXPayHandle();
                     })
                     .catch(function(response) {
                         //handle error
@@ -145,10 +146,7 @@
                 return false;
             } else {
                 if (confirm('Are you sure ?')) {
-                    axios({
-                            method: 'post',
-                            url: '{{ route('admin.salary.save') }}',
-                            data: {
+                    const data=loadXPay( {
                                 'date': date,
                                 'emp_id': emp_id,
                                 'year': year,
@@ -156,7 +154,13 @@
                                 'pay': pay,
                                 'desc': desc,
 
-                            }
+                            });
+                    console.log(data);
+                    showProgress('Adding Salary Pay');
+                    axios({
+                            method: 'post',
+                            url: '{{ route('admin.salary.save') }}',
+                            data:data
                         })
                         .then(function(response) {
                             // console.log(response.data);
@@ -166,10 +170,13 @@
                                 showNotification('bg-danger', 'Already paid !');
                             }
                             loadEmployeeData();
+                            hideProgress();
                         })
                         .catch(function(response) {
                             //handle error
                             console.log(response);
+                            hideProgress();
+
                         });
                 }
             }
@@ -188,6 +195,8 @@
                 return false;
             } else {
                 if (confirm('Are you sure ?')) {
+                    showProgress('Transfering Amount');
+
                     axios({
                             method: 'post',
                             url: '{{ route('admin.employee.amount.transfer') }}',
@@ -210,10 +219,14 @@
                             $('#p_amt').val(0);
                             $('#transfer_amount').val(0);
                             paidList();
+                            hideProgress();
+
                         })
                         .catch(function(response) {
                             //handle error
                             console.log(response);
+                            hideProgress();
+
                         });
                 }
             }
