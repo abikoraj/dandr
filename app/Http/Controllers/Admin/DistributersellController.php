@@ -10,6 +10,7 @@ use App\Models\Item;
 use App\Models\Ledger;
 use App\Models\Sellitem;
 use App\Models\User;
+use App\PaymentManager;
 use Illuminate\Http\Request;
 
 class DistributersellController extends Controller
@@ -85,6 +86,7 @@ class DistributersellController extends Controller
                     $manager->addLedger('Paid amount', 1, $request->paid, $date, '114', $sell_item->id);
                 }
             }
+            new PaymentManager($request,$sell_item->id,114);
             return view('admin.distributer.sell.single', ['sell' => $sell_item]);
         } else {
             return response('item Stock is not available', 500);

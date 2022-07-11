@@ -172,9 +172,15 @@
                             loadEmployeeData();
                             hideProgress();
                         })
-                        .catch(function(response) {
+                        .catch(function(err) {
                             //handle error
-                            console.log(response);
+                            console.log(err);
+                            if(err.response){
+                                showNotification('bg-danger', 'Error : '+err.response.data.message);
+                            }else{
+                                showNotification('bg-danger', 'Some error occured please try again');
+
+                            }
                             hideProgress();
 
                         });

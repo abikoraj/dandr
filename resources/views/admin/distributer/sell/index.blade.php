@@ -92,7 +92,7 @@
 
                 <div class="col-md-3">
                     <label for="paid">Paid</label>
-                    <input type="number" name="paid" oninput="paidTotal();" id="paid" step="0.001" placeholder="Paid" value="0" class="form-control focus-select" min="0.001">
+                    <input type="number" name="paid" oninput="paidTotal();" id="paid" step="0.001" placeholder="Paid" value="0" class="form-control focus-select xpay_handle" min="0.001">
                 </div>
 
                 <div class="col-md-3">
@@ -103,6 +103,11 @@
                 <div class="col-md-3 mt-4">
                     <input type="button" value="Save" class="btn btn-primary btn-block" onclick="saveData();" id="save">
                     {{-- <span class="btn btn-primary btn-block" >Save</span> --}}
+                </div>
+                <div class="col-12 pt-1">
+                    <div class="row">
+                        @include('admin.payment.take')
+                    </div>
                 </div>
 
             </div>
@@ -155,7 +160,7 @@
 
     //XXX Select Item From Search
     function itemSelected(data) {
-       
+
         @if($large)
             $('#product_id').closeSearch();
         @endif
@@ -165,7 +170,7 @@
        $('#rate').focus();
        $('#rate').select();
        calTotal();
-       
+
    }
     sellock=false;
     function saveData() {
@@ -176,6 +181,9 @@
             $('#id').focus();
             return false;
         } else {
+            if(!xpayVerifyData()){
+                return;
+            }
             console.log("sell_"+$('#id').val());
             if(exists(".sell_"+$('#id').val())){
                 if(!confirm("Sell Data Already added, Do You Want Add Another?")){
@@ -203,6 +211,7 @@
                     $('#total').val(0);
                     $('#paid').val(0);
                     $('#due').val(0);
+                    $('#xpay_amount').val(0);
                     $('#id').focus();
                     showNotification('bg-success', 'Sell item added successfully !');
                     sellock=false;
@@ -299,10 +308,10 @@
             console.log(response);
         });
     }
-  
+
 
     window.onload = function() {
-       
+
         $('#id').focus();
         loaddata();
     };
@@ -344,7 +353,7 @@
 
 </script>
 @if ($large)
-    
+
     <script>
         function renderBarcode(){
             html="<table>";
