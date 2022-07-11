@@ -98,7 +98,7 @@
             }
         }
 
-        emp_id=0;
+        emp_id=-1;
         function setEmp(id){
             emp_id=id;
             loadEmployeeData();
