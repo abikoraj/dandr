@@ -119,6 +119,7 @@ class DistributersellController extends Controller
         if ($ddd != null) {
              $ddd->delete();
         }
+        PaymentManager::remove($request->id,114);
         return response('ok');
     }
 }
