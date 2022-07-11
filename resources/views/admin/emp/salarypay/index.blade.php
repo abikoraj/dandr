@@ -267,12 +267,12 @@
 
         window.onload = function() {
 
-            paidList();
+            // paidList();
         };
 
 
         $('#month').change(function() {
-            paidList();
+            // paidList();
             if ($('#employee_id').val() != -1) {
                 loadEmployeeData();
             }
