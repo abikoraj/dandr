@@ -58,7 +58,7 @@
         <div class="col-md-6">
             {{-- <input type="hidden" id="u_id" value="{{$id}}"> --}}
             <label for="amount">Amount</label>
-            <input  placeholder="Enter Payment Amount" type="number" id="amount" class="form-control" min="1" step="=0.01" >
+            <input  placeholder="Enter Payment Amount" type="number" id="amount" class="form-control xpay_handle" min="1" step="=0.01" >
         </div>
         <div class="col-md-12 py-2">
             <label>
@@ -68,6 +68,11 @@
         </div>
         <div class="col-md-4">
             <button class="btn btn-success" onclick="pay()">Pay</button>
+        </div>
+        <div class="col-12">
+            <div class="row">
+                @include('admin.payment.take')
+            </div>
         </div>
 
     </div>

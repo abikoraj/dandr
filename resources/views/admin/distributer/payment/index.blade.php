@@ -137,6 +137,7 @@
                     hideProgress();
                     $('#data').html(response.data);
                     setDate();
+                    addXPayHandle();
                 })
                 .catch(function(response) {
                     //handle error

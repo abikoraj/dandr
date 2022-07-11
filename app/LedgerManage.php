@@ -41,6 +41,7 @@ class LedgerManage
     * "118" = "Account Adjustment"
     * "119" = "Distributor opening balance"
     * "132" = "Milk total Distributer"
+    * "150" = "Milk total Distributer"
 
     * "112" = "Employee Advaance payment"
     * "113" = "Employee Account Open"

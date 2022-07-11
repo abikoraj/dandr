@@ -8,6 +8,7 @@ use App\Models\Distributer;
 use App\Models\DistributorPayment;
 use App\Models\Distributorsell;
 use App\Models\Ledger;
+use App\PaymentManager;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -23,12 +24,14 @@ class DistributorPaymentController extends Controller
         $id=$request->id;
         $distributor->balance=Ledger::where('user_id',$distributor->user_id)->where('type',2)->sum('amount') - Ledger::where('user_id',$distributor->user_id)->where('type',1)->sum('amount');
         $distributor->payments=DB::table('distributor_payments')->where('user_id',$distributor->user_id)->get();
+
         return view('admin.distributer.payment.data',compact('distributor','id'));
     }
 
     public function del($id){
         DB::table('distributor_payments')->where('id',$id)->delete();
-        DB::table('ledgers')->where('foreign_key',$id)->where('identifire',114)->delete();
+        DB::table('ledgers')->where('foreign_key',$id)->where('identifire',150)->delete();
+        PaymentManager::remove($id,150);
         return response('ok');
     }
 
@@ -69,11 +72,12 @@ class DistributorPaymentController extends Controller
 
         $ledger=new LedgerManage($distributor->user_id);
         if(env('acc_system','old')=='old'){
-            $ledger->addLedger("Payment by distributor",2,$request->amount,$date,'114',$payment->id);
+            $ledger->addLedger("Payment by distributor",2,$request->amount,$date,'150',$payment->id);
         }else{
-            $ledger->addLedger("Payment by distributor",1,$request->amount,$date,'114',$payment->id);
+            $ledger->addLedger("Payment by distributor",1,$request->amount,$date,'150',$payment->id);
         }
         return response('ok');
+        new PaymentManager($request,$payment->id,150);
         // // $bills=Distributorsell::where('distributer_id',$request->id)->where('deu','>',0)->get();
         // $id=$request->id;
         // $distributor->balance=Ledger::where('user_id',$distributor->user_id)->where('type',2)->sum('amount') - Ledger::where('user_id',$distributor->user_id)->where('type',1)->sum('amount');
