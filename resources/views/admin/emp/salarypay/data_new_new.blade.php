@@ -153,12 +153,11 @@
             </div>
         </div>
     </div>
-
-    @if (($employee->sessionClosed($year, $month)))
+    @endif
+    @if ($empSession==null)
         <div class="p-2">
             <hr>
             <button class="btn btn-primary w-25" onclick="closeMonth({{$salaryLoaded?0:$salary}})">Close Month</button>
         </div>
     @endif
-@endif
 

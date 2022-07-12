@@ -47,7 +47,7 @@
     };
     lock=false;
     function initEditLedger(title, id){
-        win.showPost("Edit Ledger - "+title,"{{route('admin.ledger.edit')}}",{"id":id});
+        win.showPost("Edit Ledger - "+title,"{{route('admin.ledger.edit')}}",{"id":id},addEXPayHandle);
     }
 
     function s_calculate(){
@@ -56,6 +56,9 @@
 
     function updateLedger(){
         if(!lock){
+            if(!expayVerifyData()){
+                return;
+            }
             if(confirm('Do You Want TO Update Ledger ')){
 
                 data=new FormData(document.getElementById('xp_1'));
@@ -66,6 +69,7 @@
                     lock=false;
                     win.hide();
                     loadData();
+
                 })
                 .catch(function(err){
                     lock=false;

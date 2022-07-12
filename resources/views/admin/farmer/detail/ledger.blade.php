@@ -76,7 +76,9 @@
                         <td class="d-print-none">
 
                             <button  onclick="initEditLedger('{{$l->title}}',{{$l->id}});">Edit</button>
-                            <button  onclick="deleteLedger({{$l->id}},loadData);">Delete</button>
+                            @if (lCanDelete($l->identifire))
+                                <button  onclick="deleteLedger({{$l->id}},loadData);">Delete</button>
+                            @endif
 
                         </td>
                     </tr>

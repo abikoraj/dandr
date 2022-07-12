@@ -1,0 +1,47 @@
+ *amounttype[1="CR",2="DR"]
+    * "101"= Aalya
+    * "102"= "farmer opening balance/advance"
+    * "103" = "item sell"
+    * "104" = "Farmer Advance"
+    * "106" = "Farmer amount paid at Selling item"
+    * "107" = "Amount paid by farmer"
+    * "108" = "Famer milk Money Adjustment"
+    * "109" = "Colsing Balance farmer"
+    * "110" = "Automatic payment Given to famer when closing"
+    * "116" = "Farmer item return"
+    * "117" = "Farmer item return paid cancel"
+    * "121" = "Farmer paid for milk"
+
+    * "105" = "Sold to distributer"
+    * "114" = "distributer Payment"
+    * "115" = "distributer sell cancel"
+    * "118" = "Account Adjustment"
+    * "119" = "Distributor opening balance"
+    * "132" = "Milk total Distributer"
+    * "150" = "Milk total Distributer"
+
+    * "112" = "Employee Advaance payment"
+    * "113" = "Employee Account Open"
+    * "124" = "Employee Salary payment"
+    * "122" = "paid amount while billing"
+    * "123" = "purchase in billing items"
+    * "129" = "Employee Salary For Month"
+    * "132" = "Employee closing Balance"
+    * "133" = "Employee opening Balance"
+
+
+
+    * "125" = "purchase from suppliers"
+    * "126" = "paid to suppliers through billing entry"
+    * "127" = "Payment to supplier"
+    * "128" = "Previous balance of supplier"
+    * "128" = "Previous balance of supplier"
+
+    **customer section
+    * "130" = "Sold to customer"
+    * "131" = "customer Payment"
+    * "135" = "customer Payment extra"
+    * "134" = "customer opening Balance"
+
+    **Expense Section
+    * "201" = "index"

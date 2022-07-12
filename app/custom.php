@@ -18,6 +18,9 @@ define('supplier', 4);
 define('customer', 5);
 
 $xxx_per = "data";
+function lCanDelete($identifire){
+    return ! in_array($identifire,[106]);
+}
 function _nepalidate($date)
 {
     $year = (int)($date / 10000);

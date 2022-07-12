@@ -295,7 +295,7 @@ class EmployeeController extends Controller
         $empSession = EmployeeSession::where('year', $request->year)->where('month', $request->month)->where('user_id', $user->id)->first();
         $year=$request->year;
         $month=$request->month;
-        $totalSalaryPaid=SalaryPayment::where('date', '>=', $range[1])->where('date', '<=', $range[2])->where('user_id', $user->id)->sum('amount');
+        $totalSalaryPaid=SalaryPayment::where('year',$request->year)->where('month', $request->month)->where('user_id', $user->id)->sum('amount');
         $arr = [];
         $base = $prev;
         $salaryLoaded=false;
@@ -360,7 +360,6 @@ class EmployeeController extends Controller
             $salaryPay->user_id = $employee->user_id;
             $salaryPay->save();
             if(env('acc_system','old')=='old'){
-
                 $ledger->addLedger('Salary Paid for ' . $request->year . "-" . ($request->month < 10 ? "0" . $request->month : $request->month), 1, $request->pay, $date, '124', $salaryPay->id);
             }else{
                 $ledger->addLedger('Salary Paid for ' . $request->year . "-" . ($request->month < 10 ? "0" . $request->month : $request->month), 2, $request->pay, $date, '124', $salaryPay->id);
@@ -421,17 +420,18 @@ class EmployeeController extends Controller
         }
         if ($employee->sessionClosed($request->year, $request->month)) {
 
-            if($request->amount>0){
 
-                $l = [];
+            $range = NepaliDate::getDateMonth($request->year, $request->month);
+            $salaryLoaded = Ledger::where('date', '>=', $range[1])->where('date', '<=', $range[2])->where('user_id', $employee->user_id)->where('identifire',129)->count()>0;
 
+            if(!$salaryLoaded){
                 $lm = new LedgerManage($employee->user_id);
                 $lastdate = NepaliDate::getDateMonthLast($request->year, $request->month);
-
+                $salary=NepaliDate::calculateSalary($request->year, $request->month,$employee);
                 if(env('acc_system','old')=='old'){
-                    $l[0] = $lm->addLedger('salary Remaning  For (' . $request->year . "-" . ($request->month < 10 ? "0" . $request->month : $request->month) . ")", 2, $request->amount, $lastdate, 129);
+                    $lm->addLedger('salary For (' . $request->year . "-" . ($request->month < 10 ? "0" . $request->month : $request->month) . ")", 2, $salary, $lastdate, 129);
                 }else{
-                    $l[0] = $lm->addLedger('salary Remaning For (' . $request->year . "-" . ($request->month < 10 ? "0" . $request->month : $request->month) . ")", 1, $request->amount, $lastdate, 129);
+                    $lm->addLedger('salary For (' . $request->year . "-" . ($request->month < 10 ? "0" . $request->month : $request->month) . ")", 1, $salary, $lastdate, 129);
                 }
             }
 

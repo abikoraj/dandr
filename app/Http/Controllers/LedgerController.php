@@ -14,6 +14,7 @@ use App\Models\Sellitem;
 use App\Models\Supplierbill;
 use App\Models\Supplierpayment;
 use App\Models\User;
+use App\PaymentManager;
 use Illuminate\Http\Request;
 
 class LedgerController extends Controller
@@ -54,15 +55,20 @@ class LedgerController extends Controller
     * "128" = "Previous balance of supplier"
 
     */
+
+    const changable=[102,119,113,128,134];
+
     public function edit(Request $request){
         $ledger=Ledger::where('id',$request->id)->first();
         if($ledger->identifire==103){
             $sellitem=Sellitem::where('id',$ledger->foreign_key)->first();
             return view('admin.ledger.sellitem-edit',compact('ledger','sellitem'));
-        }else if($ledger->identifire==125){
+        }else if($ledger->identifire==125 || $ledger->identifire==126){
             return response("<h5 class='text-center'>Supplier Bill Cannot Be Edited From This interface</h5>");
         }else{
-            return view('admin.ledger.edit',compact('ledger'));
+            $paymentData=$ledger->getPaymentData();
+
+            return view('admin.ledger.edit',compact('ledger','paymentData'));
         }
     }
 
@@ -74,7 +80,7 @@ class LedgerController extends Controller
         $key=$ledger->foreign_key;
         $type=$request->type;
         if($i==103){
-            $type=1;
+            $type=2;
             $sellitem=Sellitem::where('id',$key)->first();
             $title=$sellitem->item->name.' ('.$request->rate .' X '.$request->qty.''.$sellitem->item->unit. ')';
             $sellitem->rate=$request->rate;
@@ -82,30 +88,38 @@ class LedgerController extends Controller
             $sellitem->total=$request->amount;
             $sellitem->due = $sellitem->total - $sellitem->paid;
             $sellitem->save();
-        }else if($i==104){
+        }
+        else if($i==106){
             $type=1;
+            $sellitem=Sellitem::where('id',$key)->first();
+            $sellitem->paid=$request->amount;
+            $sellitem->due = $sellitem->total - $sellitem->paid;
+            $sellitem->save();
+
+        }else if($i==104){
+            $type=2;
             $advance=Advance::where('id',$key)->first();
             $advance->amount=$request->amount;
             $advance->save();
         }else if($i==107){
-            $type=2;
+            $type=1;
             $advance=Farmerpayment::where('id',$key)->first();
             $advance->amount=$request->amount;
             $advance->save();
 
 
         }else if($i==121){
-            $type=1;
+            $type=2;
             $payment=MilkPayment::where('id',$key)->first();
             $payment->amount=$request->amount;
             $payment->save();
-        }else if($i==114){
-            $type=2;
+        }else if($i==150){
+            $type=1;
             $payment=DistributorPayment::where('id',$key)->first();
             $payment->amount=$request->amount;
             $payment->save();
         }else if($i==112){
-            $type=1;
+            $type=2;
             $payment=EmployeeAdvance::where('id',$key)->first();
             $payment->amount=$request->amount;
             $payment->save();
@@ -116,6 +130,7 @@ class LedgerController extends Controller
             $payment->save();
         }
 
+        $ledger->updatePayment($request);
 
         $ledger->type=$type;
         $ledger->amount=$request->amount;
@@ -132,37 +147,30 @@ class LedgerController extends Controller
         $i=$ledger->identifire;
         $key=$ledger->foreign_key;
         $foreign=null;
+        $another=null;
         if($i==103){
             $foreign=Sellitem::where('id',$key)->first();
+            $another=Ledger::where('ad');
         }else if($i==104){
-
             $foreign=Advance::where('id',$key)->first();
-
         }else if($i==107){
-
             $foreign=Farmerpayment::where('id',$key)->first();
-
         }else if($i==121){
-
            $foreign=MilkPayment::where('id',$key)->first();
-
         }else if($i==112){
-
             $foreign=EmployeeAdvance::where('id',$key)->first();
-
-         }else if($i==114){
-
+         }else if($i==150){
            $foreign=DistributorPayment::where('id',$key)->first();
-
         }else if($i==127){
-
            $foreign=Supplierpayment::where('id',$key)->first();
-
         }
+
         if($foreign!=null){
             $foreign->delete();
         }
+        $ledger->deletePayment();
         $ledger->delete();
+
         return response('ok');
     }
 }

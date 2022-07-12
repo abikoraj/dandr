@@ -14,12 +14,13 @@
             </div>
             <div class="col-md-6">
                 <label for="s_total">Total</label>
-                <input type="number" name="amount" value="{{$ledger->amount}}" id="s_amount" class="form-control" step="0.01" readonly>
+                <input type="number" name="amount expay_handle" value="{{$ledger->amount}}" id="s_amount" class="form-control" step="0.01" readonly>
             </div>
             <div class="col-md-12 text-right pt-2">
                 <span type="button" class="btn btn-secondary mr-2" onclick="win.hide()">Close</span>
                 <span type="button" class="btn btn-primary" onclick="updateLedger();">Save changes</span>
             </div>
+
         </div>
     </div>
 </form>

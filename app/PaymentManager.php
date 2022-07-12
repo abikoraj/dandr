@@ -10,6 +10,8 @@ use Illuminate\Support\Facades\DB;
 
 class PaymentManager
 {
+    const foreignChecks=[104,114,150,112,124,201,107,121,106,126,127];
+    const idChecks=[140];
     public $banks;
     public $cash;
     public $fy;
@@ -45,7 +47,7 @@ class PaymentManager
                 return "Paid Via Cash";
 
             }else if($payment->method==2){
-                return "Paid Via Bank - ".DB::table('banks')->where('id',$detail[0])->get['name']->name;
+                return "Paid Via Bank - ".DB::table('banks')->where('id',$detail[0])->first(['name'])->name;
             }
         }
     }

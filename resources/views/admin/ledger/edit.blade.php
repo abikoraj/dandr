@@ -5,22 +5,30 @@
         <input type="hidden"  name="id" value="{{$ledger->id}}">
         <div class="col-md-6">
             <label for="amount">amount</label>
-            <input type="number" name="amount" id="amount" class="form-control" value="{{$ledger->amount}}">
+            <input type="number" name="amount" id="amount" class="form-control expay_handle" value="{{$ledger->amount}}">
         </div>
-        <div class="col-md-6">
-            <label for="l_type">type</label>
-            <select  id="l_type" name="type" class="show-tick ms select2 form-control">
-                <option value="1" {{$ledger->type==1?"selected":""}}>CR</option>
-                <option value="2" {{$ledger->type==2?"selected":""}}>DR</option>
-            </select>
-        </div>
+
+        @if ($ledger->canChangeType())
+            <div class="col-md-6">
+                <label for="l_type">type</label>
+                <select  id="l_type" name="type" class="show-tick ms select2 form-control">
+                    <option value="1" {{$ledger->type==1?"selected":""}}>CR</option>
+                    <option value="2" {{$ledger->type==2?"selected":""}}>DR</option>
+                </select>
+            </div>
+        @endif
         <div class="col-md-12 text-right pt-2">
             <span  class="btn btn-secondary mr-2" onclick="win.hide()">Close</span>
             <span  class="btn btn-primary" onclick="updateLedger();">Save changes</span>
         </div>
+        @if ($paymentData!='' || $paymentData!=null)
+            <div class="col-12">
+                @include('admin.payment.editholder')
+            </div>
+        @endif
     </div>
 </div>
 </form>
 <div class="modal-footer">
- 
+
 </div>

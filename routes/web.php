@@ -64,7 +64,6 @@ Route::get('/test/{id}', 'TestController@index')->name('test');
 Route::get('/test-all/{id}', 'TestController@all')->name('test-all');
 Route::get('/test-distributor', 'TestController@distributor')->name('test-distributor');
 Route::get('/test-distributor-date', 'TestController@distributorByDate')->name('test-distributor');
-
 Route::view('/403', 'access.403')->name('403');
 
 Route::get('/pass', function () {
