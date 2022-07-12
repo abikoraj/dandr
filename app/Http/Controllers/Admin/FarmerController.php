@@ -275,7 +275,7 @@ class FarmerController extends Controller
         $farmer1->advance = (float)(Advance::where('user_id', $r->user_id)->where('date', '>=', $range[1])->where('date', '<=', $range[2])->sum('amount'));
         $farmer1->prevdue = (float)$previousMonth1;
         $farmer1->prevbalance = (float)$previousBalance;
-        $farmer1->paidamount = (float)Ledger::where('user_id', $r->user_id)->where('date', '>=', $range[1])->where('date', '<=', $range[2])->where('identifire', '121')->where('type', 1)->sum('amount');
+        $farmer1->paidamount = (float)Ledger::where('user_id', $r->user_id)->where('date', '>=', $range[1])->where('date', '<=', $range[2])->where('identifire', '121')->sum('amount');
         $balance = $farmer1->grandtotal + $farmer1->balance - $farmer1->prevdue - $farmer1->advance - $farmer1->purchase - $farmer1->paidamount + $farmer1->prevbalance - $farmer1->bonus + $farmer1->fpaid;
 
         $farmer1->balance = 0;
