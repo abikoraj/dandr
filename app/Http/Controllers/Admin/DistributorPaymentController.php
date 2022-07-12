@@ -76,8 +76,8 @@ class DistributorPaymentController extends Controller
         }else{
             $ledger->addLedger("Payment by distributor",1,$request->amount,$date,'150',$payment->id);
         }
-        return response('ok');
         new PaymentManager($request,$payment->id,150);
+        return response('ok');
         // // $bills=Distributorsell::where('distributer_id',$request->id)->where('deu','>',0)->get();
         // $id=$request->id;
         // $distributor->balance=Ledger::where('user_id',$distributor->user_id)->where('type',2)->sum('amount') - Ledger::where('user_id',$distributor->user_id)->where('type',1)->sum('amount');
