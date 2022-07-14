@@ -470,7 +470,6 @@ class ManufactureProcessController extends Controller
         join manufacture_process_items mp
         on mp.manufactured_product_item_id=m.id
         join items i on  i.id=m.item_id
-
         where mp.manufacture_process_id = ?', [$id]);
         // dd($items);
         foreach ($items as $key => $item) {

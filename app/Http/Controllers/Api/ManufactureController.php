@@ -3,6 +3,11 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Models\CenterStock;
+use App\Models\ManufactureProcess;
+use App\Models\ManufactureUnusedItem;
+use App\Models\ManufactureWastage;
+use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -123,4 +128,118 @@ class ManufactureController extends Controller
             return [$process,$items];
     }
 
+    public function finish(Request $request,$id){
+        $process = ManufactureProcess::where('id', $id)->first();
+        // if ($process->stage >= 3) {
+        //     return response()->json(['message'=>"Process Already Closed"],500);
+        // }
+        $process->end = $request->end;
+        $process->actual = $request->actual;
+        $process->stage = 3;
+        $process->save();
+
+
+        $items = db::select('select
+        m.id as manu_item_id,
+        mp.id,
+        m.item_id,
+        mp.center_id,
+        mp.amount,
+        i.cost_price,
+        i.sell_price
+        from manufactured_product_items m
+        join manufacture_process_items mp
+        on mp.manufactured_product_item_id=m.id
+        join items i on  i.id=m.item_id
+        where mp.manufacture_process_id = ?', [$id]);
+        $wastages=collect(
+            array_map(function($arr){
+                return (object)$arr;
+            }, $request->wastages)
+        );
+        $unusedItems=collect(
+            array_map(function($arr){
+                return (object)$arr;
+            }, $request->unusedItems)
+        );
+        // dd($wastages,$unusedItems);
+
+        foreach ($items as $key => $item) {
+            $amount=0;
+            $center_id = $item->center_id;
+            $_wastage=$wastages->where('manufactured_product_item_id',$item->manu_item_id)->first();
+            // dd($_wastage->amount);
+            if ($_wastage!=null) {
+                $amount = $_wastage->amount;
+
+                if ($amount > 0) {
+                    $wastage = new ManufactureWastage();
+                    $wastage->item_id = $item->item_id;
+                    $wastage->manufacture_process_id = $process->id;
+                    $wastage->rate=$item->cost_price;
+                    $wastage->amount =  $_wastage->amount;
+                    $wastage->center_id = $center_id;
+                    $wastage->save();
+                }
+            }
+            $_unusedItem=$unusedItems->where('manufactured_product_item_id',$item->manu_item_id)->first();
+            if ($_unusedItem !=null) {
+                $unusedAmount = $_unusedItem->amount;
+                $amount-=$unusedAmount;
+                if ($unusedAmount > 0) {
+                    $unusedItem = new ManufactureUnusedItem();
+                    $unusedItem->item_id = $item->item_id;
+                    $unusedItem->center_id = $center_id;
+                    $unusedItem->manufacture_process_id = $process->id;
+                    $unusedItem->amount = $_unusedItem->amount;
+                    $unusedItem->save();
+
+                }
+            }
+
+            // dd($_wastage,$_unusedItem,$amount);
+
+
+
+            if($amount!=0){
+                if($amount<0){
+                    DB::update('update items set stock = stock+? where id=?', [(-1*$amount), $item->item_id]);
+                }else{
+                    DB::update('update items set stock = stock-? where id=?', [$amount, $item->item_id]);
+                }
+
+                if (env('multi_stock', false)) {
+                    $centerStock = CenterStock::where('item_id', $item->item_id)->where('center_id', $center_id)->select('id', 'amount')->first();
+                    if ($centerStock == null) {
+                        $centerStock = new CenterStock();
+                        $centerStock->amount = -1 * $amount;
+                        $centerStock->item_id = $item->item_id;
+                        $centerStock->center_id = $center_id;
+                    } else {
+                        $centerStock->amount -= $amount;
+                    }
+                    $centerStock->save();
+                }
+            }
+        }
+
+        $product = DB::table('manufactured_products')->where('id', $process->manufactured_product_id)->first();
+        DB::update('update items set stock = stock+? where id=?', [$process->actual, $product->item_id]);
+        if (env('multi_stock')) {
+            $center_id = $process->center_id;
+            $centerStock = CenterStock::where('item_id', $product->item_id)->where('center_id', $center_id)->select('id', 'amount')->first();
+            if ($centerStock == null) {
+                $centerStock = new CenterStock();
+                $centerStock->amount =  $process->actual;
+                $centerStock->item_id = $product->item_id;
+                $centerStock->center_id = $center_id;
+            } else {
+                $centerStock->amount += $process->actual;
+            }
+            $centerStock->save();
+        }
+
+
+        return $this->detail($id);
+    }
 }
