@@ -87,6 +87,7 @@ class DistributersellController extends Controller
                     $manager->addLedger('Paid amount', 1, $request->paid, $date, '114', $sell_item->id);
                 }
             }
+
             new PaymentManager($request,$sell_item->id,114);
             return view('admin.distributer.sell.single', ['sell' => $sell_item]);
         } else {

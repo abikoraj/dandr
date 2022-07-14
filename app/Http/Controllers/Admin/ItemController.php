@@ -149,7 +149,7 @@ class ItemController extends Controller
             if (env('multi_package', false)) {
                 $item->cunit = DB::selectOne('select name from conversions where id=?', [$item->conversion_id])->name;
             }
-            return view('admin.item.single', compact('item'));
+            return view('admin.item.singlenew', compact('item'));
         }
     }
 
@@ -231,7 +231,7 @@ class ItemController extends Controller
         if (env('multi_package', false)) {
             $item->cunit = DB::selectOne('select name from conversions where id=?', [$item->conversion_id])->name;
         }
-        return view('admin.item.single', compact('item'));
+        return view('admin.item.singlenew', compact('item'));
     }
 
     public function delete($id)
