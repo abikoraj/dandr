@@ -130,9 +130,9 @@ class ManufactureController extends Controller
 
     public function finish(Request $request,$id){
         $process = ManufactureProcess::where('id', $id)->first();
-        // if ($process->stage >= 3) {
-        //     return response()->json(['message'=>"Process Already Closed"],500);
-        // }
+        if ($process->stage >= 3) {
+            return response()->json(['message'=>"Process Already Closed"],500);
+        }
         $process->end = $request->end;
         $process->actual = $request->actual;
         $process->stage = 3;
@@ -162,13 +162,11 @@ class ManufactureController extends Controller
                 return (object)$arr;
             }, $request->unusedItems)
         );
-        // dd($wastages,$unusedItems);
 
         foreach ($items as $key => $item) {
             $amount=0;
             $center_id = $item->center_id;
             $_wastage=$wastages->where('manufactured_product_item_id',$item->manu_item_id)->first();
-            // dd($_wastage->amount);
             if ($_wastage!=null) {
                 $amount = $_wastage->amount;
 
@@ -197,7 +195,6 @@ class ManufactureController extends Controller
                 }
             }
 
-            // dd($_wastage,$_unusedItem,$amount);
 
 
 
