@@ -72,9 +72,9 @@ class DistributorPaymentController extends Controller
 
         $ledger=new LedgerManage($distributor->user_id);
         if(env('acc_system','old')=='old'){
-            $ledger->addLedger("Payment by distributor",2,$request->amount,$date,'150',$payment->id);
+            $ledger->addLedger("Payment received from distributor",2,$request->amount,$date,'150',$payment->id);
         }else{
-            $ledger->addLedger("Payment by distributor",1,$request->amount,$date,'150',$payment->id);
+            $ledger->addLedger("Payment received from distributor",1,$request->amount,$date,'150',$payment->id);
         }
         new PaymentManager($request,$payment->id,150);
         return response('ok');

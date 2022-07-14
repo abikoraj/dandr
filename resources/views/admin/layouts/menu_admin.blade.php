@@ -29,7 +29,7 @@
                     <ul class="ml-menu">
                         <li><a href="{{ route('admin.farmer.list') }}" class="waves-effect waves-block">Farmer List</a></li>
                         <li><a href="{{ route('admin.farmer.advance') }}" class="waves-effect waves-block">Advance</a></li>
-                        <li><a href="{{ route('admin.farmer.due') }}" class="waves-effect waves-block">Farmer Payment</a></li>
+                        <li><a href="{{ route('admin.farmer.due') }}" class="waves-effect waves-block">Payment From Farmer</a></li>
                         <li><a href="{{ route('admin.farmer.due.add.list') }}" class="waves-effect waves-block">Account Opening</a></li>
                         <li><a href="{{ route('admin.farmer.milk.payment.index') }}" class="waves-effect waves-block">Milk Payment</a></li>
                         <li><a href="{{ route('admin.sell.item.index') }}" class="waves-effect waves-block">Farmer Sell</a></li>

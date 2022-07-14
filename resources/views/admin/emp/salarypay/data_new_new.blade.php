@@ -8,7 +8,10 @@
 
 </style>
 <hr>
-
+<h4 >
+    Salary Seet For {{$employee->user->name}}
+</h4>
+<hr>
 <div class="p-2" id="data">
     <table class="table">
         <tr>

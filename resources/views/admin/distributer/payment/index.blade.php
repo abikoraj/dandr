@@ -101,12 +101,13 @@
 
         function pay() {
             showProgress('Saving Distributor Payment');
-            axios.post('{{ route('admin.distributer.pay') }}', {
+            const data=loadXPay({
                     'id': $('#u_id').val(),
                     'amount': $('#amount').val(),
                     'method': $('#method').val(),
                     'date': $('#nepali-datepicker').val()
-                })
+                });
+            axios.post('{{ route('admin.distributer.pay') }}', data)
                 .then(function(response) {
                     // console.log(response.data);
                     // $('#data').html(response.data);
