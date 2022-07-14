@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\LedgerManage;
+use App\Models\CenterStock;
 use App\Models\Distributer;
 use App\Models\Distributorsell;
 use App\Models\Item;
@@ -12,13 +13,15 @@ use App\Models\Sellitem;
 use App\Models\User;
 use App\PaymentManager;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class DistributersellController extends Controller
 {
     public function index()
     {
         $large=env('large',false);
-        return view('admin.distributer.sell.index',compact('large'));
+        $centers=DB::table('centers')->get(['id','name']);
+        return view('admin.distributer.sell.index',compact('large','centers'));
     }
 
     public function addDistributersell(Request $request)
@@ -50,7 +53,12 @@ class DistributersellController extends Controller
         $canadd = false;
         if ($item->trackstock == 1) {
             if ($item->stock > $request->qty) {
-                $canadd = true;
+                if(env('multi_stock',false)){
+                    $stock=$item->stock($request->center_id);
+                    $canadd=$stock==null?false:( $stock->amount>=$request->qty);
+                }else{
+                    $canadd = true;
+                }
             }
         } else {
             $canadd = true;
@@ -63,13 +71,13 @@ class DistributersellController extends Controller
             $sell_item->rate = $request->rate;
             $sell_item->due = $request->due;
             $sell_item->paid = $request->paid;
+            $sell_item->center_id = $request->center_id;
             $sell_item->user_id = $user->id;
             $sell_item->item_id = $item->id;
             $sell_item->date = $date;
             $sell_item->save();
             if ($item->trackstock == 1){
-                $item->stock = $item->stock - $request->qty;
-                $item->save();
+               maintainStock($item->id,$request->qty,$request->center_id,"out");
             }
             $sell_item->name=$user->name;
             $sell_item->title=$item->title;
@@ -110,6 +118,9 @@ class DistributersellController extends Controller
     {
         // $date = str_replace('-','',$request->date);
         $sell = Sellitem::where('id',$request->id)->first();
+
+        maintainStock($sell->item_id,$sell->qty,$sell->center_id,"in");
+
         if($sell!=null){
             $sell->delete();
         }

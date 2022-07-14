@@ -237,27 +237,32 @@ function maintainStock($item_id, $qty, $center_id = null, $dir = 'in')
             }
             $center_id = $center->id;
         }
+        if (CenterStock::where('item_id', $item_id)->where('center_id', $center_id)->count() > 0) {
+            if ($dir == 'in') {
+                DB::update('update center_stocks set amount = amount+? where item_id = ? and center_id=?', [$qty, $item_id, $center_id]);
+            } else {
+                DB::update('update center_stocks set amount = amount-? where item_id = ? and center_id=?', [$qty, $item_id, $center_id]);
+            }
+        } else {
+            $centerStock = new CenterStock();
+            $centerStock->item_id = $item_id;
+            $centerStock->center_id = $center_id;
+            $centerStock->wholesale = $item->wholesale;
+            $centerStock->rate = $item->sell_price;
+            if ($dir == 'in') {
+                $centerStock->amount = $qty;
+            } else {
+                $centerStock->amount = -1 * $qty;
+            }
+            $centerStock->save();
+        }
     }
 
-    if (CenterStock::where('item_id', $item_id)->where('center_id', $center_id)->count() > 0) {
-        if ($dir == 'in') {
-            DB::update('update center_stocks set amount = amount+? where item_id = ? and center_id=?', [$qty, $item_id, $center_id]);
-        } else {
-            DB::update('update center_stocks set amount = amount-? where item_id = ? and center_id=?', [$qty, $item_id, $center_id]);
-        }
-    } else {
-        $centerStock = new CenterStock();
-        $centerStock->item_id = $item_id;
-        $centerStock->center_id = $center_id;
-        $centerStock->wholesale = $item->wholesale;
-        $centerStock->rate = $item->sell_price;
-        if ($dir == 'in') {
-            $centerStock->amount = $qty;
-        } else {
-            $centerStock->amount = -1 * $qty;
-        }
-        $centerStock->save();
-    }
+
+}
+
+function isMainCenter($id){
+    return env('maincenter',-1) == $id;
 }
 
 function currentStock()

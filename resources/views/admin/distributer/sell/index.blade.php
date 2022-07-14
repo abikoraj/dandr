@@ -54,6 +54,21 @@
         <form action="" id="sellitemData">
             @csrf
             <div class="row">
+                @if (env('multi_stock',false))
+
+                    <div class="col-12">
+                        <div class="row">
+                            <div class="col-md-3">
+                                <label for="center_id">Center</label>
+                                <select name="center_id" id="center_id" class="ms form-control">
+                                    @foreach ($centers as $center)
+                                        <option value="{{$center->id}}" {{isMainCenter($center->id)?"selected":""}}>{{$center->name}}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                @endif
                 <div class="col-md-3">
                     <div class="form-group">
                         <label for="date">Date</label>
