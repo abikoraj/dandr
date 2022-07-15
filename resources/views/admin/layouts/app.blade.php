@@ -86,7 +86,7 @@
     </section>
 
 
-    {{-- <div class="modal fade" id="menumodal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal fade" id="menumodal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg p-0 m-0" role="document" style="max-width:100vw;">
           <div class="modal-content">
             <div class="modal-header pb-3">
@@ -99,7 +99,7 @@
             </div>
           </div>
         </div>
-      </div> --}}
+      </div>
     <!-- Jquery Core Js -->
     <script>
         const printcss ='{{ asset("backend/css/print.css") }}';

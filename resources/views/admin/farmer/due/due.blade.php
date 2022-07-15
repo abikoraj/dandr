@@ -33,6 +33,9 @@
 </div> --}}
 
 <div class="mt-4" style="border: 1px solid rgb(136, 126, 126); padding:1rem;">
+    <hr>
+    <h5>{{$user->name}}</h5>
+    <hr>
     <table class="table">
         <thead>
             <tr>

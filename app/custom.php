@@ -388,3 +388,20 @@ function ledgerSum($id,$identifire,$range=null,$type=null){
 function randomChance($min=0,$max=1,$no=1){
     return mt_rand($min,$max)==$no;
 }
+
+
+function modalMenuData(){
+    return DB::selectOne('select
+    (select count(*) from farmers) as farmers,
+    (select count(*) from suppliers) as suppliers,
+    (select count(*) from distributers) as distributers,
+    (select count(*) from manufactured_products ) as products,
+    (select count(*) from manufacture_processes ) as processes,
+    (select count(*) from centers ) as centers
+    ');
+}
+
+function nepaliToday(){
+    $n=new NepaliDateHelper();
+    return $n->today();
+}

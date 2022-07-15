@@ -1,11 +1,14 @@
-{{-- <div class="row">
-    <div class="col-md-2 section section_1 href" data-target="{{route('admin.farmer')}}">
+@php
+    $data=modalMenuData();
+@endphp
+<div class="row">
+    <div class="col-md-2 section section_1 href" data-target="{{route('admin.farmer.list')}}">
         <span class="icon">
             <i class="zmdi zmdi-accounts"></i>
         </span>
         <span class="divider"></span>
         <span class="text">
-            Farmers ({{ \App\Models\User::where('role',1)->count() }})
+            Farmers ({{ $data->farmers }})
         </span>
     </div>
 
@@ -19,7 +22,7 @@
         </span>
     </div>
 
-    <div class="col-md-2 section section_1 href" data-target="{{route('admin.collection')}}">
+    <div class="col-md-2 section section_1 href" data-target="{{route('admin.center.index')}}">
         <span class="icon">
             <i class="zmdi zmdi-pin"></i>
         </span>
@@ -29,7 +32,7 @@
         </span>
     </div>
 
-    <div class="col-md-2 section section_1 href" data-target="{{route('admin.milk')}}">
+    <div class="col-md-2 section section_1 href" data-target="{{route('admin.milk.index')}}">
         <span class="icon">
             <i class="zmdi zmdi-dns"></i>
         </span>
@@ -39,7 +42,7 @@
         </span>
     </div>
 
-    <div class="col-md-2 section section_1 href" data-target="{{route('admin.snf.fat')}}">
+    <div class="col-md-2 section section_1 href" data-target="{{route('admin.snf-fat.index')}}">
         <span class="icon">
             <i class="zmdi zmdi-dns"></i>
         </span>
@@ -49,7 +52,7 @@
         </span>
     </div>
 
-    <div class="col-md-2 section section_1 href" data-target="{{route('admin.item')}}">
+    <div class="col-md-2 section section_1 href" data-target="{{route('admin.item.index')}}">
         <span class="icon">
             <i class="zmdi zmdi-view-module"></i>
         </span>
@@ -59,7 +62,7 @@
         </span>
     </div>
 
-    <div class="col-md-2 section section_1 href" data-target="{{route('admin.sell.item')}}">
+    <div class="col-md-2 section section_1 href" data-target="{{route('admin.sell.item.index')}}">
         <span class="icon">
             <i class="zmdi zmdi-view-compact"></i>
         </span>
@@ -68,17 +71,28 @@
             Sell Item
         </span>
     </div>
-    <div class="col-md-2 section section_1 href" data-target="{{route('product.home')}}">
+    <div class="col-md-2 section section_1 href" data-target="{{route('admin.manufacture.product.index')}}">
         <span class="icon">
             <i class="zmdi zmdi-drink"></i>
 
         </span>
         <span class="divider"></span>
         <span class="text text-center">
-            Products ( {{\App\Models\Product::count()}} )
+            Products ( {{\App\Models\ManufacturedProduct::count()}} )
         </span>
     </div>
-    <div class="col-md-2 section section_1 href" data-target="{{route('admin.dis')}}">
+    <div class="col-md-2 section section_1 href" data-target="{{route('admin.manufacture.process.index')}}">
+        <span class="icon">
+            <i class="zmdi zmdi-memory"></i>
+
+
+        </span>
+        <span class="divider"></span>
+        <span class="text text-center">
+            Production Process ( {{\App\Models\ManufactureProcess::where('stage',2)->count()}} )
+        </span>
+    </div>
+    <div class="col-md-2 section section_1 href" data-target="{{route('admin.distributer.index')}}">
         <span class="icon">
             <i class="zmdi zmdi-truck"></i>
         </span>
@@ -87,7 +101,7 @@
             Distributors ( {{\App\Models\Distributer::count()}} )
         </span>
     </div>
-    <div class="col-md-2 section section_1 href" data-target="{{route('admin.dis.sell')}}">
+    <div class="col-md-2 section section_1 href" data-target="{{route('admin.distributer.sell')}}">
         <span class="icon">
             <i class="zmdi zmdi-assignment"></i>
         </span>
@@ -97,7 +111,7 @@
         </span>
     </div>
     @if (env('tier',1)==1)
-        <div class="col-md-2 section section_1 href" data-target="{{route('admin.exp')}}">
+        <div class="col-md-2 section section_1 href" data-target="{{route('admin.expense.index')}}">
             <span class="icon">
                 <i class="zmdi zmdi-balance-wallet"></i>
             </span>
@@ -107,17 +121,17 @@
             </span>
         </div>
 
-        <div class="col-md-2 section section_1 href" data-target="{{route('admin.exp')}}">
+        <div class="col-md-2 section section_1 href" data-target="{{route('admin.supplier.index')}}">
             <span class="icon">
                 <i class="zmdi zmdi-accounts"></i>
             </span>
             <span class="divider"></span>
             <span class="text text-center">
-                Suppliers ({{ \App\Models\User::where('role',3)->count() }})
+                Suppliers ({{ \App\Models\Supplier::count()}})
             </span>
         </div>
 
-        <div class="col-md-2 section section_1 href" data-target="{{route('admin.exp')}}">
+        <div class="col-md-2 section section_1 href" data-target="{{route('admin.supplier.bill')}}">
             <span class="icon">
                 <i class="zmdi zmdi-book"></i>
             </span>
@@ -128,7 +142,7 @@
         </div>
 
     @endif
-    <div class="col-md-2 section section_1 href" data-target="{{route('report.home')}}">
+    <div class="col-md-2 section section_1 href" data-target="{{route('admin.report.home')}}">
         <span class="icon">
             <i class="zmdi zmdi-markunread-mailbox"></i>
         </span>
@@ -137,4 +151,4 @@
             Reports
         </span>
     </div>
-</div> --}}
+</div>

@@ -2,6 +2,8 @@
 
 namespace App;
 
+use Carbon\Carbon;
+
 class NepaliDateHelper
 {
     // Data for nepali date
@@ -97,6 +99,20 @@ class NepaliDateHelper
         88 => [2088, 30, 31, 32, 32, 30, 31, 30, 30, 29, 30, 30, 30],
         89 => [2089, 30, 32, 31, 32, 31, 30, 30, 30, 29, 30, 30, 30],
         90 => [2090, 30, 32, 31, 32, 31, 30, 30, 30, 29, 30, 30, 30],
+    ];
+    const nepaliMonthName=[
+        "Baisakh",
+        "Jestha",
+        "Ashar",
+        "Shrawan",
+        "Bhadra",
+        "Ashoj",
+        "Kartik",
+        "Mangsir",
+        "Poush",
+        "Magh",
+        "Falgun",
+        "Chaitra",
     ];
 
     public $_nep_date = ['year' => '', 'month' => '', 'date' => '', 'day' => '', 'nmonth' => '', 'num_day' => ''];
@@ -378,7 +394,7 @@ class NepaliDateHelper
      *
      * @return array
      */
-    public function eng_to_nep($yy, $mm, $dd)
+    public function eng_to_nep($yy, $mm, $dd,$innepali=false)
     {
         // Check for date range
         $chk = $this->_is_in_range_eng($yy, $mm, $dd);
@@ -459,12 +475,22 @@ class NepaliDateHelper
                 $total_eDays--;
             }
             $numDay = $day;
-            $this->_nep_date['year'] = $this->convert_to_nepali_number($y);
-            $this->_nep_date['month'] = $this->convert_to_nepali_number($m);
-            $this->_nep_date['date'] = $this->convert_to_nepali_number($total_nDays);
-            $this->_nep_date['day'] = $this->_get_day_of_week($day);
-            $this->_nep_date['nmonth'] = $this->_get_nepali_month($m);
-            $this->_nep_date['num_day'] = $this->convert_to_nepali_number($numDay);
+            if($innepali){
+
+                $this->_nep_date['year'] = $this->convert_to_nepali_number($y);
+                $this->_nep_date['month'] = $this->convert_to_nepali_number($m);
+                $this->_nep_date['date'] = $this->convert_to_nepali_number($total_nDays);
+                $this->_nep_date['day'] = $this->_get_day_of_week($day);
+                $this->_nep_date['nmonth'] = $this->_get_nepali_month($m);
+                $this->_nep_date['num_day'] = $this->convert_to_nepali_number($numDay);
+            }else{
+                $this->_nep_date['year'] = $y;
+                $this->_nep_date['month'] = $m;
+                $this->_nep_date['date'] = $total_nDays;
+                $this->_nep_date['day'] = $this->_get_day_of_week($day);
+                $this->_nep_date['nmonth'] = $this->_get_nepali_month($m);
+                $this->_nep_date['num_day'] = $numDay;
+            }
 
             return $this->_nep_date;
         }
@@ -685,5 +711,41 @@ class NepaliDateHelper
         return $y."-".($m<10?"0".$m:$m)."-".($d<10?"0".$d:$d);
 
     }
-    
+
+    public function today(){
+        $today=Carbon::now();
+        return $this->eng_to_nepInt($today->year,$today->month,$today->day);
+    }
+
+    public function currentMonth(){
+        $today=Carbon::now();
+        $data= $this->eng_to_nep($today->year,$today->month,$today->day);
+        return (object)[
+            'year'=>   $data['year'],
+            'month'=>$data['month'],
+            'month_name'=>self::nepaliMonthName[$data['month']-1]
+        ];
+    }
+
+    public function currentMonthRange(){
+        $today=Carbon::now();
+        $data= $this->eng_to_nep($today->year,$today->month,$today->day);
+        return NepaliDate::getDateMonth((int)$data['year'],(int)$data['month']);
+
+
+    }
+    public function currentSessionRange($session=null){
+        $today=Carbon::now();
+        $data= $this->eng_to_nep($today->year,$today->month,$today->day);
+        if($session==null){
+            return NepaliDate::getdate((int)$data['year'],(int)$data['month'],((int)$data['date'])>15?2:1);
+
+        }else{
+            return NepaliDate::getdate((int)$data['year'],(int)$data['month'],$session);
+
+        }
+
+
+    }
+
 }

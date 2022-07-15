@@ -5,6 +5,7 @@ use App\Http\Controllers\Admin\BankController;
 use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\CounterController;
 use App\Http\Controllers\Admin\CustomerController;
+use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\DistributerController;
 use App\Http\Controllers\Admin\DistributerMilkController;
 use App\Http\Controllers\Admin\DistributersellController;
@@ -90,7 +91,7 @@ Route::match(['get', 'post'], 'logout', 'AuthController@logout')->name('logout')
 Route::name('admin.')->group(function () {
 
     Route::group(['middleware' => 'role:admin', 'prefix' => 'admin'], function () {
-        Route::get('dashboard', 'Admin\DashboardController@index')->name('dashboard');
+        Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
         Route::prefix('collection-centers')->name('center.')->group(function () {
             // XXX collection centers
