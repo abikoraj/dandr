@@ -16,8 +16,8 @@ class DashboardController extends Controller
         $n=new NepaliDateHelper();
         $range=$n->currentSessionRange(1);
         $month=$n->currentMonth();
-        // $today=nepaliToday();
-        $today=20790301;
+        $today=nepaliToday();
+        // $today=20790301;
         $milkData=[];
         foreach (Center::all(['id','name']) as $key => $center) {
             array_push($milkData,(object)[
