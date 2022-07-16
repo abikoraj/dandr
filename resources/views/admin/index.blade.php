@@ -8,8 +8,18 @@
     const range={!! json_encode($range) !!};
     console.log(range,'range');
 </script>
+
+
+@include('admin.modalmenu')
+<hr>
+<h5>
+    General Report of {{_nepalidate($today)}}
+</h5>
+
+<hr>
 <div class="row" id="datas">
     @include('admin.index.milk')
+    @include('admin.index.sales')
 </div>
 @endsection
 @section('js')

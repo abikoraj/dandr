@@ -1,3 +1,50 @@
+<div class="col-md-5">
+    <div class="shadow">
+        <h5 class="mb-0 p-2">
+            Milk Collection
+        </h5>
+        @php
+            $milkTotal=0;
+        @endphp
+        <div class="py-2">
+            <table class="table">
+                <tr>
+                    <th>
+                        Center
+                    </th>
+                    <th>
+                        Collection
+                    </th>
+                </tr>
+                @foreach ($milkData as $data)
+                    <tr>
+                        <td>
+                            {{$data->center}}
+                        </td>
+                        <td>
+                            {{$data->amount}}
+                            @php
+                                $milkTotal+=$data->amount;
+                            @endphp
+                        </td>
+
+                    </tr>
+
+                @endforeach
+                <tr>
+                    <th>
+                        Total Amount
+                    </th>
+                    <th>
+                        {{$milkTotal}}
+                    </th>
+                </tr>
+            </table>
+
+
+        </div>
+    </div>
+</div>
 {{-- <div class="col-md-12">
     <div class="shadow">
         <h3 class="mb-0 p-2">
@@ -59,7 +106,7 @@
         </table>
     </div>
 </div> --}}
-<div class="col-12 mb-3 shadow">
+{{-- <div class="col-12 mb-3 shadow">
     <canvas id="milk"></canvas>
 </div>
 <script>
@@ -117,4 +164,4 @@
 
 
     });
-</script>
+</script> --}}
