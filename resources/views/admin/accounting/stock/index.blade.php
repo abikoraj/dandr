@@ -1,4 +1,4 @@
-@extends('admin.index')
+@extends('admin.layouts.app')
 @section('title','accounting - stock')
 @section('content')
 @include('admin.accounting.stock.add')
