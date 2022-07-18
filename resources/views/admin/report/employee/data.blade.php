@@ -62,6 +62,7 @@
             <th>
                 Bank Detail
             </th>
+            <th>Signature</th>
         </tr>
     </thead>
     @php
@@ -156,6 +157,7 @@
             <td>
                 {{$employee->acc}}
             </td>
+            <td></td>
 
         </tr>
         @endforeach
@@ -191,6 +193,7 @@
                 {{$_totaladvance}}
             </td>
             <td>------</td>
+            <td></td>
         </tr>
     </tbody>
 </table>
