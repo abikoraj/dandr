@@ -61,10 +61,12 @@
         }
 
         function saveData(e) {
+            
             e.preventDefault();
             if(!xpayVerifyData()){
                 return;
             }
+            showProgress('Adding Expense');
             var bodyFormData = new FormData(document.getElementById('form_validation'));
             axios({
                     method: 'post',
@@ -83,13 +85,15 @@
                         $("#addModal").modal('hide');
                     }
                     $('#form_validation').trigger("reset");
-                    $('#expenseData').prepend(response.data);
                     document.getElementById('add_another').checked = add_another;
                     resetXPayment()
+                    hideProgress();
+                    $('#expensesList').prepend(response.data);
 
                 })
                 .catch(function(response) {
                     //handle error
+                    hideProgress();
                     console.log(response);
                 });
         }

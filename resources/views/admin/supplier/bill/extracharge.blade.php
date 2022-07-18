@@ -57,7 +57,7 @@
 </div>
 @section('js3')
 <script>
-    ei=1;
+    var ei=1;
     function addExpense(){
         title= $('#extra-title').val();
         amount=$('#extra-amount').val();
@@ -85,6 +85,7 @@
             $('#extra-amount').val('');
             $('#extra-title').focus();
             calculateExpenseTotal();
+            ei+=1;
     }
     function removeExpense(id){
         $("#ei-"+id).remove();

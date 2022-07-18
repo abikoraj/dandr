@@ -12,7 +12,7 @@ $total = 0;
     </div>
 </div>
 <hr>
-<table id="newstable1" class="table table-bordered table-striped table-hover js-basic-example dataTable">
+<table id="expenses" class="table table-bordered table-striped table-hover js-basic-example dataTable">
     <thead>
         <tr>
             <th>Title</th>
@@ -24,7 +24,7 @@ $total = 0;
             <th>Action</th>
         </tr>
     </thead>
-    <tbody>
+    <tbody id="expensesList">
         @foreach ($exps as $exp)
             <tr id="expense-{{ $exp->id }}" data-name="{{ $exp->title }}" class="searchable">
                 <td>{{ $exp->title }}</td>

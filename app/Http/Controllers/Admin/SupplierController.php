@@ -80,6 +80,7 @@ class SupplierController extends Controller
     {
         // dd($request->all());
         if ($request->getMethod() == "POST") {
+            throw new \Exception('testing');
 
             // dd($request->all());
             $date = str_replace('-', '', $request->date);
@@ -193,7 +194,6 @@ class SupplierController extends Controller
         } else {
             $centers=DB::table('centers')->get(['id','name']);
             if(env('multi_package',false)){
-
                 $items=DB::table('items')->get(['id','title','conversion_id']);
                 $units=DB::table('conversions')->get(['id','name','local','main','parent_id']);
                 return view('admin.supplier.bill.addMultiPackage',compact('centers','units','items'));

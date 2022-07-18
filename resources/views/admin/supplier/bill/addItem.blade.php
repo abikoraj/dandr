@@ -82,7 +82,7 @@
                                     <label for="unit">Unit Type</label>
                                     <div class="form-group">
                                         <select name="conversion_id" id="conversion_id" class="form-control ms">
-                                            @foreach ($units->where('is_base', 1) as $unit)
+                                            @foreach ($units as $unit)
                                                 <option value="{{ $unit->id }}">{{ $unit->name }}</option>
                                             @endforeach
                                         </select>
