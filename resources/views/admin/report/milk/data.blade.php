@@ -1,6 +1,5 @@
-
-
 @foreach ($data1 as $key=>$milkdatas)
+    
     <div id="center-{{$key}}" class="p-4 shadow m-3">
         <div>
             <button class="btn success" style="float: right;" onclick="printDiv('center-data-{{$key}}')">Print</button>
@@ -31,7 +30,13 @@
                             Farmer Name
                         </th>
                         <th>
-                            Milk Amount
+                            Morning Amount
+                        </th>
+                        <th>
+                            Evening Amount
+                        </th>
+                        <th>
+                            Total Amount
                         </th>
                     </tr>
 
@@ -46,11 +51,31 @@
                                 {{$milkdata->name}}
                             </td>
                             <td>
-                                {{$milkdata->milk}}
+                                {{$milkdata->m_amount}}
+                            </td>
+                            <td>
+                                {{$milkdata->e_amount}}
+                            </td>
+                            <td>
+                                {{$milkdata->e_amount+$milkdata->m_amount}}
                             </td>
 
                         </tr>
                     @endforeach
+                    <tr>
+                        <th colspan="2">
+                            Total
+                        </th>
+                        <th>
+                            {{$milkdatas->sum('m_amount')}}
+                        </th>
+                        <th>
+                            {{$milkdatas->sum('e_amount')}}
+                        </th>
+                        <th>
+                            {{$milkdatas->sum('m_amount')+$milkdatas->sum('e_amount')}}
+                        </th>
+                    </tr>
                 </tbody>
             </table>
         </div>

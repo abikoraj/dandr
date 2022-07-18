@@ -353,7 +353,7 @@ class ReportController extends Controller
             $range = [];
             $data = [];
 
-            $milkdatas = MilkData::join('farmers', 'farmers.user_id', '=', 'milkdatas.user_id')
+            $milkdatas = DB::table('milkdatas')->join('farmers', 'farmers.user_id', '=', 'milkdatas.user_id')
                 ->join('centers', 'centers.id', '=', 'farmers.center_id')
                 ->join('users', 'users.id', '=', 'milkdatas.user_id');
 
@@ -386,7 +386,8 @@ class ReportController extends Controller
             }
 
             $datas = $milkdatas->select('milkdatas.m_amount', 'milkdatas.e_amount', 'milkdatas.user_id', 'milkdatas.date', 'farmers.center_id', 'users.name', 'users.no')->get();
-            $data1 = $milkdatas->select(DB::raw('(sum(milkdatas.m_amount)+sum(milkdatas.e_amount)) as milk ,milkdatas.user_id ,users.name,users.no,farmers.center_id'))->groupBy('milkdatas.user_id', 'users.name', 'users.no', 'farmers.center_id')->get()->groupBy('center_id');
+            $data1 = $milkdatas->select(DB::raw('sum(milkdatas.m_amount) as m_amount,sum(milkdatas.e_amount) as e_amount ,milkdatas.user_id ,users.name,users.no,farmers.center_id'))->
+            groupBy('milkdatas.user_id', 'users.name', 'users.no', 'farmers.center_id')->get()->groupBy('center_id');
 
 
 
