@@ -774,16 +774,23 @@ class ReportController extends Controller
                 $range[2] = str_replace('-', '', $request->date2);;
                 $data = $data->where('date', '>=', $range[1])->where('date', '<=', $range[2]);
             }
-            if ($request->category_id == null) {
-                $data = $data->get();
-            }
-            $hascat = false;
+
+            // if ($request->category_id == null) {
+            //     $data = $data->get();
+            // }
+
+            // $hascat = false;
+
             if ($request->category_id != -1) {
                 $hascat = true;
                 $data = $data->where('expcategory_id', $request->category_id)->get();
             } else {
                 $data = $data->get();
             }
+
+
+
+
             return view('admin.report.expense.data', compact('data'));
         } else {
             return view('admin.report.expense.index');

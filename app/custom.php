@@ -321,8 +321,10 @@ function renderEmpList(){
 
 function getFiscalYear(){
     $name=env('fiscal_year',null);
+    // dd($name);
     if($name!=null){
         $fy=DB::table('fiscal_years')->where('name',$name)->first();
+        // dd($fy);
     }else{
        $nepaliDateHelper=new NepaliDateHelper();
        $date=Carbon::now();
@@ -348,10 +350,16 @@ function assetCategory($id){
 
 
 function getBanks(){
-    $fy=getFiscalYear();
-    $banks= DB::select("select name,id from banks where account_id = (select id from accounts where identifire='1.2' and fiscal_year_id={$fy->id} limit 1) ");
-    // dd($banks);
-    return $banks;
+    try {
+        //code...
+        $fy=getFiscalYear();
+        $banks= DB::select("select name,id from banks where account_id = (select id from accounts where identifire='1.2' and fiscal_year_id={$fy->id} limit 1) ");
+        // dd($banks);
+        return $banks;
+    } catch (\Throwable $th) {
+        //throw $th;
+        return [];
+    }
 }
 
 function getCashAcc(){

@@ -120,7 +120,10 @@
 
             return true;
 
+        }else{
+            return true;
         }
+
     }
 
     function expayVerifyData() {

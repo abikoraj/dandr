@@ -70,6 +70,7 @@
            @foreach (\App\Models\Expcategory::all() as $item)
                <option value="{{ $item->id }}">{{$item->name}}</option>
            @endforeach
+                <option value="0">Purchase Expense</option>
         </select>
     </div>
 
