@@ -9,7 +9,7 @@
 </style>
 <hr>
 <h4 >
-    Salary Seet For {{$employee->user->name}}
+    Salary Seet For {{$employee->user->name}} , {{$year}} - {{nepaliMonthName($month)}}
 </h4>
 <hr>
 <div class="p-2" id="data">
@@ -130,7 +130,7 @@
             <div class="col-md-4">
                 <label for="date">Date</label>
                 <input readonly type="text" name="date" id="nepali-datepicker" class="form-control"
-                    placeholder="Date">
+                    placeholder="Date" value="{{$lastdate}}">
             </div>
             <div class="col-md-4">
                 <label for="total"> Monthly Salary </label>
@@ -141,12 +141,18 @@
                 <input type="text" class="form-control xpay_handle" id="p_amt" name="salary" min="0" step="0.001"
                     value="{{ (-1*$remaning) }}">
             </div>
-            <div class="col-md-9 mt-1">
+            <div class="col-md-12 mt-1">
                 <label for="detail">Payment Detail</label>
                 <input type="text" class="form-control" id="p_detail" placeholder="Payment details">
             </div>
+
+            <div class="col-12 pt-2">
+            </div>
+            <div class="col-md-3 pt-2">
+                <input checked type="checkbox" name="close" id="close" value="1"> <label for="close">Close Month</label>
+            </div>
             <div class="col-md-3">
-                <span class="btn btn-primary btn-block" style="margin-top:35px;" onclick="salaryPayment();"> Pay Now
+                <span class="btn btn-primary btn-block"  onclick="salaryPayment();"> Pay Now
                 </span>
             </div>
             <div class="col-12 pt-2">

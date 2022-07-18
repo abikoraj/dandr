@@ -364,6 +364,13 @@ class EmployeeController extends Controller
             }else{
                 $ledger->addLedger('Salary Paid for ' . $request->year . "-" . ($request->month < 10 ? "0" . $request->month : $request->month), 2, $request->pay, $date, '124', $salaryPay->id);
             }
+
+            $sessionClose = new EmployeeSession();
+            $sessionClose->user_id = $employee->user_id;
+            $sessionClose->month = $request->month;
+            $sessionClose->year = $request->year;
+            $sessionClose->save();
+
             new PaymentManager($request,$salaryPay->id,124);
             echo 'ok';
         }

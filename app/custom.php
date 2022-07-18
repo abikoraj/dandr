@@ -413,3 +413,22 @@ function nepaliToday(){
     $n=new NepaliDateHelper();
     return $n->today();
 }
+
+
+function nepaliMonthName(int $i){
+     $_n=[
+        "Baisakh",
+        "Jestha",
+        "Ashar",
+        "Shrawan",
+        "Bhadra",
+        "Ashoj",
+        "Kartik",
+        "Mangsir",
+        "Poush",
+        "Magh",
+        "Falgun",
+        "Chaitra",
+    ];
+    return $_n[$i];
+}
