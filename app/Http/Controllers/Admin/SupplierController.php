@@ -80,7 +80,7 @@ class SupplierController extends Controller
     {
         // dd($request->all());
         if ($request->getMethod() == "POST") {
-            throw new \Exception('testing');
+            // throw new \Exception('testing');
 
             // dd($request->all());
             $date = str_replace('-', '', $request->date);
