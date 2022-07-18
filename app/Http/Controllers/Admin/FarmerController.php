@@ -35,7 +35,10 @@ class FarmerController extends Controller
 
     public function listFarmerByCenter(Request $request)
     {
-        $farmers = User::join('farmers', 'farmers.user_id', '=', 'users.id')->where('farmers.center_id', $request->center)->select('users.id', 'users.name', 'users.phone', 'users.address', 'farmers.center_id', 'farmers.usecc', 'farmers.usetc', 'farmers.userate', 'farmers.rate', 'farmers.no')->orderBy('farmers.no', 'asc')->get();
+        $farmers = User::join('farmers', 'farmers.user_id', '=', 'users.id')
+        ->where('farmers.center_id', $request->center)->
+        select('users.id', 'users.name', 'users.phone', 'users.address', 'farmers.center_id', 'farmers.usecc', 'farmers.usetc', 'farmers.userate', 'farmers.rate', 'farmers.no')
+        ->orderByRaw('abs(farmers.no) asc')->get();
         return view('admin.farmer.list', ['farmers' => $farmers]);
     }
 
