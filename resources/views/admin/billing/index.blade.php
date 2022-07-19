@@ -90,7 +90,7 @@ input[type=number] {
                     </span>
                     <span>
                         <h3 >
-                            <a style="color:White;" href="{{route('admin.dashboard')}}">Home</a>aa
+                            <a style="color:White;" href="{{route('admin.dashboard')}}">Home</a>
                         </h3>
                     </span>
                 </div>
