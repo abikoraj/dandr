@@ -29,7 +29,7 @@ class FarmerController extends Controller
         }
         return response()->json($query->get());
     }
-    
+
     public function pushMilkData(Request $request){
         
         $date=(int)str_replace("-",'',$request->date);
@@ -39,13 +39,13 @@ class FarmerController extends Controller
         foreach ($request->data as $_data) {
             $data=(object)$_data;
             $localData=$localDatas->where('user_id',$data->id)->first();
-            if($localData){
+            if($localData!=null){
                 $change=false;
-                if($data->m_amount==$localData->m_amount){
+                if($data->m_amount!=$localData->m_amount){
                     $localData->m_amount=$data->m_amount;
                     $change=true;
                 }
-                if($data->e_amount==$localData->e_amount){
+                if($data->e_amount!=$localData->e_amount){
                     $localData->e_amount=$data->e_amount;
                     $change=true;
                 }
