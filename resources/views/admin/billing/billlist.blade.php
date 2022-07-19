@@ -19,8 +19,10 @@
         </td>
         <td>
             <button data-href="{{route('admin.billing.detail',['id'=>$bill->id])}}" onclick="win.showGet('{{$bill->id}}',this.dataset.href)">Details</button>
-            
-            <button data-href="{{route('admin.billing.del',['id'=>$bill->id])}}" onclick="" Class>Cancel</button>
+            @if ($bill->is_canceled==0)
+                
+                <button id="cancel-{{$bill->id}}" data-href="{{route('admin.billing.del',['id'=>$bill->id])}}" onclick="del(this.dataset.href,{{$bill->id}})" >Cancel</button>
+            @endif
         </td>
     </tr>
 @endforeach

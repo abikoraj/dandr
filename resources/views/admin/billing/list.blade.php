@@ -1,6 +1,14 @@
 @extends('admin.layouts.app')
 @section('title', 'POS Bill')
+@section('css')
+    <style>
+        .canceled{
+            background: #ff0000c4 !important;
+            color: white;
+        }
+    </style>
 
+@endsection
 @section('head-title', 'POS Bill')
 @section('toobar')
    
@@ -91,9 +99,24 @@
         }
 
         window.onload = function() {
-            $('#type').val(0).change();
+            $('#type').val(1).change();
             loadData();
         };
 
+        function del(url,id){
+            if(prompt('Enter yes to continue')=='yes'){
+                axios.post(url,{})
+                .then((res)=>{
+                    if($('#canceled')[0].checked){
+                        $('#bill-'+id).addClass('canceled');
+                    }else{
+                        $('#bill-'+id).remove();
+                    }
+                })
+                .catch((err)=>{
+
+                })
+            }
+        }
     </script>
 @endsection
