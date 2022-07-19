@@ -22,6 +22,11 @@ class BillingController extends Controller
     }
 
     public function del($id){
+        $billItems=DB::select('select b.center_id,bi.item_id,bi.qty from bill_items bi join bills b on b.id=bi.bill_id where b.id=?',[$id]);
+        // dd($billItems);
+        foreach ($billItems as $key => $billItem) {
+            maintainStock($billItem->item_id,$billItem->qty,$billItem->center_id);
+        }
         DB::delete('update bills set is_canceled =1 where id=?',[$id]);
 
     }
@@ -42,9 +47,7 @@ class BillingController extends Controller
             if ($type == 0) {
                 $range = NepaliDate::getDate($request->year, $request->month, $request->session);
                 $bills_query = $bills_query->where('date', '>=', $range[1])->where('date', '<=', $range[2]);
-                $title = "<span class='mx-2'>Year:" . $year . "</span>";
-                $title .= "<span class='mx-2'>Month:" . $month . "</span>";
-                $title .= "<span class='mx-2'>Session:" . $session . "</span>";
+             
             } elseif ($type == 1) {
                 $date = $date = str_replace('-', '', $request->date1);
                 $bills_query = $bills_query->where('date', '=', $date);
@@ -52,30 +55,24 @@ class BillingController extends Controller
             } elseif ($type == 2) {
                 $range = NepaliDate::getDateWeek($request->year, $request->month, $request->week);
                 $bills_query = $bills_query->where('date', '>=', $range[1])->where('date', '<=', $range[2]);
-                $title = "<span class='mx-2'>Year:" . $year . "</span>";
-                $title .= "<span class='mx-2'>Month:" . $month . "</span>";
-                $title .= "<span class='mx-2'>Week:" . $week . "</span>";
+              
             } elseif ($type == 3) {
                 $range = NepaliDate::getDateMonth($request->year, $request->month);
                 $bills_query = $bills_query->where('date', '>=', $range[1])->where('date', '<=', $range[2]);
-                $title = "<span class='mx-2'>Year:" . $year . "</span>";
-                $title .= "<span class='mx-2'>Month:" . $month . "</span>";
+            
             } elseif ($type == 4) {
                 $range = NepaliDate::getDateYear($request->year);
                 $bills_query = $bills_query->where('date', '>=', $range[1])->where('date', '<=', $range[2]);
-                $title = "<span class='mx-2'>Year:" . $year . "</span>";
             } elseif ($type == 5) {
                 $range[1] = str_replace('-', '', $request->date1);;
                 $range[2] = str_replace('-', '', $request->date2);;
                 $bills_query = $bills_query->where('date', '>=', $range[1])->where('date', '<=', $range[2]);
-                $title = "<span class='mx-2'>from:" . $request->date1 . "</span>";
-                $title .= "<span class='mx-2'>To:" . $request->date2 . "</span>";
+                
             } elseif ($type == 6) {
                 $range[1] = $fy->startdate;
                 $range[2] = $fy->enddate;
                 $bills_query = $bills_query->where('date', '>=', $range[1])->where('date', '<=', $range[2]);
-                $title = "<span class='mx-2'>from:" . _nepalidate($range[1]) . "</span>";
-                $title .= "<span class='mx-2'>To:" . _nepalidate($range[2]) . "</span>";
+             
             }
             if ($request->customer_id != -1) {
                 $bills_query = $bills_query->where('customer_id', $request->customer_id);
@@ -85,10 +82,10 @@ class BillingController extends Controller
             }
             
 
-            if($request->filled('center_id')){
-
+            if($request->canceled==0){
+               $bills_query= $bills_query->where('is_canceled', 0);
             }
-            $bills = $bills_query->where('is_canceled', 0)->select(
+            $bills = $bills_query->select(
                 DB::raw("id,(select group_concat(concat(name,' x ',qty) SEPARATOR ', ')  from bill_items where bill_items.bill_id=bills.id) as billitems,name,grandtotal,billno,center_id,date,is_canceled")
             )->get();
             return view('admin.billing.billlist',compact('bills'));
@@ -160,6 +157,7 @@ class BillingController extends Controller
 
     public function detail($id){
         $bill=Bill::find($id);
+
         return view('admin.billing.detail',compact('bill'));
 
     }
