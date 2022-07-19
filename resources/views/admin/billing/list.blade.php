@@ -109,6 +109,8 @@
                 .then((res)=>{
                     if($('#canceled')[0].checked){
                         $('#bill-'+id).addClass('canceled');
+                        $('#cancel-'+id).remove();
+
                     }else{
                         $('#bill-'+id).remove();
                     }
