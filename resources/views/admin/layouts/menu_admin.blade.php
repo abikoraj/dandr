@@ -124,10 +124,14 @@
             @if (env('use_pos',false))
             <li><a href="javascript:void(0);" class="waves-effect waves-block menu-toggle"><i class="zmdi zmdi-shopping-cart"></i><span>POS</span></a>
                 <ul class="ml-menu">
+                    @if (env('pos_interface',"new")=="old")
+                    <li><a href="{{ route('admin.billing.home') }}" class="waves-effect waves-block">POS Interface </a></li>
+                    @else
                     <li><a href="{{ route('pos.index') }}" class="waves-effect waves-block">POS Interface</a></li>
                     <li><a href="{{ route('admin.pos.billing.index') }}" class="waves-effect waves-block">Search Bills</a></li>
                     <li><a href="{{ route('admin.pos.billing.print') }}" class="waves-effect waves-block">Reprint Bills</a></li>
                     <li><a href="{{ route('admin.pos.billing.return') }}" class="waves-effect waves-block">Sales Return</a></li>
+                    @endif
                 </ul>
             </li>
             <li><a href="javascript:void(0);" class="waves-effect waves-block menu-toggle"><i class="zmdi zmdi-shopping-cart"></i><span>POS Setting</span></a>

@@ -294,6 +294,7 @@ class POSController extends Controller
         $user->save();
         $customer = new Customer();
         $customer->user_id = $user->id;
+        $customer->foreign_id = 0;
         $customer->save();
         $customer->user = $user;
         $data = Customer::join('users', 'users.id', '=', 'customers.user_id')->select('customers.id', 'users.name', 'users.address', 'customers.user_id', 'users.phone')->where('customers.id', $customer->id)->first();

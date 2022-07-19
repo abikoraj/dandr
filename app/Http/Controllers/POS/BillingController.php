@@ -33,6 +33,7 @@ class BillingController extends Controller
         $setting = PosSetting::first();
         if ($setting == null) {
             return response("Day Not Opened, Please Contact Administrator.", 500);
+            
         }else{
             if($setting->open!=1){
                 return response("Day Not Opened, Please Contact Administrator.", 500);

@@ -32,6 +32,7 @@ use App\Http\Controllers\Admin\SupplierController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\WastageController;
 use App\Http\Controllers\BackupController;
+use App\Http\Controllers\Billing\BillingController as BillingBillingController;
 use App\Http\Controllers\FixedAssetController;
 use App\Http\Controllers\HomeController as ControllersHomeController;
 use App\Http\Controllers\PaymentController;
@@ -632,7 +633,9 @@ Route::name('admin.')->group(function () {
             Route::name('billing.')->group(function () {
                 Route::get('', 'Billing\BillingController@index')->name('home');
                 Route::get('detail/{id}', 'Billing\BillingController@detail')->name('detail');
+                Route::post('del/{id}', 'Billing\BillingController@del')->name('del');
                 Route::post('save', 'Billing\BillingController@save')->name('save');
+                Route::match(['get', 'post'], "list",[BillingBillingController::class,'list'])->name('list');
             });
         });
 

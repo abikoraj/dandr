@@ -124,6 +124,9 @@ class Menu
                 'icon' => 'apps',
                 'text' => "POS",
                 'children' => [
+
+                    ["POS Interface Old", '09.01', route('admin.billing.home')],
+
                     ["POS Interface", '09.01', url('/pos/day')],
                     ["Search Bills", '09.02', route('admin.pos.billing.index')],
                     ["Reprint Bills", '09.03', route('admin.pos.billing.print')],

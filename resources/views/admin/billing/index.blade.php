@@ -90,7 +90,7 @@ input[type=number] {
                     </span>
                     <span>
                         <h3 >
-                            <a style="color:White;" href="{{route('admin.dashboard')}}">Home</a>
+                            <a style="color:White;" href="{{route('admin.dashboard')}}">Home</a>aa
                         </h3>
                     </span>
                 </div>
@@ -98,9 +98,17 @@ input[type=number] {
         </div>
         <div  style="flex-grow: 1;border:1px #505050 solid;overflow:scroll;">
             <div class="row p-1">
-                <div class="col-2 offset-10">
+                <div class="col-2 offset-8">
+                    Center 
+                    <select name="center_id" class="form-control" id="center_id">
+                        @foreach ($centers as $center)
+                            <option value="{{$center->id}}">{{$center->name}}</option>
+                        @endforeach
+                    </select>
+                </div>
+                <div class="col-2 ">
                     Date :
-                    <input type="text" name="date" id="nepali-datepicker" placeholder="Date" required>
+                    <input type="text" name="date" id="nepali-datepicker" placeholder="Date" class="form-control" required>
                 </div>
             </div>
             <table class="table">
@@ -441,6 +449,7 @@ input[type=number] {
             var fd={
                 billitems:arr,
                 gross:$('#grosstotal').val(),
+                center_id:$('#center_id').val(),
                 date:$('#nepali-datepicker').val(),
                 dis:$('#discount').val(),
                 net:$('#nettotal').val(),

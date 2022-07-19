@@ -231,7 +231,7 @@ function maintainStock($item_id, $qty, $center_id = null, $dir = 'in')
     if (env('multi_stock', false)) {
 
         if ($center_id == null) {
-            $center = Center::first(['id']);
+            $center = Center::where('id',env('maincenter'))->first();
             if ($center == null) {
                 return;
             }
