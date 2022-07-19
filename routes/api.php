@@ -71,6 +71,7 @@ Route::middleware(['auth:api'])->group(function () {
 
     route::prefix('farmers')->group(function(){
         Route::get('list', [FarmerController::class,'list']);
+        Route::get('centers', [FarmerController::class,'centers']);
         Route::post('push-milk-data', [FarmerController::class,'pushMilkData']);
         Route::post('pull-milk-data', [FarmerController::class,'pullMilkData']);
     });

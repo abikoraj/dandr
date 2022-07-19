@@ -11,6 +11,9 @@ use Illuminate\Support\Facades\DB;
 
 class FarmerController extends Controller
 {
+    public function centers(){
+        return  response()->json(DB::select('select * from centers'));
+    }
     public function list( )
     {
         return response()->json(DB::select('select u.id,u.name,u.no,f.center_id from farmers f join users u on f.user_id=u.id '));
