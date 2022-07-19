@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Admin\CustomerController as AdminCustomerController;
 use App\Http\Controllers\Api\customerController;
+use App\Http\Controllers\Api\FarmerController;
 use App\Http\Controllers\Api\GeneralController;
 use App\Http\Controllers\Api\ItemController;
 use App\Http\Controllers\Api\LoginController;
@@ -66,6 +67,12 @@ Route::middleware(['auth:api'])->group(function () {
         Route::post('list',[ManufactureController::class,'list'])->middleware('permmission:13.05');
         Route::get('detail/{id}',[ManufactureController::class,'detail'])->middleware('permmission:13.04');
         Route::post('finish/{id}',[ManufactureController::class,'finish'])->middleware('permmission:13.04');
+    });
+
+    route::prefix('farmers')->group(function(){
+        Route::get('list', [FarmerController::class,'list']);
+        Route::post('push-milk-data', [FarmerController::class,'pushMilkData']);
+        Route::post('pull-milk-data', [FarmerController::class,'pullMilkData']);
     });
 });
 Route::match(['GET',"POST"],'variants', [ItemController::class,'variants']);
