@@ -8,5 +8,5 @@ use Illuminate\Database\Eloquent\Model;
 class StockOut extends Model
 {
     use HasFactory;
-    protected $fillable=['center_id','date'];
+    protected $fillable=['center_id','date','from_center_id'];
 }

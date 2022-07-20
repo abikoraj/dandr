@@ -50,6 +50,7 @@
                         <li><a href="{{ route('admin.center.index') }}" class="waves-effect waves-block">Manage Collection Center</a></li>
                         <li><a href="{{ route('admin.milk.index') }}" class="waves-effect waves-block"> Milk Collection</a></li>
                         <li><a href="{{ route('admin.snf-fat.index') }}" class="waves-effect waves-block">Add Fat & Snf</a></li>
+                        <li><a href="{{ route('admin.milk.chalan') }}" class="waves-effect waves-block">Milk Chalan</a></li>
                     </ul>
                 </li>
             @endif

@@ -21,6 +21,7 @@ use App\Http\Controllers\Admin\ItemStockController;
 use App\Http\Controllers\Admin\ItemVariantController;
 use App\Http\Controllers\Admin\Manufacture\ManufactreProductController;
 use App\Http\Controllers\Admin\Manufacture\ManufactureProcessController;
+use App\Http\Controllers\Admin\MilkController;
 use App\Http\Controllers\Admin\OfferController;
 use App\Http\Controllers\Admin\PackagingController;
 use App\Http\Controllers\Admin\PointController;
@@ -166,11 +167,12 @@ Route::name('admin.')->group(function () {
             Route::get('', 'Admin\MilkController@index')->name('index')->middleware('permmission:02.01');
             Route::post('save/{type}', 'Admin\MilkController@saveMilkData')->name('store')->middleware('permmission:02.01');
             Route::post('load', 'Admin\MilkController@milkDataLoad')->name('load')->middleware('permmission:02.01');
-
             Route::post('update', 'Admin\MilkController@update')->name('update')->middleware('permmission:02.02');
             Route::post('delete', 'Admin\MilkController@delete')->name('delete')->middleware('permmission:02.03');
-
             Route::post('farmer-data-load', 'Admin\MilkController@loadFarmerData')->name('load.farmer.data');
+
+            Route::match(['GET','POST'],'chalan',[MilkController::class,'chalan'])->name('chalan');
+            Route::match(['GET','POST'],'chalan-save',[MilkController::class,'chalanSave'])->name('chalan-save');
         });
 
         Route::prefix('distributers')->name('distributer.')->group(function () {

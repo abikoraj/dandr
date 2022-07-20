@@ -309,7 +309,7 @@ class ItemController extends Controller
     {
         $items = [];
         if ($request->getMethod() == "GET") {
-            $centers = DB::table('centers')->where('id', '!=', env('maincenter'))->get(['id', 'name']);
+            $centers = DB::table('centers')->get(['id', 'name']);
             $items = DB::table('items')->get(['id', 'title', 'number']);
 
             return view('admin.item.stockout', compact('items', 'centers'));
@@ -324,7 +324,8 @@ class ItemController extends Controller
                 //code...
                 $sout = StockOut::create([
                     'date' => $date,
-                    'center_id' => $center_id
+                    'center_id' => $center_id,
+                    'from_center_id' => $from_center_id,
                 ]);
                 foreach ($request->items as $key => $item) {
                     $sout_item = StockOutItem::create([
@@ -406,7 +407,7 @@ class ItemController extends Controller
             ->where('stock_out_id', $id)->get(['item_id', 'amount']);
         foreach ($stockOutItems as $key => $item) {
             $cstock = CenterStock::where('item_id', $item->item_id)->where('center_id', $stockOut->center_id)->first();
-            $istock = CenterStock::where('item_id', $item->item_id)->where('center_id', env('maincenter'))->first();
+            $istock = CenterStock::where('item_id', $item->item_id)->where('center_id', $stockOut->from_center_id??env('maincenter'))->first();
             if ($cstock != null) {
                 $cstock->amount -= $item->amount;
                 $cstock->save();

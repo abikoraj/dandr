@@ -59,8 +59,19 @@ function toNepaliDate($date)
 
 function truncate_decimals($number, $decimals = 2)
 {
+    // $factor = pow(10, $decimals);
+    // $val = intval($number * $factor) / $factor;
+    // return $val;
     $factor = pow(10, $decimals);
-    $val = intval($number * $factor) / $factor;
+
+    $mul = strval($number * $factor);
+    $pos = strpos($mul, '.');
+    if ($pos != false) {
+        $mul = substr($mul, 0,$pos);
+    }
+    $data = intval($mul);
+    $val = ($data) / $factor;
+
     return $val;
 }
 
