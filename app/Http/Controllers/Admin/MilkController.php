@@ -95,6 +95,7 @@ class MilkController extends Controller
             }
             $product->save();
         }
+        
         $milkData->save();
         $milkData->no = $user->no;
         if ($actiontype == 1) {
@@ -192,38 +193,47 @@ class MilkController extends Controller
             throw new \Exception('Please Set Milk Item');
         }
 
-        foreach ($request->chalan_ids as $key => $chalan_id) {
-            $amount = $request->input('chalan_amount_' . $chalan_id);
-            $stockOutItem = StockOutItem::where('id', $chalan_id)->first();
-            if ($stockOutItem->amount != $amount) {
-                $stockOut = StockOut::where('id', $stockOutItem->stock_out_id)->first();
-                $oldAmount = $stockOutItem->amount;
-                $stockOutItem->amount = $amount;
-                $stockOutItem->save();
-                maintainStockCenter($stockOutItem->item_id, $oldAmount, $stockOut->center_id, "out");
-                maintainStockCenter($stockOutItem->item_id, $oldAmount, $stockOut->from_center_id, "in");
-                maintainStockCenter($stockOutItem->item_id, $amount, $stockOut->center_id, "in");
-                maintainStockCenter($stockOutItem->item_id, $amount, $stockOut->from_center_id, "out");
+        if($request->filled('chalan_ids')){
+
+            foreach ($request->chalan_ids as $key => $chalan_id) {
+                $amount = $request->input('chalan_amount_' . $chalan_id);
+                $stockOutItem = StockOutItem::where('id', $chalan_id)->first();
+                if ($stockOutItem->amount != $amount) {
+                    $stockOut = StockOut::where('id', $stockOutItem->stock_out_id)->first();
+                    $oldAmount = $stockOutItem->amount;
+                    $stockOutItem->amount = $amount;
+                    $stockOutItem->save();
+                    maintainStockCenter($stockOutItem->item_id, $oldAmount, $stockOut->center_id, "out");
+                    maintainStockCenter($stockOutItem->item_id, $oldAmount, $stockOut->from_center_id, "in");
+                    maintainStockCenter($stockOutItem->item_id, $amount, $stockOut->center_id, "in");
+                    maintainStockCenter($stockOutItem->item_id, $amount, $stockOut->from_center_id, "out");
+                }
             }
         }
-        foreach ($request->center_ids as $key => $center_id) {
-            $amount = $request->input('center_amount_' . $center_id);
-            if($amount>0){
+        if($request->filled('center_ids')){
 
-                $stockOut = StockOut::create([
-                    'date' => $date,
-                    'center_id' => $maincenter->id,
-                    'from_center_id' => $center_id,
-                ]);
+            foreach ($request->center_ids as $key => $center_id) {
+                if($request->filled('center_amount_' . $center_id)){
     
-                $stockOutItem = StockOutItem::create([
-                    'item_id' => $milk_id,
-                    'amount' => $amount,
-                    'stock_out_id' => $stockOut->id
-                ]);
-
-                maintainStockCenter($milk_id, $amount, $stockOut->center_id, "in");
-                maintainStockCenter($milk_id, $amount, $stockOut->from_center_id, "out");
+                    $amount = $request->input('center_amount_' . $center_id);
+                    if($amount>0){
+        
+                        $stockOut = StockOut::create([
+                            'date' => $date,
+                            'center_id' => $maincenter->id,
+                            'from_center_id' => $center_id,
+                        ]);
+            
+                        $stockOutItem = StockOutItem::create([
+                            'item_id' => $milk_id,
+                            'amount' => $amount,
+                            'stock_out_id' => $stockOut->id
+                        ]);
+        
+                        maintainStockCenter($milk_id, $amount, $stockOut->center_id, "in");
+                        maintainStockCenter($milk_id, $amount, $stockOut->from_center_id, "out");
+                    }
+                }
             }
         }
         return response('ok');

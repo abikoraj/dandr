@@ -206,7 +206,7 @@ function setSetting($key, $value, $direct = false)
 
 function maintainStockCenter($item_id, $qty, $center_id, $dir = 'in')
 {
-
+    
     if (CenterStock::where('item_id', $item_id)->where('center_id', $center_id)->count() > 0) {
         if ($dir == 'in') {
             DB::update('update center_stocks set amount = amount+? where item_id = ? and center_id=?', [$qty, $item_id, $center_id]);
