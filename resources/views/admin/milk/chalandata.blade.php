@@ -16,7 +16,7 @@
                 Milk Amount <input type="number" min="0" name="chalan_amount_{{$chalan->stock_out_item_id}}" value="{{$chalan->amount}}" required> 
                 @else
                 <input type="hidden" name="center_ids[]" value="{{$center->id}}">
-                Milk Amount <input type="number" min="0" name="center_amount_{{$center->id}}" required> 
+                Milk Amount <input type="number" min="0" name="center_amount_{{$center->id}}" > 
                 @endif
             </dd>
         </dl>
