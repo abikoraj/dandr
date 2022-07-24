@@ -30,7 +30,7 @@ class FarmerController extends Controller
         if($request->filled('center_id')){
             $query=$query->where('center_id',$request->center_id);
         }
-        return response()->json($query->get());
+        return response(json_encode($query->get(),JSON_NUMERIC_CHECK));
     }
 
     public function pushMilkData(Request $request){

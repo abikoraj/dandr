@@ -75,10 +75,10 @@ Route::middleware(['auth:api'])->group(function () {
         Route::post('push-milk-data', [FarmerController::class,'pushMilkData']);
         Route::post('pull-milk-data', [FarmerController::class,'pullMilkData']);
     });
+    
 });
 Route::match(['GET',"POST"],'variants', [ItemController::class,'variants']);
 Route::match(['GET',"POST"],'show-ledger', [ItemController::class,'showLedger']);
-
 // Route::get('json/{table}',function($table){
 //     return response(json_encode(DB::table($table)->first(),JSON_NUMERIC_CHECK|JSON_PRESERVE_ZERO_FRACTION));
 // });
