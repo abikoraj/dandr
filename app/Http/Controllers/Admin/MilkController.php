@@ -112,6 +112,7 @@ class MilkController extends Controller
             ->join('farmers', 'farmers.user_id', '=', 'milkdatas.user_id')
             ->where(['date' => $date, 'milkdatas.center_id' => $request->center_id])
             ->select('milkdatas.*', 'farmers.no')
+            ->orderBy('milkdatas.id')
             ->get();
         return view('admin.milk.dataload', ['milkdatas' => $milkData]);
     }
