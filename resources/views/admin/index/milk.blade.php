@@ -1,10 +1,12 @@
-<div class="col-md-5">
+<div class="col-md-6">
     <div class="shadow">
         <h5 class="mb-0 p-2">
             Milk Collection
         </h5>
         @php
             $milkTotal=0;
+            $m_milkTotal=0;
+            $e_milkTotal=0;
         @endphp
         <div class="py-2">
             <table class="table">
@@ -13,7 +15,13 @@
                         Center
                     </th>
                     <th>
-                        Collection
+                        Morning
+                    </th>
+                    <th>
+                        Evening
+                    </th>
+                    <th>
+                        Total
                     </th>
                 </tr>
                 @foreach ($milkData as $data)
@@ -22,9 +30,21 @@
                             {{$data->center}}
                         </td>
                         <td>
-                            {{$data->amount}}
+                            {{$data->amounts->m_amount}}
                             @php
-                                $milkTotal+=$data->amount;
+                                $m_milkTotal+=$data->amounts->m_amount;
+                            @endphp
+                        </td>
+                        <td>
+                            {{$data->amounts->e_amount}}
+                            @php
+                                $e_milkTotal+=$data->amounts->e_amount;
+                            @endphp
+                        </td>
+                        <td>
+                            {{$data->amounts->e_amount+$data->amounts->m_amount}}
+                            @php
+                                $milkTotal+=$data->amounts->e_amount+$data->amounts->m_amount;
                             @endphp
                         </td>
 
@@ -34,6 +54,12 @@
                 <tr>
                     <th>
                         Total Amount
+                    </th>
+                    <th>
+                        {{$m_milkTotal}}
+                    </th>
+                    <th>
+                        {{$e_milkTotal}}
                     </th>
                     <th>
                         {{$milkTotal}}

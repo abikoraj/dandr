@@ -22,7 +22,7 @@ class DashboardController extends Controller
         foreach (Center::all(['id','name']) as $key => $center) {
             array_push($milkData,(object)[
                 'center'=>$center->name,
-                'amount'=> DB::table('milkdatas')->where('center_id',$center->id)->where('date',$today)->select(DB::raw('(sum(e_amount) + sum(m_amount) ) as amount'))->first()->amount??0
+                'amounts'=> DB::table('milkdatas')->where('center_id',$center->id)->where('date',$today)->select(DB::raw('IFNULL(sum(e_amount),0) as e_amount ,IFNULL(sum(m_amount),0)  as m_amount'))->first()??((object)['m_amount'=>0,'e_amount'=>0])
             ]);
         }
 

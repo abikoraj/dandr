@@ -44,6 +44,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Sahakari\HomeController;
 use App\Http\Controllers\Sahakari\Member\MemberController;
 use App\Http\Controllers\SMSController;
+use App\Http\Controllers\SummaryController;
 use App\Models\ExtraIncome;
 use App\Models\ExtraIncomeCategory;
 use App\Models\Item;
@@ -171,7 +172,7 @@ Route::name('admin.')->group(function () {
             Route::post('delete', 'Admin\MilkController@delete')->name('delete')->middleware('permmission:02.03');
             Route::post('farmer-data-load', 'Admin\MilkController@loadFarmerData')->name('load.farmer.data');
 
-            Route::match(['GET','POST'],'chalan',[MilkController::class,'chalan'])->name('chalan');
+        Route::match(['GET','POST'],'chalan',[MilkController::class,'chalan'])->name('chalan');
             Route::match(['GET','POST'],'chalan-save',[MilkController::class,'chalanSave'])->name('chalan-save');
         });
 
@@ -382,6 +383,7 @@ Route::name('admin.')->group(function () {
             });
         });
 
+        // XXX sms
         Route::prefix('sms')->name('sms.')->group(function () {
             Route::post('distributer-credit', [SMSController::class, 'distributerCredit'])->name('distributer.credit');
             Route::post('customer-credit', [SMSController::class, 'customerCredit'])->name('customer.credit');
@@ -596,7 +598,6 @@ Route::name('admin.')->group(function () {
         });
 
         //XXX report routes
-
         Route::group(['prefix' => 'report'], function () {
             Route::name('report.')->group(function () {
 
@@ -615,6 +616,11 @@ Route::name('admin.')->group(function () {
                 Route::match(['GET', 'POST'], 'bonus', [ReportController::class, 'bonus'])->name('bonus');
                 Route::match(['GET', 'POST'], 'stock', [ReportController::class, 'stock'])->name('stock');
             });
+        });
+
+        //XXX summary
+        Route::prefix('summary')->name('summary.')->group(function(){
+            Route::match(['get', 'post'], '', [SummaryController::class,'index'])->name('index');
         });
 
         ///XXX billing

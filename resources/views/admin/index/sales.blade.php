@@ -1,4 +1,4 @@
-<div class="col-md-7">
+<div class="col-md-6">
     <div class="shadow">
         <h5 class="mb-0 p-2">
             Sales

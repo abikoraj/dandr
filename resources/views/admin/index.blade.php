@@ -12,8 +12,14 @@
 
 @include('admin.modalmenu')
 <hr>
-<h5>
-    General Report of {{_nepalidate($today)}}
+<h5 class="d-flex justify-content-between">
+    <span>
+
+        General Report of {{_nepalidate($today)}}
+    </span>
+    <span>
+        <a href="{{route('admin.summary.index')}}">View More </a>
+    </span>
 </h5>
 
 <hr>
