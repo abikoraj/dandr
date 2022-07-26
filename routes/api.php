@@ -55,6 +55,10 @@ Route::middleware(['auth:api'])->group(function () {
     Route::middleware('permmission:09.05')->group(function(){
         Route::prefix('customers')->group(function(){
             Route::get('customers/{center_id}',[customerController::class,'index']);
+            Route::get('unsynced-customers/{center_id}',[customerController::class,'unsyncedCustomers']);
+            Route::post('fetch-customers/{center_id}',[customerController::class,'fetchCustomer']);
+            Route::post('push-customers/{center_id}',[customerController::class,'pushCustomer']);
+            Route::get('ledgers/{id}', [customerController::class,'ledger']);
         });
         Route::post('customers/{center_id}',[GeneralController::class,'getCustomers']);
 
@@ -75,6 +79,7 @@ Route::middleware(['auth:api'])->group(function () {
         Route::post('push-milk-data', [FarmerController::class,'pushMilkData']);
         Route::post('pull-milk-data', [FarmerController::class,'pullMilkData']);
     });
+
     
 });
 Route::match(['GET',"POST"],'variants', [ItemController::class,'variants']);

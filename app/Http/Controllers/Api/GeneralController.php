@@ -27,6 +27,7 @@ class GeneralController extends Controller
         ->join('users','users.id','=','customers.user_id')
         ->where('customers.center_id',$center_id)
         ->whereNotIn('users.phone',$request->phones)
+        ->where('customers.foreign_id','<>',0)
         ->select(DB::raw('users.name,users.phone,users.address,customers.panvat,customers.foreign_id as id,
         (select sum(amount) from ledgers where user_id=users.id and type=1) as cr,
         (select sum(amount) from ledgers where user_id=users.id and type=2) as dr'))->get();

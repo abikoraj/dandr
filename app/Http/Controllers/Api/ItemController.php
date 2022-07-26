@@ -94,8 +94,10 @@ class ItemController extends Controller
                     $cus_user->address = $customer->address??"";
                     $cus_user->phone = $customer->phone;
                     $cus_user->save();
-
-                    $new_cus = new Customer();
+                    $new_cus=Customer::where('user_id',$cus_user->id)->first();
+                    if($new_cus==null){
+                        $new_cus = new Customer();
+                    }
                     $new_cus->panvat = $customer->panvat;
                     $new_cus->center_id = $request->center_id;
                     $new_cus->user_id = $cus_user->id;
@@ -252,13 +254,17 @@ class ItemController extends Controller
             $cus_user->phone = $customer->phone;
             $cus_user->save();
 
-            $new_cus = new Customer();
+            $new_cus=Customer::where('user_id',$cus_user->id)->first();
+            if($new_cus==null){
+                $new_cus = new Customer();
+            }
             $new_cus->panvat = $customer->panvat;
             $new_cus->center_id = $request->center_id;
             $new_cus->user_id = $cus_user->id;
             $new_cus->foreign_id = $customer->id;
             $new_cus->save();
         }
+
         try {
             $nepalidate = new NepaliDate($ledger->date);
             $title=$ledger->particular;
