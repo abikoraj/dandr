@@ -27,6 +27,8 @@ class MilkController extends Controller
     public function saveMilkData(Request $request, $type)
     {
         // dd($request->all());
+        $extracenters=explode(",",env('extracenter',''));
+
         $actiontype = 0;
         $date = str_replace('-', '', $request->date);
         $user = User::join('farmers', 'users.id', '=', 'farmers.user_id')->where('farmers.no', $request->user_id)->where('farmers.center_id', $request->center_id)->select('users.id', 'farmers.no', 'farmers.center_id')->first();
@@ -68,7 +70,7 @@ class MilkController extends Controller
             }
         }
 
-        if ($product != null) {
+        if ($product != null && !(in_array($request->center_id,$extracenters))) {
             if (env('multi_stock')) {
 
                 $centerStock = $product->stock($request->center_id);
@@ -148,6 +150,8 @@ class MilkController extends Controller
     {
         if ($request->getMethod() == "POST") {
             try {
+                $extracenters=explode(",",env('extracenter',''));
+                // dd($extracenters);
                 $date = str_replace('-', '', $request->date);
                 $maincenter = Center::where('id', env('maincenter', null))->first();
                 $milk_id = env('milk_id', null);
@@ -157,9 +161,18 @@ class MilkController extends Controller
                 if ($milk_id == null) {
                     throw new \Exception('Please Set Milk Item');
                 }
-                $centers = Center::where('id', '<>', $maincenter->id)->get();
+                if(count($extracenters)>0){
+
+                    $centers = Center::where('id', '<>', $maincenter->id)->whereNotIn('id',$extracenters)->get();
+                }else{
+                    $centers = Center::where('id', '<>', $maincenter->id)->whereNotIn->get();
+
+                }
 
                 foreach ($centers as $key => $center) {
+                    
+                    $center->milktotal=DB::selectOne("select sum(m_amount+e_amount) as amount from milkdatas where center_id={$center->id} and date={$date}")->amount??0;
+
                     $center->chalans = DB::select("select 
                     s.id,
                     si.id as stock_out_item_id,
@@ -168,6 +181,7 @@ class MilkController extends Controller
                     join stock_out_items si on si.stock_out_id=s.id
                     where s.date={$date} and s.from_center_id = {$center->id} and s.center_id={$maincenter->id} and si.item_id={$milk_id}");
                 }
+                // dd($centers);
                 //code...
             } catch (\Throwable $th) {
                 return response($th->getMessage());
@@ -213,6 +227,7 @@ class MilkController extends Controller
         }
         if($request->filled('center_ids')){
 
+            // dd($request->center_ids);
             foreach ($request->center_ids as $key => $center_id) {
                 if($request->filled('center_amount_' . $center_id)){
     
@@ -223,6 +238,7 @@ class MilkController extends Controller
                             'date' => $date,
                             'center_id' => $maincenter->id,
                             'from_center_id' => $center_id,
+
                         ]);
             
                         $stockOutItem = StockOutItem::create([
@@ -231,8 +247,8 @@ class MilkController extends Controller
                             'stock_out_id' => $stockOut->id
                         ]);
         
-                        maintainStockCenter($milk_id, $amount, $stockOut->center_id, "in");
-                        maintainStockCenter($milk_id, $amount, $stockOut->from_center_id, "out");
+                        maintainStockCenter($milk_id, $amount,  $maincenter->id, "in");
+                        maintainStockCenter($milk_id, $amount, $center_id, "out");
                     }
                 }
             }

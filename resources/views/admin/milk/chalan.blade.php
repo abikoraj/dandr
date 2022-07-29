@@ -43,6 +43,18 @@
 
             }
         }
+
+        function loadAllChalan(){
+            $('.milkdata').each(function (index, element) {
+                element.click();
+                
+            });
+        }
+
+        function collect(id,amount){
+            console.log(id,amount);
+            $('#amount_'+id).val(amount);
+        }
     </script>
 
 @endsection
