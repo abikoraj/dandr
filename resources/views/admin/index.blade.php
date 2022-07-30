@@ -22,12 +22,15 @@
     </span>
 </h5>
 
-<hr>
-<div class="row" id="datas">
-    @include('admin.index.milk')
-    @include('admin.index.sales')
-</div>
-@endsection
+@if (env('use_farmer',false))
+    
+    <hr>
+    <div class="row" id="datas">
+        @include('admin.index.milk')
+        @include('admin.index.sales')
+    </div>
+    @endsection
+@endif
 @section('js')
     <script src="{{asset('assets/js/chart.js')}}"></script>
     <script>
