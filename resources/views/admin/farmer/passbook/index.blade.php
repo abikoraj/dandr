@@ -60,17 +60,25 @@
     <script src="{{ asset('backend/js/jquery.hotkeys.js') }}"></script>
     <script src="{{ asset('backend/plugins/select2/select2.min.js') }}"></script>
     <script>
-
+        
         function closeSession(e,ele){
             e.preventDefault();
+            showProgress("Saving Payment And Closing session");
             axios.post("{{route('admin.farmer.passbook.close')}}",new FormData(ele))
             .then((res)=>{
                 console.log(res.data);
+                loadData();
+                hideProgress();
+            })
+            .catch((err)=>{
+                loadData();
+                hideProgress();
             })
         }
         function loadData() {
             user = null;
             $('#allData').html(`<div class=" text-center">Loading Data</div>`);
+            showProgress("Loading Data");
 
             var data = {
                 'farmer_no': $('#farmer_no').val(),
@@ -88,11 +96,13 @@
                     $('#allData').html(response.data);
                     setDate('closedate');
                     addXPayHandle();
+                    hideProgress();
                 })
                 .catch(function(response) {
                     //handle error
                     $('#allData').html(`<div class="text-danger text-center">Error Loading Data</div>`);
 
+                    hideProgress();
                     console.log(response);
                 });
         }

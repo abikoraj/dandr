@@ -154,7 +154,7 @@ class FarmerDetailController extends Controller
         // dd($milk_rate);
         // dd(compact('snfFats','milkData','data','center','farmer1'));
         $closingDate = NepaliDate::getDateSessionLast($request->year, $request->month, $request->session);
-        return view('admin.farmer.passbook.data',compact('farmer','closingDate','prev','closing'));
+        return view('admin.farmer.passbook.data',compact('farmer','closingDate','prev','closing','center'));
         // dd($farmer,$closingDate);
     }
 
