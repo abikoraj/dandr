@@ -173,7 +173,7 @@
         </div>
        
 
-    @include('admin.farmer.passbook.ledger')
+        @include('admin.farmer.passbook.ledger')
 
         <div class="col-md-12">
 
@@ -345,5 +345,11 @@
                 </table>
             </div>
         </div>
+        
     </div>
+    @if ($farmer->nettotal>0 && $farmer->paidamount==0 )
+        <div>
+            @include('admin.farmer.passbook.payment')
+        </div>
+    @endif
 </div>

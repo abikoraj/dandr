@@ -3,12 +3,15 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\LedgerManage;
 use App\Models\Advance;
 use App\Models\Center;
 use App\Models\FarmerReport;
 use App\Models\Ledger;
+use App\Models\MilkPayment;
 use App\Models\User;
 use App\NepaliDate;
+use App\PaymentManager;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -27,6 +30,7 @@ class FarmerDetailController extends Controller
         $center=DB::selectOne('select snf_rate,fat_rate,cc,tc,bonus from centers where id=?',[$request->center_id]);
         
         $farmer->session=[$request->year, $request->month, $request->session];
+        $farmer->center_id=$request->center_id;
         $range = NepaliDate::getDate($request->year, $request->month, $request->session);
 
         $farmer->old = FarmerReport::where(['year' => $request->year, 'month' => $request->month, 'session' => $request->session, 'user_id' => $farmer->id])->count() > 0;
@@ -150,7 +154,79 @@ class FarmerDetailController extends Controller
         // dd($milk_rate);
         // dd(compact('snfFats','milkData','data','center','farmer1'));
         $closingDate = NepaliDate::getDateSessionLast($request->year, $request->month, $request->session);
-        return view('admin.farmer.passbook.data',compact('farmer','closingDate'));
+        return view('admin.farmer.passbook.data',compact('farmer','closingDate','prev','closing'));
         // dd($farmer,$closingDate);
+    }
+
+    public function close(Request $request){
+        $date = str_replace('-', '', $request->date);;
+        $ledger = new LedgerManage($request->id);
+        $data=[];
+        if($request->filled('payment_amount')){
+            $payment=new MilkPayment();
+            $payment->session=$request->session;
+            $payment->year=$request->year;
+            $payment->month=$request->month;
+            $payment->center_id=$request->center_id;
+            $payment->amount=$request->payment_amount;
+            $payment->user_id=$request->id;
+            $payment->date=$date;
+            $payment->save();
+           
+            $ledger=new LedgerManage($payment->user_id);
+            if(env('acc_system','old')=='old'){
+                $ledger->addLedger('Payment Milk Payment Given To Farmer',1,$payment->amount,$date,'121',$payment->id);
+            }else{
+                $ledger->addLedger('Payment Milk Payment Given To Farmer',2,$payment->amount,$date,'121',$payment->id);
+            }
+            new PaymentManager($request,$payment->id,121);
+            array_push($data,$payment);
+        }
+        if($request->filled('close')){
+            if (env('acc_system', "old") == "old") {
+                if (env('hasextra', 0) == 1) {
+                    $ledger->addLedger("Bonus", 1, $request->bonus, $date, '124');
+                }
+                if ($request->grandtotal > 0) {
+                    $ledger->addLedger("Payment for milk (" . ($request->milk) . "l)", 2, $request->grandtotal, $date, '108');
+                }
+            } else {
+                if (env('hasextra', 0) == 1) {
+                    $ledger->addLedger("Bonus", 2, $request->bonus, $date, '124');
+                }
+                if ($request->grandtotal > 0) {
+                    $ledger->addLedger("Payment for milk (" . ($request->milk) . "l)", 1, $request->grandtotal, $date, '108');
+                }
+            }
+            $farmerreport = new FarmerReport();
+            $farmerreport->user_id = $request->id;
+            $farmerreport->milk = $request->milk;
+            $farmerreport->snf = $request->snf ?? 0;
+            $farmerreport->fat = $request->fat ?? 0;
+            $farmerreport->rate = $request->rate ?? 0;
+            $farmerreport->total = $request->total ?? 0;
+            $farmerreport->due = $request->due ?? 0;
+            $farmerreport->bonus = $request->bonus ?? 0;
+            $farmerreport->prevdue = $request->prevdue ?? 0;
+            $farmerreport->advance = $request->advance ?? 0;
+            $farmerreport->nettotal = $request->nettotal ?? 0;
+            $farmerreport->balance = $request->balance ?? 0;
+            $farmerreport->paidamount = $request->paidamount ?? 0;
+            $farmerreport->prevbalance = $request->prevbalance ?? 0;
+            $farmerreport->tc = $request->tc ?? 0;
+            $farmerreport->cc = $request->cc ?? 0;
+            $farmerreport->grandtotal = $request->grandtotal ?? $request->total;
+            $farmerreport->year = $request->year;
+            $farmerreport->month = $request->month;
+            $farmerreport->session = $request->session;
+            $farmerreport->fpaid = $request->fpaid;
+            $farmerreport->center_id = $request->center_id;
+            $farmerreport->save();
+            array_push($data,$farmerreport);
+        }
+
+      
+
+        return response()->json($data);
     }
 }

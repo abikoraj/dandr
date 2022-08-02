@@ -57,8 +57,17 @@
 
 @endsection
 @section('js')
+    <script src="{{ asset('backend/js/jquery.hotkeys.js') }}"></script>
     <script src="{{ asset('backend/plugins/select2/select2.min.js') }}"></script>
     <script>
+
+        function closeSession(e,ele){
+            e.preventDefault();
+            axios.post("{{route('admin.farmer.passbook.close')}}",new FormData(ele))
+            .then((res)=>{
+                console.log(res.data);
+            })
+        }
         function loadData() {
             user = null;
             $('#allData').html(`<div class=" text-center">Loading Data</div>`);
@@ -77,8 +86,8 @@
                 })
                 .then(function(response) {
                     $('#allData').html(response.data);
-
                     setDate('closedate');
+                    addXPayHandle();
                 })
                 .catch(function(response) {
                     //handle error
@@ -90,6 +99,11 @@
 
         window.onload = function() {
             $('body').addClass('ls-toggle-menu');
+            $('body,.form-control1, .form-control').bind('keydown', 'f1', function(e) {
+                e.preventDefault();
+                $('#farmer_no').focus();
+                $('#farmer_no').select();
+            });
 
         };
 
@@ -108,5 +122,8 @@
         function milkDeleted(data) {
             loadData();
         }
+
+
+
     </script>
 @endsection

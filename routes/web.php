@@ -107,12 +107,13 @@ Route::name('admin.')->group(function () {
         });
 
 
-
+        // XXX farmer
         Route::prefix('farmers')->name('farmer.')->group(function () {
-
+            // XXX farmer passbook
             Route::prefix('passbook')->name('passbook.')->middleware('permmission:01.11')->group(function(){
                 Route::get('',[FarmerDetailController::class,'index'])->name('index');
                 Route::post('data',[FarmerDetailController::class,'data'])->name('data');
+                Route::post('close',[FarmerDetailController::class,'close'])->name('close');
             });
             // XXX farmer routes
             Route::get('', [FarmerController::class, 'index'])->name('list')->middleware('permmission:01.01');

@@ -453,3 +453,17 @@ function nepaliMonthName(int $i){
     return $_n[$i];
 }
 
+function makeFive($num){
+    try {
+        $mod=$num%5;
+        // return $mod;
+        if($mod==0){
+           return $num;
+        }else{
+                return ($num-$mod)+($mod>=3?5:0);
+            
+        }
+    } catch (\Throwable $th) {
+        return 0;
+    }
+}
