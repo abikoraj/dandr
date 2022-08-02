@@ -36,7 +36,16 @@
 
 <script>
     snflock=false;
-    function showSnfFatUpdate(ele){
+    function showSnfFatUpdateNew(id){
+        const txt = $('#snffat-' + id).html();
+        const snfdata = JSON.parse(txt);
+        console.log(txt, snfdata);
+        $('#update_snf').val(snfdata.snf);
+        $('#update_snffat_id').val(snfdata.id);
+        $('#update_fat').val(snfdata.fat);
+        $('#snf_change').modal('show');
+    }
+    function showSnfFatUpdate(id){
         snfdata=$(ele).data('snffat');
         $('#update_snf').val(snfdata.snf);
         $('#update_snffat_id').val(snfdata.id);

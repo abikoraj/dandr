@@ -33,6 +33,7 @@
                         <li><a href="{{ route('admin.farmer.due.add.list') }}" class="waves-effect waves-block">Account Opening</a></li>
                         <li><a href="{{ route('admin.farmer.milk.payment.index') }}" class="waves-effect waves-block">Milk Payment</a></li>
                         <li><a href="{{ route('admin.sell.item.index') }}" class="waves-effect waves-block">Farmer Sell</a></li>
+                        <li><a href="{{ route('admin.farmer.passbook.index') }}" class="waves-effect waves-block">Check Passbook</a></li>
                     </ul>
                 </li>
             @endif

@@ -13,6 +13,7 @@ return [
             "acc_opening" => ['code' => "01.06"],
             "milk_payment" => ['code' => "01.07"],
             "item_sell" => ['code' => "01.08"],
+            "details" => ['code' => "01.11"],
         ]
     ],
     "milk_collection" => [

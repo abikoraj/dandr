@@ -128,18 +128,33 @@ class MilkController extends Controller
     public function update(Request $request)
     {
         $milkdata = Milkdata::find($request->id);
+        $oldAmount=$milkdata->e_amount+ $milkdata->m_amount;
         $milkdata->e_amount = $request->evening;
         $milkdata->m_amount = $request->morning;
+        $newAmount=$milkdata->e_amount+ $milkdata->m_amount;
+        if($oldAmount!=$newAmount){
+            $milk_id=env('milk_id');
+            if($milk_id!=null){
+                $amount=$newAmount-$oldAmount;
+                if($amount>0){
+                    maintainStock($milk_id,$amount,$milkdata->center_id,'in');
+                }else{
+                    $amount=-1*$amount;
+                    maintainStock($milk_id,$amount,$milkdata->center_id,'out');
+                }
+            }
+        }
+
         $milkdata->save();
-        return response('ok', 200);
+        return response()->json([$amount,$oldAmount,$newAmount]);
     }
     public function delete(Request $request)
     {
         $milkdata = Milkdata::find($request->id);
-        $product = Item::where('id', env('milk_id'))->first();
-        if ($product != null) {
-            $product->stock -= ($milkdata->e_amount + $milkdata->m_amount);
-            $product->save();
+        $milk_id=env('milk_id');
+        if($milk_id!=null){
+            $amount=$milkdata->e_amount+ $milkdata->m_amount;
+            maintainStock($milk_id,$amount,$milkdata->center_id,'out');
         }
         $milkdata->delete();
         return response('ok', 200);

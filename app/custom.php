@@ -328,6 +328,16 @@ function renderEmpList(){
     return $html;
 }
 
+function renderCenters($blank=false){
+    $centers=DB::select('select id,name from centers');
+    $html=$blank?"<option></option>":"";
+
+    foreach ($centers as $key => $center) {
+        $html.="<option value='{$center->id}'>{$center->name}</option>";
+    }
+    return $html;
+}
+
 
 function getFiscalYear(){
     $name=env('fiscal_year',null);

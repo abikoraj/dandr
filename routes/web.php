@@ -14,6 +14,7 @@ use App\Http\Controllers\Admin\DistributorPaymentController;
 use App\Http\Controllers\Admin\EmployeeController;
 use App\Http\Controllers\Admin\ExtraIncomeController;
 use App\Http\Controllers\Admin\FarmerController;
+use App\Http\Controllers\Admin\FarmerDetailController;
 use App\Http\Controllers\Admin\GatewayController;
 use App\Http\Controllers\Admin\ImportController;
 use App\Http\Controllers\Admin\ItemController;
@@ -108,6 +109,11 @@ Route::name('admin.')->group(function () {
 
 
         Route::prefix('farmers')->name('farmer.')->group(function () {
+
+            Route::prefix('passbook')->name('passbook.')->middleware('permmission:01.11')->group(function(){
+                Route::get('',[FarmerDetailController::class,'index'])->name('index');
+                Route::post('data',[FarmerDetailController::class,'data'])->name('data');
+            });
             // XXX farmer routes
             Route::get('', [FarmerController::class, 'index'])->name('list')->middleware('permmission:01.01');
             Route::post('list-by-center', [FarmerController::class, 'listFarmerByCenter'])->name('list-bycenter');

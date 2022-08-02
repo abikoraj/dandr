@@ -164,7 +164,9 @@ $(".modal").each(function () {
         _id = $(this).data("ff");
         console.log("shown", _id);
         // $("#" + _id)[0].focus();
-        document.getElementById(_id).focus();
+        if(_id!=undefined){
+            document.getElementById(_id).focus();
+        }
     });
 });
 

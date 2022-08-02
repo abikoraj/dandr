@@ -19,6 +19,7 @@ class Menu
                     ["Account Opening", '01.06', route('admin.farmer.due.add.list')],
                     ["Milk Payment", '01.07', route('admin.farmer.milk.payment.index')],
                     ["Farmer Sell", '01.08', route('admin.sell.item.index')],
+                    ["Check Passbook", '01.11', route('admin.farmer.passbook.index')],
                 ],
             ],
             "milk" => [
