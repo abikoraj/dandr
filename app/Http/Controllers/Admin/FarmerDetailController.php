@@ -189,6 +189,7 @@ class FarmerDetailController extends Controller
         $closing = 0;
         $arr = [];
         $prev = ledgerPrev($farmer->id, $range[1], 2) - ledgerPrev($farmer->id, $range[1], 1);
+
         $previousMonth = ledgerSum($farmer->id, '101', $range, 2) - ledgerSum($farmer->id, '101', $range, 1)
         + ledgerSum($farmer->id, '102', $range, 2) - ledgerSum($farmer->id, '102', $range, 1);
         $base = $prev;
@@ -229,7 +230,7 @@ class FarmerDetailController extends Controller
         $farmer->prevdue = (float)$previousMonth1;
         $farmer->prevbalance = (float)$previousBalance;
         $farmer->paidamount = (float)Ledger::where('user_id', $farmer->id)->where('date', '>=', $range[1])->where('date', '<=', $range[2])->where('identifire', '121')->sum('amount');
-        $balance = $farmer->grandtotal + $farmer->prevdue - $farmer->advance - $farmer->purchase - $farmer->paidamount + $farmer->prevbalance - $farmer->bonus + $farmer->fpaid;
+        $balance = $farmer->grandtotal - $farmer->prevdue - $farmer->advance - $farmer->purchase - $farmer->paidamount + $farmer->prevbalance - $farmer->bonus + $farmer->fpaid;
 
         $farmer->balance = 0;
         $farmer->nettotal = 0;
