@@ -152,6 +152,8 @@
 
             return true;
 
+        }else{
+            return true;
         }
     }
     window.addEventListener('load', addXPayHandle, true);
