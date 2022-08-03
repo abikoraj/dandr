@@ -44,6 +44,15 @@ class SellitemController extends Controller
         if(env('farmersellmain',false)){
             $item_center_id=env('maincenter');
         }
+
+        // $extracenters=explode(",",env('extraposcenter',''));
+        // if(count($extracenters)>0){
+        //     if(in_array($item_center_id,$extracenters)){
+        //     }
+        // }
+
+
+
         if ($item->trackstock == 1) {
             if (env('multi_stock', false)) {
                 $stock = $item->stock($item_center_id);
