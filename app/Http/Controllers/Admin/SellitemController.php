@@ -45,15 +45,17 @@ class SellitemController extends Controller
             $item_center_id=env('maincenter');
         }
 
-        // $extracenters=explode(",",env('extraposcenter',''));
-        // if(count($extracenters)>0){
-        //     if(in_array($item_center_id,$extracenters)){
-        //     }
-        // }
+        $maintainStock=true;
+        $extracenters=explode(",",env('extraposcenter',''));
+        if(count($extracenters)>0){
+            if(in_array($request->center_id,$extracenters)){
+                $maintainStock=false;
+            }
+        }
 
 
 
-        if ($item->trackstock == 1) {
+        if ($item->trackstock == 1 && $maintainStock ) {
             if (env('multi_stock', false)) {
                 $stock = $item->stock($item_center_id);
                 if ($stock == null) {
@@ -89,7 +91,8 @@ class SellitemController extends Controller
             $sell_item->center_id = $request->center_id;
             $sell_item->item_center_id = $item_center_id;
             $sell_item->save();
-            if ($item->trackstock == 1) {
+
+            if ($item->trackstock == 1 && $maintainStock) {
                 $item->stock = $item->stock - $request->qty;
                 $item->save();
                 if (env('multi_stock', false)) {
@@ -192,7 +195,16 @@ class SellitemController extends Controller
         $total = $sell->total;
         $user_id = $sell->user_id;
 
-        maintainStock($sell->item_id,$sell->qty,$sell->item_center_id,"in");
+        $maintainStock=true;
+        $extracenters=explode(",",env('extraposcenter',''));
+        if(count($extracenters)>0){
+            if(in_array($sell->center_id,$extracenters)){
+                $maintainStock=false;
+            }
+        }
+        if($maintainStock){
+            maintainStock($sell->item_id,$sell->qty,$sell->item_center_id,"in");
+        }
 
         $sell->delete();
         $manager = new LedgerManage($user_id);
@@ -224,7 +236,16 @@ class SellitemController extends Controller
             $paid = $sell->paid;
             $total = $sell->total;
             $user_id = $sell->user_id;
-            maintainStock($sell->item_id,$sell->qty,$sell->item_center_id,"in");
+            $maintainStock=true;
+            $extracenters=explode(",",env('extraposcenter',''));
+            if(count($extracenters)>0){
+                if(in_array($sell->center_id,$extracenters)){
+                    $maintainStock=false;
+                }
+            }
+            if($maintainStock){
+                maintainStock($sell->item_id,$sell->qty,$sell->item_center_id,"in");
+            }
             $sell->delete();
             $manager = new LedgerManage($user_id);
             $ledger = [];
