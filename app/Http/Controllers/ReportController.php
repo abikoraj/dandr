@@ -147,6 +147,7 @@ class ReportController extends Controller
 
             foreach ($farmers as $key => $farmer) {
                 $farmer->old = $reports->where('user_id', $farmer->id)->count() > 0;
+                
                 $farmer->fat = truncate_decimals($farmer->fat);
                 $farmer->snf = truncate_decimals($farmer->snf);
                 $fatAmount = ($farmer->fat * $center->fat_rate);

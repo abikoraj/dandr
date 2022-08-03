@@ -177,11 +177,8 @@ class SellitemController extends Controller
         $total = $sell->total;
         $user_id = $sell->user_id;
 
-        $title = $item->title . ' ( Rs.' . $sell->rate . ' x ' . $sell->qty . ')';
+        maintainStock($sell->item_id,$sell->qty,$sell->center_id,"in");
 
-        $item->stock = $item->stock + $sell->qty;
-
-        $item->save();
         $sell->delete();
         $manager = new LedgerManage($user_id);
         $ledger = [];
@@ -208,16 +205,11 @@ class SellitemController extends Controller
 
 
             $sell = Sellitem::find($id);
-            $item = Item::where('id', $sell->item_id)->first();
 
             $paid = $sell->paid;
             $total = $sell->total;
             $user_id = $sell->user_id;
-
-            $title = $item->title . ' ( Rs.' . $sell->rate . ' x ' . $sell->qty . ')';
-
-            $item->stock = $item->stock + $sell->qty;
-            $item->save();
+            maintainStock($sell->item_id,$sell->qty,$sell->center_id,"in");
             $sell->delete();
             $manager = new LedgerManage($user_id);
             $ledger = [];
