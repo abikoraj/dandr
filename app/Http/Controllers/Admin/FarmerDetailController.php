@@ -22,6 +22,95 @@ class FarmerDetailController extends Controller
         // dd(renderCenters());
         return view('admin.farmer.passbook.index');
     }
+
+    public function updateData(Request $request){
+            $date = str_replace('-', '', $request->date);;
+            $farmerreport=FarmerReport::where('id',$request->report_id)->first();
+            $oldbonus=0;
+            $oldgrandtotal=0;
+            if($farmerreport==null){
+                throw new \Exception("Session Not Closed");
+            }else{
+                $oldbonus=$farmerreport->bonus;
+                $oldgrandtotal=$farmerreport->grandtotal;
+            }
+            $farmerreport->milk = $request->milk;
+            $farmerreport->snf = $request->snf ?? 0;
+            $farmerreport->fat = $request->fat ?? 0;
+            $farmerreport->rate = $request->rate ?? 0;
+            $farmerreport->total = $request->total ?? 0;
+            $farmerreport->due = $request->due ?? 0;
+            $farmerreport->bonus = $request->bonus ?? 0;
+            $farmerreport->prevdue = $request->prevdue ?? 0;
+            $farmerreport->advance = $request->advance ?? 0;
+            $farmerreport->nettotal = $request->nettotal ?? 0;
+            $farmerreport->balance = $request->balance ?? 0;
+            $farmerreport->paidamount = $request->paidamount ?? 0;
+            $farmerreport->prevbalance = $request->prevbalance ?? 0;
+            $farmerreport->tc = $request->tc ?? 0;
+            $farmerreport->cc = $request->cc ?? 0;
+            $farmerreport->grandtotal = $request->grandtotal ?? $request->total;
+            $farmerreport->fpaid = $request->fpaid;
+            $farmerreport->has_passbook = !($request->filled('no_passbook'));
+            $farmerreport->save();
+
+            $ledger=new LedgerManage($request->id);
+            if (env('hasextra', 0) == 1) {
+
+                if($oldbonus!=$farmerreport->bonus ){
+    
+                    $ledger_bonus=Ledger::where([
+                        'year' => $farmerreport->year, 
+                        'month' => $farmerreport->month,
+                        'session' => $farmerreport->session,
+                        'user_id' => $request->id,
+                        'identifire'=>124
+                      ])->first();
+                    if($ledger_bonus!=null){
+                        
+                        $ledger_bonus->amount=$farmerreport->bonus;
+                        $ledger_bonus->save();
+                    }else{
+                        if (env('acc_system', "old") == "old") {
+                            $ledger->addLedger("Bonus", 1, $request->bonus, $date, '124');
+
+                        }else{
+                            $ledger->addLedger("Bonus", 2, $request->bonus, $date, '124');
+
+                        }
+                    }
+                }
+            }
+
+            if($oldgrandtotal != $farmerreport->grandtotal){
+                $ledger_grandtotal=Ledger::where([
+                    'year' => $farmerreport->year, 
+                    'month' => $farmerreport->month,
+                    'session' => $farmerreport->session,
+                    'user_id' => $request->id,
+                    'identifire'=>108
+                  ])->first();
+                  if($ledger_grandtotal!=null){
+                    $ledger_grandtotal->title="Payment for milk (" . ($request->milk) . "l)";
+                    $ledger_grandtotal->amount=$request->grandtotal;
+                    $ledger_grandtotal->save();
+                  }else{
+                      if (env('acc_system', "old") == "old") {
+                         
+                          if ($request->grandtotal > 0) {
+                              $ledger->addLedger("Payment for milk (" . ($request->milk) . "l)", 2, $request->grandtotal, $date, '108');
+                          }
+                      } else {
+                         
+                          if ($request->grandtotal > 0) {
+                              $ledger->addLedger("Payment for milk (" . ($request->milk) . "l)", 1, $request->grandtotal, $date, '108');
+                          }
+                      }
+                  }
+            }
+
+    }
+
     public function data(Request $request)
     {
         $farmer = DB::table('users')->join('farmers', 'users.id', '=', 'farmers.user_id')->
@@ -33,7 +122,8 @@ class FarmerDetailController extends Controller
         $farmer->center_id=$request->center_id;
         $range = NepaliDate::getDate($request->year, $request->month, $request->session);
 
-        $farmer->old = FarmerReport::where(['year' => $request->year, 'month' => $request->month, 'session' => $request->session, 'user_id' => $farmer->id])->count() > 0;
+        $farmer->report = FarmerReport::where(['year' => $request->year, 'month' => $request->month, 'session' => $request->session, 'user_id' => $farmer->id])->first();
+        $farmer->old = $farmer->report!=null;
 
         $farmer->milkData = DB::table('milkdatas')
         ->where('user_id', $farmer->id)
@@ -163,24 +253,27 @@ class FarmerDetailController extends Controller
         $ledger = new LedgerManage($request->id);
         $data=[];
         if($request->filled('payment_amount')){
-            $payment=new MilkPayment();
-            $payment->session=$request->session;
-            $payment->year=$request->year;
-            $payment->month=$request->month;
-            $payment->center_id=$request->center_id;
-            $payment->amount=$request->payment_amount;
-            $payment->user_id=$request->id;
-            $payment->date=$date;
-            $payment->save();
-           
-            $ledger=new LedgerManage($payment->user_id);
-            if(env('acc_system','old')=='old'){
-                $ledger->addLedger('Payment Milk Payment Given To Farmer',1,$payment->amount,$date,'121',$payment->id);
-            }else{
-                $ledger->addLedger('Payment Milk Payment Given To Farmer',2,$payment->amount,$date,'121',$payment->id);
+            if($request->payment_amount>0){
+
+                $payment=new MilkPayment();
+                $payment->session=$request->session;
+                $payment->year=$request->year;
+                $payment->month=$request->month;
+                $payment->center_id=$request->center_id;
+                $payment->amount=$request->payment_amount;
+                $payment->user_id=$request->id;
+                $payment->date=$date;
+                $payment->save();
+               
+                $ledger=new LedgerManage($payment->user_id);
+                if(env('acc_system','old')=='old'){
+                    $ledger->addLedger('Payment Milk Payment Given To Farmer',1,$payment->amount,$date,'121',$payment->id);
+                }else{
+                    $ledger->addLedger('Payment Milk Payment Given To Farmer',2,$payment->amount,$date,'121',$payment->id);
+                }
+                new PaymentManager($request,$payment->id,121);
+                array_push($data,$payment);
             }
-            new PaymentManager($request,$payment->id,121);
-            array_push($data,$payment);
         }
         if($request->filled('close')){
             if (env('acc_system', "old") == "old") {
@@ -221,6 +314,7 @@ class FarmerDetailController extends Controller
             $farmerreport->session = $request->session;
             $farmerreport->fpaid = $request->fpaid;
             $farmerreport->center_id = $request->center_id;
+            $farmerreport->has_passbook = !($request->filled('no_passbook'));
             $farmerreport->save();
             array_push($data,$farmerreport);
         }

@@ -18,8 +18,9 @@ define('supplier', 4);
 define('customer', 5);
 
 $xxx_per = "data";
-function lCanDelete($identifire){
-    return ! in_array($identifire,[106]);
+function lCanDelete($identifire)
+{
+    return !in_array($identifire, [106]);
 }
 function _nepalidate($date)
 {
@@ -67,7 +68,7 @@ function truncate_decimals($number, $decimals = 2)
     $mul = strval($number * $factor);
     $pos = strpos($mul, '.');
     if ($pos != false) {
-        $mul = substr($mul, 0,$pos);
+        $mul = substr($mul, 0, $pos);
     }
     $data = intval($mul);
     $val = ($data) / $factor;
@@ -241,7 +242,7 @@ function maintainStock($item_id, $qty, $center_id = null, $dir = 'in')
     if (env('multi_stock', false)) {
 
         if ($center_id == null) {
-            $center = Center::where('id',env('maincenter'))->first();
+            $center = Center::where('id', env('maincenter'))->first();
             if ($center == null) {
                 return;
             }
@@ -267,12 +268,11 @@ function maintainStock($item_id, $qty, $center_id = null, $dir = 'in')
             $centerStock->save();
         }
     }
-
-
 }
 
-function isMainCenter($id){
-    return env('maincenter',-1) == $id;
+function isMainCenter($id)
+{
+    return env('maincenter', -1) == $id;
 }
 
 function currentStock()
@@ -280,7 +280,8 @@ function currentStock()
     return DB::selectOne('select round(sum(stock * ( case when sell_price = 0   then cost_price when sell_price<cost_price then cost_price else sell_price end)),2) as sum from items');
 }
 
-function rangeSelector($request,$query){
+function rangeSelector($request, $query)
+{
     $year = $request->year;
     $month = $request->month;
     $week = $request->week;
@@ -298,11 +299,9 @@ function rangeSelector($request,$query){
     } elseif ($type == 2) {
         $range = NepaliDate::getDateWeek($year, $month, $week);
         $query = $query->where('date', '>=', $range[1])->where('date', '<=', $range[2]);
-
     } elseif ($type == 3) {
         $range = NepaliDate::getDateMonth($year, $month);
         $query = $query->where('date', '>=', $range[1])->where('date', '<=', $range[2]);
-
     } elseif ($type == 4) {
         $range = NepaliDate::getDateYear($year);
         $query = $query->where('date', '>=', $range[1])->where('date', '<=', $range[2]);
@@ -310,70 +309,74 @@ function rangeSelector($request,$query){
         $range[1] = str_replace('-', '', $request->date1);;
         $range[2] = str_replace('-', '', $request->date2);;
         $query = $query->where('date', '>=', $range[1])->where('date', '<=', $range[2]);
-    }else if($type==6){
-        $fy=DB::selectOne('select startdate,enddate from fiscal_years where id=?',[$request->fiscalyear]);
+    } else if ($type == 6) {
+        $fy = DB::selectOne('select startdate,enddate from fiscal_years where id=?', [$request->fiscalyear]);
         // dd($fy);
         $query = $query->where('date', '>=', $fy->startdate)->where('date', '<=', $fy->enddate);
     }
     return $query;
 }
 
-function renderEmpList(){
-    $emps=DB::select('select u.name from employees e join users u on e.user_id=u.id');
-    $html="<datalist id='emp_datalist'>";
+function renderEmpList()
+{
+    $emps = DB::select('select u.name from employees e join users u on e.user_id=u.id');
+    $html = "<datalist id='emp_datalist'>";
     foreach ($emps as $key => $emp) {
-        $html.="<option value='{$emp->name}'>{$emp->name}</option>";
+        $html .= "<option value='{$emp->name}'>{$emp->name}</option>";
     }
-    $html.="</datalist>";
+    $html .= "</datalist>";
     return $html;
 }
 
-function renderCenters($blank=false){
-    $centers=DB::select('select id,name from centers');
-    $html=$blank?"<option></option>":"";
+function renderCenters($blank = false)
+{
+    $centers = DB::select('select id,name from centers');
+    $html = $blank ? "<option></option>" : "";
 
     foreach ($centers as $key => $center) {
-        $html.="<option value='{$center->id}'>{$center->name}</option>";
+        $html .= "<option value='{$center->id}'>{$center->name}</option>";
     }
     return $html;
 }
 
 
-function getFiscalYear(){
-    $name=env('fiscal_year',null);
+function getFiscalYear()
+{
+    $name = env('fiscal_year', null);
     // dd($name);
-    if($name!=null){
-        $fy=DB::table('fiscal_years')->where('name',$name)->first();
+    if ($name != null) {
+        $fy = DB::table('fiscal_years')->where('name', $name)->first();
         // dd($fy);
-    }else{
-       $nepaliDateHelper=new NepaliDateHelper();
-       $date=Carbon::now();
-       $currentdate=$nepaliDateHelper->eng_to_nepInt($date->year,$date->month,$date->day);
-       $fy=DB::table('fiscal_years')->where('startdate','>=',$currentdate)->where('enddate','<=',$currentdate)->first();
-
+    } else {
+        $nepaliDateHelper = new NepaliDateHelper();
+        $date = Carbon::now();
+        $currentdate = $nepaliDateHelper->eng_to_nepInt($date->year, $date->month, $date->day);
+        $fy = DB::table('fiscal_years')->where('startdate', '>=', $currentdate)->where('enddate', '<=', $currentdate)->first();
     }
     return $fy;
 }
 
-function subAccounts($id){
-    return DB::table('accounts')->where('parent_id',$id)->get(['name','amount']);
+function subAccounts($id)
+{
+    return DB::table('accounts')->where('parent_id', $id)->get(['name', 'amount']);
 }
 
-function assetCategory($id){
-    if($id==null){
+function assetCategory($id)
+{
+    if ($id == null) {
         return null;
-    }else{
-        return DB::table('fixed_asset_categories')->where('id',$id)->first(['name'])->name;
+    } else {
+        return DB::table('fixed_asset_categories')->where('id', $id)->first(['name'])->name;
     }
-
 }
 
 
-function getBanks(){
+function getBanks()
+{
     try {
         //code...
-        $fy=getFiscalYear();
-        $banks= DB::select("select name,id from banks where account_id = (select id from accounts where identifire='1.2' and fiscal_year_id={$fy->id} limit 1) ");
+        $fy = getFiscalYear();
+        $banks = DB::select("select name,id from banks where account_id = (select id from accounts where identifire='1.2' and fiscal_year_id={$fy->id} limit 1) ");
         // dd($banks);
         return $banks;
     } catch (\Throwable $th) {
@@ -382,43 +385,48 @@ function getBanks(){
     }
 }
 
-function getCashAcc(){
+function getCashAcc()
+{
     getFiscalYear();
 }
 
 
-function hasPay(){
-    return env('xpay',false);
+function hasPay()
+{
+    return env('xpay', false);
 }
 
-function ledgerPrev($id,$date,$type=null,$identifire=null){
-    $query = DB::table('ledgers')->where('user_id',$id)->where('date','<',$date);
-    if($type!=null){
-        $query=$query->where('type',$type);
+function ledgerPrev($id, $date, $type = null, $identifire = null)
+{
+    $query = DB::table('ledgers')->where('user_id', $id)->where('date', '<', $date);
+    if ($type != null) {
+        $query = $query->where('type', $type);
     }
-    if($identifire!=null){
-        $query=$query->where('identifire',$identifire);
+    if ($identifire != null) {
+        $query = $query->where('identifire', $identifire);
     }
-    return $query->sum('amount')??0;
+    return $query->sum('amount') ?? 0;
 }
-function ledgerSum($id,$identifire,$range=null,$type=null){
-    $query = DB::table('ledgers')->where('user_id',$id)->where('identifire',$identifire);
-    if($range!=null){
-        $query=$query->where('date', '>=', $range[1])->
-        where('date', '<=', $range[2]);
+function ledgerSum($id, $identifire, $range = null, $type = null)
+{
+    $query = DB::table('ledgers')->where('user_id', $id)->where('identifire', $identifire);
+    if ($range != null) {
+        $query = $query->where('date', '>=', $range[1])->where('date', '<=', $range[2]);
     }
-    if($type!=null){
-        $query=$query->where('type',$type);
+    if ($type != null) {
+        $query = $query->where('type', $type);
     }
-    return $query->sum('amount')??0;
-}
-
-function randomChance($min=0,$max=1,$no=1){
-    return mt_rand($min,$max)==$no;
+    return $query->sum('amount') ?? 0;
 }
 
+function randomChance($min = 0, $max = 1, $no = 1)
+{
+    return mt_rand($min, $max) == $no;
+}
 
-function modalMenuData(){
+
+function modalMenuData()
+{
     return DB::selectOne('select
     (select count(*) from farmers) as farmers,
     (select count(*) from suppliers) as suppliers,
@@ -429,14 +437,16 @@ function modalMenuData(){
     ');
 }
 
-function nepaliToday(){
-    $n=new NepaliDateHelper();
+function nepaliToday()
+{
+    $n = new NepaliDateHelper();
     return $n->today();
 }
 
 
-function nepaliMonthName(int $i){
-     $_n=[
+function nepaliMonthName(int $i)
+{
+    $_n = [
         "Baisakh",
         "Jestha",
         "Ashar",
@@ -453,15 +463,16 @@ function nepaliMonthName(int $i){
     return $_n[$i];
 }
 
-function makeFive($num){
+function makeFive($num)
+{
     try {
-        $mod=$num%5;
+        
+        $mod = $num % 5;
         // return $mod;
-        if($mod==0){
-           return $num;
-        }else{
-                return ($num-$mod)+($mod>=3?5:0);
-            
+        if ($mod == 0) {
+            return $num;
+        } else {
+            return ($num - $mod) + ($mod == 4 ? 5 : 0);
         }
     } catch (\Throwable $th) {
         return 0;

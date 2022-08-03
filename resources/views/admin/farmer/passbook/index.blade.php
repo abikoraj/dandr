@@ -60,10 +60,10 @@
     <script src="{{ asset('backend/js/jquery.hotkeys.js') }}"></script>
     <script src="{{ asset('backend/plugins/select2/select2.min.js') }}"></script>
     <script>
-        
+        var updateNeeded=false;
         function closeSession(e,ele){
             e.preventDefault();
-            showProgress("Saving Payment And Closing session");
+            showProgress("Saving Payment");
             axios.post("{{route('admin.farmer.passbook.close')}}",new FormData(ele))
             .then((res)=>{
                 console.log(res.data);
@@ -73,7 +73,27 @@
             .catch((err)=>{
                 loadData();
                 hideProgress();
+            });
+        }
+
+        function update(ele) {
+            updateNeeded=false;
+            showProgress("Updating Sessiondata");
+            axios.post("{{route('admin.farmer.passbook.updateData')}}",new FormData(ele))
+            .then((res)=>{
+                console.log(res.data);
+                loadData();
+                hideProgress();
             })
+            .catch((err)=>{
+                loadData();
+                hideProgress();
+            });
+        }
+        function updateSession(e,ele){
+
+            e.preventDefault();
+            update(ele);
         }
         function loadData() {
             user = null;
@@ -97,6 +117,13 @@
                     setDate('closedate');
                     addXPayHandle();
                     hideProgress();
+                    if(updateNeeded){
+                        const ele=document.getElementById('updateSession');
+                        if(ele!=null){
+                            update(ele);
+                        }
+                        console.log(ele);
+                    }
                 })
                 .catch(function(response) {
                     //handle error
@@ -118,18 +145,23 @@
         };
 
         function snfUpdated(data) {
+            updateNeeded=true;
             loadData();
         }
 
         function snfDeleted() {
-            datadData();
+            updateNeeded=true;
+            loadData();
+
         }
 
         function milkUpdated(data) {
+            updateNeeded=true;
             loadData();
         }
 
         function milkDeleted(data) {
+            updateNeeded=true;
             loadData();
         }
 

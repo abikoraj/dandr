@@ -114,6 +114,7 @@ Route::name('admin.')->group(function () {
                 Route::get('',[FarmerDetailController::class,'index'])->name('index');
                 Route::post('data',[FarmerDetailController::class,'data'])->name('data');
                 Route::post('close',[FarmerDetailController::class,'close'])->name('close');
+                Route::post('updateData',[FarmerDetailController::class,'updateData'])->name('updateData');
             });
             // XXX farmer routes
             Route::get('', [FarmerController::class, 'index'])->name('list')->middleware('permmission:01.01');
