@@ -231,6 +231,16 @@ function maintainStockCenter($item_id, $qty, $center_id, $dir = 'in')
 }
 function maintainStock($item_id, $qty, $center_id = null, $dir = 'in')
 {
+    if($center_id!=null){
+
+        $extracenters=explode(",",env('extraposcenter',''));
+        if(count($extracenters)>0){
+            if(in_array($center_id,$extracenters)){
+                return;
+            }
+        }
+    }
+
     $item = Item::where('id', $item_id)->select('id', 'stock', 'wholesale', 'sell_price')->first();
     if ($dir == 'in') {
         $item->stock += $qty;
