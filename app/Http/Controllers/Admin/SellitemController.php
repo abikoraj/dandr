@@ -40,9 +40,13 @@ class SellitemController extends Controller
             return response('Previous session is not closed yet', 500);
         }
         $canadd = false;
+        $item_center_id=$request->center_id;
+        if(env('farmersellmain',false)){
+            $item_center_id=env('maincenter');
+        }
         if ($item->trackstock == 1) {
             if (env('multi_stock', false)) {
-                $stock = $item->stock($request->center_id);
+                $stock = $item->stock($item_center_id);
                 if ($stock == null) {
                     $canadd = false;
                 } else {
@@ -73,12 +77,14 @@ class SellitemController extends Controller
             $sell_item->user_id = $user->id;
             $sell_item->item_id = $item->id;
             $sell_item->date = $date;
+            $sell_item->center_id = $request->center_id;
+            $sell_item->item_center_id = $item_center_id;
             $sell_item->save();
             if ($item->trackstock == 1) {
                 $item->stock = $item->stock - $request->qty;
                 $item->save();
                 if (env('multi_stock', false)) {
-                    $stock = $item->stock($request->center_id);
+                    $stock = $item->stock($item_center_id);
                     $stock->amount = $stock->amount - $request->qty;
                     $stock->save();
                 }
@@ -177,7 +183,7 @@ class SellitemController extends Controller
         $total = $sell->total;
         $user_id = $sell->user_id;
 
-        maintainStock($sell->item_id,$sell->qty,$sell->center_id,"in");
+        maintainStock($sell->item_id,$sell->qty,$sell->item_center_id,"in");
 
         $sell->delete();
         $manager = new LedgerManage($user_id);
@@ -209,7 +215,7 @@ class SellitemController extends Controller
             $paid = $sell->paid;
             $total = $sell->total;
             $user_id = $sell->user_id;
-            maintainStock($sell->item_id,$sell->qty,$sell->center_id,"in");
+            maintainStock($sell->item_id,$sell->qty,$sell->item_center_id,"in");
             $sell->delete();
             $manager = new LedgerManage($user_id);
             $ledger = [];
