@@ -48,8 +48,10 @@ class AccountingController extends Controller
                 }
             }
 
-            $opening = DB::selectOne("select id,opening from stocks where date>={$range[1]} and date <={$range[2]} and opening is not null order by date,id asc limit 1")->opening;
-            $closing = DB::selectOne("select id,closing from stocks where date>={$range[1]} and date <={$range[2]} and closing is not null order by date,id desc limit 1")->closing;
+            $openingdata = DB::selectOne("select id,opening from stocks where date>={$range[1]} and date <={$range[2]} and opening is not null order by date,id asc limit 1");
+            $closingdata = DB::selectOne("select id,closing from stocks where date>={$range[1]} and date <={$range[2]} and closing is not null order by date,id desc limit 1");
+            $opening=$openingdata==null?0:$openingdata->opening;
+            $closing=$closingdata==null?0:$closingdata->closing;
             // dd($opening,$closing);
             $queries = [
                 'milk' => " select sum(amount) from ledgers where identifire=108 ",
