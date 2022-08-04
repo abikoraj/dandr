@@ -59,13 +59,14 @@ class AccountingController extends Controller
                 'purchaseExpense' => "select sum(be.amount) from bill_expenses be join supplierbills b on be.supplierbill_id=b.id where canceled=0 ",
                 'counter1' => "select sum(grandtotal) from pos_bills where is_canceled=0 ",
                 'counter2' => "select sum(grandtotal) from bills where id>0 ",
-                'farmer' => "select  sum(qty*rate) from sellitems where id>0 ",
-                'distributer' => "select  total from distributorsells where id>0 ",
+                'farmer1' => "select  sum(total) from sellitems where id>0 ",
+                'distributer1' => "select  total from distributorsells where id>0 ",
             ];
             $temp = [];
             foreach ($queries as $key => $query) {
                 array_push($temp, "( " . $query . " and (date>={$range[1]} and date<={$range[2]} )) as {$key}");
             }
+
 
             $query = "select " . implode(",", $temp);
 
@@ -74,6 +75,16 @@ class AccountingController extends Controller
                 $query
             );
 
+            $farmerdata=DB::selectOne("select  sum(total) as total from sellitems 
+            where (date>={$range[1]} and date<={$range[2]} )
+             and user_id in (select u.id from users u join farmers f on u.id=f.user_id) ");
+            $trading->farmer=$farmerdata!=null?$farmerdata->total:0;
+
+            $distributerdata=DB::selectOne("select  sum(total) as total from sellitems 
+            where (date>={$range[1]} and date<={$range[2]} )
+             and user_id in (select u.id from users u join distributers f on u.id=f.user_id) ");
+            $trading->distributer=$distributerdata!=null?$distributerdata->total:0;
+            // dd($trading);
             $trading->counter = $trading->counter1 + $trading->counter2;
             $trading->sales = $trading->counter + $trading->farmer + $trading->distributer;
             $trading->cr = $trading->sales + $closing;
