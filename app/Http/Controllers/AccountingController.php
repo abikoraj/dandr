@@ -59,8 +59,8 @@ class AccountingController extends Controller
                 'purchaseExpense' => "select sum(be.amount) from bill_expenses be join supplierbills b on be.supplierbill_id=b.id where canceled=0 ",
                 'counter1' => "select sum(grandtotal) from pos_bills where is_canceled=0 ",
                 'counter2' => "select sum(grandtotal) from bills where id>0 ",
-                'farmer1' => "select  sum(total) from sellitems where id>0 ",
-                'distributer1' => "select  total from distributorsells where id>0 ",
+                // 'farmer1' => "select  sum(total) from sellitems where id>0 ",
+                // 'distributer1' => "select  total from distributorsells where id>0 ",
             ];
             $temp = [];
             foreach ($queries as $key => $query) {

@@ -81,7 +81,7 @@
                     </th>
                 @endif
                 <th>Due</th>
-                <th>Avance</th>
+                <th>Advance</th>
                 <th>
                     Prev Due
                 </th>

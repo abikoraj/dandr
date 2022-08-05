@@ -18,7 +18,13 @@
 @include('admin.farmer.snippet.updateledger') --}}
 
     <div style="position: relative;background:white;">
-        <div style="position: fixed;top:170px;width:270px;bottom:50px;overflow-y: auto;background: white;">
+        <div style="position: fixed;padding:15px;top:170px;width:300px;bottom:50px;overflow-y: auto;background: white;" class="shadow">
+            <div >
+                <a href="{{route('admin.farmer.passbook.notClosed')}}" class="btn btn-primary">
+                    Session Not Closed Farmers
+                </a>                
+            </div>
+            <hr>
             <div class="pb-2">
                 <select name="center_id" id="center_id" class="form-control ms">
                     {!! renderCenters() !!}
@@ -47,7 +53,7 @@
                 <span class="btn btn-primary" onclick="printDiv('print')"> Print </span>
             </div>
         </div>
-        <div style="margin-left: 285px">
+        <div style="margin-left: 315px">
             <div id="allData">
 
             </div>

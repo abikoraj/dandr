@@ -277,7 +277,7 @@
                         @endif
                         <th>Purchase</th>
                         <th>Payment</th>
-                        <th>Avance</th>
+                        <th>Advance</th>
                         <th>
                             Prev Balance
                         </th>

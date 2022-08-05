@@ -29,6 +29,7 @@ use App\Http\Controllers\Admin\PointController;
 use App\Http\Controllers\Admin\PosBillingController;
 use App\Http\Controllers\Admin\SellitemController;
 use App\Http\Controllers\Admin\Setting\ConversionController;
+use App\Http\Controllers\Admin\SimpleManufactureController;
 use App\Http\Controllers\Admin\StockController;
 use App\Http\Controllers\Admin\SupplierController;
 use App\Http\Controllers\Admin\UserController;
@@ -115,6 +116,8 @@ Route::name('admin.')->group(function () {
                 Route::post('data',[FarmerDetailController::class,'data'])->name('data');
                 Route::post('close',[FarmerDetailController::class,'close'])->name('close');
                 Route::post('updateData',[FarmerDetailController::class,'updateData'])->name('updateData');
+                Route::match(['GET','POST'],'notClosed',[FarmerDetailController::class,'notClosed'])->name('notClosed');
+                Route::match(['GET','POST'],'close-notClosed',[FarmerDetailController::class,'closeNotClosed'])->name('close.notClosed');
             });
             // XXX farmer routes
             Route::get('', [FarmerController::class, 'index'])->name('list')->middleware('permmission:01.01');
@@ -449,6 +452,10 @@ Route::name('admin.')->group(function () {
             });
         });
 
+        Route::name('simple.manufacture.')->prefix('simple-manufacture')->group(function(){
+            Route::match(['get', 'post'], '', [SimpleManufactureController::class,'index'])->name('index');
+            Route::match(['get', 'post'], 'add', [SimpleManufactureController::class,'add'])->name('add');
+        });
 
         //XXX item expire wastage
         Route::prefix('wastage')->name('wastage.')->middleware('permmission:03.09')->group(function () {

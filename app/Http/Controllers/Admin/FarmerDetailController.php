@@ -272,6 +272,10 @@ class FarmerDetailController extends Controller
                 }else{
                     $ledger->addLedger('Payment Milk Payment Given To Farmer',2,$payment->amount,$date,'121',$payment->id);
                 }
+
+                if($request->filled('passbookchecked')){
+                    DB::update('update farmer_reports set has_passbook=1 where user_id=? and year=? and month= ? and session=? ',[$request->id,$request->year,$request->month,$request->session]);
+                }
                 new PaymentManager($request,$payment->id,121);
                 array_push($data,$payment);
             }
@@ -323,5 +327,168 @@ class FarmerDetailController extends Controller
       
 
         return response()->json($data);
+    }
+
+    public function closeNotClosed(Request $request){
+        $lastdate = str_replace('-', '', $request->date);
+
+        foreach ($request->farmers as $farmer) {
+            $data = json_decode($farmer);
+            // dd($data);
+            $ledger = new LedgerManage($data->id);
+            $grandtotal = $data->grandtotal ?? 0;
+            if ($data->grandtotal > 0) {
+                if (env('acc_system', "old") == "old") {
+                    $ledger->addLedger("Payment for milk (" . ($data->milk) . "l X " . ($data->rate ?? 0) . ")", 2, $data->grandtotal ?? 0, $lastdate, '108');
+                } else {
+                    $ledger->addLedger("Payment for milk (" . ($data->milk) . "l X " . ($data->rate ?? 0) . ")", 1, $data->grandtotal ?? 0, $lastdate, '108');
+                }
+            }
+
+            $farmerreport = new FarmerReport();
+            $farmerreport->user_id = $data->id;
+            $farmerreport->milk = $data->milk ?? 0;
+            $farmerreport->snf = $data->snf ?? 0;
+            $farmerreport->fat = $data->fat ?? 0;
+            $farmerreport->rate = $data->rate ?? 0;
+            $farmerreport->total = $data->total ?? 0;
+            $farmerreport->due = $data->due ?? 0;
+            $farmerreport->prevdue = $data->prevdue ?? 0;
+            $farmerreport->bonus = $data->bonus ?? 0;
+            $farmerreport->advance = $data->advance ?? 0;
+            $farmerreport->nettotal = $data->nettotal ?? 0;
+            $farmerreport->balance = $data->balance ?? 0;
+            $farmerreport->tc = $data->tc ?? 0;
+            $farmerreport->fpaid = $data->fpaid ?? 0;
+            $farmerreport->cc = $data->cc ?? 0;
+            $farmerreport->grandtotal = $data->grandtotal ?? ($data->total ?? 0);
+            $farmerreport->paidamount = $data->paidamount ?? 0;
+            $farmerreport->prevbalance = $data->prevbalance ?? 0;
+            $farmerreport->year = $request->year;
+            $farmerreport->month = $request->month;
+            $farmerreport->session = $request->session;
+            $farmerreport->center_id = $request->center_id;
+            $farmerreport->has_passbook = 0;
+            $farmerreport->save();
+        }
+
+        return response()->json(["status"=>true]);
+    }
+
+    public function notClosed(Request $request){
+        if($request->getMethod()=="POST"){
+            $range = NepaliDate::getDate($request->year, $request->month, $request->session);
+            $center = Center::find($request->center_id);
+            $year = $request->year;
+            $month = $request->month;
+            $session = $request->session;
+            $usetc = (env('usetc', 0) == 1) && ($center->tc > 0);
+            $usecc = (env('usecc', 0) == 1) && ($center->cc > 0);
+            $user_ids=DB::table('users')->join('farmers','farmers.user_id','=','users.id')->where('farmers.center_id',$center->id)->orderBy('users.id')->pluck('users.id')->toArray();
+            $reports_id= DB::table('farmer_reports')->where(['year' => $year, 'month' => $month, 'session' => $session])->whereIn('user_id',$user_ids)->orderBy('user_id')->pluck('user_id')->toArray();
+            $remain=array_diff($user_ids,$reports_id);
+            if(count($remain)==0){
+                return response("Session Closed Of All Farmers");
+            }
+            $remainList="(". implode(",",$remain).")";
+
+            // dd($user_ids,$reports_id,$remainList);
+
+            $query = "select  u.id,u.no,u.name,u.usecc,u.rate,u.usetc,u.userate,
+            (select sum(m_amount) + sum(e_amount) from milkdatas where user_id= u.id and date>={$range[1]} and date<={$range[2]}) as milk,
+            (select avg(snf) from snffats where user_id= u.id and date>={$range[1]} and date<={$range[2]}) as snf,
+            (select avg(fat) from snffats where user_id= u.id and date>={$range[1]} and date<={$range[2]}) as fat,
+            (select sum(amount) from advances where user_id= u.id and date>={$range[1]} and date<={$range[2]}) as advance,
+            (select sum(amount) from ledgers where user_id= u.id and date>={$range[1]} and date<={$range[2]} and identifire=121) as paidamount,
+            (select sum(amount) from ledgers where user_id= u.id and date>={$range[1]} and date<={$range[2]} and (identifire=106 or identifire=107)) as fpaid,
+            (select sum(amount) from ledgers where user_id= u.id and date>={$range[1]} and date<={$range[2]} and identifire=103) as purchase,
+            (select sum(amount) from ledgers where user_id= u.id and date<{$range[1]} and type=1) as prevcr,
+            (select sum(amount) from ledgers where user_id= u.id and date<{$range[1]} and type=2) as prevdr,
+            (select sum(amount) from ledgers where user_id= u.id and date>={$range[1]} and date<={$range[2]} and (identifire=101 or identifire=102) and type=1) as openingcr,
+            (select sum(amount) from ledgers where user_id= u.id and date>={$range[1]} and date<={$range[2]} and (identifire=101 or identifire=102) and type=2) as openingdr,
+            (select sum(amount) from ledgers where user_id= u.id and date>={$range[1]} and date<={$range[2]} and identifire=120 and type=1) as closingcr,
+            (select sum(amount) from ledgers where user_id= u.id and date>={$range[1]} and date<={$range[2]} and identifire=120  and type=2) as closingdr
+            from (select iu.name,iu.id,iu.no,f.usecc,f.rate,f.usetc,f.userate from users iu join farmers f on iu.id=f.user_id where f.center_id={$center->id} and iu.id in {$remainList}  ) u order by u.no asc";
+
+            $farmers = DB::select($query);
+
+         
+            $datas = [];
+         
+
+            foreach ($farmers as $key => $farmer) {
+                
+                $farmer->fat = truncate_decimals($farmer->fat);
+                $farmer->snf = truncate_decimals($farmer->snf);
+                $fatAmount = ($farmer->fat * $center->fat_rate);
+                $snfAmount = ($farmer->snf * $center->snf_rate);
+                if ($farmer->userate == 1) {
+
+                    $farmer->rate = $farmer->rate;
+                } else {
+
+                    $farmer->rate = truncate_decimals($fatAmount + $snfAmount);
+                }
+
+                $farmer->total = truncate_decimals(($farmer->rate * $farmer->milk), 2);
+
+                $farmer->tc = 0;
+                $farmer->cc = 0;
+
+                if ($farmer->usetc == 1 && $farmer->total > 0) {
+                    $farmer->tc = truncate_decimals((($center->tc * ($farmer->snf + $farmer->fat) / 100) * $farmer->milk), 2);
+                }
+                if ($farmer->usecc == 1 && $farmer->total > 0) {
+                    $farmer->cc = truncate_decimals($center->cc * $farmer->milk, 2);
+                }
+                $farmer->bonus = 0;
+                if (env('hasextra', 0) == 1) {
+                    $farmer->bonus = (int)($farmer->grandtotal * $center->bonus / 100);
+                }
+
+                $farmer->grandtotal = (int)($farmer->total + $farmer->tc + $farmer->cc);
+                $prev = $farmer->prevdr - $farmer->prevcr;
+                $opening = $farmer->openingdr - $farmer->openingcr;
+                $farmer->prevTotal = $prev + $opening;
+
+
+
+                if ($farmer->prevTotal > 0) {
+                    $farmer->prevdue = $farmer->prevTotal;
+                    $farmer->prevbalance = 0;
+                } else {
+                    $farmer->prevdue = 0;
+                    $farmer->prevbalance = (-1) * $farmer->prevTotal;
+                }
+
+                $farmer->balance = 0;
+                $farmer->nettotal = 0;
+
+                $balance = $farmer->grandtotal
+                    + $farmer->fpaid
+                    + $farmer->prevbalance
+                    - $farmer->prevdue
+                    - $farmer->advance
+                    - $farmer->purchase
+                    - $farmer->paidamount
+                    - $farmer->bonus;
+
+                if ($balance < 0) {
+                    $farmer->balance = (-1) * $balance;
+                }
+                if ($balance > 0) {
+                    $farmer->nettotal = $balance;
+                }
+                array_push($datas,$farmer);
+            }
+            $closingDate = NepaliDate::getDateSessionLast($request->year, $request->month, $request->session);
+
+            
+           return view('admin.farmer.passbook.notclosed.data',compact('datas','year','month','session','center','usecc','usetc',"closingDate"));
+        }else{
+            return view('admin.farmer.passbook.notclosed.index',[
+                'centers'=>DB::table('centers')->get(['id','name'])
+            ]);
+        }
     }
 }

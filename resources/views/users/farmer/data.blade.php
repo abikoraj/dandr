@@ -308,7 +308,7 @@
                             <th>Bonus</th>
                         @endif
                         <th>Due</th>
-                        <th>Avance</th>
+                        <th>Advance</th>
                         <th>
                             Prev Balance
                         </th>

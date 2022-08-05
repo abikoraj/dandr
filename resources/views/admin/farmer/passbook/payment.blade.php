@@ -38,6 +38,9 @@
                 <input type="hidden" name="fpaid" value=" {{ $farmer->fpaid }}">
                 <input type="checkbox" name="close" id="close" value="1" checked> Close Session
             </div>
+        @else
+        <input type="checkbox" name="passbookchecked" id="passbookchecked" value="1" checked> Passbook Checked
+
         @endif
         <div class="col-md-3 ">
             <button class="btn btn-success" >Save Payment</button>
