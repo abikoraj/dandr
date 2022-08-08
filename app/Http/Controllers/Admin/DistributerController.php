@@ -153,7 +153,8 @@ class DistributerController extends Controller
         $prev = 0;
         $closing = 0;
         $arr = [];
-        $ledgers = $ledger->orderBy('id', 'asc')->get();
+        $ledgers = $ledger->orderBy('date', 'asc')->get();
+        $cr=0;$dr=0;
         foreach ($ledgers as $key => $l) {
 
             if ($l->type == 1) {
@@ -170,6 +171,8 @@ class DistributerController extends Controller
                 array_push($arr, $l);
             }
         }
+
+        
         $user = User::where('id', $request->user_id)->first();
 
         $milkData = [];
@@ -182,6 +185,7 @@ class DistributerController extends Controller
             ])->first();
             $milkData['req']=(object)$request->all();
         }
+
         return view('admin.distributer.data', compact('distributer', 'arr', 'type', 'user', 'title', 'prev', 'closing', 'milkData'));
     }
 

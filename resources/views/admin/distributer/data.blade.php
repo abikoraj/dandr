@@ -76,6 +76,10 @@
                         <th>Balance (Rs.)</th>
                         <th></th>
                     </tr>
+                    @php
+                        $cr=0;
+                        $dr=0;
+                    @endphp
                     @if ($prev != 0)
 
                         <tr>
@@ -95,6 +99,9 @@
                                 </td>
                                 <td>
                                     Dr.{{ $prev }}
+                                    @php
+                                        $dr+=$prev;
+                                    @endphp
                                 </td>
                             @elseif ($prev<0) <td>
                                     {{ -1 * $prev }}
@@ -104,6 +111,9 @@
                                     </td>
                                     <td>
                                         Cr.{{ -1 * $prev }}
+                                        @php
+                                            $cr+= (-1 * $prev);
+                                        @endphp
                                     </td>
                                 @else
                                     <td>
@@ -127,11 +137,17 @@
                             <td>
                                 @if ($l->type == 1)
                                     {{ (float) $l->amount }}
+                                    @php
+                                        $cr+=$l->amount;
+                                    @endphp
                                 @endif
                             </td>
                             <td>
                                 @if ($l->type == 2)
                                     {{ (float) $l->amount }}
+                                    @php
+                                        $dr+=$l->amount;
+                                    @endphp
                                 @endif
                             </td>
                             <td>
@@ -161,6 +177,52 @@
                         </td>
                     </tr>
                 @endforeach
+                <tr>
+                    <th colspan="2">
+                        @if($cr>$dr)
+                            Advance
+                        @elseif($dr>$cr)
+                            Due Remaning
+                        @endif
+                    </th>
+                    <th>
+                        @if($dr>$cr)
+                        {{$dr-$cr}}
+                        @endif
+                    </th>
+                    <th>
+                        @if($cr>$dr)
+                        {{$cr-$dr}}
+                        @endif
+
+                    </th>
+                    <td>
+
+                    </td>
+                    <td class="d-print-none">
+
+                    </td>
+                </tr>
+                <tr>
+                    <th colspan="2">
+
+                   
+
+                    </th>
+                    <th>
+                        {{$dr>$cr?$dr:$cr}}
+                    </th>
+                    <th>
+                        {{$dr>$cr?$dr:$cr}}
+                        
+                    </th>
+                    <th>
+
+                    </th>
+                    <th class="d-print-none">
+
+                    </th>
+                </tr>
             </table>
         </div>
     </div>
