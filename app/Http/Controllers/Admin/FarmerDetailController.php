@@ -130,12 +130,14 @@ class FarmerDetailController extends Controller
         ->where('date', '>=', $range[1])
         ->where('date', '<=', $range[2])
         ->select(DB::raw('id,e_amount,m_amount,date'))
+        ->orderBy('date')
         ->get();
         $farmer->snfFats = DB::table('snffats')
         ->where('user_id', $farmer->id)
         ->where('date', '>=', $range[1])
         ->where('date', '<=', $range[2])
         ->select(DB::raw('id,snf,fat,date'))
+        ->orderBy('date')
         ->get();
 
         $snfAvg = truncate_decimals($farmer->snfFats->avg('snf'), 2);

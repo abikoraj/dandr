@@ -102,17 +102,7 @@
             <div style="border: 1px solid rgb(136, 126, 126); padding:1rem;">
 
                 <div id="snffat-data">
-                    <style>
-                        td,th{
-                            border:1px solid black;
-                        }
-                        table{
-                            width:100%;
-                            border-collapse: collapse;
-                        }
-                        thead {display: table-header-group;}
-                        tfoot {display: table-header-group;}
-                    </style>
+                    
                     <strong>Snf & Fats </strong>
                     <hr>
                     <table class="table table-bordered table-striped table-hover js-basic-example dataTable">
