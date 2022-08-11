@@ -359,9 +359,94 @@ $_fpaidtotal = 0;
     @endphp
 @endforeach
 
+<table class="table">
+    <thead>
+        <tr>
+            <th>No</th>
+            <th>Name</th>
+            <th>Milk (l)</th>
+            <th>Snf%</th>
+            <th>Fat%</th>
+            <th>Price/l</th>
+            @if ($usecc || $usetc)
+                <th>MilK Total</th>
+                <th>TS</th>
+                <th>Cooling Cost</th>
+            @endif
+            <th>Total</th>
+            @if (env('hasextra', 0) == 1)
+                <th>Bonus({{ round($center->bonus, 2) }}%)</th>
+            @endif
+            <th>Purchase</th>
+            <th>Purchase Paid</th>
+            <th>Advance</th>
+            <th>Prev Due</th>
+            @if (env('tier', 0) == 1)
+                <th>Prev Balance</th>
+                <th>Paid Amount</th>
+            @endif
+            <th>Net Total</th>
+            <th>Due Balance</th>
+
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td colspan="2">Grandtotal</td>
+            <td>{{ $_milktotal }}</td>
+            <td>--</td>
+            <td>--</td>
+            <td>--</td>
+            @if ($usecc || $usetc)
+                <td>
+                    {{ $_totaltotal }}
+
+                </td>
+                <td>
+                    {{ $_tctotal }}
+
+                </td>
+                <td>
+                    {{ $_cctotal }}
+
+                </td>
+            @endif
+            <td>{{ $_grandtotal }}</td>
+            @if (env('hasextra', 0) == 1)
+                <td>{{ $_bonustotal }}</td>
+            @endif
+            <td>
+                {{ $_duetotal }}
+            </td>
+            <td>
+                {{ $_fpaidtotal }}
+            </td>
+            <td>
+                {{ $_advancetotal }}
+            </td>
+            <td>
+                {{ $_prevduetotal }}
+            </td>
+            @if (env('tier', 0) == 1)
+                <td>
+                    {{ $_prevbalancetotal }}
+                </td>
+                <td>
+                    {{ $_paidamounttotal }}
+                </td>
+            @endif
+            <td>
+                {{ $_nettotaltotal }}
+            </td>
+            <td>
+                {{ $_balancetotal }}
+            </td>
+        </tr>
+    </tbody>
+</table>
 
 
-@if ($newsession)
+@if ($newsession && env('closeonreport',false))
     <div class="py-2 d-print-none">
         <label for=>Session Close Date</label>
         <input type="text" name="date" id="closedate" readonly required>
