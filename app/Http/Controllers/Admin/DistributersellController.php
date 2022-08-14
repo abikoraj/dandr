@@ -52,7 +52,7 @@ class DistributersellController extends Controller
         }
         $canadd = false;
         if ($item->trackstock == 1) {
-            if ($item->stock > $request->qty) {
+            if ($item->stock >= $request->qty) {
                 if(env('multi_stock',false)){
                     $stock=$item->stock($request->center_id);
                     $canadd=$stock==null?false:( $stock->amount>=$request->qty);

@@ -45,7 +45,7 @@
         $('#update_fat').val(snfdata.fat);
         $('#snf_change').modal('show');
     }
-    function showSnfFatUpdate(id){
+    function showSnfFatUpdate(ele){
         snfdata=$(ele).data('snffat');
         $('#update_snf').val(snfdata.snf);
         $('#update_snffat_id').val(snfdata.id);
