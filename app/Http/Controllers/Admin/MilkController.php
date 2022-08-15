@@ -132,20 +132,41 @@ class MilkController extends Controller
         $milkdata->e_amount = $request->evening;
         $milkdata->m_amount = $request->morning;
         $newAmount=$milkdata->e_amount+ $milkdata->m_amount;
-        if($oldAmount!=$newAmount){
-            $milk_id=env('milk_id');
-            if($milk_id!=null){
-                $amount=$newAmount-$oldAmount;
-                if($amount>0){
-                    maintainStock($milk_id,$amount,$milkdata->center_id,'in');
-                }else{
-                    $amount=-1*$amount;
-                    maintainStock($milk_id,$amount,$milkdata->center_id,'out');
+        $amount=$newAmount-$oldAmount;
+        $milkdata->save();
+        
+        $extracenters=explode(",",env('extracenter',''));
+        if(! in_array($milkdata->center_id,$extracenters)){
+            if($oldAmount!=$newAmount){
+                $milk_id=env('milk_id');
+                if($milk_id!=null){
+                    if($amount>0){
+                        maintainStock($milk_id,$amount,$milkdata->center_id,'in');
+                    }else{
+                        $amount=-1*$amount;
+                        maintainStock($milk_id,$amount,$milkdata->center_id,'out');
+                    }
+                    $maincenter = Center::where('id', env('maincenter', null))->first();
+            
+                    $milktotal=DB::selectOne("select sum(m_amount+e_amount) as amount from milkdatas where center_id={$milkdata->center_id} and date={$milkdata->date}")->amount??0;
+                    try {
+                        $chalan = DB::selectOne("select 
+                        si.id ,
+                        si.amount 
+                        from stock_outs s 
+                        join stock_out_items si on si.stock_out_id=s.id
+                        where s.date={$milkdata->date} and s.from_center_id = {$milkdata->center_id} and s.center_id={$maincenter->id} and si.item_id={$milk_id}");
+    
+                        $si=StockOutItem::where('id',$chalan->id)->first();
+                        $si->amount=$milktotal;
+                        $si->save();
+                    } catch (\Throwable $th) {
+                    }
                 }
             }
         }
 
-        $milkdata->save();
+
         return response()->json([$amount,$oldAmount,$newAmount]);
     }
     public function delete(Request $request)
