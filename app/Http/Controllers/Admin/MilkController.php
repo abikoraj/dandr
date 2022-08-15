@@ -139,29 +139,40 @@ class MilkController extends Controller
         if(! in_array($milkdata->center_id,$extracenters)){
             if($oldAmount!=$newAmount){
                 $milk_id=env('milk_id');
+                
                 if($milk_id!=null){
-                    if($amount>0){
-                        maintainStock($milk_id,$amount,$milkdata->center_id,'in');
-                    }else{
-                        $amount=-1*$amount;
-                        maintainStock($milk_id,$amount,$milkdata->center_id,'out');
-                    }
                     $maincenter = Center::where('id', env('maincenter', null))->first();
-            
-                    $milktotal=DB::selectOne("select sum(m_amount+e_amount) as amount from milkdatas where center_id={$milkdata->center_id} and date={$milkdata->date}")->amount??0;
-                    try {
-                        $chalan = DB::selectOne("select 
-                        si.id ,
-                        si.amount 
-                        from stock_outs s 
-                        join stock_out_items si on si.stock_out_id=s.id
-                        where s.date={$milkdata->date} and s.from_center_id = {$milkdata->center_id} and s.center_id={$maincenter->id} and si.item_id={$milk_id}");
     
+                    $chalan = DB::selectOne("select 
+                            si.id ,
+                            si.amount 
+                            from stock_outs s 
+                            join stock_out_items si on si.stock_out_id=s.id
+                            where s.date={$milkdata->date} and s.from_center_id = {$milkdata->center_id} and s.center_id={$maincenter->id} and si.item_id={$milk_id}");
+                    
+                    if($chalan!=null){
+                        if($amount>0){
+                            maintainStock($milk_id,$amount,$maincenter->id,'in');
+                        }else{
+                            $amount=-1*$amount;
+                            maintainStock($milk_id,$amount,$maincenter->id,'out');
+                        }
+                        $milktotal=DB::selectOne("select sum(m_amount+e_amount) as amount from milkdatas where center_id={$milkdata->center_id} and date={$milkdata->date}")->amount??0;
                         $si=StockOutItem::where('id',$chalan->id)->first();
                         $si->amount=$milktotal;
                         $si->save();
-                    } catch (\Throwable $th) {
+                    }else{
+
+                        if($amount>0){
+                            maintainStock($milk_id,$amount,$milkdata->center_id,'in');
+                        }else{
+                            $amount=-1*$amount;
+                            maintainStock($milk_id,$amount,$milkdata->center_id,'out');
+                        }
                     }
+
+            
+                   
                 }
             }
         }
