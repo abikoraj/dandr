@@ -2,25 +2,26 @@
 @section('title', 'Expenses')
 @section('head-title', 'Expenses')
 @section('css')
-    <link rel="stylesheet" href="{{ asset('calender/nepali.datepicker.v3.2.min.css') }}" />
+    {{-- <link rel="stylesheet" href="{{ asset('calender/nepali.datepicker.v3.2.min.css') }}" /> --}}
     <link rel="stylesheet" href="{{ asset('backend/plugins/select2/select2.css') }}" />
 @endsection
 @section('toobar')
 
-    @include('admin.expense.add')
-    <div class="col lg-2">
-        <div class="pt-2 pb-2">
-            @if (auth_has_per('06.06'))
-            <button class="btn btn-primary mr-1" data-toggle="modal" data-target="#addModal">Add Expense</button>
-            @endif
-            @if (auth_has_per('06.02'))
-            <a href="{{route('admin.expense.category')}}" class="btn btn-secondary">Expense Categories</a>
-            @endif
-        </div>
+<div class="col lg-2">
+    <div class="pt-2 pb-2">
+        @if (auth_has_per('06.06'))
+        <button class="btn btn-primary mr-1" data-toggle="collapse" data-target="#collapseExample" id="open-add"   >Add Expense</button>
+        {{-- <button class="btn btn-primary mr-1" data-toggle="modal" data-target="#addModal"  data-backdrop="static">Add Expense</button> --}}
+        @endif
+        @if (auth_has_per('06.02'))
+        <a href="{{route('admin.expense.category')}}" class="btn btn-secondary">Expense Categories</a>
+        @endif
     </div>
+</div>
 @endsection
 @section('content')
 
+    @include('admin.expense.add')
     <div class="row mb-3">
         <div class="col lg-12">
             <select name="cat_id" id="cat" class="form-control show-tick ms select2" >
@@ -81,8 +82,9 @@
                     showNotification('bg-success', 'Expense added successfully!');
                     add_another = document.getElementById('add_another').checked;
                     if (!add_another) {
-                        debugger;
-                        $("#addModal").modal('hide');
+                        // debugger;
+                        // $("#addModal").modal('hide');
+                        $('#open-add')[0].click();
                     }
                     $('#form_validation').trigger("reset");
                     document.getElementById('add_another').checked = add_another;
