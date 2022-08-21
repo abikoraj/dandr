@@ -71,6 +71,26 @@
 
     }
 
+    function delSnfFatNew(id){
+
+        if(confirm("Do You Want TO delete Snf Record??"))
+        {
+            // console.log(ele.dataset.)
+            d={id:id};
+            axios.post('{{route("admin.snf-fat.delete")}}',d)
+            .then(function(reponse){
+                snfDeleted(d);
+
+            })
+            .catch(function(err){
+                showNotification('bg-danger', 'You hove no authority!');
+            });
+        }
+
+        }
+
+    
+
     function saveSnfFatUpdate(){
         if(!snflock){
             snflock=true;
