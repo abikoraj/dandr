@@ -85,6 +85,7 @@
                                 <td><strong>Total</strong></td>
                                 <td>{{ $m }}</td>
                                 <td>{{ $e }}</td>
+                                <td></td>
 
                             </tr>
                     </table>
