@@ -185,8 +185,8 @@ class FarmerController extends Controller
 
         $farmer1->old = FarmerReport::where(['year' => $r->year, 'month' => $r->month, 'session' => $r->session, 'user_id' => $r->user_id])->count() > 0;
 
-        $milkData = Milkdata::where('user_id', $r->user_id)->where('date', '>=', $range[1])->where('date', '<=', $range[2])->get();
-        $snfFats = Snffat::where('user_id', $r->user_id)->where('date', '>=', $range[1])->where('date', '<=', $range[2])->get();
+        $milkData = Milkdata::where('user_id', $r->user_id)->where('date', '>=', $range[1])->where('date', '<=', $range[2])->orderBy('date')->get();
+        $snfFats = Snffat::where('user_id', $r->user_id)->where('date', '>=', $range[1])->where('date', '<=', $range[2])->orderBy('date')->get();
 
         $snfAvg = truncate_decimals($snfFats->avg('snf'), 2);
         $fatAvg = truncate_decimals($snfFats->avg('fat'), 2);
