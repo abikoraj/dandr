@@ -33,23 +33,23 @@ Route::post('bill/{id}', function ($id) {
 Route::middleware('auth')->get('/user', function (Request $request) {
 
 });
+Route::get('centers',function(){
+    return response(json_encode([
+        'centers'=>DB::table('centers')->get(),
+        'company'=>[
+            'name'=>env('companyName'),
+            'phone'=>env('companyphone'),
+            'reg'=>env('companyRegNO'),
+            'panvat'=>env('companyVATPAN'),
+            'usetax'=>env('companyUseTax'),
+            'billtitle'=>env('companyBillTitle'),
+            'address'=>env('companyAddress')
+        ],
+        'counters'=>DB::table('counters')->get(['id','name','center_id'])
+    ]));
+});
 Route::middleware(['auth:api'])->group(function () {
     Route::match(['GET','POST'],'items',[ItemController::class,'index']);
-    Route::get('centers',function(){
-        return response(json_encode([
-            'centers'=>DB::table('centers')->get(['id','name']),
-            'company'=>[
-                'name'=>env('companyName'),
-                'phone'=>env('companyphone'),
-                'reg'=>env('companyRegNO'),
-                'panvat'=>env('companyVATPAN'),
-                'usetax'=>env('companyUseTax'),
-                'billtitle'=>env('companyBillTitle'),
-                'address'=>env('companyAddress')
-            ],
-            'counters'=>DB::table('counters')->get(['id','name','center_id'])
-        ]));
-    });
     Route::post('pos-user',[LoginController::class,'addPosUser']);
 
     Route::middleware('permmission:09.05')->group(function(){
@@ -72,15 +72,12 @@ Route::middleware(['auth:api'])->group(function () {
         Route::get('detail/{id}',[ManufactureController::class,'detail'])->middleware('permmission:13.04');
         Route::post('finish/{id}',[ManufactureController::class,'finish'])->middleware('permmission:13.04');
     });
-
-    route::prefix('farmers')->group(function(){
-        Route::get('list', [FarmerController::class,'list']);
-        Route::get('centers', [FarmerController::class,'centers']);
-        Route::post('push-milk-data', [FarmerController::class,'pushMilkData']);
-        Route::post('pull-milk-data', [FarmerController::class,'pullMilkData']);
-    });
-
-    
+});
+route::prefix('farmers')->group(function(){
+    Route::get('list', [FarmerController::class,'list']);
+    Route::get('centers', [FarmerController::class,'centers']);
+    Route::post('push-milk-data', [FarmerController::class,'pushMilkData']);
+    Route::post('pull-milk-data', [FarmerController::class,'pullMilkData']);
 });
 Route::match(['GET',"POST"],'variants', [ItemController::class,'variants']);
 Route::match(['GET',"POST"],'show-ledger', [ItemController::class,'showLedger']);
