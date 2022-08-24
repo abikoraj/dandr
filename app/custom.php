@@ -480,3 +480,8 @@ function makeFive($num)
         return 0;
     }
 }
+
+
+function scriptSafe($data){
+    return str_replace('script','div',$data);
+}

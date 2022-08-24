@@ -86,6 +86,9 @@ Route::get('/pass', function () {
     // dd(currentStock()->sum);
 });
 
+
+
+
 Route::post('cuurent-stock', function () {
     return response(currentStock()->sum);
 })->name('current-stock');
@@ -782,6 +785,10 @@ Route::name('admin.')->group(function () {
 
 Route::name('restaurant.')->prefix('restaurant')->group(function(){
     Route::match(['GET','POST'],'table',[RestaurantController::class,'table'])->name('table');
+    Route::match(['GET','POST'],'bill',[RestaurantController::class,'bill'])->name('bill');
+    Route::match(['GET','POST'],'print',[RestaurantController::class,'print'])->name('print');
+    Route::match(['GET','POST'],'checkLogin',[RestaurantController::class,'checkLogin'])->name('checkLogin');
+    
 });
 
 

@@ -13,6 +13,7 @@
 
     <script>
         window.print();
+        // window.close();
     </script>
 </body>
 </html>

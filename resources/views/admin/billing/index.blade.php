@@ -76,7 +76,9 @@ input[type=number] {
   -moz-appearance: textfield;
 }
     </style>
-    @include('admin.billing.products')
+    @if (!$hasTable)
+        @include('admin.billing.products')
+    @endif
     @include('admin.billing.distributors')
     @include('admin.billing.add_customer')
     <div style="display:flex;flex-direction: column;height:100vh;">
@@ -137,25 +139,26 @@ input[type=number] {
 
             </table>
         </div>
-
         <div style="padding:15px;">
             <div class="row">
-                <div class="col-md-2">
-                    <label for="item">Item (F1)</label>
-                    <input type="text" id="item" class="form-control next" data-next="rate">
-                </div>
-                <div class="col-md-2">
-                    <label for="item">Rate</label>
-                    <input type="number" min="0" step="0.01" id="rate" class="form-control next" data-next="qty" >
-                </div>
-                <div class="col-md-2">
-                    <label for="item">Qty</label>
-                    <input type="number" oninput="calculateTotal(this);" min="0" step="0.01" id="qty" class="form-control next" data-next="total" >
-                </div>
-                <div class="col-md-2">
-                    <label for="item">Total</label>
-                    <input type="number" min="0" step="0.01" id="total" class="form-control"  >
-                </div>
+                @if (!$hasTable)   
+                    <div class="col-md-2">
+                        <label for="item">Item (F1)</label>
+                        <input type="text" id="item" class="form-control next" data-next="rate">
+                    </div>
+                    <div class="col-md-2">
+                        <label for="item">Rate</label>
+                        <input type="number" min="0" step="0.01" id="rate" class="form-control next" data-next="qty" >
+                    </div>
+                    <div class="col-md-2">
+                        <label for="item">Qty</label>
+                        <input type="number" oninput="calculateTotal(this);" min="0" step="0.01" id="qty" class="form-control next" data-next="total" >
+                    </div>
+                    <div class="col-md-2">
+                        <label for="item">Total</label>
+                        <input type="number" min="0" step="0.01" id="total" class="form-control"  >
+                    </div>
+                @endif
                 <div class="col-md-4">
                     <label for="item" id="customerName" onclick="showCustomer()">__________________________</label> <br>
                     <button class="btn btn-primary" onclick="showCustomer()">Select Customer</button>
@@ -398,23 +401,29 @@ input[type=number] {
 
         function resetBill(){
             if(confirm("Do You want to cancel Bill")){
-                $('#paid').val(0);
-                $('#grosstotal').val(0);
-                $('#discount').val(0);
-                $('#nettotal').val(0);
-                $('#return').val(0);
-                $('#due').val(0);
-                $('#billitemholder').html('');
-                var savelock=false;
-                var customerid=-1;
-                var customername='';
-                var state=1;
-                calculateAll();
+                @if ($hasTable)
+                    window.close();
+                @else
+                    $('#paid').val(0);
+                    $('#grosstotal').val(0);
+                    $('#discount').val(0);
+                    $('#nettotal').val(0);
+                    $('#return').val(0);
+                    $('#due').val(0);
+                    $('#billitemholder').html('');
+                    var savelock=false;
+                    var customerid=-1;
+                    var customername='';
+                    var state=1;
+                    calculateAll();
+                @endif
             }
         }
 
         function clearBill(){
-
+            @if ($hasTable)
+                window.close();
+            @else
                 $('#paid').val(0);
                 $('#grosstotal').val(0);
                 $('#discount').val(0);
@@ -427,6 +436,7 @@ input[type=number] {
                 var customername='';
                 var state=1;
                 calculateAll();
+            @endif
         }
 
         var savelock=false;
@@ -457,7 +467,14 @@ input[type=number] {
                 return:$('#return').val(),
                 due:$('#due').val(),
                 id:customerid
+
             };
+            @if ($hasTable)
+                fd.table_id={{$table_id}};
+            @endif
+
+            console.log(fd);
+
             if(fd.due>0 && customerid<=0){
                 $('.distviwer').addClass('active');
                 state=2;
@@ -466,19 +483,19 @@ input[type=number] {
                 axios.post('{{route("admin.billing.save")}}',fd)
                 .then((response)=>{
                     console.log(response.data);
-                        alert('Bill Save successfully')
-                        clearBill();
-                        resetCustomer();
-                    console.log(response.data);
-
-                    axios.post('http://localhost:8000/api/default/set/',{'id':JSON.stringify(response.data)}).then((res)=>{
-                        console.log(res.data);
-                    })
+                        @if($hasTable)
+                            window.open("{{route('restaurant.print')}}?id="+response.data.id);
+                            opener.clearOrder({{$table_id}},response.data.id);
+                            window.close();
+                        @else
+                            alert('Bill Save successfully')
+                            clearBill();
+                            resetCustomer();
+                        @endif
                 })
                 .catch((err)=>{
 
                 })
-                console.log(fd);
             }
         }
 
@@ -513,12 +530,22 @@ input[type=number] {
         }
 
         window.onload = function() {
-        var mainInput = document.getElementById("nepali-datepicker");
-        mainInput.nepaliDatePicker();
-    };
-    var month = ('0'+ NepaliFunctions.GetCurrentBsDate().month).slice(-2);
-    var day = ('0' + NepaliFunctions.GetCurrentBsDate().day).slice(-2);
-    $('#nepali-datepicker').val(NepaliFunctions.GetCurrentBsYear() + '-' + month + '-' + day);
+            var mainInput = document.getElementById("nepali-datepicker");
+            mainInput.nepaliDatePicker();
+            @if ($hasTable)
+                showProgress('Loading Table Data');
+                axios.post('{{route('restaurant.bill')}}',{id:{{$table_id}}})
+                .then((res)=>{
+                        $('#billitemholder').html(res.data);
+                        calculateAll();
+                        hideProgress();
+
+                });
+            @endif
+        };
+        var month = ('0'+ NepaliFunctions.GetCurrentBsDate().month).slice(-2);
+        var day = ('0' + NepaliFunctions.GetCurrentBsDate().day).slice(-2);
+        $('#nepali-datepicker').val(NepaliFunctions.GetCurrentBsYear() + '-' + month + '-' + day);
     </script>
 @endsection
 
