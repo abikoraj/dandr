@@ -15,6 +15,10 @@ class CreateTablesTable extends Migration
     {
         Schema::create('tables', function (Blueprint $table) {
             $table->id();
+            $table->unsignedBigInteger('section_id');
+            $table->foreign('section_id')->references('id')->on('sections');
+            $table->string('name');
+            $table->text('data')->nullable();
             $table->timestamps();
         });
     }

@@ -22,7 +22,7 @@
 
                     <div class="col-md-6">
                         <label for="snf">Evening Milk</label>
-                        <input type="number" name="update_evening" id="update_evening" class="form-control"
+                        <input type="number" onkeydown="if(event.which==13){saveMilkUpdate();}" name="update_evening" id="update_evening" class="form-control"
                             step="0.01">
                     </div>
 

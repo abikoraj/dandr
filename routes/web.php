@@ -27,11 +27,13 @@ use App\Http\Controllers\Admin\OfferController;
 use App\Http\Controllers\Admin\PackagingController;
 use App\Http\Controllers\Admin\PointController;
 use App\Http\Controllers\Admin\PosBillingController;
+use App\Http\Controllers\Admin\SectionController;
 use App\Http\Controllers\Admin\SellitemController;
 use App\Http\Controllers\Admin\Setting\ConversionController;
 use App\Http\Controllers\Admin\SimpleManufactureController;
 use App\Http\Controllers\Admin\StockController;
 use App\Http\Controllers\Admin\SupplierController;
+use App\Http\Controllers\Admin\TableController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\WastageController;
 use App\Http\Controllers\BackupController;
@@ -42,6 +44,7 @@ use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\POS\BillingController;
 use App\Http\Controllers\POS\POSController;
 use App\Http\Controllers\ReportController;
+use App\Http\Controllers\RestaurantController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Sahakari\HomeController;
 use App\Http\Controllers\Sahakari\Member\MemberController;
@@ -73,14 +76,14 @@ Route::get('/test-distributor-date', 'TestController@distributorByDate')->name('
 Route::view('/403', 'access.403')->name('403');
 
 Route::get('/pass', function () {
-    // $pass = bcrypt('admin');
+    //$pass = bcrypt('55ryx82aEu8cVE3');
+    //echo $pass;
     // dd($pass);
     // $id=1;
     // $data= sprintf("%'.09d",$id);
     // $arr=str_split($data,3);
     // echo implode('/',$arr);
-
-    dd(currentStock()->sum);
+    // dd(currentStock()->sum);
 });
 
 Route::post('cuurent-stock', function () {
@@ -700,6 +703,21 @@ Route::name('admin.')->group(function () {
             });
         });
 
+        //table management
+        Route::prefix('table')->name("table.")->group(function () {
+            route::match(['GET', 'POST'], '', [TableController::class, 'index'])->name('index');
+            route::match(['GET', 'POST'], 'edit', [TableController::class, 'edit'])->name('edit');
+            route::match(['GET', 'POST'], 'del/{id}', [TableController::class, 'del'])->name('del');
+            route::match(['GET', 'POST'], 'add', [TableController::class, 'add'])->name('add');
+            //table sections
+            Route::prefix('section')->name("section.")->group(function () {
+                route::match(['GET', 'POST'], '', [SectionController::class, 'index'])->name('index');
+                route::match(['GET', 'POST'], 'edit', [SectionController::class, 'edit'])->name('edit');
+                route::match(['GET', 'POST'], 'del/{id}', [SectionController::class, 'del'])->name('del');
+                route::match(['GET', 'POST'], 'add', [SectionController::class, 'add'])->name('add');
+            });
+        });
+
         //xxx point calculation
         Route::prefix('point-calculation')->name("point.")->group(function () {
             route::match(['GET', 'POST'], '', [PointController::class, 'index'])->name('index');
@@ -760,6 +778,10 @@ Route::name('admin.')->group(function () {
             });
         });
     });
+});
+
+Route::name('restaurant.')->prefix('restaurant')->group(function(){
+    Route::match(['GET','POST'],'table',[RestaurantController::class,'table'])->name('table');
 });
 
 
