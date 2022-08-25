@@ -4,6 +4,7 @@
 @endsection
 @section('head-title','Tables')
 @section('toobar')
+<a href="{{route('admin.table.section.index')}}" class="btn btn-primary">Manage Table Sections</a>
 @endsection
 @section('content')
 @if(session()->has('message'))
