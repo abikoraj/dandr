@@ -88,6 +88,7 @@
                         <thead>
                             <tr>
                                 <th>#No</th>
+                                <th>Name</th>
                                 <th>Morning Milk (In Liter)</th>
                                 <th>Evening Milk (In Liter)</th>
                             </tr>

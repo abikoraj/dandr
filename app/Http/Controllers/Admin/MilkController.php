@@ -31,7 +31,7 @@ class MilkController extends Controller
 
         $actiontype = 0;
         $date = str_replace('-', '', $request->date);
-        $user = User::join('farmers', 'users.id', '=', 'farmers.user_id')->where('farmers.no', $request->user_id)->where('farmers.center_id', $request->center_id)->select('users.id', 'farmers.no', 'farmers.center_id')->first();
+        $user = User::join('farmers', 'users.id', '=', 'farmers.user_id')->where('farmers.no', $request->user_id)->where('farmers.center_id', $request->center_id)->select('users.id', 'farmers.no','users.name', 'farmers.center_id')->first();
         // $user=User::where('no',$request->user_id)->first();
         // dd($user,$request);
         if ($user == null) {
@@ -100,6 +100,7 @@ class MilkController extends Controller
         
         $milkData->save();
         $milkData->no = $user->no;
+        $milkData->name = $user->name;
         if ($actiontype == 1) {
             return view('admin.milk.single', ['d' => $milkData]);
         } else {
@@ -112,8 +113,9 @@ class MilkController extends Controller
         $date = str_replace('-', '', $request->date);
         $milkData = DB::table('milkdatas')
             ->join('farmers', 'farmers.user_id', '=', 'milkdatas.user_id')
+            ->join('users', 'farmers.user_id', '=', 'users.id')
             ->where(['date' => $date, 'milkdatas.center_id' => $request->center_id])
-            ->select('milkdatas.*', 'farmers.no')
+            ->select('milkdatas.*', 'farmers.no','users.name')
             ->orderBy('milkdatas.id')
             ->get();
         return view('admin.milk.dataload', ['milkdatas' => $milkData]);
