@@ -189,7 +189,7 @@
             <li><a href="{{route('admin.report.home')}}" class="waves-effect waves-block"><i class="zmdi zmdi-shopping-cart"></i><span>Reports</span></a></li>
                 
             @endif
-            @if (env('use_accountung',false))
+            @if (env('use_accounting',false))
     
             <li><a href="{{route('admin.accounting.index')}}" class="waves-effect waves-block"><i class="zmdi zmdi-shopping-cart"></i><span>Accounting</span></a></li>
             @endif
