@@ -45,6 +45,7 @@ use App\Http\Controllers\POS\BillingController;
 use App\Http\Controllers\POS\POSController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\RestaurantController;
+use App\Http\Controllers\RestaurantReportController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Sahakari\HomeController;
 use App\Http\Controllers\Sahakari\Member\MemberController;
@@ -636,6 +637,7 @@ Route::name('admin.')->group(function () {
                 Route::match(['GET', 'POST'], 'expenses', [ReportController::class, 'expense'])->name('expense');
                 Route::match(['GET', 'POST'], 'bonus', [ReportController::class, 'bonus'])->name('bonus');
                 Route::match(['GET', 'POST'], 'stock', [ReportController::class, 'stock'])->name('stock');
+                Route::match(['GET', 'POST'], 'restaurant', [RestaurantReportController::class, 'index'])->name('restaurant');
             });
         });
 

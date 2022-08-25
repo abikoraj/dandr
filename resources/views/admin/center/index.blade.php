@@ -105,7 +105,7 @@
                                 </div>
                             </div>
                             <div class="col-lg-6 {{env('usecc',0)==1?"":"d-none"}}" >
-                                <label for="name">Cooling Cost (%)</label>
+                                <label for="name">Cooling Cost (per litre)</label>
                                 <div class="form-group">
                                     <input type="number" id="cc" name="cc" class="form-control" step="0.001" placeholder="Enter Cooling Cost" value="0" required>
                                 </div>

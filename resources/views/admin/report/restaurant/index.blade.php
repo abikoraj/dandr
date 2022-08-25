@@ -1,11 +1,11 @@
 @extends('admin.layouts.app')
-@section('title','Sales Report')
+@section('title','Report - Restaurant')
 @section('css')
 <link rel="stylesheet" href="{{ asset('backend/plugins/select2/select2.css') }}" />
 <link rel="stylesheet" href="{{ asset('calender/nepali.datepicker.v3.2.min.css') }}" />
 @endsection
 @section('head-title')
-    <a href="{{route('admin.report.home')}}">Report</a> / Sales
+    <a href="{{route('admin.report.home')}}">Report</a> / Restaurant
 
 @endsection
 @section('toobar')
@@ -126,7 +126,7 @@
             'date2': $('#date2').val(),
             'type':$('#type').val(),
         };
-        axios.post("{{route('admin.report.sales')}}",d)
+        axios.post("{{route('admin.report.restaurant')}}",d)
         .then(function(response){
             $('#allData').html(response.data);
         })

@@ -98,7 +98,7 @@
     </div> --}}
 
     @if (env('use_restaurant'))
-        <div class="col-md-2 section href" data-target="{{route('admin.report.expense')}}">
+        <div class="col-md-2 section href" data-target="{{route('admin.report.restaurant')}}">
             <span class="icon">
                 <i class="zmdi zmdi-money-off"></i>
             </span>
