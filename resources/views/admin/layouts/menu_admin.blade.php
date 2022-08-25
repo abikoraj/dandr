@@ -136,10 +136,10 @@
             </li>
             @endif
             @if (env('use_restaurant',false))
-            <li><a href="javascript:void(0);" class="waves-effect waves-block menu-toggle"><i class="zmdi zmdi-shopping-cart"></i><span>Manufacture</span></a>
+            <li><a href="javascript:void(0);" class="waves-effect waves-block menu-toggle"><i class="zmdi zmdi-shopping-cart"></i><span>Restaurant</span></a>
                 <ul class="ml-menu">
-                    <li><a href="{{ route('admin.manufacture.product.index') }}" class="waves-effect waves-block">Manage Products</a></li>
-                    <li><a href="{{ route('admin.manufacture.process.index') }}" class="waves-effect waves-block">Manage Process</a></li>
+                    <li><a href="{{ route('admin.table.index') }}" class="waves-effect waves-block">Manage Table</a></li>
+                    <li><a href="{{ route('restaurant.table') }}" class="waves-effect waves-block">Manage Orders</a></li>
 
                 </ul>
             </li>
