@@ -540,6 +540,9 @@ input[type=number] {
                         calculateAll();
                         hideProgress();
 
+                })
+                .catch((err)=>{
+                    window.location.replace('/403');
                 });
             @endif
         };

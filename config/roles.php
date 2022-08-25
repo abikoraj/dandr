@@ -1,6 +1,7 @@
 <?php
 return [
     "farmer" => [
+        'use'=>['use_farmer'],
         'code' => '01',
         'children' => [
             "list" => ['code' => "01.01"],
@@ -17,6 +18,7 @@ return [
         ]
     ],
     "milk_collection" => [
+        'use'=>['use_milk'],
         'code' => '02',
         'children' => [
             'add' => ['code' => '02.01'],
@@ -28,6 +30,7 @@ return [
         ]
     ],
     "item" => [
+        'use'=>[],
         'code' => '03',
         'children' => [
             'add' => ['code' => '03.01'],
@@ -43,6 +46,7 @@ return [
         ]
     ],
     "distributer" => [
+        'use'=>['use_distributer'],
         'code' => '04',
         'children' => [
             "list" => ['code' => "04.01"],
@@ -60,6 +64,7 @@ return [
     ],
 
     "staff" => [
+        'use'=>['use_employee'],
         'code' => '05',
         'children' => [
             'employee list' => ['code' => '05.01'],
@@ -74,6 +79,7 @@ return [
     ],
 
     "manage_expense" => [
+        'use'=>['use_expense'],
         'code' => '06',
         'children' => [
             'category list' => ['code' => '06.01'],
@@ -88,6 +94,7 @@ return [
     ],
 
     "suppliers" => [
+        'use'=>['use_supplier'],
         'code' => '07',
         'children' => [
             'supplier list' => ['code' => '07.01'],
@@ -105,6 +112,8 @@ return [
     ],
 
     "customer" => [
+        'use'=>['use_restaurant','use_pos'],
+
         'code' => '08',
         'children' => [
             'customer list' => ['code' => '08.01'],
@@ -113,6 +122,7 @@ return [
     ],
 
     "Manufacture" => [
+        'use'=>['use_manufacture'],
         'code' => '13',
         'children' => [
             'product_template' => ['code' => '13.01'],
@@ -124,6 +134,7 @@ return [
     ],
 
     "POS" => [
+        'use'=>['use_pos'],
         'code' => '09',
         'children' => [
             'POS Interface' => ['code' => '09.01'],
@@ -133,8 +144,17 @@ return [
             'sync' => ['code' => '09.05'],
         ]
     ],
+    "Old Pos" => [
+        'use'=>['use_oldpos','use_restaurant'],
+        'code' => '15',
+        'children' => [
+            'add manage' => ['code' => '15.01'],
+            'list' => ['code' => '15.02'],
+        ]
+    ],
 
     "POS_Setting" => [
+        'use'=>['use_pos'],
         'code' => '10',
         'children' => [
             'Day Management' => ['code' => '10.01'],
@@ -145,6 +165,7 @@ return [
     ],
 
     "Payment_Setting" => [
+        'use'=>['use_pos'],
         'code' => '11',
         'children' => [
             'Banks' => ['code' => '11.01'],
@@ -153,11 +174,22 @@ return [
     ],
 
     "Reports" => [
+        'use'=>['use_reports'],
+
         'code' => '12',
         'children' => [
             'Reports' => ['code' => '12.01'],
         ]
     ],
+
+    "Restaurant"=>[
+        'use'=>['use_restaurant'],
+        'code'=>'14',
+        'children'=>[
+            'Manage Tables'=>['code'=>'14.01'],
+            'Manage Orders'=>['code'=>'14.02'],
+        ]
+    ]
 
 
 ];

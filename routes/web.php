@@ -660,11 +660,14 @@ Route::name('admin.')->group(function () {
         ///XXX billing
         Route::group(['prefix' => 'billing'], function () {
             Route::name('billing.')->group(function () {
-                Route::get('', 'Billing\BillingController@index')->name('home');
-                Route::get('detail/{id}', 'Billing\BillingController@detail')->name('detail');
-                Route::post('del/{id}', 'Billing\BillingController@del')->name('del');
-                Route::post('save', 'Billing\BillingController@save')->name('save');
-                Route::match(['get', 'post'], "list",[BillingBillingController::class,'list'])->name('list');
+                Route::middleware('permmission:15.01')->group(function(){
+
+                    Route::get('', 'Billing\BillingController@index')->name('home');
+                    Route::get('detail/{id}', 'Billing\BillingController@detail')->name('detail');
+                    Route::post('del/{id}', 'Billing\BillingController@del')->name('del');
+                    Route::post('save', 'Billing\BillingController@save')->name('save');
+                });
+                Route::match(['get', 'post'], "list",[BillingBillingController::class,'list'])->name('list')->middleware('permmission:15.02');
             });
         });
 
@@ -783,7 +786,8 @@ Route::name('admin.')->group(function () {
     });
 });
 
-Route::name('restaurant.')->prefix('restaurant')->group(function(){
+Route::name('restaurant.')->prefix('restaurant')->middleware('permmission:14.02')->group(function(){
+
     Route::match(['GET','POST'],'table',[RestaurantController::class,'table'])->name('table');
     Route::match(['GET','POST'],'bill',[RestaurantController::class,'bill'])->name('bill');
     Route::match(['GET','POST'],'print',[RestaurantController::class,'print'])->name('print');
@@ -809,6 +813,7 @@ Route::name('pos.')->prefix('pos')->group(function () {
         Route::get('customers', [POSController::class, 'customers'])->name('customers');
         Route::post('customers-add', [POSController::class, 'customersAdd'])->name('customers-add');
         Route::post('customer-search', [POSController::class, 'searchCustomer'])->name('customers-search');
+
         Route::name('billing.')->prefix('billing')->group(function () {
             Route::post('add', [BillingController::class, 'add'])->name('add');
             Route::post('hold', [BillingController::class, 'hold'])->name('hold');

@@ -1,6 +1,11 @@
 @extends('admin.layouts.app')
 @section('title','Change Password')
-@section('head-title','Users Change Password')
+@section('head-title')
+<a href="{{route('admin.user.users')}}">
+    Users
+</a>
+/Change Password
+ @endsection
 
 @section('content')
 

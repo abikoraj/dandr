@@ -8,6 +8,7 @@ class Menu
     {
         return [
             "Farmer" => [
+                'conition'=>env('use_farmer',false),
                 'code' => '01',
                 'link' => null,
                 'icon' => 'apps',
@@ -23,6 +24,7 @@ class Menu
                 ],
             ],
             "milk" => [
+                'conition'=>env('use_milk',false),
                 'code' => '02',
                 'link' => null,
                 'icon' => 'apps',
@@ -33,6 +35,7 @@ class Menu
                 ],
             ],
             "item" => [
+                'conition'=>env('use_farmer',false) || env('use_farmer') || env('use_pos'),
                 'code' => '03',
                 'link' => null,
                 'icon' => 'apps',
@@ -46,6 +49,8 @@ class Menu
                 ],
             ],
             "distributer" => [
+                'conition'=>env('use_distributer',false),
+
                 'code' => '04',
                 'link' => null,
                 'icon' => 'apps',
@@ -61,6 +66,7 @@ class Menu
                 ],
             ],
             "staff" => [
+                'conition'=>env('use_employee',false),
                 'code' => '05',
                 'link' => null,
                 'icon' => 'apps',
@@ -75,6 +81,8 @@ class Menu
             ],
 
             "expese" => [
+                'conition'=>env('use_expense',false),
+                
                 'code' => '06',
                 'link' => null,
                 'icon' => 'apps',
@@ -86,6 +94,8 @@ class Menu
             ],
 
             "supplier" => [
+                'conition'=>env('use_supplier',false),
+                
                 'code' => '07',
                 'link' => null,
                 'icon' => 'apps',
@@ -99,6 +109,7 @@ class Menu
             ],
 
             "customer" => [
+                'conition'=>env('use_pos',false) || env('use_restaurant'),
                 'code' => '08',
                 'link' => null,
                 'icon' => 'apps',
@@ -109,6 +120,8 @@ class Menu
                 ],
             ],
             "manufacture" => [
+                'conition'=>env('user_manufacture',false),
+
                 'code' => '08',
                 'link' => null,
                 'icon' => 'apps',
@@ -118,8 +131,32 @@ class Menu
                     ["Manage Process", '13.02', route('admin.manufacture.process.index')],
                 ],
             ],
-
+            "Restaurant"=>[
+                'conition'=>env('use_restaurant',false),
+                
+                'code' => '14',
+                'link' => null,
+                'icon' => 'apps',
+                'text' => "Restaurant",
+                'children' => [
+                    ["Manage Tables", '14.01', route('admin.table.index')],
+                    ["Table Orders", '14.02', route('restaurant.table')],
+                ],  
+            ],
+            "old_pos"=>[
+                'conition'=>env('use_oldpos',false),
+                'code' => '15',
+                'link' => null,
+                'icon' => 'apps',
+                'text' => "Old Pos",
+                'children' => [
+                    ["Interface", '15.01', route('admin.billing.home')],
+                    ["Search Bill", '15.02', route('admin.billing.list')],
+                ],  
+            ],
             "pos" => [
+                'conition'=>env('use_pos',false),
+
                 'code' => '09',
                 'link' => null,
                 'icon' => 'apps',
@@ -137,6 +174,8 @@ class Menu
 
 
             "pos setting" => [
+                'conition'=>env('use_pos',false),
+
                 'code' => '10',
                 'link' => null,
                 'icon' => 'apps',
@@ -150,6 +189,8 @@ class Menu
             ],
 
             "Payment setting" => [
+                'conition'=>env('use_pos',false),
+
                 'code' => '11',
                 'link' => null,
                 'icon' => 'apps',
@@ -160,6 +201,8 @@ class Menu
             ],
 
             "Reports" => [
+                'conition'=>env('use_reports',false),
+                
                 'code' => '12',
                 'link' => null,
                 'icon' => 'apps',

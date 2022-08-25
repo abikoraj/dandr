@@ -64,8 +64,5 @@ class RestaurantController extends Controller
         }
     }
 
-    // public function FunctionName()
-    // {
-    //     stat
-    // }
+   
 }

@@ -82,12 +82,16 @@
                 </ul>
             </li>
             @endif
-            <li><a href="javascript:void(0);" class="waves-effect waves-block menu-toggle"><i class="zmdi zmdi-shopping-cart"></i><span>Manage Expense</span></a>
-                <ul class="ml-menu">
-                    <li><a href="{{ route('admin.expense.category') }}" class="waves-effect waves-block"><span>Expense Categories</span></a></li>
-                    <li><a href="{{ route('admin.expense.index') }}" class="waves-effect waves-block"><span>Expenses</span></a></li>
-                </ul>
-            </li>
+            @if (env('use_expenses',false))
+                <li><a href="javascript:void(0);" class="waves-effect waves-block menu-toggle"><i class="zmdi zmdi-shopping-cart"></i><span>Manage Expense</span></a>
+                    <ul class="ml-menu">
+                        <li><a href="{{ route('admin.expense.category') }}" class="waves-effect waves-block"><span>Expense Categories</span></a></li>
+                        <li><a href="{{ route('admin.expense.index') }}" class="waves-effect waves-block"><span>Expenses</span></a></li>
+                    </ul>
+                </li>
+            @endif
+            @if (env('use_supplier',false))
+                
             <li><a href="javascript:void(0);" class="waves-effect waves-block menu-toggle"><i class="zmdi zmdi-shopping-cart"></i><span>Suppliers</span></a>
                 <ul class="ml-menu">
                     <li><a href="{{ route('admin.supplier.index') }}" class="waves-effect waves-block">Supplier List</a></li>
@@ -96,16 +100,21 @@
                     <li><a href="{{ route('admin.supplier.previous.balance') }}" class="waves-effect waves-block">Opening Blance</a></li>
                 </ul>
             </li>
-            <li><a href="javascript:void(0);" class="waves-effect waves-block menu-toggle"><i class="zmdi zmdi-shopping-cart"></i><span>Staff Manage</span></a>
-                <ul class="ml-menu">
-                    <li><a href="{{ route('admin.employee.index') }}" class="waves-effect waves-block">Employees </a></li>
-                    <li><a href="{{ route('admin.employee.account.index') }}" class="waves-effect waves-block">Account Opening</a></li>
-                    <li><a href="{{ route('admin.employee.advance') }}" class="waves-effect waves-block">Advance</a></li>
-                    <li><a href="{{ route('admin.salary.pay') }}" class="waves-effect waves-block">Salary Pay</a></li>
-                    <li><a href="{{ route('admin.employee.ret') }}" class="waves-effect waves-block">Return Advance</a></li>
-                </ul>
-            </li>
+            @endif
+            @if (env('use_employee',false))
+                
+                <li><a href="javascript:void(0);" class="waves-effect waves-block menu-toggle"><i class="zmdi zmdi-shopping-cart"></i><span>Staff Manage</span></a>
+                    <ul class="ml-menu">
+                        <li><a href="{{ route('admin.employee.index') }}" class="waves-effect waves-block">Employees </a></li>
+                        <li><a href="{{ route('admin.employee.account.index') }}" class="waves-effect waves-block">Account Opening</a></li>
+                        <li><a href="{{ route('admin.employee.advance') }}" class="waves-effect waves-block">Advance</a></li>
+                        <li><a href="{{ route('admin.salary.pay') }}" class="waves-effect waves-block">Salary Pay</a></li>
+                        <li><a href="{{ route('admin.employee.ret') }}" class="waves-effect waves-block">Return Advance</a></li>
+                    </ul>
+                </li>
+            @endif
 
+            @if (env('use_employee',false)||env('use_restaurant'))
             <li><a href="javascript:void(0);" class="waves-effect waves-block menu-toggle"><i class="zmdi zmdi-shopping-cart"></i><span>Customers</span></a>
                 <ul class="ml-menu">
                     <li><a href="{{ route('admin.customer.home') }}" class="waves-effect waves-block">List </a></li>
@@ -114,6 +123,9 @@
                     <li><a href="{{ route('admin.customer.promo') }}" class="waves-effect waves-block">Promo  SMS</a></li>
                 </ul>
             </li>
+            @endif
+
+
             @if (env('use_manufacture',false))
             <li><a href="javascript:void(0);" class="waves-effect waves-block menu-toggle"><i class="zmdi zmdi-shopping-cart"></i><span>Manufacture</span></a>
                 <ul class="ml-menu">
@@ -123,13 +135,28 @@
                 </ul>
             </li>
             @endif
+            @if (env('use_restaurant',false))
+            <li><a href="javascript:void(0);" class="waves-effect waves-block menu-toggle"><i class="zmdi zmdi-shopping-cart"></i><span>Manufacture</span></a>
+                <ul class="ml-menu">
+                    <li><a href="{{ route('admin.manufacture.product.index') }}" class="waves-effect waves-block">Manage Products</a></li>
+                    <li><a href="{{ route('admin.manufacture.process.index') }}" class="waves-effect waves-block">Manage Process</a></li>
+
+                </ul>
+            </li>
+            @endif
+
+            @if (env('use_oldpos',false))
+            <li><a href="javascript:void(0);" class="waves-effect waves-block menu-toggle"><i class="zmdi zmdi-shopping-cart"></i><span>Old POS</span></a>
+                <ul class="ml-menu">
+                    <li><a href="{{ route('admin.billing.home') }}" class="waves-effect waves-block">Old POS Interface </a></li>
+                    <li><a href="{{ route('admin.billing.list') }}" class="waves-effect waves-block">Old Search Bill </a></li>
+                </ul>
+            </li>
+            @endif
             @if (env('use_pos',false))
             <li><a href="javascript:void(0);" class="waves-effect waves-block menu-toggle"><i class="zmdi zmdi-shopping-cart"></i><span>POS</span></a>
                 <ul class="ml-menu">
-                    @if (env('pos_interface',"new")=="old")
-                    <li><a href="{{ route('admin.billing.home') }}" class="waves-effect waves-block">Old POS Interface </a></li>
-                    <li><a href="{{ route('admin.billing.list') }}" class="waves-effect waves-block">Old Search Bill </a></li>
-                    @endif
+
                     <li><a href="{{ route('pos.index') }}" class="waves-effect waves-block">POS Interface</a></li>
                     <li><a href="{{ route('admin.pos.billing.index') }}" class="waves-effect waves-block">Search Bills</a></li>
                     <li><a href="{{ route('admin.pos.billing.print') }}" class="waves-effect waves-block">Reprint Bills</a></li>
@@ -151,13 +178,21 @@
                 </ul>
             </li> --}}
             @endif
+            
             <li><a href="javascript:void(0);" class="waves-effect waves-block menu-toggle"><i class="zmdi zmdi-shopping-cart"></i><span> Setting</span></a>
                 <ul class="ml-menu">
                     <li><a href="{{ route('admin.setting.conversion.index') }}" class="waves-effect waves-block">Units </a></li>
                 </ul>
             </li>
+
+            @if (env('use_reports',false))
             <li><a href="{{route('admin.report.home')}}" class="waves-effect waves-block"><i class="zmdi zmdi-shopping-cart"></i><span>Reports</span></a></li>
+                
+            @endif
+            @if (env('use_accountung',false))
+    
             <li><a href="{{route('admin.accounting.index')}}" class="waves-effect waves-block"><i class="zmdi zmdi-shopping-cart"></i><span>Accounting</span></a></li>
+            @endif
             <li><a href="{{route('admin.user.users')}}" class="waves-effect waves-block"><i class="zmdi zmdi-shopping-cart"></i><span>Users</span></a></li>
             <li><a href="{{route('admin.backup.index')}}" class="waves-effect waves-block"><i class="zmdi zmdi-shopping-cart"></i><span>Backup</span></a></li>
 
