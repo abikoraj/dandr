@@ -1,6 +1,10 @@
 @foreach($data as $d)
 <tr id="snffat_{{$d->id}}" data-snf="{{ $d->snf??0 }}" data-fat="{{ $d->fat??0 }}">
-    <td>{{ $d->user()->no }}</td>
+    @php
+        $user=$d->user()
+    @endphp
+    <td>{{ $user->no }}</td>
+    <td>{{ $user->name }}</td>
     <td id="{{$d->id}}_fat" >{{ $d->fat??0 }}</td>
     <td id="{{$d->id}}_snf" >{{ $d->snf??0 }}</td>
     <td class="d-print-none">

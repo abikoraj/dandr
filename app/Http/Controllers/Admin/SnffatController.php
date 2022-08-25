@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Snffat;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class SnffatController extends Controller
 {
@@ -36,6 +37,7 @@ class SnffatController extends Controller
             $snffat->center_id = $request->center_id;
             $snffat->save();
             $snffat->no=$request->user_id;
+            $snffat->name=$user->name;
             return view('admin.snf.single',compact('snffat'));
         // }else{
         //     $checkData->snf = $request->snf;

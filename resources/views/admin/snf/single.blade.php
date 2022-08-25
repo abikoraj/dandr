@@ -1,6 +1,8 @@
 
 <tr id="snffat_{{$snffat->id}}" data-snf="{{ $snffat->snf??0 }}" data-fat="{{ $snffat->fat??0 }}">
     <td>{{ $snffat->no }}</td>
+    <td>{{ $snffat->name }}</td>
+
     <td id="{{$snffat->id}}_fat" >{{ $snffat->fat??0 }}</td>
     <td id="{{$snffat->id}}_snf" >{{ $snffat->snf??0 }}</td>
     <td>

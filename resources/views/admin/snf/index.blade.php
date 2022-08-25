@@ -71,6 +71,7 @@
                         <thead>
                             <tr>
                                 <th>#No</th>
+                                <th>Name</th>
                                 <th>Fats (%)</th>
                                 <th>Snf (%)</th>
                             </tr>
