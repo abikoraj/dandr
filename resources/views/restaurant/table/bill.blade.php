@@ -35,14 +35,16 @@
             Issued Date: {{_nepalidate( $bill->date )}}
         </div>
         <div class="col-12 b-500 f-12 text-start">
-            Purchaser's Name : {{ $bill->customer_name }}
+            Purchaser's Name : {{ $bill->name }}
         </div>
         <div class="col-6 b-500 f-12 text-start">
-            Purchaser's Phone : {{ $bill->customer_phone }}
+            Purchaser's Phone : {{ $bill->phone }}
         </div>
-        <div class="col-6 b-500 f-12 text-end">
-            Purchaser's Vat/PAN : {{ $bill->customer_pan }}
-        </div>
+        @if (env('companyUseTax'))       
+            <div class="col-6 b-500 f-12 text-end">
+                Purchaser's Vat/PAN : {{ $bill->customer_pan }}
+            </div>
+        @endif
     </div>
     <table class="print-table f-12 text-start">
         <tr class="">

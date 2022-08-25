@@ -126,10 +126,10 @@ class BillingController extends Controller
         $bill->save();
 
         if ($request->id != -1) {
-            $ledger->addLedger('Purchase ', 1, $request->net, $date, 130, $bill->id);
+            $ledger->addLedger('Purchase ', 2, $request->net, $date, 130, $bill->id);
 
             if ($request->paid > 0) {
-                $ledger->addLedger('Paid Amount', 2, $paidamount, $date, 131, $bill->id);
+                $ledger->addLedger('Paid Amount', 1, $paidamount, $date, 131, $bill->id);
             }
         }
         // dd($request->billitems);

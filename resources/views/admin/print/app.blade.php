@@ -12,7 +12,9 @@
     @yield('content')
 
     <script>
+        window.onafterprint = () => window.close();
         window.print();
+
         // window.close();
     </script>
 </body>

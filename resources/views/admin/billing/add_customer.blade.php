@@ -68,16 +68,21 @@
                 var data=new FormData(document.getElementById('addCustomer'));
                 axios.post('{{route('admin.customer.add')}}',data)
                 .then((res)=>{
-                    $('#data').append(res.data);
+                    // $('#data').append(customer);
                     hideProgress();
                     lock=false;
                     $('#addModal').modal('hide');
                     document.getElementById('addCustomer').reset();
-                   
-                    html='<tr  class="hovertr" id="distri_'+res.data.id+'" " onclick="selectCustomer('+res.data.id+',\''+res.data.user.name+'\')"> <td>'+res.data.id+'</td><td>'+res.data.user.name+'</td></tr>';
+                    const customer=res.data;
+                    console.log(customer);
+                    html=`<tr  class="hovertr" id="distri_${customer.id}" " onclick="selectCustomer(${customer.id},'${res.data.name}')">
+                            <td>${customer.id}</td>
+                            <td>${customer.name}</td>
+                        </tr>`;
+                    console.log(html,customer);
                     $('#customers').append(html);
                     if(state==2){
-                        selectCustomer(res.data.id,res.data.user.name);
+                        selectCustomer(customer.id,customer.name);
                     }
                 })
                 .catch((err)=>{

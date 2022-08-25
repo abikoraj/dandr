@@ -7,22 +7,27 @@ use App\Models\Distributer;
 use App\Models\Distributerreq;
 use App\Models\Distributorsell;
 use App\Models\Ledger;
+use App\Models\Sellitem;
 use App\Models\User;
 use App\NepaliDate;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 
 class DistributorDashboardController extends Controller
 {
     public function index(){
         $user = Auth::user();
+
         $distributor = Distributer::where('user_id',$user->id)->first();
-        $purchase = Distributorsell::where('distributer_id',$distributor->id)->sum('total');
-        $pay = Distributorsell::where('distributer_id',$distributor->id)->sum('paid');
+        $dr = DB::selectOne('select sum(amount)  as total from ledgers where user_id=? and type=2' , [$user->id]);
+        $cr = DB::selectOne('select sum(amount)  as total from ledgers where user_id=? and type=1' , [$user->id]);
+        $balance=($dr==null?0:$dr->total) - ($cr==null?0:$cr->total);
+       
         // dd($pay);
-        $due = User::where('id',Auth::user()->id)->where('amounttype',1)->sum('amount');
-        return view('users.distributor.index',compact('due','pay','purchase'));
+        // $due = User::where('id',Auth::user()->id)->where('amounttype',1)->sum('amount');
+        return view('users.distributor.index',compact('balance'));
     }
 
 
@@ -40,51 +45,64 @@ class DistributorDashboardController extends Controller
         $data=[];
         $date=1;
         $title="";
-        $ledger=Ledger::where('user_id',$request->user_id);
-        if($type==0){
-            $range = NepaliDate::getDate($request->year,$request->month,$request->session);
-            $ledger=$ledger->where('date','>=',$range[1])->where('date','<=',$range[2]);
-            $title="<span class='mx-2'>Year:".$year ."</span>";
-            $title.="<span class='mx-2'>Month:".$month ."</span>";
-            $title.="<span class='mx-2'>Session:".$session ."</span>";
-
-        }elseif($type==1){
-            $date=$date = str_replace('-','',$request->date1);
-           $ledger=$ledger->where('date','=',$date);
-           $title="<span class='mx-2'>Date:"._nepalidate($date) ."</span>";
-
-        }elseif($type==2){
-            $range=NepaliDate::getDateWeek($request->year,$request->month,$request->week);
-            $ledger=$ledger->where('date','>=',$range[1])->where('date','<=',$range[2]);
-            $title="<span class='mx-2'>Year:".$year ."</span>";
-            $title.="<span class='mx-2'>Month:".$month ."</span>";
-            $title.="<span class='mx-2'>Week:".$week ."</span>";
-
-        }elseif($type==3){
-            $range=NepaliDate::getDateMonth($request->year,$request->month);
-           $ledger=$ledger->where('date','>=',$range[1])->where('date','<=',$range[2]);
-           $title="<span class='mx-2'>Year:".$year ."</span>";
-            $title.="<span class='mx-2'>Month:".$month ."</span>";
-
-        }elseif($type==4){
-            $range=NepaliDate::getDateYear($request->year);
-            $ledger=$ledger->where('date','>=',$range[1])->where('date','<=',$range[2]);
-            $title="<span class='mx-2'>Year:".$year ."</span>";
-
-
-        }elseif($type==5){
-            $range[1]=str_replace('-','',$request->date1);;
-            $range[2]=str_replace('-','',$request->date2);;
-             $ledger=$ledger->where('date','>=',$range[1])->where('date','<=',$range[2]);
-             $title="<span class='mx-2'>from:".$request->date1 ."</span>";
-            $title.="<span class='mx-2'>To:".$request->date2 ."</span>";
-
+        $user=Auth::user();
+        $ledger=Ledger::where('user_id',$user->id);
+        if ($type == 0) {
+            $range = NepaliDate::getDate($request->year, $request->month, $request->session);
+            $ledger = $ledger->where('date', '<=', $range[2]);
+            $title = "<span class='mx-2'>Year:" . $year . "</span>";
+            $title .= "<span class='mx-2'>Month:" . $month . "</span>";
+            $title .= "<span class='mx-2'>Session:" . $session . "</span>";
+        } elseif ($type == 1) {
+            $date = $date = str_replace('-', '', $request->date1);
+            $ledger = $ledger->where('date', '=', $date);
+            $title = "<span class='mx-2'>Date:" . _nepalidate($date) . "</span>";
+        } elseif ($type == 2) {
+            $range = NepaliDate::getDateWeek($request->year, $request->month, $request->week);
+            $ledger = $ledger->where('date', '<=', $range[2]);
+            $title = "<span class='mx-2'>Year:" . $year . "</span>";
+            $title .= "<span class='mx-2'>Month:" . $month . "</span>";
+            $title .= "<span class='mx-2'>Week:" . $week . "</span>";
+        } elseif ($type == 3) {
+            $range = NepaliDate::getDateMonth($request->year, $request->month);
+            $ledger = $ledger->where('date', '<=', $range[2]);
+            $title = "<span class='mx-2'>Year:" . $year . "</span>";
+            $title .= "<span class='mx-2'>Month:" . $month . "</span>";
+        } elseif ($type == 4) {
+            $range = NepaliDate::getDateYear($request->year);
+            $ledger = $ledger->where('date', '<=', $range[2]);
+            $title = "<span class='mx-2'>Year:" . $year . "</span>";
+        } elseif ($type == 5) {
+            $range[1] = str_replace('-', '', $request->date1);;
+            $range[2] = str_replace('-', '', $request->date2);;
+            $ledger = $ledger->where('date', '<=', $range[2]);
+            $title = "<span class='mx-2'>from:" . $request->date1 . "</span>";
+            $title .= "<span class='mx-2'>To:" . $request->date2 . "</span>";
         }
-        // dd($ledger->toSql(),$ledger->getBindings());
-        $ledgers=$ledger->orderBy('id','asc')->get();
-        $user=User::where('id',$request->user_id)->first();
+        $base = 0;
+        $prev = 0;
+        $closing = 0;
+        $arr = [];
+        $ledgers = $ledger->orderBy('date', 'asc')->get();
+        $cr=0;$dr=0;
+        foreach ($ledgers as $key => $l) {
 
-        return view('users.distributor.data',compact('ledgers','type','user','title'));
+            if ($l->type == 1) {
+                $base -= $l->amount;
+            } else {
+                $base += $l->amount;
+            }
+            if ($l->date < $range[1]) {
+                $prev = $base;
+            }
+            if ($l->date >= $range[1] && $l->date <= $range[2]) {
+                $l->amt = $base;
+                $closing = $base;
+                array_push($arr, $l);
+            }
+        }
+
+        return view('users.distributor.data',compact('arr','type','user','title','prev'));
     }
 
     public function changePasswordPage(){

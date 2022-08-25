@@ -75,4 +75,17 @@
 ::-webkit-scrollbar-thumb:hover {
   background: #555;
 }
+
+@media(max-width:425px){
+  .sideHolder-{{csrf_token()}} {
+        position: fixed;
+        bottom: 0px;
+        right: 0px;
+        top: 0px;
+        left:0px;
+        width: auto;
+        overflow-y:auto; 
+
+    }
+}
 </style>

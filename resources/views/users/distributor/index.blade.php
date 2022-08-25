@@ -12,11 +12,11 @@
         <span class="divider"></span>
         <span class="text">
             Total Balance <br>
-            Rs.{{ $due }}
+            Rs.{{ $balance>0? ($balance .' Dr'): ((-1*$balance). ' Cr') }}
         </span>
     </div>
 
-    <div class="col-md-2 section">
+    {{-- <div class="col-md-2 section">
         <span class="icon">
             <i class="zmdi zmdi-accounts"></i>
         </span>
@@ -36,7 +36,7 @@
             Total Payment <br>
             Rs.{{ $pay }}
         </span>
-    </div>
+    </div> --}}
 </div>
 @endsection
 @section('js')

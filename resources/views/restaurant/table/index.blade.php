@@ -1,7 +1,7 @@
 @extends('restaurant.layout.app')
 @section('content')
     @include('restaurant.table.style')
-    <div class="p-5">
+    <div class="p-2 p-md-5">
 
         <div class="d-flex">
             @foreach ($sections as $section)
@@ -16,7 +16,7 @@
                     onclick="setSelection({{ $section->id }});">
                     <div class="row">
                         @foreach ($tables->where('section_id', $section->id) as $table)
-                            <div class="col-md-6 col-lg-4 " ondblclick="showOrderPad({{$table->id}},'{{$table->name}}')">
+                            <div class="col-md-6 col-lg-4 mb-1 " ondblclick="showOrderPad({{$table->id}},'{{$table->name}}')">
                                 <div class="shadow tables p-2"  id="table={{$table->id}}" >
                                     <h5 class="px-2">{{ $table->name }}</h5>
                                     <div class="orders">
@@ -239,6 +239,7 @@
             $('.sideBar-{{csrf_token()}}').css('display', 'block');
             $('#table_name').html(name);
             $('#table_id').val(id);
+            $('#item_id').focus();
             currentTable={name:name,id:id};
             renderSide();
 
@@ -276,7 +277,7 @@
             if(index>-1){
                 currentData.splice(index,1);
                 save();
-                window.open("{{route('restaurant.print')}}?id="+bill_id)
+                // window.open("{{route('restaurant.print')}}?id="+bill_id)
                 $('#order-'+id).html('');
             }
 

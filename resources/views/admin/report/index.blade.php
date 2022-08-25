@@ -74,15 +74,18 @@
         </span>
     </div>
     @endif
-    <div class="col-md-2 section href" data-target="{{route('admin.report.emp')}}">
-        <span class="icon">
-            <i class="zmdi zmdi-truck"></i>
-        </span>
-        <span class="divider"></span>
-        <span class="text">
-            Employee <br> Report
-        </span>
-    </div>
+    @if (env('use_employee'))
+        
+        <div class="col-md-2 section href" data-target="{{route('admin.report.emp')}}">
+            <span class="icon">
+                <i class="zmdi zmdi-truck"></i>
+            </span>
+            <span class="divider"></span>
+            <span class="text">
+                Employee <br> Report
+            </span>
+        </div>
+    @endif
     {{-- <div class="col-md-2 section href" data-target="{{route('admin.report.credit')}}">
         <span class="icon">
             <i class="zmdi zmdi-money-off"></i>
@@ -94,15 +97,21 @@
         </span>
     </div> --}}
 
-    <div class="col-md-2 section href" data-target="{{route('admin.report.expense')}}">
-        <span class="icon">
-            <i class="zmdi zmdi-money-off"></i>
-        </span>
-        <span class="divider"></span>
-        <span class="text">
-            Expenses <br> Report
-        </span>
-    </div>
+    @if ()
+        
+    @endif
+    @if (env('use_expenses'))
+        
+        <div class="col-md-2 section href" data-target="{{route('admin.report.expense')}}">
+            <span class="icon">
+                <i class="zmdi zmdi-money-off"></i>
+            </span>
+            <span class="divider"></span>
+            <span class="text">
+                Expenses <br> Report
+            </span>
+        </div>
+    @endif
 </div>
 @endsection
 @section('js')
