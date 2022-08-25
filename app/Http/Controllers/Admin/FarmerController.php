@@ -32,6 +32,53 @@ class FarmerController extends Controller
         return view('admin.farmer.index');
     }
 
+    public function switch(Request $request){
+        if($request->getMethod()=="POST"){
+            $farmers=DB::select('select 
+            users.name,users.no,farmers.enabled ,farmers.id
+            from users join farmers on users.id=farmers.user_id 
+            where farmers.center_id=?',[$request->center_id]);
+            return view('admin.farmer.switch.data',compact('farmers'));
+        }else{
+            $centers=DB::select('select id,name from centers ');
+            return view('admin.farmer.switch.index',compact('centers'));
+        }
+    }
+
+    public function switchSave(Request $request){
+        Farmer::whereIn('id',$request->checked)->update(['enabled'=>1]);
+        Farmer::whereIn('id',$request->unchecked)->update(['enabled'=>0]);
+    }
+
+    public function printSlip(Request $request)
+    {
+        if($request->getMethod()=="POST"){
+            $farmers=DB::select('select 
+            users.name,users.no
+            from users join farmers on users.id=farmers.user_id 
+            where farmers.center_id=? and farmers.enabled =1',[$request->center_id]);
+            $view="admin.farmer.slip.all";
+            $title="Milk Collection and Fat Snf for ";
+
+            if($request->type==1){
+                $title="Milk Collection for ";
+                $view="admin.farmer.slip.milk";
+                
+            }else if($request->type==2){
+                $title="Fat Snf For ";
+                $view="admin.farmer.slip.fatsnf";
+
+            }
+
+            $title.=(Center::where('id',$request->center_id)->first()->name)." ".($request->date);
+            return view($view,compact('title','farmers'));
+        }else{
+            $centers=DB::select('select id,name from centers ');
+
+            return view('admin.farmer.slip.index',compact('centers'));
+        }
+    }
+
 
     public function listFarmerByCenter(Request $request)
     {

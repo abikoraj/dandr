@@ -128,6 +128,9 @@ Route::name('admin.')->group(function () {
             });
             // XXX farmer routes
             Route::get('', [FarmerController::class, 'index'])->name('list')->middleware('permmission:01.01');
+            Route::match(["GET","POST"],'switch', [FarmerController::class, 'switch'])->name('switch')->middleware('permmission:01.01');
+            Route::match(["GET","POST"],'printSlip', [FarmerController::class, 'printSlip'])->name('printSlip')->middleware('permmission:01.01');
+            Route::match(["GET","POST"],'switchSave', [FarmerController::class, 'switchSave'])->name('switchSave')->middleware('permmission:01.01');
             Route::post('list-by-center', [FarmerController::class, 'listFarmerByCenter'])->name('list-bycenter');
             Route::post('minlist-by-center', [FarmerController::class, 'minlistFarmerByCenter'])->name('minlist-bycenter');
 

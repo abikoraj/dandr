@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class AddTableIdToBillsTable extends Migration
+class AddEnabledToFarmersTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,8 +13,8 @@ class AddTableIdToBillsTable extends Migration
      */
     public function up()
     {
-        Schema::table('bills', function (Blueprint $table) {
-            $table->unsignedBigInteger('table_id')->nullable();
+        Schema::table('farmers', function (Blueprint $table) {
+            $table->boolean('enabled')->default(true);
         });
     }
 
@@ -25,9 +25,8 @@ class AddTableIdToBillsTable extends Migration
      */
     public function down()
     {
-        Schema::table('bills', function (Blueprint $table) {
-            //
-            $table->dropColumn('table_id');
+        Schema::table('farmers', function (Blueprint $table) {
+            $table->dropColumn('enabled');
         });
     }
 }

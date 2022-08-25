@@ -34,6 +34,8 @@
                         <li><a href="{{ route('admin.farmer.milk.payment.index') }}" class="waves-effect waves-block">Milk Payment</a></li>
                         <li><a href="{{ route('admin.sell.item.index') }}" class="waves-effect waves-block">Farmer Sell</a></li>
                         <li><a href="{{ route('admin.farmer.passbook.index') }}" class="waves-effect waves-block">Check Passbook</a></li>
+                        <li><a href="{{ route('admin.farmer.switch') }}" class="waves-effect waves-block">Enable Disable</a></li>
+                        <li><a href="{{ route('admin.farmer.printSlip') }}" class="waves-effect waves-block">Print Slip</a></li>
                     </ul>
                 </li>
             @endif

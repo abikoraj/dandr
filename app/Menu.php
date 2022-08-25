@@ -21,6 +21,8 @@ class Menu
                     ["Milk Payment", '01.07', route('admin.farmer.milk.payment.index')],
                     ["Farmer Sell", '01.08', route('admin.sell.item.index')],
                     ["Check Passbook", '01.11', route('admin.farmer.passbook.index')],
+                    ["Enable Disable", '01.11', route('admin.farmer.switch')],
+                    ["Print Slip", '01.11', route('admin.farmer.printSlip')],
                 ],
             ],
             "milk" => [
