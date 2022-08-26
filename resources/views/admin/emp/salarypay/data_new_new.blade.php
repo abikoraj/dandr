@@ -95,17 +95,21 @@
     @else
 
             @php
-                $remaning =   $track - $salary;
+                $sal=$salary[1]-$salary[0];
+                $remaning =   $track - $sal;
 
             @endphp
-        @if ($empSession == null && $salary>0)
+        @if ($empSession == null && $sal>0)
             <tr>
                 <td></td>
                 <td>
-                    Salary For This Month
+                    Salary For This Month 
+                    @if (env('use_employeetax',false))
+                        ( -{{env('emp_tax',1)}}% tax)
+                    @endif
                 </td>
                 <td>
-                    {{ $salary }}
+                    {{ $sal }}
                 </td>
                 <td>
                 </td>
@@ -166,7 +170,7 @@
     @if ($empSession==null)
         <div class="p-2">
             <hr>
-            <button class="btn btn-primary w-25" onclick="closeMonth({{$salaryLoaded?0:$salary}})">Close Month</button>
+            <button class="btn btn-primary w-25" onclick="closeMonth({{$salaryLoaded?0:$sal}})">Close Month</button>
         </div>
     @endif
 

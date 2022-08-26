@@ -40,6 +40,10 @@
             <th>
                 Prev Salary
             </th>
+            @if (env('use_employeetax'))
+                <th>Full Salary</th>
+                <th>Tax Deduction ({{env('emp_tax',1)}}%)</th>
+            @endif
             <th>
                 Salary
             </th>
@@ -72,6 +76,8 @@
         $_advance=0;
         $_salary=0;
         $_paid=0;
+        $_totalFullsalary=0;
+        $_tax=0;
         $_totalsalary=0;
         $_totaladvance=0;
         $_returned=0;
@@ -111,10 +117,27 @@
                 0
                 @endif
             </td>
+            @if (env('use_employeetax'))
+                <td>
+                    {{$employee->salary[1]}}
+                    @php
+                        $_totalFullsalary+=($employee->salary[1]);
+                    @endphp
+                </td>
+                <td>
+                    {{$employee->salary[0]}}
+                    @php
+                    $_tax+=($employee->salary[0]);
+                @endphp
+                </td>
+            @endif
             <td>
-                {{$employee->salary}}
                 @php
-                    $_salary+=$employee->salary;
+                    $sal=$employee->salary[1]-$employee->salary[0];
+                @endphp
+                {{$sal}}
+                @php
+                    $_salary+=$sal;
                 @endphp
             </td>
             <td>
@@ -138,7 +161,7 @@
 
             @php
 
-                $t=$employee->prevbalance-($employee->salary-$employee->advance-$employee->paid+$employee->returned);
+                $t=$employee->prevbalance-($sal-$employee->advance-$employee->paid+$employee->returned);
             @endphp
             <td>
                 {{$t<0?(-1*$t):0}}
@@ -173,6 +196,14 @@
                 {{$_prevSalary}}
 
             </td>
+            @if (env('use_employeetax'))
+            <td>
+                {{$_totalFullsalary}}
+            </td>
+            <td>
+                {{$_tax}}
+            </td>
+            @endif
             <td>
                 {{$_salary}}
             </td>

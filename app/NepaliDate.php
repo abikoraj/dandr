@@ -104,7 +104,10 @@ class NepaliDate
 
     public static function calculateSalary($year,$month,$employee){
         if($employee->start==null && $employee->enddate==null){
-            return $employee->salary;
+            $salary= $employee->salary;;
+            // dd($start,$end,$_start,$_end,$days,$extra,$salary);
+            $tax=env('use_employeetax',false)?($salary*env('emp_tax',1)/100):0;
+            return [$tax,$salary];
         }
 
         $start=$employee->start??0;
@@ -136,7 +139,8 @@ class NepaliDate
 
         $salary= $extra>0?($employee->salary/$days*($days-$extra)):$employee->salary;
         // dd($start,$end,$_start,$_end,$days,$extra,$salary);
-        return (int)$salary;
+        $tax=env('use_employeetax',false)?($salary*env('emp_tax',1)/100):0;
+        return [$tax,(int)$salary];
     }
 
 

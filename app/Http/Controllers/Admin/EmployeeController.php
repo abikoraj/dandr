@@ -289,6 +289,7 @@ class EmployeeController extends Controller
         $employee = Employee::where('id', $request->emp_id)->first();
         $user = $employee->user;
         $salary=NepaliDate::calculateSalary($request->year, $request->month,$employee);
+        // dd($salary);
         $range = NepaliDate::getDateMonth($request->year, $request->month);
         $prev = Ledger::where('date', '<', $range[1])->where('type', 2)->where('user_id', $user->id)->sum('amount') - Ledger::where('date', '<', $range[1])->where('type', 1)->where('user_id', $user->id)->sum('amount');
         $ledgers = Ledger::where('date', '>=', $range[1])->where('date', '<=', $range[2])->where('user_id', $user->id)->get();
