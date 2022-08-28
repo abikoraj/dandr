@@ -4,64 +4,64 @@ return [
         'use'=>['use_farmer'],
         'code' => '01',
         'children' => [
-            "list" => ['code' => "01.01"],
-            "add" => ['code' => "01.02"],
-            "update" => ['code' => "01.03"],
-            "delete" => ['code' => "01.04"],
-            "ledger" => ['code' => "01.09"],
-            "advance" => ['code' => "01.10"],
-            "payment" => ['code' => "01.05"],
-            "acc_opening" => ['code' => "01.06"],
-            "milk_payment" => ['code' => "01.07"],
-            "item_sell" => ['code' => "01.08"],
-            "details" => ['code' => "01.11"],
+            "list" => ['use'=>[],'code' => "01.01"],
+            "add" => ['use'=>[],'code' => "01.02"],
+            "update" => ['use'=>[],'code' => "01.03"],
+            "delete" => ['use'=>[],'code' => "01.04"],
+            "ledger" => ['use'=>[],'code' => "01.09"],
+            "advance" => ['use'=>[],'code' => "01.10"],
+            "payment" => ['use'=>[],'code' => "01.05"],
+            "acc_opening" => ['use'=>[],'code' => "01.06"],
+            "milk_payment" => ['use'=>[],'code' => "01.07"],
+            "item_sell" => ['use'=>[],'code' => "01.08"],
+            "details" => ['use'=>[],'code' => "01.11"],
         ]
     ],
     "milk_collection" => [
         'use'=>['use_milk'],
         'code' => '02',
         'children' => [
-            'add' => ['code' => '02.01'],
-            'update' => ['code' => '02.02'],
-            'delete' => ['code' => '02.03'],
-            'SNF_FAT_add' => ['code' => '02.04'],
-            'SNF_FAT_update' => ['code' => '02.05'],
-            'SNF_FAT_delete' => ['code' => '02.06'],
-            'MILK_SNF_FAT_add' => ['code' => '02.07'],
-            'MILK_SNF_FAT_NAME_add' => ['code' => '02.08'],
+            'add' => ['use'=>['singleMilk'],'code' => '02.01'],
+            'update' => ['use'=>['singleMilk'],'code' => '02.02'],
+            'delete' => ['use'=>['singleMilk'],'code' => '02.03'],
+            'SNF_FAT_add' => ['use'=>['singleFatSNF'],'code' => '02.04'],
+            'SNF_FAT_update' => ['use'=>['singleFatSNF'],'code' => '02.05'],
+            'SNF_FAT_delete' => ['use'=>['singleFatSNF'],'code' => '02.06'],
+            'MILK_SNF_FAT_add' => ['use'=>['singleMilkFatSNF'],'code' => '02.07'],
+            'MILK_SNF_FAT_NAME_add' => ['use'=>['multipleMilkFatSNF'],'code' => '02.08'],
         ]
     ],
     "item" => [
         'use'=>[],
         'code' => '03',
         'children' => [
-            'add' => ['code' => '03.01'],
-            'update' => ['code' => '03.02'],
-            'delete' => ['code' => '03.03'],
-            'list' => ['code' => '03.04'],
-            'stock' => ['code' => '03.05'],
-            // 'stock_out' => ['code' => '03.06'],
-            'branch_stock' => ['code' => '03.07'],
-            'repackaging' => ['code' => '03.08'],
-            'wastage' => ['code' => '03.09'],
-            'manage_variants' => ['code' => '03.10'],
+            'add' => ['use'=>[],'code' => '03.01'],
+            'update' => ['use'=>[],'code' => '03.02'],
+            'delete' => ['use'=>[],'code' => '03.03'],
+            'list' => ['use'=>[],'code' => '03.04'],
+            'stock' => ['use'=>[],'code' => '03.05'],
+            // 'stock_out' => ['use'=>[],'code' => '03.06'],
+            'branch_stock' => ['use'=>[],'code' => '03.07'],
+            'repackaging' => ['use'=>[],'code' => '03.08'],
+            'wastage' => ['use'=>[],'code' => '03.09'],
+            'manage_variants' => ['use'=>[],'code' => '03.10'],
         ]
     ],
     "distributer" => [
         'use'=>['use_distributer'],
         'code' => '04',
         'children' => [
-            "list" => ['code' => "04.01"],
-            "add" => ['code' => "04.02"],
-            "update" => ['code' => "04.03"],
-            "delete" => ['code' => "04.04"],
-            "payment" => ['code' => "04.05"],
-            "acc_opening" => ['code' => "04.06"],
-            "milk_collection" => ['code' => "04.07"],
-            "SNF_FAT" => ['code' => "04.08"],
-            "item_sell" => ['code' => "04.09"],
-            "credit_list" => ['code' => "04.10"],
-            "ledger" => ['code' => "04.11"],
+            "list" => ['use'=>[],'code' => "04.01"],
+            "add" => ['use'=>[],'code' => "04.02"],
+            "update" => ['use'=>[],'code' => "04.03"],
+            "delete" => ['use'=>[],'code' => "04.04"],
+            "payment" => ['use'=>[],'code' => "04.05"],
+            "acc_opening" => ['use'=>[],'code' => "04.06"],
+            "milk_collection" => ['use'=>[],'code' => "04.07"],
+            "SNF_FAT" => ['use'=>[],'code' => "04.08"],
+            "item_sell" => ['use'=>[],'code' => "04.09"],
+            "credit_list" => ['use'=>[],'code' => "04.10"],
+            "ledger" => ['use'=>[],'code' => "04.11"],
         ]
     ],
 
@@ -69,14 +69,14 @@ return [
         'use'=>['use_employee'],
         'code' => '05',
         'children' => [
-            'employee list' => ['code' => '05.01'],
-            'employee add' => ['code' => '05.02'],
-            'employee edit' => ['code' => '05.03'],
-            'employee delete' => ['code' => '05.04'],
-            'account opening' => ['code' => '05.05'],
-            'advance' => ['code' => '05.06'],
-            'salary' => ['code' => '05.07'],
-            'advance return' => ['code' => '05.08'],
+            'employee list' => ['use'=>[],'code' => '05.01'],
+            'employee add' => ['use'=>[],'code' => '05.02'],
+            'employee edit' => ['use'=>[],'code' => '05.03'],
+            'employee delete' => ['use'=>[],'code' => '05.04'],
+            'account opening' => ['use'=>[],'code' => '05.05'],
+            'advance' => ['use'=>[],'code' => '05.06'],
+            'salary' => ['use'=>[],'code' => '05.07'],
+            'advance return' => ['use'=>[],'code' => '05.08'],
         ]
     ],
 
@@ -84,14 +84,14 @@ return [
         'use'=>['use_expense'],
         'code' => '06',
         'children' => [
-            'category list' => ['code' => '06.01'],
-            'category add' => ['code' => '06.02'],
-            'category edit' => ['code' => '06.03'],
-            'category delete' => ['code' => '06.04'],
-            'expense list' => ['code' => '06.05'],
-            'expense add' => ['code' => '06.06'],
-            'expense edit' => ['code' => '06.07'],
-            'expense delete' => ['code' => '06.08'],
+            'category list' => ['use'=>[],'code' => '06.01'],
+            'category add' => ['use'=>[],'code' => '06.02'],
+            'category edit' => ['use'=>[],'code' => '06.03'],
+            'category delete' => ['use'=>[],'code' => '06.04'],
+            'expense list' => ['use'=>[],'code' => '06.05'],
+            'expense add' => ['use'=>[],'code' => '06.06'],
+            'expense edit' => ['use'=>[],'code' => '06.07'],
+            'expense delete' => ['use'=>[],'code' => '06.08'],
         ]
     ],
 
@@ -99,27 +99,26 @@ return [
         'use'=>['use_supplier'],
         'code' => '07',
         'children' => [
-            'supplier list' => ['code' => '07.01'],
-            'supplier add' => ['code' => '07.02'],
-            'supplier edit' => ['code' => '07.03'],
-            'supplier delete' => ['code' => '07.04'],
-            'purchase bills' => ['code' => '07.05'],
-            'purchase add' => ['code' => '07.06'],
-            'purchase edit' => ['code' => '07.07'],
-            'purchase delete' => ['code' => '07.08'],
-            'Supplier Payment' => ['code' => '07.09'],
-            'Opening Balance' => ['code' => '07.10'],
-            'Supplier Payment Delete' => ['code' => '07.11'],
+            'supplier list' => ['use'=>[],'code' => '07.01'],
+            'supplier add' => ['use'=>[],'code' => '07.02'],
+            'supplier edit' => ['use'=>[],'code' => '07.03'],
+            'supplier delete' => ['use'=>[],'code' => '07.04'],
+            'purchase bills' => ['use'=>[],'code' => '07.05'],
+            'purchase add' => ['use'=>[],'code' => '07.06'],
+            'purchase edit' => ['use'=>[],'code' => '07.07'],
+            'purchase delete' => ['use'=>[],'code' => '07.08'],
+            'Supplier Payment' => ['use'=>[],'code' => '07.09'],
+            'Opening Balance' => ['use'=>[],'code' => '07.10'],
+            'Supplier Payment Delete' => ['use'=>[],'code' => '07.11'],
         ]
     ],
 
     "customer" => [
         'use'=>['use_restaurant','use_pos'],
-
         'code' => '08',
         'children' => [
-            'customer list' => ['code' => '08.01'],
-            'payment' => ['code' => '08.02'],
+            'customer list' => ['use'=>[],'code' => '08.01'],
+            'payment' => ['use'=>[],'code' => '08.02'],
         ]
     ],
 
@@ -127,11 +126,11 @@ return [
         'use'=>['use_manufacture'],
         'code' => '13',
         'children' => [
-            'product_template' => ['code' => '13.01'],
-            'list_process'=> ['code' => '13.02'],
-            'add_process'=> ['code' => '13.03'],
-            'manage_process'=> ['code' => '13.04'],
-            'api_list_process_api'=> ['code' => '13.05'],
+            'product_template' => ['use'=>[],'code' => '13.01'],
+            'list_process'=> ['use'=>[],'code' => '13.02'],
+            'add_process'=> ['use'=>[],'code' => '13.03'],
+            'manage_process'=> ['use'=>[],'code' => '13.04'],
+            'api_list_process_api'=> ['use'=>[],'code' => '13.05'],
         ]
     ],
 
@@ -139,19 +138,19 @@ return [
         'use'=>['use_pos'],
         'code' => '09',
         'children' => [
-            'POS Interface' => ['code' => '09.01'],
-            'Search Bills' => ['code' => '09.02'],
-            'Reprint Bills' => ['code' => '09.03'],
-            'Sales Returns' => ['code' => '09.04'],
-            'sync' => ['code' => '09.05'],
+            'POS Interface' => ['use'=>[],'code' => '09.01'],
+            'Search Bills' => ['use'=>[],'code' => '09.02'],
+            'Reprint Bills' => ['use'=>[],'code' => '09.03'],
+            'Sales Returns' => ['use'=>[],'code' => '09.04'],
+            'sync' => ['use'=>[],'code' => '09.05'],
         ]
     ],
     "Old Pos" => [
         'use'=>['use_oldpos','use_restaurant'],
         'code' => '15',
         'children' => [
-            'add manage' => ['code' => '15.01'],
-            'list' => ['code' => '15.02'],
+            'add manage' => ['use'=>[],'code' => '15.01'],
+            'list' => ['use'=>[],'code' => '15.02'],
         ]
     ],
 
@@ -159,10 +158,10 @@ return [
         'use'=>['use_pos'],
         'code' => '10',
         'children' => [
-            'Day Management' => ['code' => '10.01'],
-            'Counters' => ['code' => '10.02'],
-            'Offers' => ['code' => '10.03'],
-            'Reward_Point_setting' => ['code' => '10.03'],
+            'Day Management' => ['use'=>[],'code' => '10.01'],
+            'Counters' => ['use'=>[],'code' => '10.02'],
+            'Offers' => ['use'=>[],'code' => '10.03'],
+            'Reward_Point_setting' => ['use'=>[],'code' => '10.03'],
         ]
     ],
 
@@ -170,8 +169,8 @@ return [
         'use'=>['use_pos'],
         'code' => '11',
         'children' => [
-            'Banks' => ['code' => '11.01'],
-            'Payments Gateways' => ['code' => '11.02'],
+            'Banks' => ['use'=>[],'code' => '11.01'],
+            'Payments Gateways' => ['use'=>[],'code' => '11.02'],
         ]
     ],
 
@@ -180,7 +179,7 @@ return [
 
         'code' => '12',
         'children' => [
-            'Reports' => ['code' => '12.01'],
+            'Reports' => ['use'=>[],'code' => '12.01'],
         ]
     ],
 
@@ -188,8 +187,8 @@ return [
         'use'=>['use_restaurant'],
         'code'=>'14',
         'children'=>[
-            'Manage Tables'=>['code'=>'14.01'],
-            'Manage Orders'=>['code'=>'14.02'],
+            'Manage Tables'=>['use'=>[],'code'=>'14.01'],
+            'Manage Orders'=>['use'=>[],'code'=>'14.02'],
         ]
     ]
 

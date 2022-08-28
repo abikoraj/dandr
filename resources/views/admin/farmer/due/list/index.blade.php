@@ -60,7 +60,7 @@
                     <div class="col-md-3">
                         <div class="form-group">
                             <label for="id">Farmer</label>
-                            <input type="number" id="id" name="id" class="form-control next" data-next="product_id">
+                            <input type="text" list="farmerdatalist" id="id" name="id" class="form-control next" data-next="amount">
                         </div>
                     </div>
                     <div class="col-md-3">

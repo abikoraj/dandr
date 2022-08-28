@@ -71,7 +71,7 @@
                     </div>
 
                     <div class="col-md-4 add-section">
-                        <input type="number" name="user_id" id="u_id" placeholder="number"
+                        <input type="test" list="farmerdatalist" name="user_id" id="u_id" placeholder="number"
                             class="form-control checkfarmer next" data-next="m_amt" min="1">
                     </div>
 

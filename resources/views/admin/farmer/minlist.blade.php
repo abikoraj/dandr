@@ -11,7 +11,7 @@
         </thead>
         <tbody id="farmerData">
             @foreach($farmers as $u)
-            <tr id="farmer-{{ $u->no }}" data-name="{{ $u->name }}" onclick="farmerSelected({{ $u->no }});">
+            <tr id="farmer-{{ $u->no }}" data-name="{{ $u->name }}" onclick="farmerSelected('{{ $u->no }}');">
                 <td class="p-1"><span style="cursor: pointer;">{{ $u->no }}</span></td>
                 <td class="p-1"> <span style="cursor: pointer;">{{ $u->name }}</span></td>
             </tr>

@@ -8,7 +8,7 @@ class Menu
     {
         return [
             "Farmer" => [
-                'conition'=>env('use_farmer',false),
+                'condition'=>env('use_farmer',false),
                 'code' => '01',
                 'link' => null,
                 'icon' => 'apps',
@@ -26,18 +26,21 @@ class Menu
                 ],
             ],
             "milk" => [
-                'conition'=>env('use_milk',false),
+                'condition'=>env('use_milk',false),
                 'code' => '02',
                 'link' => null,
                 'icon' => 'apps',
                 'text' => "Milk Collection",
                 'children' => [
+                
                     ["Milk Collection", '02.01', route('admin.milk.index')],
                     ["SNF FAT", '02.04', route('admin.snf-fat.index')],
+                    ["Milk and Fat SNF", '02.07', route('admin.milk.milkfatsnf')],
+                    ["Milk and Fat SNF With Name", '02.08', route('admin.milk.milkfatsnfname')],
                 ],
             ],
             "item" => [
-                'conition'=>env('use_farmer',false) || env('use_farmer') || env('use_pos'),
+                'condition'=>env('use_farmer',false) || env('use_farmer') || env('use_pos'),
                 'code' => '03',
                 'link' => null,
                 'icon' => 'apps',
@@ -51,7 +54,7 @@ class Menu
                 ],
             ],
             "distributer" => [
-                'conition'=>env('use_distributer',false),
+                'condition'=>env('use_distributer',false),
 
                 'code' => '04',
                 'link' => null,
@@ -68,7 +71,7 @@ class Menu
                 ],
             ],
             "staff" => [
-                'conition'=>env('use_employee',false),
+                'condition'=>env('use_employee',false),
                 'code' => '05',
                 'link' => null,
                 'icon' => 'apps',
@@ -83,7 +86,7 @@ class Menu
             ],
 
             "expese" => [
-                'conition'=>env('use_expense',false),
+                'condition'=>env('use_expense',false),
                 
                 'code' => '06',
                 'link' => null,
@@ -96,7 +99,7 @@ class Menu
             ],
 
             "supplier" => [
-                'conition'=>env('use_supplier',false),
+                'condition'=>env('use_supplier',false),
                 
                 'code' => '07',
                 'link' => null,
@@ -111,7 +114,7 @@ class Menu
             ],
 
             "customer" => [
-                'conition'=>env('use_pos',false) || env('use_restaurant'),
+                'condition'=>env('use_pos',false) || env('use_restaurant'),
                 'code' => '08',
                 'link' => null,
                 'icon' => 'apps',
@@ -122,7 +125,7 @@ class Menu
                 ],
             ],
             "manufacture" => [
-                'conition'=>env('user_manufacture',false),
+                'condition'=>env('user_manufacture',false),
 
                 'code' => '08',
                 'link' => null,
@@ -134,7 +137,7 @@ class Menu
                 ],
             ],
             "Restaurant"=>[
-                'conition'=>env('use_restaurant',false),
+                'condition'=>env('use_restaurant',false),
                 
                 'code' => '14',
                 'link' => null,
@@ -146,7 +149,7 @@ class Menu
                 ],  
             ],
             "old_pos"=>[
-                'conition'=>env('use_oldpos',false),
+                'condition'=>env('use_oldpos',false),
                 'code' => '15',
                 'link' => null,
                 'icon' => 'apps',
@@ -157,7 +160,7 @@ class Menu
                 ],  
             ],
             "pos" => [
-                'conition'=>env('use_pos',false),
+                'condition'=>env('use_pos',false),
 
                 'code' => '09',
                 'link' => null,
@@ -176,7 +179,7 @@ class Menu
 
 
             "pos setting" => [
-                'conition'=>env('use_pos',false),
+                'condition'=>env('use_pos',false),
 
                 'code' => '10',
                 'link' => null,
@@ -191,7 +194,7 @@ class Menu
             ],
 
             "Payment setting" => [
-                'conition'=>env('use_pos',false),
+                'condition'=>env('use_pos',false),
 
                 'code' => '11',
                 'link' => null,
@@ -203,7 +206,7 @@ class Menu
             ],
 
             "Reports" => [
-                'conition'=>env('use_reports',false),
+                'condition'=>env('use_reports',false),
                 
                 'code' => '12',
                 'link' => null,

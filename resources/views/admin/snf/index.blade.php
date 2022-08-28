@@ -46,7 +46,7 @@
                     <span class="btn btn-danger d-none" onclick="resetData()" id="resetdata"> Reset</span>
                 </div>
                 <div class="col-md-3 add-section">
-                    <input type="number" name="user_id" id="u_id" placeholder="number" class="form-control checkfarmer next" data-next="fat" min="1">
+                    <input type="text" list="farmerdatalist" name="user_id" id="u_id" placeholder="number" class="form-control checkfarmer next" data-next="fat" min="1">
                 </div>
 
                 <div class="col-md-3 add-section">

@@ -32,6 +32,10 @@ class MilkPaymentController extends Controller
         }
     }
 
+    public function milkAmount(){
+        
+    }
+
     public function add(Request $request){
 
         $date = str_replace('-', '', $request->date);

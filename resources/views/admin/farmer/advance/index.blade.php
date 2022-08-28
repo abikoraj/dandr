@@ -38,7 +38,7 @@
                 <label for="u_number">Farmer Number</label>
                 <span id="farmersearch"  data-toggle="modal" data-target="#farmermodal" style="cursor: pointer;">( search (alt+s) )</span>
                 <div class="form-group">
-                    <input type="number" id="u_id" name="no" min="0" class="form-control next checkfarmer" data-next="amount" placeholder="Enter farmer number" required>
+                    <input type="text" id="u_id" name="no" list="farmerdatalist" min="0" class="form-control next checkfarmer" data-next="amount" placeholder="Enter farmer number" required>
                 </div>
             </div>
 

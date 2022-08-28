@@ -39,10 +39,22 @@
                 </h5>
                 <hr class="m-1">
                 @foreach ($role['children'] as $key_child=>$role_child)
-                <div class="pl-3">
-                    <input type="checkbox" class="check check-{{$key}}" id="{{$role_child['code']}}" name="codes[]" value="{{$role_child['code']}}" {{has_per($role_child['code'],$per)?"checked":""}}>
-                    <label for=""></label><strong class="cap">{{roleToWord($key_child)}}</strong>
-                </div>
+                @php
+                    $childuse=true;
+                    foreach ($role_child['use'] as  $childusecase) {
+                        $childuse=env($childusecase,false);
+        
+                        if($childuse){
+                            break;
+                        }
+                    }
+                @endphp
+                @if ($childuse)
+                    <div class="pl-3">
+                        <input type="checkbox" class="check check-{{$key}}" id="{{$role_child['code']}}" name="codes[]" value="{{$role_child['code']}}" {{has_per($role_child['code'],$per)?"checked":""}}>
+                        <label for=""></label><strong class="cap">{{roleToWord($key_child)}}</strong>
+                    </div>
+                @endif
                 @endforeach
             </div>
         @endif

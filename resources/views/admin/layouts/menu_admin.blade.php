@@ -51,11 +51,19 @@
                 <li><a href="javascript:void(0);" class="waves-effect waves-block menu-toggle"><i class="zmdi zmdi-shopping-cart"></i><span>Milk Collection</span></a>
                     <ul class="ml-menu">
                         <li><a href="{{ route('admin.center.index') }}" class="waves-effect waves-block">Manage Collection Center</a></li>
-                        <li><a href="{{ route('admin.milk.index') }}" class="waves-effect waves-block"> Milk Collection</a></li>
-                        <li><a href="{{ route('admin.snf-fat.index') }}" class="waves-effect waves-block">Add Fat & Snf</a></li>
+                        @if (env('singleMilk',false))
+                            <li><a href="{{ route('admin.milk.index') }}" class="waves-effect waves-block"> Milk Collection</a></li>
+                        @endif
+                        @if (env('singleFatSNF',false))
+                            <li><a href="{{ route('admin.snf-fat.index') }}" class="waves-effect waves-block">Add Fat & Snf</a></li>
+                        @endif
                         <li><a href="{{ route('admin.milk.chalan') }}" class="waves-effect waves-block">Milk Chalan</a></li>
-                        <li><a href="{{ route('admin.milk.milkfatsnf') }}" class="waves-effect waves-block">Milk  and Fat SNF</a></li>
-                        <li><a href="{{ route('admin.milk.milkfatsnfname') }}" class="waves-effect waves-block">Milk  and Fat SNF With Names</a></li>
+                        @if (env('singleMilkFatSNF',false))
+                            <li><a href="{{ route('admin.milk.milkfatsnf') }}" class="waves-effect waves-block">Milk and Fat SNF</a></li>
+                        @endif
+                        @if (env('multipleMilkFatSNF',false))
+                            <li><a href="{{ route('admin.milk.milkfatsnfname') }}" class="waves-effect waves-block">Milk  and Fat SNF With Names</a></li>
+                        @endif
                     </ul>
                 </li>
             @endif

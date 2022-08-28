@@ -46,7 +46,7 @@
                 <div class="col-md-3">
                     <div class="form-group">
                         <label for="unumber">User Number</label>
-                        <input type="number" name="user_id" id="u_id" placeholder="User number" class="form-control checkfarmer next  " data-next="item_id" min="1">
+                        <input type="text" list="farmerdatalist" name="user_id" id="u_id" placeholder="User number" class="form-control checkfarmer next  " data-next="item_id" min="1">
                     </div>
                 </div>
 
@@ -56,7 +56,7 @@
                         <label for="unumber">Item Number
                             <span id="itemsearch"  data-toggle="modal" data-target="#itemmodal">( search (alt+s) )</span>
                         </label>
-                        <input type="text" id="item_id" name="number" placeholder="Item number" class="form-control {{!$large?'checkitem':''}} next " data-rate="rate" data-next="rate" min="1" >
+                        <input type="text"  id="item_id" list="itemdatalist" name="number" placeholder="Item number" class="form-control {{!$large?'checkitem':''}} next " data-rate="rate" data-next="rate" min="1" >
                     </div>
                 </div>
 

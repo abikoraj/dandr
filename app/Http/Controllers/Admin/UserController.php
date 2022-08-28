@@ -91,15 +91,17 @@ class UserController extends Controller
             UserPermission::where('user_id',$user->id)->update([
                 'enable'=>0
             ]);
-            foreach ($request->codes as $key => $code) {
-                $permission=UserPermission::where('user_id',$user->id)->where('code',$code)->first();
-                if($permission==null){
-                    $permission=new UserPermission();
-                    $permission->user_id=$user->id;
-                    $permission->code=$code;
+            if($request->filled('codes')){
+                foreach ($request->codes as $key => $code) {
+                    $permission=UserPermission::where('user_id',$user->id)->where('code',$code)->first();
+                    if($permission==null){
+                        $permission=new UserPermission();
+                        $permission->user_id=$user->id;
+                        $permission->code=$code;
+                    }
+                    $permission->enable=1;
+                    $permission->save();
                 }
-                $permission->enable=1;
-                $permission->save();
             }
             return redirect()->back();
         }else{

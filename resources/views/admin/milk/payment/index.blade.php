@@ -76,7 +76,7 @@
                 <input type="text"  id="currentdate" class="form-control " >
             </div>
             <div class="col-md-3">
-                <input type="number" id="no" placeholder="Farmer No" class="form-control next checkfarmer"  data-next="amount">
+                <input type="text" list="farmerdatalist" id="no" placeholder="Farmer No" class="form-control next checkfarmer"  data-next="amount">
             </div>
             <div class="col-md-3">
                 <input type="number" id="amount" placeholder="Payment Amount" class="form-control xpay_handle" min="1">
