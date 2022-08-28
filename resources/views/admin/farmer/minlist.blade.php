@@ -19,3 +19,12 @@
         </tbody>
     </table>
 </div>
+
+
+<datalist id="farmerdatalist">
+                        
+    @foreach($farmers as $u)
+    <option value="{{$u->no}}">{{$u->name}}</option>
+    @endforeach
+
+</datalist>

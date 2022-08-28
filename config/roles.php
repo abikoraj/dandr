@@ -27,6 +27,8 @@ return [
             'SNF_FAT_add' => ['code' => '02.04'],
             'SNF_FAT_update' => ['code' => '02.05'],
             'SNF_FAT_delete' => ['code' => '02.06'],
+            'MILK_SNF_FAT_add' => ['code' => '02.07'],
+            'MILK_SNF_FAT_NAME_add' => ['code' => '02.08'],
         ]
     ],
     "item" => [

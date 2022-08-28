@@ -54,6 +54,8 @@
                         <li><a href="{{ route('admin.milk.index') }}" class="waves-effect waves-block"> Milk Collection</a></li>
                         <li><a href="{{ route('admin.snf-fat.index') }}" class="waves-effect waves-block">Add Fat & Snf</a></li>
                         <li><a href="{{ route('admin.milk.chalan') }}" class="waves-effect waves-block">Milk Chalan</a></li>
+                        <li><a href="{{ route('admin.milk.milkfatsnf') }}" class="waves-effect waves-block">Milk  and Fat SNF</a></li>
+                        <li><a href="{{ route('admin.milk.milkfatsnfname') }}" class="waves-effect waves-block">Milk  and Fat SNF With Names</a></li>
                     </ul>
                 </li>
             @endif

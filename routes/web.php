@@ -193,6 +193,19 @@ Route::name('admin.')->group(function () {
             Route::post('delete', 'Admin\MilkController@delete')->name('delete')->middleware('permmission:02.03');
             Route::post('farmer-data-load', 'Admin\MilkController@loadFarmerData')->name('load.farmer.data');
 
+            Route::middleware(['permmission:02.07'])->group(function () {
+                
+                Route::match(['get', 'post'],'milkfatsnf',[MilkController::class,'milkfatsnf'])->name('milkfatsnf');
+                Route::post('milkfatsnfSave',[MilkController::class,'milkfatsnfSave'])->name('milkfatsnfSave');
+                Route::post('milkfatsnfDel',[MilkController::class,'milkfatsnfDel'])->name('milkfatsnfDel');
+            });
+            Route::middleware(['permmission:02.08'])->group(function () {
+                Route::match(['get', 'post'],'milkfatsnfname',[MilkController::class,'milkfatsnfname'])->name('milkfatsnfname');
+                Route::post('milkfatsnfnameSave',[MilkController::class,'milkfatsnfnameSave'])->name('milkfatsnfnameSave');
+                Route::post('milkfatsnfnameDel',[MilkController::class,'milkfatsnfnameDel'])->name('milkfatsnfnameDel');
+            });
+
+
         Route::match(['GET','POST'],'chalan',[MilkController::class,'chalan'])->name('chalan');
             Route::match(['GET','POST'],'chalan-save',[MilkController::class,'chalanSave'])->name('chalan-save');
         });
@@ -797,6 +810,7 @@ Route::name('restaurant.')->prefix('restaurant')->middleware('permmission:14.02'
     Route::match(['GET','POST'],'bill',[RestaurantController::class,'bill'])->name('bill');
     Route::match(['GET','POST'],'print',[RestaurantController::class,'print'])->name('print');
     Route::match(['GET','POST'],'checkLogin',[RestaurantController::class,'checkLogin'])->name('checkLogin');
+    Route::match(['GET','POST'],'kot',[RestaurantController::class,'kot'])->name('kot');
     
 });
 

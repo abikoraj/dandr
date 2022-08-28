@@ -342,8 +342,8 @@ class EmployeeController extends Controller
         } else {
             $salaryLoaded = Ledger::where('date', '>=', $range[1])->where('date', '<=', $range[2])->where('user_id', $employee->user_id)->where('identifire',129)->count()>0;
             $ledger = new LedgerManage($employee->user_id);
-            $salary=NepaliDate::calculateSalary($request->year, $request->month,$employee);
-
+            $sal=NepaliDate::calculateSalary($request->year, $request->month,$employee);
+            $salary=$sal[1]-$sal[0];
             if(!$salaryLoaded){
                 if(env('acc_system','old')=='old'){
                     $ledger->addLedger('salary For (' . $request->year . "-" . ($request->month < 10 ? "0" . $request->month : $request->month) . ")", 2, $salary, $date, 129);

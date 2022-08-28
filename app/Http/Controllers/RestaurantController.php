@@ -64,5 +64,19 @@ class RestaurantController extends Controller
         }
     }
 
+    public function kot(Request $request)
+    {
+
+        $table=Table::where('id',$request->table_id)->first();
+        $datas=json_decode($table->data);
+        $localData=[];
+        foreach ($datas as $key => $data) {
+            if(in_array($data->id,$request->ids)){
+                array_push($localData,[$data->id,$data->item->title,$data->qty]);
+            }
+        }
+        return view('restaurant.table.kotprint',compact('localData','table'));
+    }
+
    
 }

@@ -234,8 +234,9 @@ class ReportController extends Controller
 
 
             $t2 = time();
+            $sessionDate=NepaliDate::getDateSessionLast($year,$month,$session);
             // dd($t2-$t1,$datas);
-            return view('admin.report.farmer.data', compact('newsession', 'usetc', 'usecc', 'datas', 'year', 'month', 'session', 'center'));
+            return view('admin.report.farmer.data', compact('newsession', 'usetc', 'usecc', 'datas', 'year', 'month', 'session', 'center','sessionDate'));
         } else {
 
             return view('admin.report.farmer.index');

@@ -112,11 +112,10 @@ $_fpaidtotal = 0;
                 <th>Purchase</th>
                 <th>Purchase Paid</th>
                 <th>Advance</th>
+                <th>Prev Balance</th>
                 <th>Prev Due</th>
-                @if (env('tier', 0) == 1)
-                    <th>Prev Balance</th>
-                    <th>Paid Amount</th>
-                @endif
+                <th>Paid Amount</th>
+
                 <th>Net Total</th>
                 <th>Due Balance</th>
                 <th>Signature</th>
@@ -221,26 +220,25 @@ $_fpaidtotal = 0;
                         @endphp
                     </td>
                     <td>
+                        {{ $farmer->prevbalance }}
+                        @php
+                            $prevbalancetotal += $farmer->prevbalance;
+                        @endphp
+                    </td>
+                    <td>
                         {{ $farmer->prevdue }}
                         {{-- <input type="hidden" name="prevdue[{{$t}}]" value="{{($farmer->prevdue)}}" > --}}
                         @php
                             $prevduetotal += $farmer->prevdue;
                         @endphp
                     </td>
-                    @if (env('tier', 0) == 1)
-                        <td>
-                            {{ $farmer->prevbalance }}
-                            @php
-                                $prevbalancetotal += $farmer->prevbalance;
-                            @endphp
-                        </td>
-                        <td>
-                            {{ $farmer->paidamount }}
-                            @php
-                                $paidamounttotal += $farmer->paidamount;
-                            @endphp
-                        </td>
-                    @endif
+
+                    <td>
+                        {{ $farmer->paidamount }}
+                        @php
+                            $paidamounttotal += $farmer->paidamount;
+                        @endphp
+                    </td>
                     <td>
                         {{ $farmer->nettotal }}
                         {{-- <input type="hidden" name="nettotal[{{$t}}]" value=" {{$tt>0?$tt:0}}" > --}}
@@ -300,17 +298,17 @@ $_fpaidtotal = 0;
                 <td>
                     {{ $advancetotal }}
                 </td>
+                
+                <td>
+                    {{ $prevbalancetotal }}
+                </td>
                 <td>
                     {{ $prevduetotal }}
                 </td>
-                @if (env('tier', 0) == 1)
-                    <td>
-                        {{ $prevbalancetotal }}
-                    </td>
-                    <td>
-                        {{ $paidamounttotal }}
-                    </td>
-                @endif
+                <td>
+                    {{ $paidamounttotal }}
+                </td>
+
                 <td>
                     {{ $nettotaltotal }}
                 </td>
@@ -340,7 +338,7 @@ $_fpaidtotal = 0;
         $_prevbalancetotal += $prevbalancetotal;
         $_paidamounttotal += $paidamounttotal;
         $_fpaidtotal += $fpaidtotal;
-
+        
         $point = false;
         $tctotal = 0;
         $cctotal = 0;
@@ -380,11 +378,9 @@ $_fpaidtotal = 0;
             <th>Purchase</th>
             <th>Purchase Paid</th>
             <th>Advance</th>
+            <th>Prev Balance</th>
             <th>Prev Due</th>
-            @if (env('tier', 0) == 1)
-                <th>Prev Balance</th>
-                <th>Paid Amount</th>
-            @endif
+            <th>Paid Amount</th>
             <th>Net Total</th>
             <th>Due Balance</th>
 
@@ -425,31 +421,33 @@ $_fpaidtotal = 0;
                 {{ $_advancetotal }}
             </td>
             <td>
+                {{ $_prevbalancetotal }}
+            </td>
+            <td>
                 {{ $_prevduetotal }}
             </td>
-            @if (env('tier', 0) == 1)
-                <td>
-                    {{ $_prevbalancetotal }}
-                </td>
-                <td>
-                    {{ $_paidamounttotal }}
-                </td>
-            @endif
+            <td>
+                {{ $_paidamounttotal }}
+            </td>
+          
             <td>
                 {{ $_nettotaltotal }}
             </td>
             <td>
                 {{ $_balancetotal }}
             </td>
+            <td>
+                
+            </td>
         </tr>
     </tbody>
 </table>
 
 
-@if ($newsession && env('closeonreport',false))
+@if ($newsession && env('closeonreport', false))
     <div class="py-2 d-print-none">
         <label for=>Session Close Date</label>
-        <input type="text" name="date" id="closedate" readonly required>
+        <input type="text" name="date" value="{{_nepalidate($sessionDate)}}" id="closedate" readonly required>
     </div>
     <div class="py-2 d-print-none">
         <input type="submit" value="Update Session Data" class="btn btn-success">
