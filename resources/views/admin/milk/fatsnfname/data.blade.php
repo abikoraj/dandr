@@ -27,7 +27,7 @@
                 <td>{{ $farmer->name }}</td>
 
                 <td class="">
-                    <input id="milkdata-{{ $farmer->id }}" type="number" class="form-control next"
+                    <input id="milkdata-{{ $farmer->id }}" type="number" class="form-control next milkdata"
                         data-next="fat-{{ $farmer->id }}" data-id="{{ $farmer->id }}" data-value="{{ $milkData == null ? '' : $milkData->amount }}"
                         value="{{ $milkData == null ? '' : $milkData->amount }}">
                 </td>
@@ -45,7 +45,7 @@
                         }
                     @endphp
                     <input id="snf-{{ $farmer->id }}" data-id="{{ $farmer->id }}" type="number"
-                        class="form-control {{ $last ? '' : 'next' }} save" data-next="milkdata-{{ $nextFarmerID }}"
+                        class="form-control next save" data-next="milkdata-{{ $nextFarmerID }}"
                         data-value="{{ $snfFat == null ? '' : $snfFat->snf }}" value="{{ $snfFat == null ? '' : $snfFat->snf }}">
                 </td>
 

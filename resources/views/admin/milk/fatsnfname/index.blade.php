@@ -133,7 +133,7 @@
 
                     $('#fat-'+localID)[0].dataset.value=data.fat;
                     $('#fat-'+localID)[0].value=data.fat;
-
+                    calculateTotal();
 
                 })
                 .catch((err)=>{
@@ -242,6 +242,7 @@
                                 }
                             }
                         });
+                        calculateTotal();
 
                         // $(".save").keydown(function (event) {
                         //     var key = event.keyCode ? event.keyCode : event.which;
@@ -269,8 +270,7 @@
             let milk = 0;
 
             $('.milkdata').each(function(index, element) {
-
-                const amt = parseFloat(element.innerText);
+                const amt = parseFloat(element.value);
                 milk += isNaN(amt) ? 0 : amt;
             });
 
