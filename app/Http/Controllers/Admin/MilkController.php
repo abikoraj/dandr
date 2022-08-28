@@ -526,6 +526,7 @@ class MilkController extends Controller
         }
 
         $milkData->amount=$request->type==0?$milkData->m_amount:$milkData->e_amount;
+        $deleted=$deleted || $snffat==null;
         return response()->json([
             'id'=>$user_id,
             'amount'=>$request->amount,
