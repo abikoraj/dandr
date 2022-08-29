@@ -451,6 +451,7 @@ function nepaliToday()
 function nepaliMonthName(int $i)
 {
     $_n = [
+        "",
         "Baisakh",
         "Jestha",
         "Ashar",

@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\Milkdata;
+use App\Models\Snffat;
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Http\Request;
@@ -36,9 +37,12 @@ class FarmerController extends Controller
     public function pushMilkData(Request $request){
         
         $date=(int)str_replace("-",'',$request->date);
+
         $center_id=$request->center_id;
         $localDatas=Milkdata::where('center_id',$center_id)->where('date',$date)->get();
         $now=Carbon::now()->toDateTimeString();
+        $oldAmount=$localDatas->sum('m_amount')+$localDatas->sum('e_amount');
+        $newAmount=0;
         foreach ($request->data as $_data) {
             $data=(object)$_data;
             $localData=$localDatas->where('user_id',$data->id)->first();
@@ -67,7 +71,30 @@ class FarmerController extends Controller
                     "updated_at"=>$now,
                 ]);
             }
+            $newAmount+=$data->m_amount+$data->e_amount;
+
         }
+
+        $amount=$oldAmount-$newAmount;
+        if($amount!=0){
+            $extracenters = explode(",", env('extracenter', ''));
+            $milk_id=env('milk_id',-1);
+            if($milk_id>0 && !in_array($center_id,$extracenters) && $amount!=0){
+                maintainStock($milk_id,($amount<0?(-1*$amount):$amount),$center_id,($amount<0?'in':'out'));
+            }
+        }
+        
         return response()->json(['staus'=>true]);
+    }
+
+    public function pushFatSnf(Request $request)
+    {
+        $date=(int)str_replace("-",'',$request->date);
+        $center_id=$request->center_id;
+        $localDatas=Snffat::where('center_id',$center_id)->where('date',$date)->get()->groupBy('user_id');
+        foreach ($request->data as $_data) {
+            dd($_data);
+        }
+
     }
 }

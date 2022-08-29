@@ -358,7 +358,9 @@ class MilkController extends Controller
             ->where('farmers.center_id', $request->center_id)
             ->select('users.id', 'farmers.no', 'users.name', 'farmers.center_id')
             ->first();
+        
         $milkStock=0;
+
         $milkData = Milkdata::where('user_id', $user->id)->where('date', $date)->first();
     
         if($milkData==null){

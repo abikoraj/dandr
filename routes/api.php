@@ -78,6 +78,7 @@ route::prefix('farmers')->group(function(){
     Route::get('centers', [FarmerController::class,'centers']);
     Route::post('push-milk-data', [FarmerController::class,'pushMilkData']);
     Route::post('pull-milk-data', [FarmerController::class,'pullMilkData']);
+    Route::post('push-snffat', [FarmerController::class,'pushFatSnf']);
 });
 Route::match(['GET',"POST"],'variants', [ItemController::class,'variants']);
 Route::match(['GET',"POST"],'show-ledger', [ItemController::class,'showLedger']);
