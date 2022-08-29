@@ -121,6 +121,7 @@
                         <li><a href="{{ route('admin.employee.account.index') }}" class="waves-effect waves-block">Account Opening</a></li>
                         <li><a href="{{ route('admin.employee.advance') }}" class="waves-effect waves-block">Advance</a></li>
                         <li><a href="{{ route('admin.salary.pay') }}" class="waves-effect waves-block">Salary Pay</a></li>
+                        <li><a href="{{ route('admin.employee.sales.index') }}" class="waves-effect waves-block">Sales</a></li>
                         <li><a href="{{ route('admin.employee.ret') }}" class="waves-effect waves-block">Return Advance</a></li>
                     </ul>
                 </li>

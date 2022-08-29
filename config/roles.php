@@ -77,6 +77,8 @@ return [
             'advance' => ['use'=>[],'code' => '05.06'],
             'salary' => ['use'=>[],'code' => '05.07'],
             'advance return' => ['use'=>[],'code' => '05.08'],
+            'sales' => ['use'=>[],'code' => '05.09'],
+            'sales delete' => ['use'=>[],'code' => '05.10'],
         ]
     ],
 

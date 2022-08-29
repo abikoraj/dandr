@@ -81,6 +81,7 @@ class Menu
                     ["Account Opening", '05.05', route('admin.employee.account.index')],
                     ["Advance", '05.06', route('admin.employee.advance')],
                     ["Salary Pay", '05.07', route('admin.salary.pay')],
+                    ["Sales", '05.09', route('admin.employee.sales.index')],
                     ["Advance Return", '05.08', route('admin.employee.ret')],
                 ],
             ],
