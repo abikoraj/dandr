@@ -12,13 +12,16 @@
 @section('content')
     <div class="row">
         <div class="col-md-3">
-            <table class="table">
+            <div>
+                <input type="text" name="emp" id="emp" class="w-100 py-1 px-2" placeholder="Search Employee">
+            </div>
+            <table class="table table-bordered" id="empdatas" >
                 <tr>
                     <th>Employee</th>
                 </tr>
                 @foreach (\App\Models\Employee::all() as $employee)
                 @if (isset($employee->user))
-                <tr id="emp-{{ $employee->id }}" onclick="setEmp({{ $employee->id}})" style="cursor: pointer;">
+                <tr id="emp-{{ $employee->id }}"  data-name="{{ $employee->user->name }}" onclick="setEmp({{ $employee->id}})" style="cursor: pointer;">
 
                     <td >
                         {{ $employee->user->name }}
@@ -79,7 +82,7 @@
 @section('js')
     <script src="{{ asset('backend/plugins/select2/select2.min.js') }}"></script>
     <script>
-        // initTableSearch('searchid', 'farmerforData', ['name']);
+        initTableSearch('emp', 'empdatas', ['name']);
         // load by date
 
 

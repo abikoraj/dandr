@@ -245,7 +245,11 @@
                         // ele.reset();
                         $('#employee_id').val(null).trigger('change');
                         $('#item_id').val(null).trigger('change');
-                        $('#rate').val(0).trigger('change');
+                        $('#rate').val(null);
+                        $('#qty').val(null);
+                        $('#total').val(null);
+                        $('#paid').val(null);
+                        $('#due').val(null);
                         $('#employee_id').select2('focus');
 
                     })

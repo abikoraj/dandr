@@ -98,7 +98,7 @@
         
         <tr class="no-border">
             <th colspan="{{$colspan}}" class="text-end">Discount:</th>
-            <td>Rs. {{ (float) $bill->discount +(float) $bill->ldiscount  }}</td>
+            <td>Rs. {{ (float) $bill->dis }}</td>
         </tr>
         @if (env('companyUseTax', false))
             @if($bill->taxable>0 )
