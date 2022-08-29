@@ -105,8 +105,8 @@ class EmployeeSalesController extends Controller
     public function del(Request $request)
     {
         $sell_item=DB::table('sellitems')->where('id', $request->id)->first(['item_id','center_id','qty']);
-        DB::table('sellitems')->where('id', $request->id)->delete();
-        DB::delete('delete ledgers where foreign_key = ? and (identifire=301 or identifire=302)', [$request->id]);
         maintainStock($sell_item->item_id,$sell_item->qty,$sell_item->center_id,'in');
+        DB::table('sellitems')->where('id', $request->id)->delete();
+        DB::delete('delete from ledgers where foreign_key = ? and (identifire=301 or identifire=302)', [$request->id]);
     }
 }

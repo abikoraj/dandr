@@ -184,7 +184,7 @@
                             //handle error
                             console.log(err);
                             if(err.response){
-                                showNotification('bg-danger', 'Error : '+err.response.data.message);
+                                showNotification('bg-danger', 'Error : '+err.response.data);
                             }else{
                                 showNotification('bg-danger', 'Some error occured please try again');
 

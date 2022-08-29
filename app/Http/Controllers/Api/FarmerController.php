@@ -92,8 +92,54 @@ class FarmerController extends Controller
         $date=(int)str_replace("-",'',$request->date);
         $center_id=$request->center_id;
         $localDatas=Snffat::where('center_id',$center_id)->where('date',$date)->get()->groupBy('user_id');
-        foreach ($request->data as $_data) {
-            dd($_data);
+        $datas=collect($request->data)->groupBy('id');
+        $now=Carbon::now();
+        foreach ($datas as $key=>$_datas) {
+            if(isset($localDatas[$key])){
+                $_localDatas=$localDatas[$key];
+                $i=0;
+                $inLength=count($_datas);
+                
+                foreach ($_localDatas as $key => $localData) {
+                    $data=(object)$_datas[$i];
+                    $localData->snf=$data->snf;
+                    $localData->fat=$data->fat;
+                    $localData->save();
+                    if($inLength==$i){
+                        break;
+                    }
+                    $i+=1;
+                }
+               
+                for ($j=$i; $j < $inLength; $j++) { 
+                    $data=(object)$_datas[$j];
+                    Snffat::insert([
+                        "user_id"=>$data->id,
+                        "snf"=>$data->snf,
+                        "fat"=>$data->fat,
+                        "date"=>$date,
+                        "center_id"=>$center_id,
+                        "created_at"=>$now,
+                        "updated_at"=>$now,
+                    ]);
+                }
+
+             
+            }else{
+                foreach ($_datas as $key1 => $_data) {
+                    $data=(object)$_data;
+                    Snffat::insert([
+                        "user_id"=>$data->id,
+                        "snf"=>$data->snf,
+                        "fat"=>$data->fat,
+                        "date"=>$date,
+                        "center_id"=>$center_id,
+                        "created_at"=>$now,
+                        "updated_at"=>$now,
+                    ]);
+                }
+            }
+            // return response()->json([$_data,$_localDatas]);
         }
 
     }
