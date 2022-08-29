@@ -44,6 +44,12 @@ class DistributerMilkController extends Controller
         $milkData->date = $date;
         $milkData->save();
         $user = User::join('distributers', 'distributers.user_id', '=', 'users.id')->select('users.name')->where('distributers.id', $request->id)->first();
+        $milk_id=env('milk_id',-1);
+        $maincenter=env('maincenter',-1);
+        if($milk_id>0 && $maincenter>0 ){
+
+            maintainStock($milk_id,$milkData->amount,$maincenter,'out');
+        }
         $milkData->name = $user->name;
         return view('admin.distributer.milk.single', compact('milkData'));
     }
@@ -51,14 +57,30 @@ class DistributerMilkController extends Controller
     public function update(Request $request)
     {
         $milkData = DistributerMilk::find($request->id);
+        $amount=$request->amount - $milkData->amount ;
         $milkData->amount = $request->amount;
         $milkData->save();
+
+        $milk_id=env('milk_id',-1);
+        $maincenter=env('maincenter',-1);
+        if($milk_id>0 && $maincenter>0 && $amount!=0){
+
+            maintainStock($milk_id,($amount<0?(-1*$amount):$amount),$maincenter,($amount<0?'in':'out'));
+        }
         return response('ok');
     }
     public function delete(Request $request)
     {
         $milkData = DistributerMilk::find($request->id);
+        $amount=$milkData->amount ;
         $milkData->delete();
+
+        $milk_id=env('milk_id',-1);
+        $maincenter=env('maincenter',-1);
+        if($milk_id>0 && $maincenter>0 ){
+
+            maintainStock($milk_id,$amount,$maincenter,'in');
+        }
         return response('ok');
     }
     public function addToLedger(Request $request){

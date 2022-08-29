@@ -180,7 +180,19 @@
         }
 
         function del(id) {
-            if(prompt())
+            if(prompt("Are you sure to delete employee sales")=='yes'){
+                showProgress("Deleting Employee Sales");
+                axios.post("{{route('admin.employee.sales.del')}}",{id:id})
+                .then((res)=>{
+                    hideProgress();
+                    showNotification('bg-success','Employee Sales Deleted Sucessfully');
+                    $('#sell_item_'+id).remove();
+                })
+                .catch((err)=>{
+                    hideProgress();
+                    showNotification('bg-danger',err.response.data.message);
+                });
+            }
         }
         function loadEmpSell() {
             var date = $('#nepali-datepicker').val();
@@ -230,9 +242,10 @@
                         // showNotification('bg-success', 'Employee advance added successfully!');
                         // $('#largeModal').modal('toggle');
                         $('#advanceData').prepend(response.data);
-                        ele.reset();
+                        // ele.reset();
                         $('#employee_id').val(null).trigger('change');
                         $('#item_id').val(null).trigger('change');
+                        $('#rate').val(0).trigger('change');
                         $('#employee_id').select2('focus');
 
                     })

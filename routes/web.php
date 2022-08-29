@@ -406,6 +406,7 @@ Route::name('admin.')->group(function () {
             Route::name('sales.')->prefix('sales')->group(function(){
                 Route::match(["GET","POST"],'',[EmployeeSalesController::class,'index'])->name('index');
                 Route::match(["POST"],'save',[EmployeeSalesController::class,'save'])->name('save');
+                Route::match(["POST"],'del',[EmployeeSalesController::class,'del'])->name('del');
             });
             //XXX Employee Account Opening
             Route::match(['get', 'post'], 'account', [EmployeeController::class, 'accountIndex'])->name('account.index')->middleware('permmission:05.05');
