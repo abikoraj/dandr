@@ -85,14 +85,19 @@
 
 
         function closeMonth(amount){
+            
             data={"emp_id":emp_id,"year":$('#year').val(),"month":$('#month').val(),"amount":amount};
             if(confirm("Do You Want To Close Month")){
-
+                showProgress("Closing Month For Employee");
                 axios.post('{{route('admin.employee.account.close')}}',data)
                 .then((res)=>{
                     loadEmployeeData();
+                    hideProgress();
+                    showNotification('bg-success',"Month CLosed Sucessfully");
+                    
                 })
                 .catch((err)=>{
+                    hideProgress();
                     showNotification('bg-danger',err.response.data);
                 })
             }
