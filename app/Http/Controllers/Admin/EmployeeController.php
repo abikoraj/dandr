@@ -435,7 +435,8 @@ class EmployeeController extends Controller
             if(!$salaryLoaded){
                 $lm = new LedgerManage($employee->user_id);
                 $lastdate = NepaliDate::getDateMonthLast($request->year, $request->month);
-                $salary=NepaliDate::calculateSalary($request->year, $request->month,$employee);
+                $sal=NepaliDate::calculateSalary($request->year, $request->month,$employee);
+                $salary=$sal[1]-$sal[0];
                 if(env('acc_system','old')=='old'){
                     $lm->addLedger('salary For (' . $request->year . "-" . ($request->month < 10 ? "0" . $request->month : $request->month) . ")", 2, $salary, $lastdate, 129);
                 }else{
