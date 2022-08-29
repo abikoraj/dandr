@@ -100,6 +100,9 @@ class PosBillingController extends Controller
             $bill = PosBill::find($request->id);
             $bill->billitems;
         }
+        if($bill==null){
+            return redirect()->route('admin.billing.detail',['id']);
+        }
         return view('admin.pos.detail', compact('bill'));
     }
 
