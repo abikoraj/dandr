@@ -65,6 +65,8 @@ class LedgerManage
     **customer section
     * "130" = "Sold to customer"
     * "131" = "customer Payment"
+    * "401" = "Sold to customer old pos"
+    * "402" = "customer Payment old pos"
     * "135" = "customer Payment extra"
     * "134" = "customer opening Balance"
 

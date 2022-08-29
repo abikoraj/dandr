@@ -126,6 +126,9 @@
                                         <button  onclick=" win.showPost('Bill Detail  ' , '{{route('admin.pos.billing.detail')}}', {id: {{$l->foreign_key}},out:{{$l->out}}});">Detail</button>
                                     @endif
                                 @else
+                                    @if($l->identifire==401)
+                                        <button  onclick=" win.showGet('Bill Detail  ' , '{{route('admin.billing.detail',['id'=>$l->foreign_key])}}')">Detail</button>
+                                    @endif
                                 @endif
                             </td>
                         </tr>

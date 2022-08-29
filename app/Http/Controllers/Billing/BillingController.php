@@ -146,10 +146,10 @@ class BillingController extends Controller
         }
 
         if ($request->id != -1) {
-            $ledger->addLedger(implode(",",$titles), 2, $request->net, $date, 130, $bill->id);
+            $ledger->addLedger(implode(",",$titles), 2, $request->net, $date, 401, $bill->id);
 
             if ($request->paid > 0) {
-                $ledger->addLedger('Received Amount', 1, $paidamount, $date, 131, $bill->id);
+                $ledger->addLedger('Received Amount', 1, $paidamount, $date, 402, $bill->id);
             }
         }
         $bill->items = $billitem;
