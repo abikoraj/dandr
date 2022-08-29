@@ -147,7 +147,7 @@ class ReportController extends Controller
 
             foreach ($farmers as $key => $farmer) {
                 $farmer->old = $reports->where('user_id', $farmer->id)->count() > 0;
-                
+
                 $farmer->fat = truncate_decimals($farmer->fat);
                 $farmer->snf = truncate_decimals($farmer->snf);
                 $fatAmount = ($farmer->fat * $center->fat_rate);
@@ -234,9 +234,9 @@ class ReportController extends Controller
 
 
             $t2 = time();
-            $sessionDate=NepaliDate::getDateSessionLast($year,$month,$session);
+            $sessionDate = NepaliDate::getDateSessionLast($year, $month, $session);
             // dd($t2-$t1,$datas);
-            return view('admin.report.farmer.data', compact('newsession', 'usetc', 'usecc', 'datas', 'year', 'month', 'session', 'center','sessionDate'));
+            return view('admin.report.farmer.data', compact('newsession', 'usetc', 'usecc', 'datas', 'year', 'month', 'session', 'center', 'sessionDate'));
         } else {
 
             return view('admin.report.farmer.index');
@@ -388,8 +388,7 @@ class ReportController extends Controller
             }
 
             $datas = $milkdatas->select('milkdatas.m_amount', 'milkdatas.e_amount', 'milkdatas.user_id', 'milkdatas.date', 'farmers.center_id', 'users.name', 'users.no')->get();
-            $data1 = $milkdatas->select(DB::raw('sum(milkdatas.m_amount) as m_amount,sum(milkdatas.e_amount) as e_amount ,milkdatas.user_id ,users.name,users.no,farmers.center_id'))->
-            groupBy('milkdatas.user_id', 'users.name', 'users.no', 'farmers.center_id')->get()->groupBy('center_id');
+            $data1 = $milkdatas->select(DB::raw('sum(milkdatas.m_amount) as m_amount,sum(milkdatas.e_amount) as e_amount ,milkdatas.user_id ,users.name,users.no,farmers.center_id'))->groupBy('milkdatas.user_id', 'users.name', 'users.no', 'farmers.center_id')->get()->groupBy('center_id');
 
 
 
@@ -410,70 +409,163 @@ class ReportController extends Controller
             $type = $request->type;
             $range = [];
             $data = [];
-            $sellitem = Sellitem::join('farmers', 'farmers.user_id', '=', 'sellitems.user_id')
-                ->join('users', 'users.id', '=', 'farmers.user_id')
-                ->join('items', 'items.id', 'sellitems.item_id');
 
-            $sellmilk = Distributorsell::join('distributers', 'distributers.id', '=', 'distributorsells.distributer_id')
-                ->join('users', 'users.id', '=', 'distributers.user_id');
+            $farmersell = DB::table('sellitems')->join('users', 'users.id', '=', 'sellitems.user_id')
+                ->join('farmers', 'users.id', '=', 'farmers.user_id')
+                ->select(DB::raw('sellitems.user_id,sellitems.total,sellitems.item_id,sellitems.qty,sellitems.rate'));
+
+            $dissell = DB::table('sellitems')->join('users', 'users.id', '=', 'sellitems.user_id')
+                ->join('distributers', 'users.id', '=', 'distributers.user_id')
+                ->select(DB::raw('sellitems.user_id,sellitems.total,sellitems.item_id,sellitems.qty,sellitems.rate'));
+
+            $empsell = DB::table('sellitems')->join('users', 'users.id', '=', 'sellitems.user_id')
+                ->join('employees', 'users.id', '=', 'employees.user_id')
+                ->select(DB::raw('sellitems.user_id,sellitems.total,sellitems.item_id,sellitems.qty,sellitems.rate'));
+
+            $countersell=DB::table('bills')->select(DB::raw('id,net_total as total,center_id'));
+
 
             if ($type == 0) {
                 $range = NepaliDate::getDate($request->year, $request->month, $request->session);
-                $sellitem = $sellitem->where('sellitems.date', '>=', $range[1])->where('sellitems.date', '<=', $range[2]);
-                $sellmilk = $sellmilk->where('distributorsells.date', '>=', $range[1])->where('distributorsells.date', '<=', $range[2]);
+                $farmersell = $farmersell->where('sellitems.date', '>=', $range[1])->where('sellitems.date', '<=', $range[2]);
+                $dissell = $dissell->where('sellitems.date', '>=', $range[1])->where('sellitems.date', '<=', $range[2]);
+                $empsell = $empsell->where('sellitems.date', '>=', $range[1])->where('sellitems.date', '<=', $range[2]);
+                $countersell = $countersell->where('date', '>=', $range[1])->where('date', '<=', $range[2]);
             } elseif ($type == 1) {
                 $date = $date = str_replace('-', '', $request->date1);
-                $sellitem = $sellitem->where('sellitems.date', '=', $date);
-                $sellmilk = $sellmilk->where('distributorsells.date', '=', $date);
+                $farmersell = $farmersell->where('sellitems.date', '=', $date);
+                $dissell = $dissell->where('sellitems.date', '=', $date);
+                $empsell = $empsell->where('sellitems.date', '=', $date);
+                $countersell = $countersell->where('date', '=', $date);
             } elseif ($type == 2) {
                 $range = NepaliDate::getDateWeek($request->year, $request->month, $request->week);
-                $sellitem = $sellitem->where('sellitems.date', '>=', $range[1])->where('sellitems.date', '<=', $range[2]);
-                $sellmilk = $sellmilk->where('distributorsells.date', '>=', $range[1])->where('distributorsells.date', '<=', $range[2]);
+                $farmersell = $farmersell->where('sellitems.date', '>=', $range[1])->where('sellitems.date', '<=', $range[2]);
+                $dissell = $dissell->where('sellitems.date', '>=', $range[1])->where('sellitems.date', '<=', $range[2]);
+                $empsell = $empsell->where('sellitems.date', '>=', $range[1])->where('sellitems.date', '<=', $range[2]);
+                $countersell = $countersell->where('date', '>=', $range[1])->where('date', '<=', $range[2]);
             } elseif ($type == 3) {
                 $range = NepaliDate::getDateMonth($request->year, $request->month);
-                $sellitem = $sellitem->where('sellitems.date', '>=', $range[1])->where('sellitems.date', '<=', $range[2]);
-                $sellmilk = $sellmilk->where('distributorsells.date', '>=', $range[1])->where('distributorsells.date', '<=', $range[2]);
+                $farmersell = $farmersell->where('sellitems.date', '>=', $range[1])->where('sellitems.date', '<=', $range[2]);
+                $dissell = $dissell->where('sellitems.date', '>=', $range[1])->where('sellitems.date', '<=', $range[2]);
+                $empsell = $empsell->where('sellitems.date', '>=', $range[1])->where('sellitems.date', '<=', $range[2]);
+                $countersell = $countersell->where('date', '>=', $range[1])->where('date', '<=', $range[2]);
             } elseif ($type == 4) {
                 $range = NepaliDate::getDateYear($request->year);
-                $sellitem = $sellitem->where('sellitems.date', '>=', $range[1])->where('sellitems.date', '<=', $range[2]);
-                $sellmilk = $sellmilk->where('distributorsells.date', '>=', $range[1])->where('distributorsells.date', '<=', $range[2]);
+                $farmersell = $farmersell->where('sellitems.date', '>=', $range[1])->where('sellitems.date', '<=', $range[2]);
+                $dissell = $dissell->where('sellitems.date', '>=', $range[1])->where('sellitems.date', '<=', $range[2]);
+                $empsell = $empsell->where('sellitems.date', '>=', $range[1])->where('sellitems.date', '<=', $range[2]);
+                $countersell = $countersell->where('date', '>=', $range[1])->where('date', '<=', $range[2]);
             } elseif ($type == 5) {
                 $range[1] = str_replace('-', '', $request->date1);;
                 $range[2] = str_replace('-', '', $request->date2);;
-                $sellitem = $sellitem->where('sellitems.date', '>=', $range[1])->where('sellitems.date', '<=', $range[2]);
-                $sellmilk = $sellmilk->where('distributorsells.date', '>=', $range[1])->where('distributorsells.date', '<=', $range[2]);
+                $farmersell = $farmersell->where('sellitems.date', '>=', $range[1])->where('sellitems.date', '<=', $range[2]);
+                $dissell = $dissell->where('sellitems.date', '>=', $range[1])->where('sellitems.date', '<=', $range[2]);
+                $empsell = $empsell->where('sellitems.date', '>=', $range[1])->where('sellitems.date', '<=', $range[2]);
+                $countersell = $countersell->where('date', '>=', $range[1])->where('date', '<=', $range[2]);
             }
 
             if ($request->center_id != -1) {
-                $sellitem = $sellitem->where('farmers.center_id', $request->center_id);
+                $farmersell = $farmersell->where('farmers.center_id', $request->center_id);
             }
 
-            $data['sellitem'] = $sellitem->select('sellitems.date', 'sellitems.rate', 'sellitems.qty', 'sellitems.total', 'sellitems.due', 'users.name', 'items.title', 'users.no')->orderBy('sellitems.date', 'asc')->get();
-            $data['sellitem1'] = $sellitem->select('sellitems.date', 'sellitems.rate', 'sellitems.qty', 'sellitems.total', 'sellitems.due', 'users.name', 'items.title', 'users.no')->orderBy('sellitems.date', 'asc')->get()->groupBy('title');
-            // dd( $data['sellitem1']);
-            $data['sellmilk'] = $sellmilk->select('distributorsells.*', 'users.name')->get();
-            $data['sellmilk1'] = $sellmilk->select('distributorsells.*', 'users.name')->get()->groupBy('distributer_id');
+            
+            $counterAmount=$countersell->get();
+            $farmerAmount = $farmersell->get();
+            $disAmount = $dissell->get();
+            $empAmount = $empsell->get();
+            
 
-            $maxdatas = [];
-            foreach ($data['sellmilk1'] as $key => $d) {
-                $dd = [];
-                $dd['distributor'] = Distributer::find($key);
-                $dt = $d->groupBy('product_id');
-                $products = [];
-                foreach ($dt as $key1 => $ddd) {
-                    $product = [];
-                    $product['product'] = Product::find($key1);
-                    $product['qty'] = $ddd->sum('qty');
-                    $product['rate'] = $ddd->avg('rate');
-                    $product['total'] = $ddd->sum('total');
-                    array_push($products, (object)$product);
+            $counterAmountIDS=$counterAmount->pluck('id');
+
+
+            $users = DB::table('users')->get(['id', 'name', 'no']);
+            $items = DB::table('items')->get(['id', 'title']);
+            $centers= DB::table('centers')->get(['id','name']);
+            // dd($dissell->get(),$farmersell->get(),$empsell->get());
+            // dd($farmerAmount,$disAmount,$empAmount,$users);
+            $g = [];
+            $itm = [];
+
+            $g[0] = $farmerAmount->groupBy('user_id');
+            $g[1] = $disAmount->groupBy('user_id');
+            $g[2] = $empAmount->groupBy('user_id');
+            $g[3]=$counterAmount->groupBy('center_id');
+
+            $itm[0] = $farmerAmount->groupBy('item_id');
+            $itm[1] = $disAmount->groupBy('item_id');
+            $itm[2] = $empAmount->groupBy('item_id');
+            $itm[3] = DB::table('bill_items')->whereIn('bill_id',$counterAmountIDS)
+                ->select(DB::raw('id,item_id,qty,total'))->get()->groupBy('item_id');
+
+            $byName = [];
+            $byItem = [];
+
+            for ($i = 0; $i < 4; $i++) {
+                $byName[$i] = [];
+                foreach ($g[$i] as $key => $val) {
+                    $localAmount = 0;
+                    foreach ($val as $key1 => $value) {
+                        $localAmount += $value->total;
+                    }
+                    if($i<3){
+
+                        $user = $users->where('id', $key)->first();
+                        array_push ( $byName[$i], (object)[
+                            'total' => $localAmount,
+                            'id' => $user->id,
+                            'name' => $user->name,
+                            'no' => $user->no,
+                        ]);
+                    }else{
+                        $center=$centers->where('id',$key)->first();
+                        array_push ( $byName[$i], (object)[
+                            'total' => $localAmount,
+                            'id' => $center->id,
+                            'name' => $center->name,
+                        ]);
+                    }
                 }
-                $dd['products'] = $products;
-                array_push($maxdatas, (object)$dd);
+
+                $byItem[$i] = [];
+                foreach ($itm[$i] as $key => $val) {
+                    $localAmount = 0;
+                    $localqty = 0;
+                    foreach ($val as $key1 => $value) {
+                        $localAmount += $value->total;
+                        $localqty += $value->qty;
+                    }
+                    $item=$items->where('id',$key)->first();
+                    array_push ( $byItem[$i], (object)[
+                        'total' => $localAmount,
+                        'qty' => $localqty,
+                        'id' => $item->id,
+                        'name' => $item->title,
+                    ]);
+                }
+            }
+            
+            $itemAmount=[];
+            for ($i=0; $i < 4; $i++) { 
+                foreach ($byItem[$i] as $key => $value) {
+                    if(!isset($itemAmount['item_'.$value->id])){
+                        $itemAmount['item_'.$value->id]=(object)[
+                            'total' => $value->total,
+                            'qty' => $value->qty,
+                            'id' => $value->id,
+                            'name' => $value->name,
+                        ];
+                        
+                    }else{
+                        $itemAmount['item_'.$value->id]->qty+=$value->qty;
+                        $itemAmount['item_'.$value->id]->total+=$value->total;
+                    }
+                }
             }
 
-            // dd($maxdatas);
-            return view('admin.report.sales.data', compact('data', 'maxdatas'));
+        
+
+
+            return view('admin.report.sales.data', compact('byName', 'byItem','itemAmount'));
         } else {
             return view('admin.report.sales.index');
         }
@@ -538,7 +630,7 @@ class ReportController extends Controller
                 DB::raw('pos_bill_items.*,pos_bills.bill_no')
             )->get();
 
-            $saleReturn = $salesReturn_query->select('id', 'bill_no', 'date', 'total')->get();
+            $saleReturn = $salesReturn_query->select('id', 'bill_no', 'date', 'qty')->get();
             $ddd = $billitems->groupBy('item_id');
             $billItemDatas = [];
 
@@ -753,10 +845,10 @@ class ReportController extends Controller
             $type = $request->type;
             $range = [];
             $data = [];
-            $data = DB::table('expenses')->join('expcategories','expcategories.id','=','expenses.expcategory_id');
-            $billExpenses=DB::table('bill_expenses')
-            ->join('supplierbills','supplierbills.id','=','bill_expenses.supplierbill_id')
-            ->join('users','supplierbills.user_id','=','users.id');
+            $data = DB::table('expenses')->join('expcategories', 'expcategories.id', '=', 'expenses.expcategory_id');
+            $billExpenses = DB::table('bill_expenses')
+                ->join('supplierbills', 'supplierbills.id', '=', 'bill_expenses.supplierbill_id')
+                ->join('users', 'supplierbills.user_id', '=', 'users.id');
             if ($type == 0) {
             } elseif ($type == 1) {
                 $date = $date = str_replace('-', '', $request->date1);
@@ -770,37 +862,34 @@ class ReportController extends Controller
                 $range = NepaliDate::getDateMonth($request->year, $request->month);
                 $data = $data->where('date', '>=', $range[1])->where('date', '<=', $range[2]);
                 $billExpenses = $billExpenses->where('supplierbills.date', '>=', $range[1])->where('supplierbills.date', '<=', $range[2]);
-
             } elseif ($type == 4) {
                 $range = NepaliDate::getDateYear($request->year);
                 $data = $data->where('date', '>=', $range[1])->where('date', '<=', $range[2]);
                 $billExpenses = $billExpenses->where('supplierbills.date', '>=', $range[1])->where('supplierbills.date', '<=', $range[2]);
-
             } elseif ($type == 5) {
                 $range[1] = str_replace('-', '', $request->date1);;
                 $range[2] = str_replace('-', '', $request->date2);;
                 $data = $data->where('date', '>=', $range[1])->where('date', '<=', $range[2]);
                 $billExpenses = $billExpenses->where('supplierbills.date', '>=', $range[1])->where('supplierbills.date', '<=', $range[2]);
-
             }
 
-          
 
-            $purchaseExp=[];
-            $alldata=[];
+
+            $purchaseExp = [];
+            $alldata = [];
             if ($request->category_id > 0) {
                 $hascat = true;
                 $data = $data->where('expcategory_id', $request->category_id);
-                $alldata=$data->select(DB::raw( 'expenses.*,expcategories.name'))->get()->groupBy('name');
-            } else if ($request->category_id == 0 ) {
-                $purchaseExp=$billExpenses->select(DB::raw('bill_expenses.*,supplierbills.date, supplierbills.billno,users.name '))->get();
-            }else{
-                $alldata=$data->select(DB::raw( 'expenses.*,expcategories.name'))->get()->groupBy('name');
-                $purchaseExp=$billExpenses->select(DB::raw('bill_expenses.*,supplierbills.date, supplierbills.billno,users.name '))->get();
+                $alldata = $data->select(DB::raw('expenses.*,expcategories.name'))->get()->groupBy('name');
+            } else if ($request->category_id == 0) {
+                $purchaseExp = $billExpenses->select(DB::raw('bill_expenses.*,supplierbills.date, supplierbills.billno,users.name '))->get();
+            } else {
+                $alldata = $data->select(DB::raw('expenses.*,expcategories.name'))->get()->groupBy('name');
+                $purchaseExp = $billExpenses->select(DB::raw('bill_expenses.*,supplierbills.date, supplierbills.billno,users.name '))->get();
             }
 
-        
-            return view('admin.report.expense.data', compact('alldata','purchaseExp'));
+
+            return view('admin.report.expense.data', compact('alldata', 'purchaseExp'));
         } else {
             return view('admin.report.expense.index');
         }

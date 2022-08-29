@@ -51,6 +51,8 @@ class LedgerManage
     * "129" = "Employee Salary For Month"
     * "132" = "Employee closing Balance"
     * "133" = "Employee opening Balance"
+    * "301" = "Employee Purchase"
+    * "302" = "Employee Payment while Purchase"
 
 
 

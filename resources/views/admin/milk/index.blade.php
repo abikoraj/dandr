@@ -334,13 +334,20 @@
             $('.m_milk').each(function(index, element) {
 
                 const amt = parseFloat(element.dataset.value);
-                m_milk += isNaN(amt) ? 0 : amt;
+                m_milk += isNaN(amt) ? 0 : (amt);
+                console.log(m_milk);
+                m_milk=Number(m_milk.toFixed(2));
+                console.log(m_milk);
+
             });
 
             $('.e_milk').each(function(index, element) {
 
                 const amt = parseFloat(element.dataset.value);
-                e_milk += isNaN(amt) ? 0 : amt;
+                e_milk += isNaN(amt) ? 0 : (amt);
+                console.log(e_milk);
+                e_milk=Number(e_milk.toFixed(2));
+                console.log(e_milk);
             });
 
             $('#m_total').html(m_milk);

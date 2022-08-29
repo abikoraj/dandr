@@ -12,6 +12,7 @@ use App\Http\Controllers\Admin\DistributersellController;
 use App\Http\Controllers\Admin\DistributerSnfFatController;
 use App\Http\Controllers\Admin\DistributorPaymentController;
 use App\Http\Controllers\Admin\EmployeeController;
+use App\Http\Controllers\Admin\EmployeeSalesController;
 use App\Http\Controllers\Admin\ExtraIncomeController;
 use App\Http\Controllers\Admin\FarmerController;
 use App\Http\Controllers\Admin\FarmerDetailController;
@@ -399,6 +400,12 @@ Route::name('admin.')->group(function () {
                 Route::post('updateadvance', [EmployeeController::class, 'updateAdvance'])->name('advance.update')->middleware('authority');
                 Route::post('editadvance', [EmployeeController::class, 'editAdvance'])->name('advance.edit')->middleware('authority');
                 Route::post('advance/transfer', [EmployeeController::class, 'amountTransfer'])->name('amount.transfer');
+            });
+
+            //XXX Employee Sales Data
+            Route::name('sales.')->prefix('sales')->group(function(){
+                Route::match(["GET","POST"],'',[EmployeeSalesController::class,'index'])->name('index');
+                Route::match(["POST"],'save',[EmployeeSalesController::class,'save'])->name('save');
             });
             //XXX Employee Account Opening
             Route::match(['get', 'post'], 'account', [EmployeeController::class, 'accountIndex'])->name('account.index')->middleware('permmission:05.05');

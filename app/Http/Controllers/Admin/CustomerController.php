@@ -235,9 +235,9 @@ class CustomerController extends Controller
 
         $ledger = new LedgerManage($user->id);
         if (env('acc_system', 'old') == 'old') {
-            $ledger->addLedger("Payment", 2, $payment->amount, $date, 135, $payment->id);
+            $ledger->addLedger("Payment Received", 2, $payment->amount, $date, 135, $payment->id);
         } else {
-            $ledger->addLedger("Payment", 1, $payment->amount, $date, 135, $payment->id);
+            $ledger->addLedger("Payment Received", 1, $payment->amount, $date, 135, $payment->id);
         }
         $user = User::find($request->id);
         return response('ok');

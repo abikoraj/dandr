@@ -31,7 +31,7 @@
             </span>
         </div>
     @endif
-    {{-- <div class="col-md-2 section href" data-target="{{route('admin.report.sales')}}">
+    <div class="col-md-2 section href" data-target="{{route('admin.report.sales')}}">
         <span class="icon">
             <i class="zmdi zmdi-money-box"></i>
         </span>
@@ -39,7 +39,7 @@
         <span class="text">
             Sales Report
         </span>
-    </div> --}}
+    </div>
     @if (env('use_pos'))
         <div class="col-md-2 section href" data-target="{{route('admin.report.pos.sales')}}">
             <span class="icon">

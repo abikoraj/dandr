@@ -125,13 +125,7 @@ class BillingController extends Controller
 
         $bill->save();
 
-        if ($request->id != -1) {
-            $ledger->addLedger('Purchase ', 2, $request->net, $date, 130, $bill->id);
-
-            if ($request->paid > 0) {
-                $ledger->addLedger('Paid Amount', 1, $paidamount, $date, 131, $bill->id);
-            }
-        }
+        $titles=[];
         // dd($request->billitems);
         $billitem = [];
         foreach ($request->billitems as $t) {
@@ -148,6 +142,15 @@ class BillingController extends Controller
             $item->save();
             array_push($billitem, $item);
             maintainStock($item->item_id, $item->qty, $bill->center_id, 'out');
+            array_push($titles,$item->name ." X ". $item->qty);
+        }
+
+        if ($request->id != -1) {
+            $ledger->addLedger(implode(",",$titles), 2, $request->net, $date, 130, $bill->id);
+
+            if ($request->paid > 0) {
+                $ledger->addLedger('Received Amount', 1, $paidamount, $date, 131, $bill->id);
+            }
         }
         $bill->items = $billitem;
         if ($bill->table_id != null) {

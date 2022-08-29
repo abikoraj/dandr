@@ -212,7 +212,7 @@ class MilkController extends Controller
 
                     $centers = Center::where('id', '<>', $maincenter->id)->whereNotIn('id', $extracenters)->get();
                 } else {
-                    $centers = Center::where('id', '<>', $maincenter->id)->whereNotIn->get();
+                    $centers = Center::where('id', '<>', $maincenter->id)->get();
                 }
 
                 foreach ($centers as $key => $center) {
