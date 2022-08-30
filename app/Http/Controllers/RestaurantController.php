@@ -6,7 +6,9 @@ use App\Models\Bill;
 use App\Models\BillItem;
 use App\Models\Table;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
 
 class RestaurantController extends Controller
 {
@@ -78,5 +80,29 @@ class RestaurantController extends Controller
         return view('restaurant.table.kotprint',compact('localData','table'));
     }
 
+
+    public function kotDel(Request $request)
+    {
+        $user = Auth::user();
+        if(Hash::check($request->password, $user->password)){
+            $table=Table::where('id',$request->table_id)->first();
+            $datas=json_decode($table->data);
+            $newDatas=[];
+            foreach ($datas as $key => $data) {
+                if($data->id!=$request->id){
+                    array_push($newDatas,$data);
+                }
+            }
+            if(count($newDatas)>0){
+                $table->data=json_encode($newDatas);
+            }else{
+                $table->data=null;
+            }
+            $table->save();
+            return response()->json(['data'=>$table->data,'table_id'=>$request->table_id,'nodel'=>count($newDatas)>0]);
+        }else{
+            return response()->json(['status'=>false]);
+        }
+    }
    
 }

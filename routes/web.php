@@ -819,6 +819,7 @@ Route::name('restaurant.')->prefix('restaurant')->middleware('permmission:14.02'
     Route::match(['GET','POST'],'print',[RestaurantController::class,'print'])->name('print');
     Route::match(['GET','POST'],'checkLogin',[RestaurantController::class,'checkLogin'])->name('checkLogin');
     Route::match(['GET','POST'],'kot',[RestaurantController::class,'kot'])->name('kot');
+    Route::match(['POST'],'kotDel',[RestaurantController::class,'kotDel'])->name('kotDel');
     
 });
 

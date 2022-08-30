@@ -234,7 +234,10 @@ function maintainStock($item_id, $qty, $center_id = null, $dir = 'in')
   
 
 
-    $item = Item::where('id', $item_id)->select('id', 'stock', 'wholesale', 'sell_price')->first();
+    $item = Item::where('id', $item_id)->select('id', 'stock', 'wholesale', 'sell_price','trackstock')->first();
+    if($item->trackstock==0){
+        return;
+    }
     if ($dir == 'in') {
         $item->stock += $qty;
     } else {

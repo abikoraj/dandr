@@ -260,7 +260,7 @@
 
         }
 
-        function renderSide() {
+        function renderSide(type=1) {
             $('#sideHolderData').html('');
             const index = currentData.findIndex(o => o.table_id == currentTable.id);
             if (index > -1) {
@@ -279,10 +279,12 @@
                     }).join('')
                 );
                 renderOrder(localData);
-                axios.post('{{ route('restaurant.table') }}', {
-                    id: localData.table_id,
-                    data: JSON.stringify(localData.items)
-                });
+                if(type!=2){
+                    axios.post('{{ route('restaurant.table') }}', {
+                        id: localData.table_id,
+                        data: JSON.stringify(localData.items)
+                    });
+                }
             }
         }
 

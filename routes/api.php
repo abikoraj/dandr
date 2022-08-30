@@ -72,7 +72,7 @@ Route::middleware(['auth:api'])->group(function () {
         Route::get('detail/{id}',[ManufactureController::class,'detail'])->middleware('permmission:13.04');
         Route::post('finish/{id}',[ManufactureController::class,'finish'])->middleware('permmission:13.04');
     });
-
+    
     route::prefix('farmers')->group(function(){
         Route::get('list', [FarmerController::class,'list'])->middleware('permmission:01.12');
         Route::get('centers', [FarmerController::class,'centers']);
@@ -80,8 +80,8 @@ Route::middleware(['auth:api'])->group(function () {
         Route::post('pull-milk-data', [FarmerController::class,'pullMilkData'])->middleware('permmission:02.10');;
         Route::post('push-snffat', [FarmerController::class,'pushFatSnf'])->middleware('permmission:02.11');;
     });
-
 });
+
 Route::match(['GET',"POST"],'variants', [ItemController::class,'variants']);
 Route::match(['GET',"POST"],'show-ledger', [ItemController::class,'showLedger']);
 // Route::get('json/{table}',function($table){

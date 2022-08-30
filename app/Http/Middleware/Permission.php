@@ -22,6 +22,7 @@ class Permission
     {
 
         $user = Auth::user();
+        
         if ($user->phone == env('authphone', "9800916365")) {
             return $next($request);
         } else {
