@@ -1,6 +1,6 @@
 <script>
     function initDel(id,table_id){
-        const password=prompt("Please Enter ypur Password");
+        const password=prompt("Please enter your phone no");
         axios.post('{{route('restaurant.kotDel')}}',{
             id:id,
             table_id:table_id,

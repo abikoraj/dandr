@@ -64,4 +64,7 @@
             </tr>
         @endif
     </table>
+    <div>
+        <a href="{{route('restaurant.print',['id'=>$bill->id])}}" class="btn btn-primary" target="_newblank"> Print</a>
+    </div>
 </div>

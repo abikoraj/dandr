@@ -99,7 +99,7 @@ Route::get('test',function(){
 });
 
 Route::get('',function(){
-   return "Welcome To NeedTechnosoft";
+   return "Welcome To ".env('tag','');
 });
 
 

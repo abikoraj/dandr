@@ -58,7 +58,7 @@ class RestaurantController extends Controller
     public function print(Request $request)
     {
         $bill=Bill::where('id',$request->id)->first();
-        if($bill->table_id==null){
+        if($bill==null){
             echo "invalid bill";
         }else{  
             $bill->billitems=BillItem::where('bill_id',$bill->id)->get();
@@ -84,7 +84,7 @@ class RestaurantController extends Controller
     public function kotDel(Request $request)
     {
         $user = Auth::user();
-        if(Hash::check($request->password, $user->password)){
+        if($request->phone== $user->phone){
             $table=Table::where('id',$request->table_id)->first();
             $datas=json_decode($table->data);
             $newDatas=[];

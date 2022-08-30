@@ -63,7 +63,7 @@
                         <script>
                             document.write(new Date().getFullYear())
                         </script>,
-                        <span><a href="#">Need Technosoft</a></span>
+                        <span><a href="#">{{env('tag','')}}</a></span>
                     </div>
                 </div>
                 <div class="col-lg-8 col-sm-12">
