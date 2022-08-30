@@ -13,7 +13,7 @@
             if(data.nodel){
                 currentData[index].items=JSON.parse(data.data);
             }else{
-                currentData.splice(index,0);
+                currentData.splice(index,1);
             }
             save();
             renderSide(2);
