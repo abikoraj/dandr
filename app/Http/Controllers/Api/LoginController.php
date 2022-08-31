@@ -7,6 +7,7 @@ use App\Models\User;
 use App\Models\UserPermission;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class LoginController extends Controller
 {
@@ -40,11 +41,14 @@ class LoginController extends Controller
             $user = Auth::user();
 
             $token = $user->createToken('API-KEY')->accessToken;
+            $apiper=DB::table('api_permissions')->where('user_id',$user->id)->first(['data']);
             return response()->json([
                 'token'=>$token,
                 'name'=>$user->name,
                 'phone'=>$user->phone,
-                'id'=>$user->id
+                'id'=>$user->id,
+                'per'=>DB::table('user_permissions')->where('user_id',$user->id)->where('enable',1)->pluck('code'),
+                'apiper'=>$apiper==null?[]:((json_decode($apiper->data))->centers)
             ]);
         } else {
            return response()->json(['message'=>'Login Failed'],401);

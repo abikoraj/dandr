@@ -805,6 +805,7 @@ Route::name('admin.')->group(function () {
                 Route::match(['GET', 'POST'], 'add', [UserController::class, 'userAdd'])->name('add');
                 Route::match(['GET', 'POST'], 'delete/{id}', [UserController::class, 'delete'])->name('delete');
                 Route::match(['GET', 'POST'], 'per/{user}', [UserController::class, 'per'])->name('per');
+                Route::match(['GET', 'POST'], 'api-per/{user}', [UserController::class, 'perAPI'])->name('api.per');
                 Route::match(['GET', 'POST'], 'update/{update}', [UserController::class, 'update'])->name('update')->middleware('authority');
                 Route::match(['GET', 'POST'], 'change/password', [UserController::class, 'changePassword'])->name('change.password');
                 Route::match(['GET', 'POST'], 'non-super-admin/change/password/{id}', [UserController::class, 'nonSuperadminChangePassword'])->name('non.super.admin.change.password');

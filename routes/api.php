@@ -77,9 +77,9 @@ Route::middleware(['auth:api'])->group(function () {
     route::prefix('farmers')->group(function(){
         Route::get('list', [FarmerController::class,'list'])->middleware('permmission:01.12');
         Route::get('centers', [FarmerController::class,'centers']);
-        Route::post('push-milk-data', [FarmerController::class,'pushMilkData'])->middleware('permmission:02.09');;
-        Route::post('pull-milk-data', [FarmerController::class,'pullMilkData'])->middleware('permmission:02.10');;
-        Route::post('push-snffat', [FarmerController::class,'pushFatSnf'])->middleware('permmission:02.11');;
+        Route::post('push-milk-data', [FarmerController::class,'pushMilkData'])->middleware('permmission:02.09');
+        Route::post('pull-milk-data', [FarmerController::class,'pullMilkData'])->middleware('permmission:02.10');
+        Route::post('push-snffat', [FarmerController::class,'pushFatSnf'])->middleware('permmission:02.11');
     });
 });
 

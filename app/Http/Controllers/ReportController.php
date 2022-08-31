@@ -152,25 +152,41 @@ class ReportController extends Controller
                 $farmer->snf = truncate_decimals($farmer->snf);
                 $fatAmount = ($farmer->fat * $center->fat_rate);
                 $snfAmount = ($farmer->snf * $center->snf_rate);
-                if ($farmer->userate == 1) {
 
-                    $farmer->rate = $farmer->rate;
-                } else {
+                $report = $reports->where('user_id', $farmer->id)->first();
+                $hasRate = false;
+                $farmer->tc = 0;
+                $farmer->cc = 0;
 
-                    $farmer->rate = truncate_decimals($fatAmount + $snfAmount);
+                if ($farmer->old) {
+                    if ($report->has_passbook == 1) {
+                        $farmer->rate = $report->rate;
+                        $farmer->cc = $report->cc;
+                        $farmer->tc = $report->tc;
+                        $hasRate = true;
+                    }
+                }
+                if (!$hasRate) {
+
+                    if ($farmer->userate == 1) {
+
+                        $farmer->rate = $farmer->rate;
+                    } else {
+
+                        $farmer->rate = truncate_decimals($fatAmount + $snfAmount);
+                    }
+
+                    if ($farmer->usetc == 1 && $farmer->total > 0) {
+                        $farmer->tc = truncate_decimals((($center->tc * ($farmer->snf + $farmer->fat) / 100) * $farmer->milk), 2);
+                    }
+                    if ($farmer->usecc == 1 && $farmer->total > 0) {
+                        $farmer->cc = truncate_decimals($center->cc * $farmer->milk, 2);
+                    }
                 }
 
                 $farmer->total = truncate_decimals(($farmer->rate * $farmer->milk), 2);
 
-                $farmer->tc = 0;
-                $farmer->cc = 0;
 
-                if ($farmer->usetc == 1 && $farmer->total > 0) {
-                    $farmer->tc = truncate_decimals((($center->tc * ($farmer->snf + $farmer->fat) / 100) * $farmer->milk), 2);
-                }
-                if ($farmer->usecc == 1 && $farmer->total > 0) {
-                    $farmer->cc = truncate_decimals($center->cc * $farmer->milk, 2);
-                }
                 $farmer->bonus = 0;
                 if (env('hasextra', 0) == 1) {
                     $farmer->bonus = (int)($farmer->grandtotal * $center->bonus / 100);
@@ -422,7 +438,7 @@ class ReportController extends Controller
                 ->join('employees', 'users.id', '=', 'employees.user_id')
                 ->select(DB::raw('sellitems.user_id,sellitems.total,sellitems.item_id,sellitems.qty,sellitems.rate'));
 
-            $countersell=DB::table('bills')->select(DB::raw('id,net_total as total,center_id'));
+            $countersell = DB::table('bills')->select(DB::raw('id,net_total as total,center_id'));
 
 
             if ($type == 0) {
@@ -468,19 +484,19 @@ class ReportController extends Controller
                 $farmersell = $farmersell->where('farmers.center_id', $request->center_id);
             }
 
-            
-            $counterAmount=$countersell->get();
+
+            $counterAmount = $countersell->get();
             $farmerAmount = $farmersell->get();
             $disAmount = $dissell->get();
             $empAmount = $empsell->get();
-            
 
-            $counterAmountIDS=$counterAmount->pluck('id');
+
+            $counterAmountIDS = $counterAmount->pluck('id');
 
 
             $users = DB::table('users')->get(['id', 'name', 'no']);
             $items = DB::table('items')->get(['id', 'title']);
-            $centers= DB::table('centers')->get(['id','name']);
+            $centers = DB::table('centers')->get(['id', 'name']);
             // dd($dissell->get(),$farmersell->get(),$empsell->get());
             // dd($farmerAmount,$disAmount,$empAmount,$users);
             $g = [];
@@ -489,12 +505,12 @@ class ReportController extends Controller
             $g[0] = $farmerAmount->groupBy('user_id');
             $g[1] = $disAmount->groupBy('user_id');
             $g[2] = $empAmount->groupBy('user_id');
-            $g[3]=$counterAmount->groupBy('center_id');
+            $g[3] = $counterAmount->groupBy('center_id');
 
             $itm[0] = $farmerAmount->groupBy('item_id');
             $itm[1] = $disAmount->groupBy('item_id');
             $itm[2] = $empAmount->groupBy('item_id');
-            $itm[3] = DB::table('bill_items')->whereIn('bill_id',$counterAmountIDS)
+            $itm[3] = DB::table('bill_items')->whereIn('bill_id', $counterAmountIDS)
                 ->select(DB::raw('id,item_id,qty,total'))->get()->groupBy('item_id');
 
             $byName = [];
@@ -507,18 +523,18 @@ class ReportController extends Controller
                     foreach ($val as $key1 => $value) {
                         $localAmount += $value->total;
                     }
-                    if($i<3){
+                    if ($i < 3) {
 
                         $user = $users->where('id', $key)->first();
-                        array_push ( $byName[$i], (object)[
+                        array_push($byName[$i], (object)[
                             'total' => $localAmount,
                             'id' => $user->id,
                             'name' => $user->name,
                             'no' => $user->no,
                         ]);
-                    }else{
-                        $center=$centers->where('id',$key)->first();
-                        array_push ( $byName[$i], (object)[
+                    } else {
+                        $center = $centers->where('id', $key)->first();
+                        array_push($byName[$i], (object)[
                             'total' => $localAmount,
                             'id' => $center->id,
                             'name' => $center->name,
@@ -534,8 +550,8 @@ class ReportController extends Controller
                         $localAmount += $value->total;
                         $localqty += $value->qty;
                     }
-                    $item=$items->where('id',$key)->first();
-                    array_push ( $byItem[$i], (object)[
+                    $item = $items->where('id', $key)->first();
+                    array_push($byItem[$i], (object)[
                         'total' => $localAmount,
                         'qty' => $localqty,
                         'id' => $item->id,
@@ -543,29 +559,28 @@ class ReportController extends Controller
                     ]);
                 }
             }
-            
-            $itemAmount=[];
-            for ($i=0; $i < 4; $i++) { 
+
+            $itemAmount = [];
+            for ($i = 0; $i < 4; $i++) {
                 foreach ($byItem[$i] as $key => $value) {
-                    if(!isset($itemAmount['item_'.$value->id])){
-                        $itemAmount['item_'.$value->id]=(object)[
+                    if (!isset($itemAmount['item_' . $value->id])) {
+                        $itemAmount['item_' . $value->id] = (object)[
                             'total' => $value->total,
                             'qty' => $value->qty,
                             'id' => $value->id,
                             'name' => $value->name,
                         ];
-                        
-                    }else{
-                        $itemAmount['item_'.$value->id]->qty+=$value->qty;
-                        $itemAmount['item_'.$value->id]->total+=$value->total;
+                    } else {
+                        $itemAmount['item_' . $value->id]->qty += $value->qty;
+                        $itemAmount['item_' . $value->id]->total += $value->total;
                     }
                 }
             }
 
-        
 
-            $cats=explode(',',env('sales_report_category',''));
-            return view('admin.report.sales.data', compact('byName', 'byItem','itemAmount','cats'));
+
+            $cats = explode(',', env('sales_report_category', ''));
+            return view('admin.report.sales.data', compact('byName', 'byItem', 'itemAmount', 'cats'));
         } else {
             return view('admin.report.sales.index');
         }
@@ -798,19 +813,19 @@ class ReportController extends Controller
 
                 $employee->prevbalance = $prev = Ledger::where('date', '<', $range[1])->where('type', 2)->where('user_id', $employee->user_id)->sum('amount')
                     - Ledger::where('date', '<', $range[1])->where('type', 1)->where('user_id', $employee->user_id)->sum('amount');
-                $employee->advance = EmployeeAdvance::where('employee_id', $employee->id)->where('date', '>=', $range[1])->where('date', '<=', $range[2])->sum('amount') 
-                +  Ledger::where('date', '>=', $range[1])->where('date', '<=', $range[2])->where('user_id', $employee->user_id)->where('identifire', 301)->sum('amount');
+                $employee->advance = EmployeeAdvance::where('employee_id', $employee->id)->where('date', '>=', $range[1])->where('date', '<=', $range[2])->sum('amount')
+                    +  Ledger::where('date', '>=', $range[1])->where('date', '<=', $range[2])->where('user_id', $employee->user_id)->where('identifire', 301)->sum('amount');
                 $employee->salary = NepaliDate::calculateSalary($year, $month, $employee);
                 $employee->paid = Ledger::where('date', '>=', $range[1])->where('date', '<=', $range[2])->where('user_id', $employee->user_id)->where('identifire', 124)->sum('amount');
                 $employee->returned = Ledger::where('date', '>=', $range[1])
-                ->where('date', '<=', $range[2])
-                ->where('user_id', $employee->user_id)
-                ->where('identifire', 140)->sum('amount')+
-                Ledger::where('date', '>=', $range[1])
-                ->where('date', '<=', $range[2])
-                ->where('user_id', $employee->user_id)
-                ->where('identifire', 302)
-                ->sum('amount');
+                    ->where('date', '<=', $range[2])
+                    ->where('user_id', $employee->user_id)
+                    ->where('identifire', 140)->sum('amount') +
+                    Ledger::where('date', '>=', $range[1])
+                    ->where('date', '<=', $range[2])
+                    ->where('user_id', $employee->user_id)
+                    ->where('identifire', 302)
+                    ->sum('amount');
 
                 $employee->old = false;
 

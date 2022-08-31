@@ -150,26 +150,39 @@ class FarmerDetailController extends Controller
         $farmer->snfavg = $snfAvg;
         $farmer->fatavg = $fatAvg;
 
-        if ($farmer->userate == 1) {
-
-            $farmer->milkrate = $farmer->rate;
-        } else {
-
-            $farmer->milkrate = truncate_decimals($fatAmount + $snfAmount);
-        }
-
+        $hasRate=false;
         $farmer->milkamount = $farmer->milkData->sum('e_amount') + $farmer->milkData->sum('m_amount');
-        $farmer->total = truncate_decimals(($farmer->milkrate * $farmer->milkamount), 2);
         $farmer->tc = 0;
         $farmer->cc = 0;
-
-
-        if ($farmer->usetc == 1 && $farmer->total > 0) {
-            $farmer->tc = truncate_decimals((($center->tc * ($snfAvg + $fatAvg) / 100) * $farmer->milkamount), 2);
+        if($farmer->report!=null){
+            if($farmer->report->has_passbook==1){
+                $hasRate=true;
+                $farmer->milkrate = $farmer->report->rate;
+                $farmer->cc = $farmer->report->cc;
+                $farmer->tc = $farmer->report->tc;
+            }
         }
-        if ($farmer->usecc == 1 && $farmer->total > 0) {
-            $farmer->cc = truncate_decimals($center->cc * $farmer->milkamount, 2);
+        if(!$hasRate){
+
+            if ($farmer->userate == 1) {
+    
+                $farmer->milkrate = $farmer->rate;
+            } else {
+    
+                $farmer->milkrate = truncate_decimals($fatAmount + $snfAmount);
+            }
+           
+    
+    
+            if ($farmer->usetc == 1 && $farmer->total > 0) {
+                $farmer->tc = truncate_decimals((($center->tc * ($snfAvg + $fatAvg) / 100) * $farmer->milkamount), 2);
+            }
+            if ($farmer->usecc == 1 && $farmer->total > 0) {
+                $farmer->cc = truncate_decimals($center->cc * $farmer->milkamount, 2);
+            }
         }
+        
+        $farmer->total = truncate_decimals(($farmer->milkrate * $farmer->milkamount), 2);
 
         $farmer->fpaid = ledgerSum($farmer->id, '106', $range) + ledgerSum($farmer->id, '107', $range);
 

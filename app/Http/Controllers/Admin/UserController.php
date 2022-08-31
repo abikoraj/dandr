@@ -3,11 +3,13 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\ApiPermission;
 use App\Models\Employee;
 use App\Models\User;
 use App\Models\UserPermission;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Config;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller
@@ -111,5 +113,40 @@ class UserController extends Controller
         }
     }
 
+
+    public function perAPI(Request $request,User $user){
+        if($request->getMethod()=="POST"){
+            $per=ApiPermission::where('user_id',$user->id)->first();
+            $centers=[];
+            if($request->filled('centers')){
+                $centers=$request->centers;
+            }
+            if($per==null){
+                $per=new ApiPermission();
+                $per->user_id=$user->id;
+
+            }
+            $data=(object)[
+                'centers'=>$centers
+            ];
+            $per->data=json_encode($data);
+            $per->save();
+            
+            return redirect()->back();
+        }else{
+            $centers=DB::select('select id,name from centers');
+            $per=ApiPermission::where('user_id',$user->id)->first();
+            if($per!=null){
+
+                $data=json_decode( $per->data);
+            }else{
+                $data=(object)[
+                    'centers'=>[]
+                ];
+            }
+            // dd($data);
+            return view('admin.users.per.api',compact('centers','data','user'));
+        }
+    }
 
 }
