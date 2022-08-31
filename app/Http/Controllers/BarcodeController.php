@@ -48,7 +48,12 @@ class BarcodeController extends Controller
         }
 
         if($now<$barcode->validtill){
-            return response()->json(['status'=>true]);
+            if($request->pin==$barcode->pin){
+                return response()->json(['status'=>true]);
+            }else{
+                return response()->json(['status'=>false,'message'=>'Wrong pin adress']);
+
+            }
 
         }else{
             return response()->json(['status'=>false,'message'=>'Token expired, Please create new token in dashboard','data'=>[$now,$barcode->token]]);
