@@ -44,7 +44,7 @@ class LedgerManage
     * "150" = "Milk total Distributer"
 
     * "112" = "Employee Advaance payment"
-    * "113" = "Employee Account Open"
+    * "303" = "Employee Account Open"
     * "124" = "Employee Salary payment"
     * "122" = "paid amount while billing"
     * "123" = "purchase in billing items"
@@ -53,6 +53,8 @@ class LedgerManage
     * "133" = "Employee opening Balance"
     * "301" = "Employee Purchase"
     * "302" = "Employee Payment while Purchase"
+    * "113" = "Advance cancel"
+
 
 
 

@@ -811,8 +811,12 @@ class ReportController extends Controller
             $data = [];
             foreach ($employees as $employee) {
 
-                $employee->prevbalance = $prev = Ledger::where('date', '<', $range[1])->where('type', 2)->where('user_id', $employee->user_id)->sum('amount')
-                    - Ledger::where('date', '<', $range[1])->where('type', 1)->where('user_id', $employee->user_id)->sum('amount');
+                $employee->prevbalance  = Ledger::where('date', '<', $range[1])->where('type', 2)->where('user_id', $employee->user_id)->sum('amount')
+                    - Ledger::where('date', '<', $range[1])->where('type', 1)->where('user_id', $employee->user_id)->sum('amount')
+                    +Ledger::where('date', '<=', $range[2])->where('date', '>=', $range[1])->where('type', 2)->where('identifire',303)->where('user_id', $employee->user_id)->sum('amount')
+                    -Ledger::where('date', '<=', $range[2])->where('date', '>=', $range[1])->where('type', 1)->where('identifire',303)->where('user_id', $employee->user_id)->sum('amount')
+                    ;
+
                 $employee->advance = EmployeeAdvance::where('employee_id', $employee->id)->where('date', '>=', $range[1])->where('date', '<=', $range[2])->sum('amount')
                     +  Ledger::where('date', '>=', $range[1])->where('date', '<=', $range[2])->where('user_id', $employee->user_id)->where('identifire', 301)->sum('amount');
                 $employee->salary = NepaliDate::calculateSalary($year, $month, $employee);

@@ -19,7 +19,7 @@ class BarcodeController extends Controller
                 $time=time();
                 $barcode->pin=$request->pin;
                 $barcode->token=bcrypt($time);
-                $barcode->validtill=$time+300;
+                $barcode->validtill=$time+60;
                 $barcode->save();
                 $data=(object)[
                     'url'=>url('/api').'/',

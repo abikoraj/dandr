@@ -423,7 +423,7 @@ class EmployeeController extends Controller
     {
         $date = str_replace('-', '', $request->date);
         $ledgerManager = new LedgerManage($request->employee);
-        $ledger = $ledgerManager->addLedger('Opening Balance', $request->type, $request->amount, $date, '113');
+        $ledger = $ledgerManager->addLedger('Opening Balance', $request->type, $request->amount, $date, '303');
         $ledger->name = User::where('id', $request->employee)->select('name')->first()->name;
         return view('admin.emp.account.single', compact('ledger'));
     }

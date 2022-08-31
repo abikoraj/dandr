@@ -452,7 +452,7 @@ class EmployeeController extends Controller
     {
         if ($request->getMethod() == "POST") {
             $date = str_replace('-', '', $request->date);
-            $ledgers = Ledger::join('users', 'ledgers.user_id', '=', 'users.id')->select('ledgers.id', 'users.name', 'ledgers.amount', 'ledgers.type')->where('ledgers.date', $date)->where('ledgers.identifire', 113)->get();
+            $ledgers = Ledger::join('users', 'ledgers.user_id', '=', 'users.id')->select('ledgers.id', 'users.name', 'ledgers.amount', 'ledgers.type')->where('ledgers.date', $date)->where('ledgers.identifire', 303)->get();
             return view('admin.emp.account.list', compact('ledgers'));
         } else {
             // $emps = User::where('role', 4)->select('name', 'id')->get();
@@ -464,7 +464,7 @@ class EmployeeController extends Controller
     {
         $date = str_replace('-', '', $request->date);
         $ledgerManager = new LedgerManage($request->employee);
-        $ledger = $ledgerManager->addLedger('Opening Balance', $request->type, $request->amount, $date, '113');
+        $ledger = $ledgerManager->addLedger('Opening Balance', $request->type, $request->amount, $date, '303');
         $ledger->name = User::where('id', $request->employee)->select('name')->first()->name;
         return view('admin.emp.account.single', compact('ledger'));
     }

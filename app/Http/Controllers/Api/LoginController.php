@@ -48,7 +48,8 @@ class LoginController extends Controller
                 'phone'=>$user->phone,
                 'id'=>$user->id,
                 'per'=>DB::table('user_permissions')->where('user_id',$user->id)->where('enable',1)->pluck('code'),
-                'apiper'=>$apiper==null?[]:((json_decode($apiper->data))->centers)
+                'apiper'=>$apiper==null?[]:((json_decode($apiper->data))->centers),
+                'time'=>explode('|',env('edittime',''))
             ]);
         } else {
            return response()->json(['message'=>'Login Failed'],401);
