@@ -5,7 +5,9 @@
             if(currentAdded.length==0){
                 alert('No New Item To Print');
             }else{
-                window.open(`{{route('restaurant.kot')}}?table_id=${currentTable.id}${currentAdded.map(o=>'&ids[]='+o.id).join('')}`);
+                @if(env('print_kot',false))
+                    window.open(`{{route('restaurant.kot')}}?table_id=${currentTable.id}${currentAdded.map(o=>'&ids[]='+o.id).join('')}`);
+                @endif
                 
             }
         }else{
@@ -19,7 +21,9 @@
                 alert("No Data Selected");
                 return;
             }
-            window.open(`{{route('restaurant.kot')}}?table_id=${currentTable.id}${datas.map(o=>'&ids[]='+o).join('')}`);
+            @if(env('print_kot',false))
+                window.open(`{{route('restaurant.kot')}}?table_id=${currentTable.id}${datas.map(o=>'&ids[]='+o).join('')}`);
+                @endif
 
         }
     }

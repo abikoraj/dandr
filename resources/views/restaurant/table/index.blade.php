@@ -299,7 +299,6 @@
             if (index > -1) {
                 currentData.splice(index, 1);
                 save();
-                // window.open("{{ route('restaurant.print') }}?id="+bill_id)
                 $('#order-' + id).html('');
             }
 

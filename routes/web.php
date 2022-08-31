@@ -38,6 +38,7 @@ use App\Http\Controllers\Admin\TableController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\WastageController;
 use App\Http\Controllers\BackupController;
+use App\Http\Controllers\BarcodeController;
 use App\Http\Controllers\Billing\BillingController as BillingBillingController;
 use App\Http\Controllers\FixedAssetController;
 use App\Http\Controllers\HomeController as ControllersHomeController;
@@ -808,6 +809,10 @@ Route::name('admin.')->group(function () {
                 Route::match(['GET', 'POST'], 'change/password', [UserController::class, 'changePassword'])->name('change.password');
                 Route::match(['GET', 'POST'], 'non-super-admin/change/password/{id}', [UserController::class, 'nonSuperadminChangePassword'])->name('non.super.admin.change.password');
             });
+        });
+        Route::name('barcode.')->prefix('barcode')->middleware('authority')->group(function(){
+            Route::match(['GET','POST'],'',[BarcodeController::class,'index'])->name('index');
+            
         });
     });
 });
