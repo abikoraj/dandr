@@ -47,11 +47,11 @@ class BarcodeController extends Controller
             return response()->json(['status'=>false,'message'=>"Invalid Token"]);
         }
 
-        if($now<$barcode->token){
+        if($now<$barcode->validtill){
             return response()->json(['status'=>true]);
 
         }else{
-            return response()->json(['status'=>false,'message'=>'Token expired, Please create new token in dashboard']);
+            return response()->json(['status'=>false,'message'=>'Token expired, Please create new token in dashboard','data'=>[$now,$barcode->token]]);
 
         }
 

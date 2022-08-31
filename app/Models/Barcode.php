@@ -9,7 +9,5 @@ class Barcode extends Model
 {
     use HasFactory;
 
-    protected  $casts = [
-            'validtill'  => 'datetime',
-    ];
+  
 }
