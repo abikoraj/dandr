@@ -8,4 +8,8 @@ use Illuminate\Database\Eloquent\Model;
 class Barcode extends Model
 {
     use HasFactory;
+
+    protected  $casts = [
+            'validtill'  => 'datetime',
+    ];
 }

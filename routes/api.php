@@ -7,6 +7,7 @@ use App\Http\Controllers\Api\GeneralController;
 use App\Http\Controllers\Api\ItemController;
 use App\Http\Controllers\Api\LoginController;
 use App\Http\Controllers\Api\ManufactureController;
+use App\Http\Controllers\BarcodeController;
 use App\Models\Customer;
 use App\Models\PosBill;
 use Illuminate\Http\Request;
@@ -89,7 +90,7 @@ Route::match(['GET',"POST"],'show-ledger', [ItemController::class,'showLedger'])
 // });
 
 
-
+Route::post('barcode-setup',[BarcodeController::class,'setup']);
 
 Route::post('login',[LoginController::class,'index']);
 Route::post('login-remote',[LoginController::class,'loginRemote']);
@@ -103,12 +104,12 @@ Route::get('',function(){
 });
 
 
-Route::get('send-sms/@{pass}',function($pass){
-    if($pass=="Chhatra123"){
-        Artisan::call('send:sms');
-    }else{
-        return response('Authenticaton Failed');
-    }
-});
+// Route::get('send-sms/@{pass}',function($pass){
+//     if($pass=="Chhatra123"){
+//         Artisan::call('send:sms');
+//     }else{
+//         return response('Authenticaton Failed');
+//     }
+// });
 
 

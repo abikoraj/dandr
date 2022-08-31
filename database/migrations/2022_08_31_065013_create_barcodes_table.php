@@ -17,7 +17,7 @@ class CreateBarcodesTable extends Migration
             $table->id();
             $table->string('token');
             $table->string('pin',6);
-            $table->dateTime('validtill');
+            $table->unsignedInteger('validtill');
             $table->timestamps();
         });
     }

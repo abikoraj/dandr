@@ -16,12 +16,13 @@ class BarcodeController extends Controller
             $user=Auth::user();
             if(Hash::check($request->password,$user->password)){
                 $barcode=new Barcode();
+                $time=time();
                 $barcode->pin=$request->pin;
-                $barcode->token=bcrypt(time());
-                $barcode->validtill=Carbon::now()->addMinutes(5);
+                $barcode->token=bcrypt($time);
+                $barcode->validtill=$time+300;
                 $barcode->save();
                 $data=(object)[
-                    'url'=>url('/api'),
+                    'url'=>url('/api').'/',
                     'token'=>$barcode->token
                 ];
                 return response()->json([
@@ -36,5 +37,23 @@ class BarcodeController extends Controller
         }else{
             return view('admin.barcode.index');
         }
+    }
+
+    public function setup(Request $request)
+    {
+        $now=time();
+        $barcode=Barcode::where('token',$request->token)->first();
+        if($barcode==null){
+            return response()->json(['status'=>false,'message'=>"Invalid Token"]);
+        }
+
+        if($now<$barcode->token){
+            return response()->json(['status'=>true]);
+
+        }else{
+            return response()->json(['status'=>false,'message'=>'Token expired, Please create new token in dashboard']);
+
+        }
+
     }
 }

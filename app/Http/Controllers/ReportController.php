@@ -564,8 +564,8 @@ class ReportController extends Controller
 
         
 
-
-            return view('admin.report.sales.data', compact('byName', 'byItem','itemAmount'));
+            $cats=explode(',',env('sales_report_category',''));
+            return view('admin.report.sales.data', compact('byName', 'byItem','itemAmount','cats'));
         } else {
             return view('admin.report.sales.index');
         }
