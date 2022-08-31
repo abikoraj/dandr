@@ -159,10 +159,10 @@
             @endif
 
             @if (env('use_oldpos',false))
-            <li><a href="javascript:void(0);" class="waves-effect waves-block menu-toggle"><i class="zmdi zmdi-shopping-cart"></i><span>Old POS</span></a>
+            <li><a href="javascript:void(0);" class="waves-effect waves-block menu-toggle"><i class="zmdi zmdi-shopping-cart"></i><span>Billing Records</span></a>
                 <ul class="ml-menu">
-                    <li><a href="{{ route('admin.billing.home') }}" class="waves-effect waves-block">Old POS Interface </a></li>
-                    <li><a href="{{ route('admin.billing.list') }}" class="waves-effect waves-block">Old Search Bill </a></li>
+                    <li><a href="{{ route('admin.billing.home') }}" class="waves-effect waves-block">Interface </a></li>
+                    <li><a href="{{ route('admin.billing.list') }}" class="waves-effect waves-block"> Search  </a></li>
                 </ul>
             </li>
             @endif
