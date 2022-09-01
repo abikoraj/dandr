@@ -1,6 +1,6 @@
 @php
 $arr = ['Farmer', 'Distributer', 'Employee','Counter'];
-$cats=explode()
+// $cats=explode()
 $tracktop = 0;
 $trackbottom = 0;
 @endphp
