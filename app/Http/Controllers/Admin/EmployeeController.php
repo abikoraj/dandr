@@ -71,8 +71,10 @@ class EmployeeController extends Controller
 
     public function list()
     {
-        $emps = DB::select('select e.id,e.user_id,u.name,u.phone,e.salary from employees e join users u on u.id=e.user_id');
-        dd($emps);
+        // $emps = DB::select('select e.id,e.user_id,u.name,u.phone,e.salary from employees e join users u on u.id=e.user_id');
+        // dd($emps);
+        $emps = Employee::with('user')->orderBy('id')->get();
+
 
         return view('admin.emp.list', compact('emps'));
     }
