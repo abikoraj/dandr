@@ -26,12 +26,12 @@ class EmployeeController extends Controller
 
     public function add(Request $request)
     {
-        $user=User::where('phone',$request->phone)->first();
-        if($user==null){
-            $user = new User();
-            $user->role = 4;
-            $user->password = bcrypt($request->phone);
-        }
+        // $user=User::where('phone',$request->phone)->first();
+        // if($user==null){
+        // }
+        $user = new User();
+        $user->role = 4;
+        $user->password = bcrypt($request->phone);
         $user->phone = $request->phone;
         $user->name = $request->name;
         $user->address = $request->address;
@@ -41,8 +41,8 @@ class EmployeeController extends Controller
         $emp->user_id = $user->id;
         $emp->salary = $request->salary;
         $emp->acc = $request->acc;
-        $emp->start = $request->filled('start')?str_replace("-","", $request->start):null;
-        $emp->enddate = $request->filled('end')?str_replace("-","", $request->end):null;
+        $emp->start = $request->filled('start') ? str_replace("-", "", $request->start) : null;
+        $emp->enddate = $request->filled('end') ? str_replace("-", "", $request->end) : null;
         $emp->save();
         $emp->user = $user;
 
@@ -62,17 +62,18 @@ class EmployeeController extends Controller
         $emp = Employee::where('user_id', $user->id)->first();
         $emp->salary = $request->salary;
         $emp->acc = $request->acc;
-        $emp->start = $request->filled('start')?str_replace("-","", $request->start):null;
-        $emp->enddate = $request->filled('end')?str_replace("-","", $request->end):null;
+        $emp->start = $request->filled('start') ? str_replace("-", "", $request->start) : null;
+        $emp->enddate = $request->filled('end') ? str_replace("-", "", $request->end) : null;
         $emp->save();
         $emp->user = $user;
         return view('admin.emp.single', compact('emp'));
-
     }
 
     public function list()
     {
-        $emps = Employee::with('user')->get();
+        $emps = DB::select('select e.id,e.user_id,u.name,u.phone,e.salary from employees e join users u on u.id=e.user_id');
+        dd($emps);
+
         return view('admin.emp.list', compact('emps'));
     }
 
@@ -106,11 +107,11 @@ class EmployeeController extends Controller
         $data = [];
         $date = 1;
         $title = "";
-        $hasPrev=true;
+        $hasPrev = true;
         $ledger = Ledger::where('user_id', $request->user_id);
         if ($type == 0) {
             $range = NepaliDate::getDate($request->year, $request->month, $request->session);
-            $ledger = $ledger->where('date', '>=',$range[1])->where('date', '<=', $range[2]);
+            $ledger = $ledger->where('date', '>=', $range[1])->where('date', '<=', $range[2]);
             $title = "<span class='mx-2'>Year:" . $year . "</span>";
             $title .= "<span class='mx-2'>Month:" . $month . "</span>";
             $title .= "<span class='mx-2'>Session:" . $session . "</span>";
@@ -120,44 +121,44 @@ class EmployeeController extends Controller
             $title = "<span class='mx-2'>Date:" . _nepalidate($date) . "</span>";
         } elseif ($type == 2) {
             $range = NepaliDate::getDateWeek($request->year, $request->month, $request->week);
-            $ledger = $ledger->where('date', '>=',$range[1])->where('date', '<=', $range[2]);
+            $ledger = $ledger->where('date', '>=', $range[1])->where('date', '<=', $range[2]);
             $title = "<span class='mx-2'>Year:" . $year . "</span>";
             $title .= "<span class='mx-2'>Month:" . $month . "</span>";
             $title .= "<span class='mx-2'>Week:" . $week . "</span>";
         } elseif ($type == 3) {
             $range = NepaliDate::getDateMonth($request->year, $request->month);
-            $ledger = $ledger->where('date', '>=',$range[1])->where('date', '<=', $range[2]);
+            $ledger = $ledger->where('date', '>=', $range[1])->where('date', '<=', $range[2]);
             $title = "<span class='mx-2'>Year:" . $year . "</span>";
             $title .= "<span class='mx-2'>Month:" . $month . "</span>";
         } elseif ($type == 4) {
             $range = NepaliDate::getDateYear($request->year);
-            $ledger = $ledger->where('date', '>=',$range[1])->where('date', '<=', $range[2]);
+            $ledger = $ledger->where('date', '>=', $range[1])->where('date', '<=', $range[2]);
             $title = "<span class='mx-2'>Year:" . $year . "</span>";
         } elseif ($type == 5) {
             $range[1] = str_replace('-', '', $request->date1);;
             $range[2] = str_replace('-', '', $request->date2);;
-            $ledger = $ledger->where('date', '>=',$range[1])->where('date', '<=', $range[2]);
+            $ledger = $ledger->where('date', '>=', $range[1])->where('date', '<=', $range[2]);
             $title = "<span class='mx-2'>from:" . $request->date1 . "</span>";
             $title .= "<span class='mx-2'>To:" . $request->date2 . "</span>";
-        }else{
-            $range=(new NepaliDateHelper())->currentMonthRange();
-            $hasPrev=false;
+        } else {
+            $range = (new NepaliDateHelper())->currentMonthRange();
+            $hasPrev = false;
         }
         // dd($ledger->toSql(),$ledger->getBindings());
         // dd($ledgers);
         $user = User::where('id', $request->user_id)->first();
-        if($hasPrev){
+        if ($hasPrev) {
 
-            $prev = DB::table('ledgers')->where('user_id',$request->user_id)->where('date','<',$range[1])->where('type',2)->sum('amount') -
-            DB::table('ledgers')->where('user_id',$request->user_id)->where('date','<',$range[1])->where('type',1)->sum('amount');
-        }else{
-            $prev=0;
+            $prev = DB::table('ledgers')->where('user_id', $request->user_id)->where('date', '<', $range[1])->where('type', 2)->sum('amount') -
+                DB::table('ledgers')->where('user_id', $request->user_id)->where('date', '<', $range[1])->where('type', 1)->sum('amount');
+        } else {
+            $prev = 0;
         }
         $base = $prev;
         $closing = 0;
         $arr = [];
         $ledgers = $ledger->orderBy('date', 'asc')->orderBy('id', 'asc')->get();
-        
+
         foreach ($ledgers as $key => $l) {
 
             if ($l->type == 1) {
@@ -168,7 +169,6 @@ class EmployeeController extends Controller
             $l->amt = $base;
             $closing = $base;
             array_push($arr, $l);
-
         }
         return view('admin.emp.data1', compact('arr', 'prev', 'type', 'user', 'title'));
     }
@@ -207,22 +207,21 @@ class EmployeeController extends Controller
         $advance->save();
 
         $ledger = new LedgerManage($employee->user_id);
-        if(env('acc_system','old')=='old'){
+        if (env('acc_system', 'old') == 'old') {
             $ledger->addLedger('Advance Given-(' . $request->title . ')', 1, $request->amount, $date, '112', $advance->id);
-        }else{
+        } else {
             $ledger->addLedger('Advance Given-(' . $request->title . ')', 2, $request->amount, $date, '112', $advance->id);
         }
-        new PaymentManager($request,$advance->id,112);
+        new PaymentManager($request, $advance->id, 112);
         return view('admin.emp.advance.single', compact('advance'));
     }
 
     public function editAdvance(Request $request)
     {
-        $advance=EmployeeAdvance::where('id',$request->id)->first();
-        $paymentData=PaymentManager::loadUpdateID($request->id,112);
+        $advance = EmployeeAdvance::where('id', $request->id)->first();
+        $paymentData = PaymentManager::loadUpdateID($request->id, 112);
         // dd($paymentData);
-        return view('admin.emp.advance.edit',compact('advance','paymentData'));
-
+        return view('admin.emp.advance.edit', compact('advance', 'paymentData'));
     }
 
     public function updateAdvance(Request $request)
@@ -234,19 +233,17 @@ class EmployeeController extends Controller
         $advance->amount = $request->amount;
         $advance->save();
         $ledger = new LedgerManage($advance->employee->user_id);
-        if(env('acc_system','old')=='old'){
+        if (env('acc_system', 'old') == 'old') {
             $ledger->addLedger('Advance Canceled', 2, $tempamount, $date, '113', $advance->id);
             $ledger->addLedger('Advance Updated-(' . $request->title . ')', 1, $request->amount, $date, '112', $advance->id);
-        }else{
+        } else {
             $ledger->addLedger('Advance Canceled', 1, $tempamount, $date, '113', $advance->id);
             $ledger->addLedger('Advance Updated-(' . $request->title . ')', 2, $request->amount, $date, '112', $advance->id);
-
         }
-        PaymentManager::update($advance->id,112,$request);
+        PaymentManager::update($advance->id, 112, $request);
 
         // return response()->json(['status' => 'success']);
         return view('admin.emp.advance.single', compact('advance'));
-
     }
 
     public function delAdvance(Request $request)
@@ -256,13 +253,12 @@ class EmployeeController extends Controller
         $tempamount = $advance->amount;
         $advance->delete();
         $ledger = new LedgerManage($advance->employee->user_id);
-        if(env('acc_system','old')=='old'){
+        if (env('acc_system', 'old') == 'old') {
             $ledger->addLedger('Advance Canceled', 2, $tempamount, $date, '113', $advance->id);
-        }else{
+        } else {
             $ledger->addLedger('Advance Canceled', 1, $tempamount, $date, '113', $advance->id);
-
         }
-        PaymentManager::remove($request->id,112);
+        PaymentManager::remove($request->id, 112);
         return response()->json(['status' => 'success']);
     }
 
@@ -280,18 +276,18 @@ class EmployeeController extends Controller
 
         $employee = Employee::where('id', $request->emp_id)->first();
         $user = $employee->user;
-        $salary=NepaliDate::calculateSalary($request->year, $request->month,$employee);
+        $salary = NepaliDate::calculateSalary($request->year, $request->month, $employee);
         // dd($salary);
         $range = NepaliDate::getDateMonth($request->year, $request->month);
         $prev = Ledger::where('date', '<', $range[1])->where('type', 2)->where('user_id', $user->id)->sum('amount') - Ledger::where('date', '<', $range[1])->where('type', 1)->where('user_id', $user->id)->sum('amount');
         $ledgers = Ledger::where('date', '>=', $range[1])->where('date', '<=', $range[2])->where('user_id', $user->id)->get();
         $empSession = EmployeeSession::where('year', $request->year)->where('month', $request->month)->where('user_id', $user->id)->first();
-        $year=$request->year;
-        $month=$request->month;
-        $totalSalaryPaid=SalaryPayment::where('year',$request->year)->where('month', $request->month)->where('user_id', $user->id)->sum('amount');
+        $year = $request->year;
+        $month = $request->month;
+        $totalSalaryPaid = SalaryPayment::where('year', $request->year)->where('month', $request->month)->where('user_id', $user->id)->sum('amount');
         $arr = [];
         $base = $prev;
-        $salaryLoaded=false;
+        $salaryLoaded = false;
 
         foreach ($ledgers as $key => $l) {
 
@@ -300,31 +296,29 @@ class EmployeeController extends Controller
             } else {
                 $base += $l->amount;
             }
-            if($l->identifire==129){
-                $salaryLoaded=true;
+            if ($l->identifire == 129) {
+                $salaryLoaded = true;
             }
             $l->amt = $base;
             $closing = $base;
             array_push($arr, $l);
         }
-        $track=$base;
+        $track = $base;
 
 
 
         $lastdate = NepaliDate::getDateMonthLast($request->year, $request->month);
-        if(env('acc_system','old')=='old'){
-            return view('admin.emp.salarypay.data_new', compact('track','arr', 'user', 'employee', 'empSession', 'prev','salaryLoaded','lastdate','salary'));
-        }else{
-            return view('admin.emp.salarypay.data_new_new', compact('track','arr', 'user', 'employee', 'empSession', 'prev','salaryLoaded','lastdate','salary','year','month'));
+        if (env('acc_system', 'old') == 'old') {
+            return view('admin.emp.salarypay.data_new', compact('track', 'arr', 'user', 'employee', 'empSession', 'prev', 'salaryLoaded', 'lastdate', 'salary'));
+        } else {
+            return view('admin.emp.salarypay.data_new_new', compact('track', 'arr', 'user', 'employee', 'empSession', 'prev', 'salaryLoaded', 'lastdate', 'salary', 'year', 'month'));
         }
-
-
     }
 
     public function storeSalary(Request $request)
     {
         // dd($request->all());
-        $date =(int) (str_replace('-', '', $request->date));
+        $date = (int) (str_replace('-', '', $request->date));
         $employee = Employee::where('id', $request->emp_id)->first();
         // $np = new NepaliDate($date);
         $range = NepaliDate::getDateMonth($request->year, $request->month);
@@ -332,17 +326,16 @@ class EmployeeController extends Controller
         if (!($employee->sessionClosed($request->year, $request->month))) {
             return response('previous Month Not Closed', 500);
         } else {
-            $salaryLoaded = Ledger::where('date', '>=', $range[1])->where('date', '<=', $range[2])->where('user_id', $employee->user_id)->where('identifire',129)->count()>0;
+            $salaryLoaded = Ledger::where('date', '>=', $range[1])->where('date', '<=', $range[2])->where('user_id', $employee->user_id)->where('identifire', 129)->count() > 0;
             $ledger = new LedgerManage($employee->user_id);
-            $sal=NepaliDate::calculateSalary($request->year, $request->month,$employee);
-            $salary=$sal[1]-$sal[0];
-            if(!$salaryLoaded){
-                if(env('acc_system','old')=='old'){
+            $sal = NepaliDate::calculateSalary($request->year, $request->month, $employee);
+            $salary = $sal[1] - $sal[0];
+            if (!$salaryLoaded) {
+                if (env('acc_system', 'old') == 'old') {
                     $ledger->addLedger('salary For (' . $request->year . "-" . ($request->month < 10 ? "0" . $request->month : $request->month) . ")", 2, $salary, $date, 129);
-                }else{
+                } else {
                     $ledger->addLedger('salary For (' . $request->year . "-" . ($request->month < 10 ? "0" . $request->month : $request->month) . ")", 1, $salary, $date, 129);
                 }
-
             }
             $salaryPay = new SalaryPayment();
             $salaryPay->date = $date;
@@ -352,9 +345,9 @@ class EmployeeController extends Controller
             $salaryPay->payment_detail = $request->desc;
             $salaryPay->user_id = $employee->user_id;
             $salaryPay->save();
-            if(env('acc_system','old')=='old'){
+            if (env('acc_system', 'old') == 'old') {
                 $ledger->addLedger('Salary Paid for ' . $request->year . "-" . ($request->month < 10 ? "0" . $request->month : $request->month), 1, $request->pay, $date, '124', $salaryPay->id);
-            }else{
+            } else {
                 $ledger->addLedger('Salary Paid for ' . $request->year . "-" . ($request->month < 10 ? "0" . $request->month : $request->month), 2, $request->pay, $date, '124', $salaryPay->id);
             }
 
@@ -364,7 +357,7 @@ class EmployeeController extends Controller
             $sessionClose->year = $request->year;
             $sessionClose->save();
 
-            new PaymentManager($request,$salaryPay->id,124);
+            new PaymentManager($request, $salaryPay->id, 124);
             echo 'ok';
         }
     }
@@ -422,16 +415,16 @@ class EmployeeController extends Controller
 
 
             $range = NepaliDate::getDateMonth($request->year, $request->month);
-            $salaryLoaded = Ledger::where('date', '>=', $range[1])->where('date', '<=', $range[2])->where('user_id', $employee->user_id)->where('identifire',129)->count()>0;
+            $salaryLoaded = Ledger::where('date', '>=', $range[1])->where('date', '<=', $range[2])->where('user_id', $employee->user_id)->where('identifire', 129)->count() > 0;
 
-            if(!$salaryLoaded){
+            if (!$salaryLoaded) {
                 $lm = new LedgerManage($employee->user_id);
                 $lastdate = NepaliDate::getDateMonthLast($request->year, $request->month);
-                $sal=NepaliDate::calculateSalary($request->year, $request->month,$employee);
-                $salary=$sal[1]-$sal[0];
-                if(env('acc_system','old')=='old'){
+                $sal = NepaliDate::calculateSalary($request->year, $request->month, $employee);
+                $salary = $sal[1] - $sal[0];
+                if (env('acc_system', 'old') == 'old') {
                     $lm->addLedger('salary For (' . $request->year . "-" . ($request->month < 10 ? "0" . $request->month : $request->month) . ")", 2, $salary, $lastdate, 129);
-                }else{
+                } else {
                     $lm->addLedger('salary For (' . $request->year . "-" . ($request->month < 10 ? "0" . $request->month : $request->month) . ")", 1, $salary, $lastdate, 129);
                 }
             }
@@ -469,49 +462,52 @@ class EmployeeController extends Controller
         return view('admin.emp.account.single', compact('ledger'));
     }
 
-    public function ret(){
+    public function ret()
+    {
         return view('admin.emp.ret.index');
     }
-    public function addRet(Request $request){
+    public function addRet(Request $request)
+    {
         $date = str_replace('-', '', $request->date);
         $np = new NepaliDate($date);
         $employee = Employee::where('id', $request->employee_id)->first();
         $ledger = new LedgerManage($employee->user_id);
-        $advance=$ledger->addLedger( $request->title , 1, $request->amount, $date, '140' );
-        new PaymentManager($request,$advance->id,140);
+        $advance = $ledger->addLedger($request->title, 1, $request->amount, $date, '140');
+        new PaymentManager($request, $advance->id, 140);
         return view('admin.emp.ret.single', compact('advance'));
     }
     public function getRet(Request $request)
     {
         $date = str_replace('-', '', $request->date);
-        $advances = Ledger::where('date', $date)->where('identifire',140)->get();
+        $advances = Ledger::where('date', $date)->where('identifire', 140)->get();
         // dd($advances);
         return view('admin.emp.ret.list', compact('advances'));
     }
 
     public function delRet(Request $request)
     {
-        Ledger::where('id',$request->id)->delete();
-        PaymentManager::remove($request->id,140);
+        Ledger::where('id', $request->id)->delete();
+        PaymentManager::remove($request->id, 140);
         return response()->json(['status' => 'success']);
     }
 
-    public function editRet(Request $request){
-        $advance = Ledger::where('id',$request->id)->first();
-        $paymentData=PaymentManager::loadUpdateID($request->id,140);
-        return view('admin.emp.ret.edit',compact('advance','paymentData'));
+    public function editRet(Request $request)
+    {
+        $advance = Ledger::where('id', $request->id)->first();
+        $paymentData = PaymentManager::loadUpdateID($request->id, 140);
+        return view('admin.emp.ret.edit', compact('advance', 'paymentData'));
     }
 
     public function updateRet(Request $request)
     {
 
-            $advance = Ledger::find($request->id);
-            $advance->title = $request->title;
-            $advance->amount = $request->amount;
-            $advance->save();
-            PaymentManager::update($advance->id,140,$request);
-            return view('admin.emp.ret.single',compact('advance'));
-            // return response()->json(['status' => 'success']);
+        $advance = Ledger::find($request->id);
+        $advance->title = $request->title;
+        $advance->amount = $request->amount;
+        $advance->save();
+        PaymentManager::update($advance->id, 140, $request);
+        return view('admin.emp.ret.single', compact('advance'));
+        // return response()->json(['status' => 'success']);
 
 
     }
