@@ -803,7 +803,7 @@ class ReportController extends Controller
             $employees = DB::select("select e.id,e.user_id,u.name,e.salary,e.start,e.enddate,e.acc
             from employees e
             join users u on e.user_id=u.id
-            where e.enddate>={$range[1]} or e.enddate is null");
+            where e.enddate>={$range[1]} or e.enddate is null order by e.id asc");
             // dd($employees);
             // $employees = DB::table('employees')
             // ->where('enddate', '<=', $range[2])->orWhereNull('enddate')->get();
