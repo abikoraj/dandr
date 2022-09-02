@@ -166,6 +166,17 @@
             });
             setSelection(current);
 
+            $('.form-control, body').bind('keydown', 'esc', function(e){
+                e.preventDefault();
+                console.log('esc');
+                if(currentAdded.length>0){
+                    printKOT(1);
+                }
+                $('.sideBar-{{ csrf_token() }}').css('display', 'none');
+                currentTable = null;
+                $('#sideHolderData').html('');
+            });
+
         });
 
 

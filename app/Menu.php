@@ -154,7 +154,7 @@ class Menu
                 'code' => '15',
                 'link' => null,
                 'icon' => 'apps',
-                'text' => "Old Pos",
+                'text' => "Billing Records",
                 'children' => [
                     ["Interface", '15.01', route('admin.billing.home')],
                     ["Search Bill", '15.02', route('admin.billing.list')],
