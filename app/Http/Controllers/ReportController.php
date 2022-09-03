@@ -819,6 +819,7 @@ class ReportController extends Controller
 
                 $employee->advance = EmployeeAdvance::where('employee_id', $employee->id)->where('date', '>=', $range[1])->where('date', '<=', $range[2])->sum('amount')
                     +  Ledger::where('date', '>=', $range[1])->where('date', '<=', $range[2])->where('user_id', $employee->user_id)->where('identifire', 301)->sum('amount');
+                
                 $employee->salary = NepaliDate::calculateSalary($year, $month, $employee);
                 $employee->paid = Ledger::where('date', '>=', $range[1])->where('date', '<=', $range[2])->where('user_id', $employee->user_id)->where('identifire', 124)->sum('amount');
                 $employee->returned = Ledger::where('date', '>=', $range[1])
