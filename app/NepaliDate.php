@@ -146,6 +146,7 @@ class NepaliDate
         $salary= $extra>0?($employee->salary/$days*($days-$extra)):$employee->salary;
         // dd($start,$end,$_start,$_end,$days,$extra,$salary);
         $tax=env('use_employeetax',false)?($salary*env('emp_tax',1)/100):0;
+        $tax=truncate_decimals($tax);
         return [$tax,(int)$salary];
     }
 
