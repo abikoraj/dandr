@@ -167,14 +167,16 @@ class ReportController extends Controller
                     }
                 }
                 if (!$hasRate) {
-
+                    
                     if ($farmer->userate == 1) {
-
+                        
                         $farmer->rate = $farmer->rate;
                     } else {
-
+                        
                         $farmer->rate = truncate_decimals($fatAmount + $snfAmount);
                     }
+
+                    $farmer->total = truncate_decimals(($farmer->rate * $farmer->milk), 2);
 
                     if ($farmer->usetc == 1 && $farmer->total > 0) {
                         $farmer->tc = truncate_decimals((($center->tc * ($farmer->snf + $farmer->fat) / 100) * $farmer->milk), 2);
@@ -182,9 +184,11 @@ class ReportController extends Controller
                     if ($farmer->usecc == 1 && $farmer->total > 0) {
                         $farmer->cc = truncate_decimals($center->cc * $farmer->milk, 2);
                     }
+                }else{
+                    $farmer->total = truncate_decimals(($farmer->rate * $farmer->milk), 2);
+
                 }
 
-                $farmer->total = truncate_decimals(($farmer->rate * $farmer->milk), 2);
 
 
                 $farmer->bonus = 0;
