@@ -125,7 +125,7 @@ class NepaliDate
         }
         $extra=0;
 
-        if($_end>$start){
+        if($_end<$start){
             return [0,0];
         }
 
