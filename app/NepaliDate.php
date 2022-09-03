@@ -130,6 +130,10 @@ class NepaliDate
             return [0,0];
         }
 
+        if($_end>$start){
+            return[0,0];
+        }
+
         if($start>$_start){
             $extra+=$start-$_start;
         }
