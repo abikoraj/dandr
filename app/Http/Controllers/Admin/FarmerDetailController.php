@@ -173,6 +173,7 @@ class FarmerDetailController extends Controller
             }
            
     
+            $farmer->total = truncate_decimals(($farmer->milkrate * $farmer->milkamount), 2);
     
             if ($farmer->usetc == 1 && $farmer->total > 0) {
                 $farmer->tc = truncate_decimals((($center->tc * ($snfAvg + $fatAvg) / 100) * $farmer->milkamount), 2);
@@ -180,9 +181,11 @@ class FarmerDetailController extends Controller
             if ($farmer->usecc == 1 && $farmer->total > 0) {
                 $farmer->cc = truncate_decimals($center->cc * $farmer->milkamount, 2);
             }
+        }else{
+            $farmer->total = truncate_decimals(($farmer->milkrate * $farmer->milkamount), 2);
+
         }
         
-        $farmer->total = truncate_decimals(($farmer->milkrate * $farmer->milkamount), 2);
 
         $farmer->fpaid = ledgerSum($farmer->id, '106', $range) + ledgerSum($farmer->id, '107', $range);
 
