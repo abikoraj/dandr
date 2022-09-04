@@ -33,6 +33,7 @@ class Menu
                 'text' => "Milk Collection",
                 'children' => [
                 
+                    ["Manage Collection Center", '02.12', route('admin.center.index')],
                     ["Milk Collection", '02.01', route('admin.milk.index')],
                     ["SNF FAT", '02.04', route('admin.snf-fat.index')],
                     ["Milk and Fat SNF", '02.07', route('admin.milk.milkfatsnf')],

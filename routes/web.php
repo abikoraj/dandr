@@ -107,7 +107,7 @@ Route::name('admin.')->group(function () {
     Route::group(['middleware' => 'role:admin', 'prefix' => 'admin'], function () {
         Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
-        Route::prefix('collection-centers')->name('center.')->group(function () {
+        Route::prefix('collection-centers')->middleware('permmission:02.12')->name('center.')->group(function () {
             // XXX collection centers
             Route::get('', 'Admin\CenterController@index')->name('index');
             Route::post('add', 'Admin\CenterController@addCollectionCenter')->name('add');

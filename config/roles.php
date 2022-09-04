@@ -33,6 +33,7 @@ return [
             "push_milk_data" => ['use' => [], 'code' => "02.09"],
             "pull_milk_data" => ['use' => [], 'code' => "02.10"],
             "push_fatsnf" => ['use' => [], 'code' => "02.11"],
+            "collection_center" => ['use' => [], 'code' => "02.12"],
 
         ]
     ],
