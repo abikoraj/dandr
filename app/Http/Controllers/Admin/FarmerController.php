@@ -356,7 +356,7 @@ class FarmerController extends Controller
             $max = (DB::table('users')
                 ->join('farmers', 'farmers.user_id', '=', 'users.id')
                 ->where('farmers.center_id', $request->center_id)
-                ->max('farmers.no') ?? 0) + 1;
+                ->max(DB::raw('cast(farmers.no as int) ')) ?? 0) + 1;
         }
         $user = new User();
         $user->phone = $request->phone ?? "9800000000";

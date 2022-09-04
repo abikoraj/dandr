@@ -116,6 +116,9 @@ class FarmerDetailController extends Controller
         $farmer = DB::table('users')->join('farmers', 'users.id', '=', 'farmers.user_id')->
         where('users.no', $request->farmer_no)->where('farmers.center_id', $request->center_id)->
         select(DB::raw( 'users.id,users.name,users.no,users.phone,farmers.userate,farmers.usecc,farmers.usetc,farmers.rate'))->first();
+        if($farmer==null){
+            return response("<h5 class='text-center'>Farmer Not Found</h5>");
+        }
         $center=DB::selectOne('select snf_rate,fat_rate,cc,tc,bonus from centers where id=?',[$request->center_id]);
         
         $farmer->session=[$request->year, $request->month, $request->session];
