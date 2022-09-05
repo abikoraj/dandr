@@ -347,10 +347,13 @@ class EmployeeController extends Controller
             $salaryPay->payment_detail = $request->desc;
             $salaryPay->user_id = $employee->user_id;
             $salaryPay->save();
+
+            $taxtitle= env('use_employeetax',false)?(" ( -".env('emp_tax',1)."% tax)"):"";
+               
             if (env('acc_system', 'old') == 'old') {
-                $ledger->addLedger('Salary Paid for ' . $request->year . "-" . ($request->month < 10 ? "0" . $request->month : $request->month), 1, $request->pay, $date, '124', $salaryPay->id);
+                $ledger->addLedger('Salary Paid for ' . $request->year . "-" . ($request->month < 10 ? "0" . $request->month : $request->month) .$taxtitle, 1, $request->pay, $date, '124', $salaryPay->id);
             } else {
-                $ledger->addLedger('Salary Paid for ' . $request->year . "-" . ($request->month < 10 ? "0" . $request->month : $request->month), 2, $request->pay, $date, '124', $salaryPay->id);
+                $ledger->addLedger('Salary Paid for ' . $request->year . "-" . ($request->month < 10 ? "0" . $request->month : $request->month) . $taxtitle, 2, $request->pay, $date, '124', $salaryPay->id);
             }
 
             $sessionClose = new EmployeeSession();
