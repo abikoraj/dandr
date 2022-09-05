@@ -8,11 +8,11 @@
 
 </style>
 <hr>
-<h4 >
-    Salary Seet For {{$employee->user->name}} , {{$year}} - {{nepaliMonthName($month)}}
-</h4>
-<hr>
 <div class="p-2" id="data">
+    <h4 >
+        Salary Seet For {{$employee->user->name}} , {{$year}} - {{nepaliMonthName($month)}}
+    </h4>
+    <hr>
     <table class="table">
         <tr>
             <th>Date</th>
