@@ -52,6 +52,8 @@ class FarmerDetailController extends Controller
             $farmerreport->prevbalance = $request->prevbalance ?? 0;
             $farmerreport->tc = $request->tc ?? 0;
             $farmerreport->cc = $request->cc ?? 0;
+            $farmerreport->protsahan_amount=$request->protsahan_amount??0;
+
             $farmerreport->grandtotal = $request->grandtotal ?? $request->total;
             $farmerreport->fpaid = $request->fpaid;
             $farmerreport->has_passbook = !($request->filled('no_passbook'));
@@ -167,7 +169,9 @@ class FarmerDetailController extends Controller
                 $hasRate=true;
                 $farmer->milkrate = $farmer->report->rate;
                 $farmer->cc = $farmer->report->cc;
-                $farmer->tc = $farmer->report->tc;
+                $farmer->tc = $farmer->report->tc;                        
+                $farmer->protsahan_amount=$farmer->report->protsahan_amount;
+
             }
         }
         if(!$hasRate){
@@ -345,6 +349,7 @@ class FarmerDetailController extends Controller
             $farmerreport->prevbalance = $request->prevbalance ?? 0;
             $farmerreport->tc = $request->tc ?? 0;
             $farmerreport->cc = $request->cc ?? 0;
+            $farmerreport->protsahan_amount=$request->protsahan_amount??0;
             $farmerreport->grandtotal = $request->grandtotal ?? $request->total;
             $farmerreport->year = $request->year;
             $farmerreport->month = $request->month;

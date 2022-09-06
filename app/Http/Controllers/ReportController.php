@@ -120,7 +120,7 @@ class ReportController extends Controller
             $newsession = SessionWatch::where(['year' => $year, 'month' => $month, 'session' => $session, 'center_id' => $center->id])->count() == 0;
 
 
-            $query = "select  u.id,u.no,u.name,u.usecc,u.rate,u.usetc,u.userate,u.ts_amount,u.use_ts_amount,
+            $query = "select  u.id,u.no,u.name,u.usecc,u.rate,u.usetc,u.userate,u.ts_amount,u.use_ts_amount,u.protsahan,u.use_protsahan,
             (select sum(m_amount) + sum(e_amount) from milkdatas where user_id= u.id and date>={$range[1]} and date<={$range[2]}) as milk,
             (select avg(snf) from snffats where user_id= u.id and date>={$range[1]} and date<={$range[2]}) as snf,
             (select avg(fat) from snffats where user_id= u.id and date>={$range[1]} and date<={$range[2]}) as fat,
@@ -134,7 +134,7 @@ class ReportController extends Controller
             (select sum(amount) from ledgers where user_id= u.id and date>={$range[1]} and date<={$range[2]} and (identifire=101 or identifire=102) and type=2) as openingdr,
             (select sum(amount) from ledgers where user_id= u.id and date>={$range[1]} and date<={$range[2]} and identifire=120 and type=1) as closingcr,
             (select sum(amount) from ledgers where user_id= u.id and date>={$range[1]} and date<={$range[2]} and identifire=120  and type=2) as closingdr
-            from (select iu.name,iu.id,iu.no,f.usecc,f.rate,f.usetc,f.userate,f.ts_amount,f.use_ts_amount from users iu join farmers f on iu.id=f.user_id where f.center_id={$center->id}  {$farmerRange}) u order by u.no asc";
+            from (select iu.name,iu.id,iu.no,f.usecc,f.rate,f.usetc,f.userate,f.ts_amount,f.use_ts_amount,f.protsahan,f.use_protsahan  from users iu join farmers f on iu.id=f.user_id where f.center_id={$center->id}  {$farmerRange}) u order by u.no asc";
             $reports = DB::table('farmer_reports')->where(['year' => $year, 'month' => $month, 'session' => $session])->get();
 
             $farmers = DB::select($query);
@@ -165,6 +165,7 @@ class ReportController extends Controller
                         $farmer->rate = $report->rate;
                         $farmer->cc = $report->cc;
                         $farmer->tc = $report->tc;
+                        $farmer->protsahan_amount=$report->protsahan_amount;
                         $hasRate = true;
                     }
                 }
@@ -189,6 +190,9 @@ class ReportController extends Controller
                     if ($farmer->usecc == 1 && $farmer->total > 0) {
                         $farmer->cc = truncate_decimals($center->cc * $farmer->milk, 2);
                     }
+                    if ($farmer->use_protsahan == 1 && $farmer->total > 0) {
+                        $farmer->protsahan_amount = truncate_decimals($farmer->protsahan * $farmer->milk, 2);
+                    }
                 }else{
                     $farmer->total = truncate_decimals(($farmer->rate * $farmer->milk), 2);
 
@@ -201,7 +205,7 @@ class ReportController extends Controller
                     $farmer->bonus = (int)($farmer->grandtotal * $center->bonus / 100);
                 }
 
-                $farmer->grandtotal = (int)($farmer->total + $farmer->tc + $farmer->cc);
+                $farmer->grandtotal = (int)($farmer->total + $farmer->tc + $farmer->cc+$farmer->protsahan_amount );
                 $prev = $farmer->prevdr - $farmer->prevcr;
                 $opening = $farmer->openingdr - $farmer->openingcr;
                 $farmer->prevTotal = $prev + $opening;
@@ -305,7 +309,7 @@ class ReportController extends Controller
         $farmerreport->prevbalance = $request->prevbalance ?? 0;
         $farmerreport->tc = $request->tc ?? 0;
         $farmerreport->cc = $request->cc ?? 0;
-        $farmerreport->protshan_amount = $request->protshan_amount ?? 0;
+        $farmerreport->protsahan_amount = $request->protsahan_amount ?? 0;
         $farmerreport->grandtotal = $request->grandtotal ?? $request->total;
         $farmerreport->year = $request->year;
         $farmerreport->month = $request->month;
@@ -351,7 +355,7 @@ class ReportController extends Controller
             $farmerreport->tc = $data->tc ?? 0;
             $farmerreport->fpaid = $data->fpaid ?? 0;
             $farmerreport->cc = $data->cc ?? 0;
-            $farmerreport->protshan_amount = $request->protshan_amount ?? 0;
+            $farmerreport->protsahan_amount = $request->protsahan_amount ?? 0;
             $farmerreport->grandtotal = $data->grandtotal ?? ($data->total ?? 0);
             $farmerreport->paidamount = $data->paidamount ?? 0;
             $farmerreport->prevbalance = $data->prevbalance ?? 0;

@@ -35,7 +35,8 @@
                 <input type="hidden" name="balance" value=" {{ $farmer->balance }}">
                 <input type="hidden" name="prevbalance" value=" {{ $farmer->prevbalance }}">
                 <input type="hidden" name="paidamount" value=" {{ $farmer->paidamount }}">
-                <input type="hidden" name="fpaid" value=" {{ $farmer->fpaid }}">
+                <input type="hidden" name="fpaid" value="{{ $farmer->fpaid }}">
+                <input type="hidden" name="protsahan_amount" value="{{ $farmer->protsahan_amount }}">
                 <input type="checkbox" name="close" id="close" value="1" checked> Close Session
             </div>
         @else

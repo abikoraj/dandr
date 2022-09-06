@@ -85,7 +85,7 @@ $_balancetotal = 0;
 $_prevbalancetotal = 0;
 $_paidamounttotal = 0;
 $_fpaidtotal = 0;
-$_protahan_amounttotal = 0;
+$_protsahan_amounttotal = 0;
 
 @endphp
 
@@ -110,7 +110,7 @@ $_protahan_amounttotal = 0;
                     @if ($usecc)
                         <th>Cooling Cost</th>
                     @endif
-                    @if ($usprotsahan)
+                    @if ($useprotsahan)
                         <th>Protsahan Amount</th>
                     @endif
                 @endif
@@ -194,7 +194,7 @@ $_protahan_amounttotal = 0;
                                 @endphp
                             </td>
                         @endif
-                        @if ($usprotsahan)
+                        @if ($useprotsahan)
                             <th>{{ $farmer->protsahan_amount }}</th>
                             @php
                                 $protsahan_amounttotal += $farmer->protsahan_amount;
@@ -295,14 +295,15 @@ $_protahan_amounttotal = 0;
                         {{ $totaltotal }}
 
                     </td>
-                    <td>
-                        {{ $tctotal }}
-
-                    </td>
-                    <td>
-                        {{ $cctotal }}
-
-                    </td>
+                    @if ($usetc)
+                        <th>{{ $tctotal }}</th>
+                    @endif
+                    @if ($usecc)
+                        <th>{{ $cctotal }}</th>
+                    @endif
+                    @if ($useprotsahan)
+                        <th>{{ $protsahan_amounttotal }}</th>
+                    @endif
                 @endif
                 <td>{{ $grandtotal }}</td>
                 @if (env('hasextra', 0) == 1)
@@ -395,7 +396,7 @@ $_protahan_amounttotal = 0;
                 @if ($usecc)
                     <th>Cooling Cost</th>
                 @endif
-                @if ($usprotsahan)
+                @if ($useprotsahan)
                     <th>Protsahan Amount</th>
                 @endif
             @endif
@@ -427,13 +428,13 @@ $_protahan_amounttotal = 0;
 
                 </td>
                 @if ($usetc)
-                    <th>{{$_tctotal}}</th>
+                    <th>{{ $_tctotal }}</th>
                 @endif
                 @if ($usecc)
-                    <th>{{$_cctotal}}</th>
+                    <th>{{ $_cctotal }}</th>
                 @endif
-                @if ($usprotsahan)
-                    <th>{{$_protsahan_amounttotal}}</th>
+                @if ($useprotsahan)
+                    <th>{{ $_protsahan_amounttotal }}</th>
                 @endif
             @endif
             <td>{{ $_grandtotal }}</td>
