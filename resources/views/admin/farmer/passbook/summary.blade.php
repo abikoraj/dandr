@@ -25,7 +25,7 @@
                     <th>
                         Milk Total
                     </th>
-                    @if ($farmer->usetc)
+                    @if ($farmer->usetc || $farmer->use_ts_amount)
                         <th>
                             TS
                         </th>
@@ -33,6 +33,11 @@
                     @if ($farmer->usecc)
                         <th>
                             Cooling Cost
+                        </th>
+                    @endif
+                    @if ($farmer->use_protsahan)
+                        <th>
+                            Protsahan <br> Amount
                         </th>
                     @endif
                     <th>
@@ -84,7 +89,7 @@
                     <th>
                         {{ $farmer->total }}
                     </th>
-                    @if ($farmer->usetc)
+                    @if ($farmer->usetc || $farmer->use_ts_amount)
                         <th>
                             {{ $farmer->tc }}
                         </th>
@@ -92,6 +97,11 @@
                     @if ($farmer->usecc)
                         <th>
                             {{ $farmer->cc }}
+                        </th>
+                    @endif
+                    @if ($farmer->use_protsahan)
+                        <th>
+                            {{$farmer->protsahan_amount}}
                         </th>
                     @endif
                     <th>

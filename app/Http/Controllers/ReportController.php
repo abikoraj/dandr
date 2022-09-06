@@ -114,12 +114,13 @@ class ReportController extends Controller
             $year = $request->year;
             $month = $request->month;
             $session = $request->session;
-            $usetc = (env('usetc', 0) == 1) && ($center->tc > 0);
-            $usecc = (env('usecc', 0) == 1) && ($center->cc > 0);
+            $usetc = (env('usetc', 0) == 1) && ($center->show_ts);
+            $usecc = (env('usecc', 0) == 1) && ($center->show_cc);
+            $useprotsahan = (env('useprotsahan', 0) == 1) && ($center->use_protsahan);
             $newsession = SessionWatch::where(['year' => $year, 'month' => $month, 'session' => $session, 'center_id' => $center->id])->count() == 0;
 
 
-            $query = "select  u.id,u.no,u.name,u.usecc,u.rate,u.usetc,u.userate,
+            $query = "select  u.id,u.no,u.name,u.usecc,u.rate,u.usetc,u.userate,u.ts_amount,u.use_ts_amount,
             (select sum(m_amount) + sum(e_amount) from milkdatas where user_id= u.id and date>={$range[1]} and date<={$range[2]}) as milk,
             (select avg(snf) from snffats where user_id= u.id and date>={$range[1]} and date<={$range[2]}) as snf,
             (select avg(fat) from snffats where user_id= u.id and date>={$range[1]} and date<={$range[2]}) as fat,
@@ -133,7 +134,7 @@ class ReportController extends Controller
             (select sum(amount) from ledgers where user_id= u.id and date>={$range[1]} and date<={$range[2]} and (identifire=101 or identifire=102) and type=2) as openingdr,
             (select sum(amount) from ledgers where user_id= u.id and date>={$range[1]} and date<={$range[2]} and identifire=120 and type=1) as closingcr,
             (select sum(amount) from ledgers where user_id= u.id and date>={$range[1]} and date<={$range[2]} and identifire=120  and type=2) as closingdr
-            from (select iu.name,iu.id,iu.no,f.usecc,f.rate,f.usetc,f.userate from users iu join farmers f on iu.id=f.user_id where f.center_id={$center->id}  {$farmerRange}) u order by u.no asc";
+            from (select iu.name,iu.id,iu.no,f.usecc,f.rate,f.usetc,f.userate,f.ts_amount,f.use_ts_amount from users iu join farmers f on iu.id=f.user_id where f.center_id={$center->id}  {$farmerRange}) u order by u.no asc";
             $reports = DB::table('farmer_reports')->where(['year' => $year, 'month' => $month, 'session' => $session])->get();
 
             $farmers = DB::select($query);
@@ -157,6 +158,7 @@ class ReportController extends Controller
                 $hasRate = false;
                 $farmer->tc = 0;
                 $farmer->cc = 0;
+                $farmer->protsahan_amount = 0;
 
                 if ($farmer->old) {
                     if ($report->has_passbook == 1) {
@@ -180,6 +182,9 @@ class ReportController extends Controller
 
                     if ($farmer->usetc == 1 && $farmer->total > 0) {
                         $farmer->tc = truncate_decimals((($center->tc * ($farmer->snf + $farmer->fat) / 100) * $farmer->milk), 2);
+                    }
+                    if ($farmer->use_ts_amount == 1 && $farmer->total > 0) {
+                        $farmer->tc = truncate_decimals((($farmer->ts_amount) * $farmer->milk), 2);
                     }
                     if ($farmer->usecc == 1 && $farmer->total > 0) {
                         $farmer->cc = truncate_decimals($center->cc * $farmer->milk, 2);
@@ -256,7 +261,7 @@ class ReportController extends Controller
             $t2 = time();
             $sessionDate = NepaliDate::getDateSessionLast($year, $month, $session);
             // dd($t2-$t1,$datas);
-            return view('admin.report.farmer.data', compact('newsession', 'usetc', 'usecc', 'datas', 'year', 'month', 'session', 'center', 'sessionDate'));
+            return view('admin.report.farmer.data', compact('newsession', 'usetc', 'usecc', 'datas', 'year', 'month', 'session', 'center', 'sessionDate','useprotsahan'));
         } else {
 
             return view('admin.report.farmer.index');
@@ -300,6 +305,7 @@ class ReportController extends Controller
         $farmerreport->prevbalance = $request->prevbalance ?? 0;
         $farmerreport->tc = $request->tc ?? 0;
         $farmerreport->cc = $request->cc ?? 0;
+        $farmerreport->protshan_amount = $request->protshan_amount ?? 0;
         $farmerreport->grandtotal = $request->grandtotal ?? $request->total;
         $farmerreport->year = $request->year;
         $farmerreport->month = $request->month;
@@ -345,6 +351,7 @@ class ReportController extends Controller
             $farmerreport->tc = $data->tc ?? 0;
             $farmerreport->fpaid = $data->fpaid ?? 0;
             $farmerreport->cc = $data->cc ?? 0;
+            $farmerreport->protshan_amount = $request->protshan_amount ?? 0;
             $farmerreport->grandtotal = $data->grandtotal ?? ($data->total ?? 0);
             $farmerreport->paidamount = $data->paidamount ?? 0;
             $farmerreport->prevbalance = $data->prevbalance ?? 0;

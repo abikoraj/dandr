@@ -42,10 +42,40 @@
                             <div class="col-lg-6">
 
                                 <div class="form-group">
-                                    <input type="checkbox" id="eusecc" name="usecc" class="mx-2" value="1">Has Cooling Cost <br>
-                                    <input type="checkbox" id="eusetc" name="usetc" class="mx-2" value="1">Has TS <br>
-                                    <input type="checkbox" id="euserate" name="userate" class="mx-2" value="1">Fixed Rate
-                                    <input type="number" min="0" step="0.01" value="0" name="rate" id="erate">
+                                    <div class="row">
+                                        <div class="col-6 ck">
+
+                                            <input type="checkbox"  id="eusecc" name="usecc" class="mr-2" value="1">Has Cooling Cost <br>
+                                        </div>
+                                        <div class="col-6 ck">
+
+                                            <input type="checkbox" id="eusetc" name="usetc" class="mr-2" value="1">Has TS % <br>
+                                        </div>
+                                        <div class="col-6 ck">
+
+                                            <input type="checkbox" id="euserate"  name="userate" class="mr-2" value="1">Fixed Rate
+                                        </div>
+                                        <div class="col-6">
+
+                                            <input type="number" step="0.01" min="0" value="0" id="ef_rate" name="f_rate"> <br>
+                                        </div>
+                                        <div class="col-6 ck">
+
+                                            <input type="checkbox" id="euse_ts_amount"  name="use_ts_amount" class="mr-2" value="1">Fixed TS Rate
+                                        </div>
+                                        <div class="col-6">
+
+                                            <input type="number" step="0.01" min="0" value="0" id="ets_amount" name="ts_amount">
+                                        </div>
+                                        <div class="col-6 ck">
+
+                                            <input type="checkbox" id="euse_protsahan"  name="use_protsahan" class="mr-2" value="1"> Protsahan Amount
+                                        </div>
+                                        <div class="col-6">
+
+                                            <input type="number" step="0.01" min="0" value="0" id="eprotsahan" name="protsahan">
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
 

@@ -335,13 +335,19 @@ function renderEmpList()
     return $html;
 }
 
-function renderCenters($blank = false)
+function renderCenters($center_id=null,$blank = false)
 {
     $centers = DB::select('select id,name from centers');
     $html = $blank ? "<option></option>" : "";
 
     foreach ($centers as $key => $center) {
-        $html .= "<option value='{$center->id}'>{$center->name}</option>";
+        if($center_id==$center->id){
+            $html .= "<option selected value='{$center->id}'>{$center->name}</option>";
+
+        }else{
+            $html .= "<option value='{$center->id}'>{$center->name}</option>";
+
+        }
     }
     return $html;
 }

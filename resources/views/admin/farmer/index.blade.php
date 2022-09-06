@@ -3,6 +3,11 @@
 @section('head-title','Farmer-List')
 @section('css')
 <link rel="stylesheet" href="{{ asset('backend/plugins/select2/select2.css') }}" />
+<style>
+    .ck:focus-within{
+        border: 1px solid #007ACC;
+    }
+</style>
 @endsection
 @section('toobar')
 @if (auth_has_per('01.02'))
@@ -68,7 +73,11 @@
         $('#eusetc')[0].checked=farmer.usetc==1;
         $('#eusecc')[0].checked=farmer.usecc==1;
         $('#euserate')[0].checked=farmer.userate==1;
+        $('#euse_ts_amount')[0].checked=farmer.use_ts_amount==1;
         $('#erate').val(farmer.rate).change();
+        $('#euse_protsahan')[0].checked=farmer.use_protsahan==1;
+        $('#eprotsahan').val(farmer.protsahan).change();
+        $('#ets_amount').val(farmer.ts_amount).change();
         // $('#eadvance').val(ele.dataset.advance);
         $('#eid').val(farmer.id);
         $('#editModal').modal('show');
@@ -112,6 +121,8 @@
                 $('#advance').val(0);
                 $('#phone').val('');
                 $('#address').val('');
+                $('#ts_amount').val('');
+                $('#use_ts_amount')[0].checked=false;
                 if($('#center_id').val()==$('#loadFarmerByCenter').val()){
                     $('#farmerData').prepend(response.data);
                 }

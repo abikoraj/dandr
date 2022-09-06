@@ -20,6 +20,10 @@ class CenterController extends Controller
         $center->cc = $request->cc??0;
         $center->tc = $request->tc??0;
         $center->snf_rate = $request->snf_rate??0;
+        $center->show_cc = $request->show_cc??0;
+        $center->show_ts = $request->show_ts??0;
+        $center->use_protsahan = $request->use_protsahan??0;
+        $center->protsahan = $request->protsahan??0;
         $center->bonus = $request->bonus??0;
         $center->save();
         return view('admin.center.single')->with(compact('center'));
@@ -34,6 +38,10 @@ class CenterController extends Controller
         $center->snf_rate = $request->snf_rate??0;
         $center->cc = $request->cc??0;
         $center->tc = $request->tc??0;
+        $center->show_cc = $request->show_cc??0;
+        $center->show_ts = $request->show_ts??0;
+        $center->use_protsahan = $request->use_protsahan??0;
+        $center->protsahan = $request->protsahan??0;
         $center->bonus = $request->bonus??0;
         $center->save();
         return view('admin.center.single')->with(compact('center'));

@@ -69,6 +69,7 @@ $balancetotal = 0;
 $prevbalancetotal = 0;
 $paidamounttotal = 0;
 $fpaidtotal = 0;
+$protsahan_amounttotal = 0;
 
 $_tctotal = 0;
 $_cctotal = 0;
@@ -84,6 +85,7 @@ $_balancetotal = 0;
 $_prevbalancetotal = 0;
 $_paidamounttotal = 0;
 $_fpaidtotal = 0;
+$_protahan_amounttotal = 0;
 
 @endphp
 
@@ -100,10 +102,17 @@ $_fpaidtotal = 0;
                 <th>Snf%</th>
                 <th>Fat%</th>
                 <th>Price/l</th>
-                @if ($usecc || $usetc)
+                @if ($usecc || $usetc || $useprotsahan)
                     <th>MilK Total</th>
-                    <th>TS</th>
-                    <th>Cooling Cost</th>
+                    @if ($usetc)
+                        <th>TS</th>
+                    @endif
+                    @if ($usecc)
+                        <th>Cooling Cost</th>
+                    @endif
+                    @if ($usprotsahan)
+                        <th>Protsahan Amount</th>
+                    @endif
                 @endif
                 <th>Total</th>
                 @if (env('hasextra', 0) == 1)
@@ -132,7 +141,7 @@ $_fpaidtotal = 0;
                         @endif
                     </td>
                     @php
-                        $t='farmer-' . $farmer->id;
+                        $t = 'farmer-' . $farmer->id;
                     @endphp
 
                     <td>
@@ -161,26 +170,36 @@ $_fpaidtotal = 0;
                         {{-- <input type="hidden" name="rate[{{$t}}]" value="{{($farmer->rate)}}" > --}}
 
                     </td>
-                    @if ($usecc || $usetc)
+                    @if ($usecc || $usetc || $useprotsahan)
                         <td>
                             {{ $farmer->total }}
                             @php
                                 $totaltotal += $farmer->total;
                             @endphp
                         </td>
-                        <td>
-                            {{ $farmer->tc }}
-                            @php
-                                $tctotal += $farmer->tc;
-                            @endphp
-                        </td>
-                        <td>
-                            {{ $farmer->cc }}
+                        @if ($usetc)
+                            <td>
+                                {{ $farmer->tc }}
+                                @php
+                                    $tctotal += $farmer->tc;
+                                @endphp
+                            </td>
+                        @endif
+                        @if ($usecc)
+                            <td>
+                                {{ $farmer->cc }}
 
+                                @php
+                                    $cctotal += $farmer->cc;
+                                @endphp
+                            </td>
+                        @endif
+                        @if ($usprotsahan)
+                            <th>{{ $farmer->protsahan_amount }}</th>
                             @php
-                                $cctotal += $farmer->cc;
+                                $protsahan_amounttotal += $farmer->protsahan_amount;
                             @endphp
-                        </td>
+                        @endif
                     @endif
                     <td>
                         {{ $farmer->grandtotal }}
@@ -298,7 +317,7 @@ $_fpaidtotal = 0;
                 <td>
                     {{ $advancetotal }}
                 </td>
-                
+
                 <td>
                     {{ $prevbalancetotal }}
                 </td>
@@ -338,6 +357,7 @@ $_fpaidtotal = 0;
         $_prevbalancetotal += $prevbalancetotal;
         $_paidamounttotal += $paidamounttotal;
         $_fpaidtotal += $fpaidtotal;
+        $_protsahan_amounttotal += $protsahan_amounttotal;
         
         $point = false;
         $tctotal = 0;
@@ -354,6 +374,7 @@ $_fpaidtotal = 0;
         $prevbalancetotal = 0;
         $paidamounttotal = 0;
         $fpaidtotal = 0;
+        $protsahan_amounttotal = 0;
     @endphp
 @endforeach
 
@@ -366,10 +387,17 @@ $_fpaidtotal = 0;
             <th>Snf%</th>
             <th>Fat%</th>
             <th>Price/l</th>
-            @if ($usecc || $usetc)
+            @if ($usecc || $usetc || $useprotsahan)
                 <th>MilK Total</th>
-                <th>TS</th>
-                <th>Cooling Cost</th>
+                @if ($usetc)
+                    <th>TS</th>
+                @endif
+                @if ($usecc)
+                    <th>Cooling Cost</th>
+                @endif
+                @if ($usprotsahan)
+                    <th>Protsahan Amount</th>
+                @endif
             @endif
             <th>Total</th>
             @if (env('hasextra', 0) == 1)
@@ -398,14 +426,15 @@ $_fpaidtotal = 0;
                     {{ $_totaltotal }}
 
                 </td>
-                <td>
-                    {{ $_tctotal }}
-
-                </td>
-                <td>
-                    {{ $_cctotal }}
-
-                </td>
+                @if ($usetc)
+                    <th>{{$_tctotal}}</th>
+                @endif
+                @if ($usecc)
+                    <th>{{$_cctotal}}</th>
+                @endif
+                @if ($usprotsahan)
+                    <th>{{$_protsahan_amounttotal}}</th>
+                @endif
             @endif
             <td>{{ $_grandtotal }}</td>
             @if (env('hasextra', 0) == 1)
@@ -429,7 +458,7 @@ $_fpaidtotal = 0;
             <td>
                 {{ $_paidamounttotal }}
             </td>
-          
+
             <td>
                 {{ $_nettotaltotal }}
             </td>
@@ -437,7 +466,7 @@ $_fpaidtotal = 0;
                 {{ $_balancetotal }}
             </td>
             <td>
-                
+
             </td>
         </tr>
     </tbody>
@@ -447,7 +476,7 @@ $_fpaidtotal = 0;
 @if ($newsession && env('closeonreport', false))
     <div class="py-2 d-print-none">
         <label for=>Session Close Date</label>
-        <input type="text" name="date" value="{{_nepalidate($sessionDate)}}" id="closedate" readonly required>
+        <input type="text" name="date" value="{{ _nepalidate($sessionDate) }}" id="closedate" readonly required>
     </div>
     <div class="py-2 d-print-none">
         <input type="submit" value="Update Session Data" class="btn btn-success">

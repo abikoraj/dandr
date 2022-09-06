@@ -27,12 +27,12 @@
             <hr>
             <div class="pb-2">
                 <select name="center_id" id="center_id" class="form-control ms">
-                    {!! renderCenters() !!}
+                    {!! renderCenters($c) !!}
                 </select>
             </div>
             <div class="pb-2">
                 <input type="number" name="farmer_no" id="farmer_no" class="form-control" placeholder="Farmer No"
-                    onkeydown="if(event.which==13){loadData();}">
+                    onkeydown="if(event.which==13){loadData();}" value="{{$f}}">
             </div>
             <div class="pb-2">
                 <select name="year" id="year" class="form-control show-tick ms select2 load-year">
@@ -147,6 +147,10 @@
                 $('#farmer_no').focus();
                 $('#farmer_no').select();
             });
+
+            @if ($c!=null && $f!=null)
+                loadData();
+            @endif
 
         };
 

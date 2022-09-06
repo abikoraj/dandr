@@ -84,7 +84,7 @@ class FarmerController extends Controller
     {
         $farmers = User::join('farmers', 'farmers.user_id', '=', 'users.id')
         ->where('farmers.center_id', $request->center)->
-        select('users.id', 'users.name', 'users.phone', 'users.address', 'farmers.center_id', 'farmers.usecc', 'farmers.usetc', 'farmers.userate', 'farmers.rate', 'farmers.no')
+        select('users.id', 'users.name', 'users.phone', 'users.address', 'farmers.center_id', 'farmers.usecc', 'farmers.usetc', 'farmers.userate', 'farmers.rate', 'farmers.no','farmers.ts_amount','farmers.use_ts_amount','farmers.protsahan','farmers.use_protsahan')
         ->orderByRaw('abs(farmers.no) asc')->get();
         return view('admin.farmer.list', ['farmers' => $farmers]);
     }
@@ -375,6 +375,10 @@ class FarmerController extends Controller
         $farmer->usetc = $request->usetc ?? 0;
         $farmer->userate = $request->userate ?? 0;
         $farmer->rate = $request->f_rate ?? 0;
+        $farmer->ts_amount = $request->ts_amount ?? 0;
+        $farmer->use_ts_amount = $request->use_ts_amount ?? 0;
+        $farmer->use_protsahan = $request->use_protsahan??0;
+        $farmer->protsahan = $request->protsahan??0;
         $farmer->no = $max;
         $farmer->save();
 
@@ -383,6 +387,11 @@ class FarmerController extends Controller
         $user->usetc = $farmer->usetc;
         $user->userate = $farmer->userate;
         $user->rate = $farmer->rate;
+        $user->ts_amount = $farmer->ts_amount;
+        $user->use_ts_amount = $farmer->use_ts_amount;
+        $user->center_id = $farmer->center_id;
+        $user->use_protsahan = $farmer->use_protsahan;
+        $user->protsahan = $farmer->protsahan;
         return view('admin.farmer.single', compact('user'));
     }
 
@@ -402,15 +411,23 @@ class FarmerController extends Controller
         $farmer->usecc = $request->usecc ?? 0;
         $farmer->usetc = $request->usetc ?? 0;
         $farmer->userate = $request->userate ?? 0;
-        $farmer->rate = $request->rate;
+        $farmer->rate = $request->f_rate;
         $farmer->no = $request->no;
-
+        $farmer->ts_amount = $request->ts_amount ?? 0;
+        $farmer->use_ts_amount = $request->use_ts_amount ?? 0;
+        $farmer->use_protsahan = $request->use_protsahan??0;
+        $farmer->protsahan = $request->protsahan??0;
         $farmer->save();
 
         $user->usecc = $farmer->usecc;
         $user->usetc = $farmer->usetc;
         $user->userate = $farmer->userate;
         $user->rate = $farmer->rate;
+        $user->ts_amount = $farmer->ts_amount;
+        $user->use_ts_amount = $farmer->use_ts_amount;
+        $user->center_id = $farmer->center_id;
+        $user->use_protsahan = $farmer->use_protsahan;
+        $user->protsahan = $farmer->protsahan;
 
         return view('admin.farmer.single', compact('user'));
     }

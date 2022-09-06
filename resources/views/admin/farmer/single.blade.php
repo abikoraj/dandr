@@ -20,7 +20,8 @@
         @endif
         @if (auth_has_per('01.09'))
 
-            <a href="{{ route('admin.farmer.detail',$user->id) }}" class="btn btn-primary btn-sm">View</a> |
+            {{-- <a href="{{ route('admin.farmer.detail',$user->id) }}" class="btn btn-primary btn-sm">View</a> | --}}
+            <a target="_blank" href="{{ route('admin.farmer.passbook.index',['center_id'=>$user->center_id,'farmer_no'=>$user->no]) }}" class="btn btn-primary btn-sm">View</a> |
         @endif
         @if (auth_has_per('01.04'))
             <button class="btn btn-danger btn-sm" onclick="removeData({{$user->id}});">Delete</button></td>

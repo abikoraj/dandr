@@ -17,10 +17,13 @@ use Illuminate\Support\Facades\DB;
 
 class FarmerDetailController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
+        $c=$request->center_id;
+        $f=$request->farmer_no;
+        // dd($c,$f);
         // dd(renderCenters());
-        return view('admin.farmer.passbook.index');
+        return view('admin.farmer.passbook.index',compact('c','f'));
     }
 
     public function updateData(Request $request){
@@ -113,9 +116,10 @@ class FarmerDetailController extends Controller
 
     public function data(Request $request)
     {
+      
         $farmer = DB::table('users')->join('farmers', 'users.id', '=', 'farmers.user_id')->
         where('users.no', $request->farmer_no)->where('farmers.center_id', $request->center_id)->
-        select(DB::raw( 'users.id,users.name,users.no,users.phone,farmers.userate,farmers.usecc,farmers.usetc,farmers.rate'))->first();
+        select(DB::raw( 'users.id,users.name,users.no,users.phone,farmers.userate,farmers.usecc,farmers.usetc,farmers.rate,farmers.ts_amount,farmers.use_ts_amount,farmers.use_protsahan,farmers.protsahan'))->first();
         if($farmer==null){
             return response("<h5 class='text-center'>Farmer Not Found</h5>");
         }
@@ -157,6 +161,7 @@ class FarmerDetailController extends Controller
         $farmer->milkamount = $farmer->milkData->sum('e_amount') + $farmer->milkData->sum('m_amount');
         $farmer->tc = 0;
         $farmer->cc = 0;
+        $farmer->protsahan_amount=0;
         if($farmer->report!=null){
             if($farmer->report->has_passbook==1){
                 $hasRate=true;
@@ -178,11 +183,17 @@ class FarmerDetailController extends Controller
     
             $farmer->total = truncate_decimals(($farmer->milkrate * $farmer->milkamount), 2);
     
-            if ($farmer->usetc == 1 && $farmer->total > 0) {
+            if ($farmer->usetc == 1  && $farmer->total > 0) {
                 $farmer->tc = truncate_decimals((($center->tc * ($snfAvg + $fatAvg) / 100) * $farmer->milkamount), 2);
+            }
+            if($farmer->use_ts_amount==1 && $farmer->total > 0){
+                $farmer->tc = truncate_decimals((($farmer->ts_amount) * $farmer->milkamount), 2);
             }
             if ($farmer->usecc == 1 && $farmer->total > 0) {
                 $farmer->cc = truncate_decimals($center->cc * $farmer->milkamount, 2);
+            }
+            if ($farmer->use_protsahan == 1 && $farmer->total > 0) {
+                $farmer->protsahan_amount = truncate_decimals($farmer->protsahan * $farmer->milkamount, 2);
             }
         }else{
             $farmer->total = truncate_decimals(($farmer->milkrate * $farmer->milkamount), 2);
@@ -192,7 +203,7 @@ class FarmerDetailController extends Controller
 
         $farmer->fpaid = ledgerSum($farmer->id, '106', $range) + ledgerSum($farmer->id, '107', $range);
 
-        $farmer->grandtotal = (int)($farmer->total + $farmer->tc + $farmer->cc);
+        $farmer->grandtotal = (int)($farmer->total + $farmer->tc + $farmer->cc+ $farmer->protsahan_amount);
         $farmer->bonus = 0;
 
         if (env('hasextra', 0) == 1) {

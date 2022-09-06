@@ -146,11 +146,17 @@
                             <strong>Milk Total : {{ $farmer->milkamount }} </strong><br>
                             <strong>Per Liter Rate : {{ $farmer->milkrate }} </strong> <br>
                                 <strong>Amount : {{ $farmer->total }} </strong><br>
-                                @if ($farmer->usetc)
+                                @if ($farmer->usetc )
                                     <strong>+TS Commission ({{(float)($center->tc)}}%) : {{ $farmer->tc }}</strong> <br>
+                                @endif
+                                @if ($farmer->use_ts_amount )
+                                    <strong>+TS Commission Rs ({{(float)($farmer->ts_amount)}} / Liter) : {{ $farmer->tc }}</strong> <br>
                                 @endif
                                 @if ($farmer->usecc)
                                     <strong>+Cooling Cost: {{ $farmer->cc }}</strong>
+                                @endif
+                                @if ($farmer->use_protsahan)
+                                    <strong>+Protsahan Amount: {{ $farmer->protsahan_amount }}</strong>
                                 @endif
                                 <hr>
                                 <strong>Total Amount: {{$farmer->grandtotal}}</strong>
