@@ -9,9 +9,8 @@
             flex: 1;
             text-align: center;
         }
-        .shadow-local{
-            box-shadow: 0px 0px 5px 0px rgba(0, 0, 0, 0.2);
-        }
+
+       
 
         .step-btn.active {
             background: rgb(0, 122, 204);
@@ -29,7 +28,7 @@
     </style>
 @endsection
 @section('head-title')
-    <a href="{{ route('admin.simple.manufacture.add') }}">Manufacture Items</a> / Add
+    <a href="{{ route('admin.simple.manufacture.index') }}">Manufacture Items</a> / Add
 @endsection
 @section('toobar')
 @endsection
@@ -47,6 +46,11 @@
         </div>
     </div>
     <div class="p-2 mt-3  shadow-local">
+        <div>
+            <strong>Date:</strong>
+            <input type="text" name="nepali-date" id="nepali-date" class="calender">
+        </div>
+        <hr>
         <div class="row mt-3">
             <div class="col-12">
                 <div class="w-25">
@@ -143,7 +147,7 @@
         </div>
     </div>
     <div class="p-2 mt-3 shadow-local text-right">
-        <button class="btn btn-success">
+        <button class="btn btn-success" onclick="saveData();">
             Save Manufacture Process
         </button>
     </div>
@@ -157,7 +161,9 @@
             rawMaterials: [],
             wastage: [],
             items: [],
-            code:'simplemanufacture',
+            date: '',
+            types: ['rawMaterials', 'wastage', 'items'],
+            code: 'simplemanufacture',
             push: function(localdata) {
                 switch (CurrentStep) {
                     case 1:
@@ -176,45 +182,60 @@
                 data.render();
                 data.save();
             },
-            
-            save:function(){
-                localStorage.setItem('simplemanufacture',JSON.stringify(data));
+            clean:function(){
+                data.rawMaterials=[];
+                data.items=[];
+                data.wastage=[];
+                data.save();
+                data.render();
             },
-            load(){
-                const str=localStorage.getItem('simplemanufacture');
-                if(str!=null){
-                    const localData=JSON.parse(str);
-                    data.items=localData.items;
-                    data.rawMaterials=localData.rawMaterials;
-                    data.wastage=localData.wastage;
-                    let max=0;
-                    ['rawMaterials','wastage','items'].forEach(type => {
-                        const localDatas=data[type];
+            clear: function(id, type) {
+                const toremove = data.types[type - 1];
+                const index = data[toremove].findIndex(o => o.uid == id);
+                if (index > -1) {
+                    data[toremove].splice(index, 1);
+                    data.render();
+                    data.save();
+                }
+            },
+            save: function() {
+                localStorage.setItem('simplemanufacture', JSON.stringify(data));
+            },
+            load() {
+                const str = localStorage.getItem('simplemanufacture');
+                if (str != null) {
+                    const localData = JSON.parse(str);
+                    data.items = localData.items;
+                    data.rawMaterials = localData.rawMaterials;
+                    data.wastage = localData.wastage;
+                    let max = 0;
+                    data.types.forEach(type => {
+                        const localDatas = data[type];
                         localDatas.forEach(local => {
-                            if(local.uid>max){
-                                max=local.uid;
+                            if (local.uid > max) {
+                                max = local.uid;
                             }
                         });
                     });
-                    uid+=max;
-                   data.render();
+                    uid += max;
+                    data.render();
                 }
 
             },
-            render:function(){
-                ['rawMaterials','wastage','items'].forEach(type => {
-                    const localDatas=data[type];
-                    let html='';
+            render: function() {
+                data.types.forEach(type => {
+                    const localDatas = data[type];
+                    let html = '';
 
                     localDatas.forEach(localData => {
-                        html+=`<tr>
+                        html += `<tr>
                                 <td>${localData.item.title}</td>
                                 <td>${localData.center.name}</td>
                                 <td>${localData.amount}</td>
-                                <td></td>
+                                <td><button onclick="data.clear(${localData.uid},${localData.type})">Del</button></td>
                             </tr>`;
                     });
-                    $('#'+type+"Data").html(html);
+                    $('#' + type + "Data").html(html);
                 });
             }
         }
@@ -255,20 +276,50 @@
                 alert('Please Enter Produced Item');
                 return;
             }
-            axios.post("{{ route('admin.simple.manufacture.add') }}", data)
+            if (data.rawMaterials.length == 0) {
+                alert('Please Enter Raw Materials');
+                return;
+            }
+
+            if(!prompt('Enter yes to continue')=='yes'){
+                return;
+            }
+            data.date = $('#nepali-date').val();
+            const localData = {
+                date: data.date,
+                items: [],
+                item_ids:[]
+            };
+
+            data.types.forEach(type => {
+                const localDatas = data[type];
+                localDatas.forEach(local => {
+                    localData.items.push({
+                        item_id:local.item.id,
+                        item_title:local.item.title,
+                        center_id:local.center.id,
+                        amount:local.amount,
+                        type:local.type,
+                    })
+                    localData.item_ids.push(local.item.id);
+                });
+            });
+            showProgress('Saving Manufacture');
+
+            axios.post("{{ route('admin.simple.manufacture.add') }}", localData)
                 .then((res) => {
-                    window.location.reload();
+                    data.clean();
+                    hideProgress();
                     showNotification("bg-success", "Manufacture Added Successfully");
                 })
                 .catch((err) => {
+                    hideProgress();
                     if (err.response) {
                         showNotification("bg-danger", err.response.data.message)
-
                     } else {
-
                         showNotification("bg-danger", "Some Error Occured");
                     }
-                })
+            })
         }
 
         function AddData() {
@@ -292,7 +343,8 @@
                     item: items.find(o => o.id == item_id),
                     center: centers.find(o => o.id == center_id),
                     amount: amount,
-                    uid: uid++
+                    uid: uid++,
+                    type: CurrentStep
                 };
 
                 console.log(localdata);
@@ -301,18 +353,18 @@
                 // $('#center_id').val(null).change();
                 // $('#item_id').select2();
                 $('#item_id').select2('focus');
-                $('#item_id').trigger({type:'select2:open'});
+                $('#item_id').trigger({
+                    type: 'select2:open'
+                });
                 data.push(localdata);
             }
 
         }
 
-        $('#amount').keydown(function (e) { 
-            if(e.which==13){
+        $('#amount').keydown(function(e) {
+            if (e.which == 13) {
                 AddData();
             }
         });
-
-
     </script>
 @endsection

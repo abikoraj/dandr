@@ -126,6 +126,9 @@ class NepaliDateHelper
         $month=(int)($date/100);
         $day= (int)($date%100);
         $ins=new self();
+        $ins->_nep_date['year']=$year;
+        $ins->_nep_date['month']=$month;
+        $ins->_nep_date['date']=$day;
         $ins->nep_to_eng($year,$month,$day);
         return $ins;
     }
@@ -599,7 +602,7 @@ class NepaliDateHelper
      *
      * @return array
      */
-    public function nep_to_eng($yy, $mm, $dd)
+    public function nep_to_eng($yy=null, $mm=null, $dd=null)
     {
         $def_eyy = 1943;
         $def_emm = 4;
@@ -618,6 +621,16 @@ class NepaliDateHelper
         $numDay = 0;
         $month = [0, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
         $lmonth = [0, 31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+        // Check for date range
+        if($yy==null){
+            $yy=$this->_nep_date['year'];
+        }
+        if($mm==null){
+            $mm=$this->_nep_date['month'];
+        }
+        if($dd==null){
+            $dd=$this->_nep_date['date'];
+        }
         // Check for date range
         $chk = $this->_is_in_range_nep($yy, $mm, $dd);
         if ($chk !== true) {
@@ -672,6 +685,14 @@ class NepaliDateHelper
 
             return $this->_eng_date;
         }
+    }
+
+    public function addDays($days){
+        $eng=$this->nep_to_eng();
+        $carbonDate=Carbon::createFromDate($eng['year'],$eng['month'],$eng['date']);
+        $carbonDate->addDays($days);
+        return $this->eng_to_nepInt($carbonDate->year,$carbonDate->month,$carbonDate->day);
+
     }
 
     public function convert_to_nepali_number($str)

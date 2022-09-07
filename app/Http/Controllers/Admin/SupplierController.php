@@ -166,7 +166,7 @@ class SupplierController extends Controller
             }
             $bill->discount = $request->idiscount;
             $bill->taxable = $total - $bill->discount;
-            $bill->tax = $request->itax;
+            $bill->tax = $request->itax??0;
             $bill->total = $bill->tax + $bill->taxable;
             $due = $bill->total - $bill->paid;
             $bill->due = $due >= 0 ? $due : 0;

@@ -487,6 +487,8 @@ Route::name('admin.')->group(function () {
         Route::name('simple.manufacture.')->prefix('simple-manufacture')->group(function(){
             Route::match(['get', 'post'], '', [SimpleManufactureController::class,'index'])->name('index');
             Route::match(['get', 'post'], 'add', [SimpleManufactureController::class,'add'])->name('add');
+            Route::match(['get'], 'detail/{process}', [SimpleManufactureController::class,'detail'])->name('detail');
+            Route::match(['get'], 'detail/{process}', [SimpleManufactureController::class,'detail'])->name('detail');
         });
 
         //XXX item expire wastage
