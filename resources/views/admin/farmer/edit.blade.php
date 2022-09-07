@@ -43,14 +43,20 @@
 
                                 <div class="form-group">
                                     <div class="row">
+                                        @if (env('usecc',0)==1)
+
                                         <div class="col-6 ck">
 
                                             <input type="checkbox"  id="eusecc" name="usecc" class="mr-2" value="1">Has Cooling Cost <br>
                                         </div>
+                                        @endif
+                                        @if (env('usetc',0)==1)
+
                                         <div class="col-6 ck">
 
                                             <input type="checkbox" id="eusetc" name="usetc" class="mr-2" value="1">Has TS % <br>
                                         </div>
+                                        @endif
                                         <div class="col-6 ck">
 
                                             <input type="checkbox" id="euserate"  name="userate" class="mr-2" value="1">Fixed Rate
@@ -59,6 +65,8 @@
 
                                             <input type="number" step="0.01" min="0" value="0" id="ef_rate" name="f_rate"> <br>
                                         </div>
+                                        @if (env('usetc',0)==1)
+
                                         <div class="col-6 ck">
 
                                             <input type="checkbox" id="euse_ts_amount"  name="use_ts_amount" class="mr-2" value="1">Fixed TS Rate
@@ -67,6 +75,9 @@
 
                                             <input type="number" step="0.01" min="0" value="0" id="ets_amount" name="ts_amount">
                                         </div>
+                                        @endif
+                                        @if (env('useprotsahan',0)==1)
+
                                         <div class="col-6 ck">
 
                                             <input type="checkbox" id="euse_protsahan"  name="use_protsahan" class="mr-2" value="1"> Protsahan Amount
@@ -75,6 +86,7 @@
 
                                             <input type="number" step="0.01" min="0" value="0" id="eprotsahan" name="protsahan">
                                         </div>
+                                        @endif
                                     </div>
                                 </div>
                             </div>

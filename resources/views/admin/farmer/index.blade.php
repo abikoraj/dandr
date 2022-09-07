@@ -69,15 +69,21 @@
         $('#eno').val(farmer.no);
         $('#ephone').val(farmer.phone);
         $('#eaddress').val(farmer.address);
+        @if(env('usecc',0)==1)
+            $('#eusecc')[0].checked=farmer.usecc==1;
+        @endif
+        @if(env('usecc',0)==1)
+            $('#eusetc')[0].checked=farmer.usetc==1;
+            $('#euse_ts_amount')[0].checked=farmer.use_ts_amount==1;
+            $('#ets_amount').val(farmer.ts_amount).change();
+        @endif
+        @if(env('useprotsahan',0)==1)
+            $('#euse_protsahan')[0].checked=farmer.use_protsahan==1;
+            $('#eprotsahan').val(farmer.protsahan).change();
+        @endif
 
-        $('#eusetc')[0].checked=farmer.usetc==1;
-        $('#eusecc')[0].checked=farmer.usecc==1;
         $('#euserate')[0].checked=farmer.userate==1;
-        $('#euse_ts_amount')[0].checked=farmer.use_ts_amount==1;
         $('#erate').val(farmer.rate).change();
-        $('#euse_protsahan')[0].checked=farmer.use_protsahan==1;
-        $('#eprotsahan').val(farmer.protsahan).change();
-        $('#ets_amount').val(farmer.ts_amount).change();
         // $('#eadvance').val(ele.dataset.advance);
         $('#eid').val(farmer.id);
         $('#editModal').modal('show');

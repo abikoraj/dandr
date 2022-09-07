@@ -62,14 +62,21 @@
 
                                 <div class="form-group">
                                     <div class="row">
+                                        @if (env('usecc',0)==1)
+                                            
                                         <div class="col-6 ck">
 
                                             <input type="checkbox" name="usecc" class="mr-2" value="1">Has Cooling Cost <br>
                                         </div>
-                                        <div class="col-6 ck">
+                                        @endif
+                                        @if (env('usetc',0)==1)
+                                            
+                                            <div class="col-6 ck">
 
-                                            <input type="checkbox" name="usetc" class="mr-2" value="1">Has TS %<br>
-                                        </div>
+                                                <input type="checkbox" name="usetc" class="mr-2" value="1">Has TS %<br>
+                                            </div>
+                                        @endif
+
                                         <div class="col-6 ck">
 
                                             <input type="checkbox"  name="userate" class="mr-2" value="1">Fixed Rate
@@ -78,6 +85,8 @@
 
                                             <input type="number" step="0.01" min="0" value="0" name="f_rate"> <br>
                                         </div>
+                                        @if (env('usetc',0)==1)
+                                            
                                         <div class="col-6 ck">
 
                                             <input type="checkbox" id="use_ts_amount"  name="use_ts_amount" class="mr-2" value="1">Fixed TS Rate
@@ -86,6 +95,9 @@
 
                                             <input type="number" step="0.01" min="0" value="0" id="ts_amount" name="ts_amount">
                                         </div>
+                                        @endif
+                                        @if (env('useprotsahan',0)==1)
+                                            
                                         <div class="col-6 ck">
 
                                             <input type="checkbox" id="use_protsahan"  name="use_protsahan" class="mr-2" value="1"> Protsahan Amount
@@ -94,6 +106,7 @@
 
                                             <input type="number" step="0.01" min="0" value="0" id="protsahan" name="protsahan">
                                         </div>
+                                        @endif
                                     </div>
                                 </div>
                             </div>
