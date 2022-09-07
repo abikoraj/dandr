@@ -533,7 +533,7 @@ class MilkController extends Controller
             'id'=>$user_id,
             'amount'=>$request->amount,
             'snf'=> $deleted?null:$snffat->snf,
-            'fat'=>$deleted?null:$snffat->snf,
+            'fat'=>$deleted?null:$snffat->fat,
             'deleted'=>$deleted
         ]);
         
