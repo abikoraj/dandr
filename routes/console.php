@@ -12,6 +12,7 @@ use App\Models\User;
 use App\NepaliDate;
 use Illuminate\Foundation\Inspiring;
 use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\DB;
 
 /*
 |--------------------------------------------------------------------------
@@ -147,6 +148,16 @@ Artisan::command('load-items',function(){
             $i->save();
             echo $i->title ." Saved.\n";
         }
+    }
+});
+Artisan::command('ttt',function(){
+    $db=env('DB_DATABASE');
+    $val=DB::select("SELECT 	TABLE_NAME,COLUMN_NAME,NUMERIC_PRECISION,NUMERIC_SCALE
+    FROM INFORMATION_SCHEMA.COLUMNS where TABLE_SCHEMA='{$db}' and DATA_TYPE='decimal'");
+    $arr=collect($val);
+    $arr1="";
+    dd($arr->groupBy('TABLE_SCHEMA'));
+    foreach ($arr->groupBy('TABLE_SCHEMA') as $schema => $value) {
     }
 });
 Artisan::command('load-customers',function(){
