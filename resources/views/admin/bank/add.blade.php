@@ -35,12 +35,7 @@
                                     <input type="text" id="accno" name="accno" class="form-control next" data-next="phone" placeholder="Enter Bank Account No" required>
                                 </div>
                             </div>
-                            <div class="col-lg-6">
-                                <label for="balance">Balance</label>
-                                <div class="form-group">
-                                    <input type="number" min="0"  id="balance" name="balance" class="form-control next" data-next="phone" placeholder="Enter Bank Account No" required>
-                                </div>
-                            </div>
+                          
                         </div>
                 </div>
             </div>

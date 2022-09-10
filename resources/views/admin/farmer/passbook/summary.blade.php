@@ -21,33 +21,42 @@
                 <th>
                     Rate
                 </th>
-                @if ($farmer->cc > 0 || $farmer->tc > 0)
+                @if ($farmer->cc > 0 || $farmer->tc > 0 || $farmer->protsahan_amount > 0 || $farmer->transport_amount)
+
                     <th>
                         Milk Total
                     </th>
-                    @if ($farmer->usetc || $farmer->use_ts_amount)
+                    @if (env('farmer_detail_milk_detail', 0) == 1)
+                        @if ($farmer->tc > 0)
+                            <th>
+                                TS
+                            </th>
+                        @endif
+                        @if ($farmer->cc > 0)
+                            <th>
+                                Cooling <br> Cost
+                            </th>
+                        @endif
+                        @if ($farmer->protsahan_amount > 0)
+                            <th>
+                                Protsahan <br> Amount
+                            </th>
+                        @endif
+                        @if ($farmer->transport_amount > 0)
+                            <th>
+                                Transport <br> Amount
+                            </th>
+                        @endif
+                    @else
                         <th>
-                            TS
+                            Added Amount
                         </th>
                     @endif
-                    @if ($farmer->usecc)
-                        <th>
-                            Cooling Cost
-                        </th>
-                    @endif
-                    @if ($farmer->use_protsahan)
-                        <th>
-                            Protsahan <br> Amount
-                        </th>
-                    @endif
-                    <th>
-                        Total
-                    </th>
-                @else
-                    <th>
-                        Total
-                    </th>
                 @endif
+
+                <th>
+                    Total
+                </th>
                 @if (env('hasextra', 0) == 1)
                     <th>Bonus</th>
                 @endif
@@ -55,17 +64,17 @@
                 <th>Payment</th>
                 <th>Advance</th>
                 <th>
-                    Prev Balance
+                    Prev <br> Balance
                 </th>
                 <th>
-                    Prev Due
+                    Prev <br> Due
                 </th>
                 <th>
                     Paid
                 </th>
-                <th>Net Total</th>
-                <th>Due Balance</th>
-                <th>
+                <th>Net <br> Total</th>
+                <th>Due <br> Balance</th>
+                <th class="d-print-none">
 
                 </th>
             </tr>
@@ -85,34 +94,41 @@
 
 
                 </td>
-                @if ($farmer->cc > 0 || $farmer->tc > 0)
+                @if ($farmer->cc > 0 || $farmer->tc > 0 || $farmer->protsahan_amount > 0 || $farmer->transport_amount)
                     <th>
                         {{ $farmer->total }}
                     </th>
-                    @if ($farmer->usetc || $farmer->use_ts_amount)
-                        <th>
-                            {{ $farmer->tc }}
-                        </th>
-                    @endif
-                    @if ($farmer->usecc)
-                        <th>
-                            {{ $farmer->cc }}
-                        </th>
-                    @endif
-                    @if ($farmer->use_protsahan)
-                        <th>
-                            {{$farmer->protsahan_amount}}
-                        </th>
-                    @endif
+                    @if (env('farmer_detail_milk_detail', 0) == 1)
+                        @if ($farmer->tc > 0)
+                            <th>
+                                {{ $farmer->tc }}
+                            </th>
+                        @endif
+                        @if ($farmer->cc > 0)
+                            <th>
+                                {{ $farmer->cc }}
+                            </th>
+                        @endif
+                        @if ($farmer->protsahan_amount > 0)
+                            <th>
+                                {{ $farmer->protsahan_amount }}
+                            </th>
+                        @endif
+                        @if ($farmer->transport_amount > 0)
+                            <th>
+                                {{ $farmer->transport_amount }}
+                            </th>
+                        @endif
+                    @else
                     <th>
-                        {{ $farmer->grandtotal }}
+                        {{ $farmer->tc + $farmer->cc + $farmer->protsahan_amount + $farmer->transport_amount }}
                     </th>
-                @else
-                    <th>
-                        {{ $farmer->grandtotal }}
-
-                    </th>
+                    @endif
                 @endif
+                <th>
+                    {{ $farmer->grandtotal }}
+
+                </th>
                 @if (env('hasextra', 0) == 1)
                     <td> {{ $farmer->bonus }} </td>
                 @endif
@@ -133,14 +149,13 @@
                 </td>
                 <td>{{ $farmer->paidamount }}</td>
 
-
                 <td>
                     {{ $farmer->nettotal }}
                 </td>
                 <td>
                     {{ $farmer->balance }}
                 </td>
-                <td>
+                <td class="d-print-none">
                     @if ($farmer->old == false)
                         <form action="{{ route('admin.farmer.passbook.close') }}" method="POST"
                             onsubmit="return closeSession(event,this);">
@@ -168,6 +183,7 @@
                             <input type="hidden" name="paidamount" value=" {{ $farmer->paidamount }}">
                             <input type="hidden" name="fpaid" value="{{ $farmer->fpaid }}">
                             <input type="hidden" name="protsahan_amount" value="{{ $farmer->protsahan_amount }}">
+                            <input type="hidden" name="transport_amount" value="{{ $farmer->transport_amount }}">
 
                             <input type="hidden" name="close" id="close" value="1" checked>
 
@@ -187,9 +203,10 @@
                         @if ($farmer->report->has_passbook)
                             Session Closed
                         @else
-                            <form id="updateSession" action="" method="post" onsubmit="return updateSession(event,this)">
+                            <form id="updateSession" action="" method="post"
+                                onsubmit="return updateSession(event,this)">
                                 @csrf
-                                
+
                                 <input type="hidden" name="id" value="{{ $farmer->id }}">
                                 <input type="hidden" name="report_id" value="{{ $farmer->report->id }}">
                                 <input type="hidden" name="snf" value="{{ $farmer->snfavg }}">
@@ -209,11 +226,16 @@
                                 <input type="hidden" name="prevbalance" value=" {{ $farmer->prevbalance }}">
                                 <input type="hidden" name="paidamount" value=" {{ $farmer->paidamount }}">
                                 <input type="hidden" name="fpaid" value=" {{ $farmer->fpaid }}">
+                                <input type="hidden" name="protsahan_amount"
+                                    value="{{ $farmer->protsahan_amount }}">
+                                <input type="hidden" name="transport_amount"
+                                    value="{{ $farmer->transport_amount }}">
                                 <input type="hidden" name="close" id="close" value="1" checked>
                                 <input type="text" name="date" id="closedate"
                                     value="{{ _nepalidate($closingDate) }}" readonly required>
                                 <div class="py-1" style="white-space: nowrap;">
-                                    <input type="checkbox" checked name="no_passbook" id="no_passbook" class="mr-2">
+                                    <input type="checkbox" checked name="no_passbook" id="no_passbook"
+                                        class="mr-2">
                                     <label for="no_passbook">
                                         No Passbook
                                     </label>

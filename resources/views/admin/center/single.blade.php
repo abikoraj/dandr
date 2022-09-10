@@ -34,10 +34,14 @@
             <td>
                 <input type="checkbox" name="use_protsahan" value="1" {{$center->use_protsahan?'checked':''}}>
             </td>
-            <td>
-                <input type="number" value="{{ $center->protsahan }}" id="protsahan" step="0.001" class="form-control" name="protsahan" form="collectionForm-{{ $center->id }}">
-            </td>
+        
         @endif
+        @if (env('usetransportamount',0)==1)
+        <td>
+            <input type="checkbox" name="use_transport" value="1" {{$center->use_transport?'checked':''}}>
+        </td>
+    
+    @endif
         
     @endif
         <td><span onclick="editCollection({{$center->id}});" form="collectionForm-{{ $center->id }}" class="btn btn-primary btn-sm"> Update </span> <br> <span class="btn btn-danger btn-sm" onclick="removeCenter({{$center->id}});">Delete</span></td>

@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AccountingController;
+use App\Http\Controllers\AccountOpeningController;
 use App\Http\Controllers\Admin\BankController;
 use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\CounterController;
@@ -40,6 +41,7 @@ use App\Http\Controllers\Admin\WastageController;
 use App\Http\Controllers\BackupController;
 use App\Http\Controllers\BarcodeController;
 use App\Http\Controllers\Billing\BillingController as BillingBillingController;
+use App\Http\Controllers\DayReportController;
 use App\Http\Controllers\FixedAssetController;
 use App\Http\Controllers\HomeController as ControllersHomeController;
 use App\Http\Controllers\PaymentController;
@@ -69,6 +71,7 @@ use App\NepaliDate;
 | contains the "web" middleware group. Now create something great!
 |
 */
+
 
 
 Route::get('/', [ControllersHomeController::class, 'home']);
@@ -488,7 +491,7 @@ Route::name('admin.')->group(function () {
             Route::match(['get', 'post'], '', [SimpleManufactureController::class,'index'])->name('index');
             Route::match(['get', 'post'], 'add', [SimpleManufactureController::class,'add'])->name('add');
             Route::match(['get'], 'detail/{process}', [SimpleManufactureController::class,'detail'])->name('detail');
-            Route::match(['get'], 'detail/{process}', [SimpleManufactureController::class,'detail'])->name('detail');
+            Route::match(['post'], 'cancel', [SimpleManufactureController::class,'cancel'])->name('cancel');
         });
 
         //XXX item expire wastage
@@ -592,6 +595,10 @@ Route::name('admin.')->group(function () {
 
             Route::get('subaccounts/{id}',[AccountingController::class,'subAccounts'] )->name('subaccounts');
             Route::match(['GET','POST'],'final',[AccountingController::class,'final'] )->name('final');
+
+            Route::prefix('opening')->name('opening.')->group(function(){
+                Route::match(['get', 'post'], '',[AccountOpeningController::class,'index'])->name('index');
+            });
         });
 
 
@@ -817,6 +824,10 @@ Route::name('admin.')->group(function () {
             Route::match(['GET','POST'],'',[BarcodeController::class,'index'])->name('index');
             
         });
+
+        Route::name('report.day.')->prefix('report/day')->group(function(){
+            Route::match(['get', 'post'], 'milk', [DayReportController::class,'milk'])->name('milk');
+        });
     });
 });
 
@@ -857,7 +868,10 @@ Route::name('pos.')->prefix('pos')->group(function () {
             Route::post('printed', [BillingController::class, 'printed'])->name('printed');
             Route::get('print/{bill}', [BillingController::class, 'print'])->name('print');
         });
+
     });
+
+
 });
 
 

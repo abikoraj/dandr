@@ -23,6 +23,7 @@ class CenterController extends Controller
         $center->show_cc = $request->show_cc??0;
         $center->show_ts = $request->show_ts??0;
         $center->use_protsahan = $request->use_protsahan??0;
+        $center->use_transport = $request->use_transport??0;
         $center->protsahan = $request->protsahan??0;
         $center->bonus = $request->bonus??0;
         $center->save();
@@ -41,6 +42,7 @@ class CenterController extends Controller
         $center->show_cc = $request->show_cc??0;
         $center->show_ts = $request->show_ts??0;
         $center->use_protsahan = $request->use_protsahan??0;
+        $center->use_transport = $request->use_transport??0;
         $center->protsahan = $request->protsahan??0;
         $center->bonus = $request->bonus??0;
         $center->save();

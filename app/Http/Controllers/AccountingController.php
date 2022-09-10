@@ -304,6 +304,10 @@ class AccountingController extends Controller
             $account->amount = $request->amount;
             $account->fiscal_year_id = $fy->id;
             $account->save();
+
+
+            
+
             if($account->parent_id!=null){
                 $this->manageAccounts($account);
             }
@@ -381,5 +385,14 @@ class AccountingController extends Controller
             }
         }
         return compact('receivable','payable');
+    }
+
+    public function open(Request $request)
+    {
+        if($request->getMethod()=="POST"){
+
+        }else{
+            
+        }
     }
 }

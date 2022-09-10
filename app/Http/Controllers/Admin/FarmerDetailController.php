@@ -53,6 +53,7 @@ class FarmerDetailController extends Controller
             $farmerreport->tc = $request->tc ?? 0;
             $farmerreport->cc = $request->cc ?? 0;
             $farmerreport->protsahan_amount=$request->protsahan_amount??0;
+            $farmerreport->transport_amount=$request->transport_amount??0;
 
             $farmerreport->grandtotal = $request->grandtotal ?? $request->total;
             $farmerreport->fpaid = $request->fpaid;
@@ -88,6 +89,7 @@ class FarmerDetailController extends Controller
             }
 
             if($oldgrandtotal != $farmerreport->grandtotal){
+            
                 $ledger_grandtotal=Ledger::where([
                     'year' => $farmerreport->year, 
                     'month' => $farmerreport->month,
@@ -118,20 +120,26 @@ class FarmerDetailController extends Controller
 
     public function data(Request $request)
     {
-      
+        $monthSession=env('session_type',1)==2;
         $farmer = DB::table('users')->join('farmers', 'users.id', '=', 'farmers.user_id')->
         where('users.no', $request->farmer_no)->where('farmers.center_id', $request->center_id)->
-        select(DB::raw( 'users.id,users.name,users.no,users.phone,farmers.userate,farmers.usecc,farmers.usetc,farmers.rate,farmers.ts_amount,farmers.use_ts_amount,farmers.use_protsahan,farmers.protsahan'))->first();
+        select(DB::raw( 'users.id,users.name,users.no,users.phone,farmers.userate,farmers.usecc,farmers.usetc,farmers.rate,farmers.ts_amount,farmers.use_ts_amount,farmers.use_protsahan,farmers.protsahan,farmers.use_transport,farmers.transport'))->first();
         if($farmer==null){
             return response("<h5 class='text-center'>Farmer Not Found</h5>");
         }
+
         $center=DB::selectOne('select snf_rate,fat_rate,cc,tc,bonus from centers where id=?',[$request->center_id]);
         
         $farmer->session=[$request->year, $request->month, $request->session];
         $farmer->center_id=$request->center_id;
         $range = NepaliDate::getDate($request->year, $request->month, $request->session);
+        
+        if($monthSession){
+            $farmer->report = FarmerReport::where(['year' => $request->year, 'month' => $request->month, 'user_id' => $farmer->id])->first();
+        }else{
+            $farmer->report = FarmerReport::where(['year' => $request->year, 'month' => $request->month, 'session' => $request->session, 'user_id' => $farmer->id])->first();
 
-        $farmer->report = FarmerReport::where(['year' => $request->year, 'month' => $request->month, 'session' => $request->session, 'user_id' => $farmer->id])->first();
+        }
         $farmer->old = $farmer->report!=null;
 
         $farmer->milkData = DB::table('milkdatas')
@@ -164,6 +172,7 @@ class FarmerDetailController extends Controller
         $farmer->tc = 0;
         $farmer->cc = 0;
         $farmer->protsahan_amount=0;
+        $farmer->transport_amount=0;
         if($farmer->report!=null){
             if($farmer->report->has_passbook==1){
                 $hasRate=true;
@@ -171,6 +180,7 @@ class FarmerDetailController extends Controller
                 $farmer->cc = $farmer->report->cc;
                 $farmer->tc = $farmer->report->tc;                        
                 $farmer->protsahan_amount=$farmer->report->protsahan_amount;
+                $farmer->transport_amount=$farmer->report->transport_amount;
 
             }
         }
@@ -196,8 +206,12 @@ class FarmerDetailController extends Controller
             if ($farmer->usecc == 1 && $farmer->total > 0) {
                 $farmer->cc = truncate_decimals($center->cc * $farmer->milkamount, 2);
             }
+
             if ($farmer->use_protsahan == 1 && $farmer->total > 0) {
                 $farmer->protsahan_amount = truncate_decimals($farmer->protsahan * $farmer->milkamount, 2);
+            }
+            if ($farmer->use_transport == 1 && $farmer->total > 0) {
+                $farmer->transport_amount = truncate_decimals($farmer->transport * $farmer->milkamount, 2);
             }
         }else{
             $farmer->total = truncate_decimals(($farmer->milkrate * $farmer->milkamount), 2);
@@ -207,7 +221,7 @@ class FarmerDetailController extends Controller
 
         $farmer->fpaid = ledgerSum($farmer->id, '106', $range) + ledgerSum($farmer->id, '107', $range);
 
-        $farmer->grandtotal = (int)($farmer->total + $farmer->tc + $farmer->cc+ $farmer->protsahan_amount);
+        $farmer->grandtotal = (int)($farmer->total + $farmer->tc + $farmer->cc+ $farmer->protsahan_amount+$farmer->transport_amount);
         $farmer->bonus = 0;
 
         if (env('hasextra', 0) == 1) {
@@ -241,6 +255,13 @@ class FarmerDetailController extends Controller
         // array_push($arr,(object)[
         //     'title'=>'Previous Balance	'
         // ]);
+
+        // if($ledgers->where('identifire',108)->count()==0 && env('farmer_detail_milk_ledger',0)==1){
+        //     $newLedger=new Ledger();
+            
+        //     $ledgers->push($newLedger);
+        // }
+        $milkloaded=$ledgers->where('identifire',108)->count()>0;
         foreach ($ledgers as $key => $l) {
             if ($l->type == 1) {
                 $base -= $l->amount;
@@ -277,11 +298,14 @@ class FarmerDetailController extends Controller
             $farmer->nettotal = $balance;
         }
 
+        
+
         // $farmer->ledger = Ledger::where('user_id', $farmer->id)->where('date', '>=', $range[1])->where('date', '<=', $range[2])->orderBy('id', 'asc')->get();
-        // dd($milk_rate);
+        // dd($farmer);
         // dd(compact('snfFats','milkData','data','center','farmer1'));
+    
         $closingDate = NepaliDate::getDateSessionLast($request->year, $request->month, $request->session);
-        return view('admin.farmer.passbook.data',compact('farmer','closingDate','prev','closing','center'));
+        return view('admin.farmer.passbook.data',compact('farmer','closingDate','prev','closing','center','milkloaded'));
         // dd($farmer,$closingDate);
     }
 
@@ -293,7 +317,7 @@ class FarmerDetailController extends Controller
             if($request->payment_amount>0){
 
                 $payment=new MilkPayment();
-                $payment->session=$request->session;
+                $payment->session=$request->session??1;
                 $payment->year=$request->year;
                 $payment->month=$request->month;
                 $payment->center_id=$request->center_id;
@@ -350,10 +374,11 @@ class FarmerDetailController extends Controller
             $farmerreport->tc = $request->tc ?? 0;
             $farmerreport->cc = $request->cc ?? 0;
             $farmerreport->protsahan_amount=$request->protsahan_amount??0;
+            $farmerreport->transport_amount=$request->transport_amount??0;
             $farmerreport->grandtotal = $request->grandtotal ?? $request->total;
             $farmerreport->year = $request->year;
             $farmerreport->month = $request->month;
-            $farmerreport->session = $request->session;
+            $farmerreport->session = $request->session??1;
             $farmerreport->fpaid = $request->fpaid;
             $farmerreport->center_id = $request->center_id;
             $farmerreport->has_passbook = !($request->filled('no_passbook'));
@@ -406,6 +431,8 @@ class FarmerDetailController extends Controller
             $farmerreport->session = $request->session;
             $farmerreport->center_id = $request->center_id;
             $farmerreport->has_passbook = 0;
+            $farmerreport->protsahan_amount=$request->protsahan_amount??0;
+            $farmerreport->transport=$request->transport??0;
             $farmerreport->save();
         }
 
@@ -419,8 +446,10 @@ class FarmerDetailController extends Controller
             $year = $request->year;
             $month = $request->month;
             $session = $request->session;
-            $usetc = (env('usetc', 0) == 1) && ($center->tc > 0);
-            $usecc = (env('usecc', 0) == 1) && ($center->cc > 0);
+            $usetc = (env('usetc', 0) == 1) && ($center->show_ts);
+            $usecc = (env('usecc', 0) == 1) && ($center->show_cc);
+            $useprotsahan = (env('useprotsahan', 0) == 1) && ($center->use_protsahan);
+
             $user_ids=DB::table('users')->join('farmers','farmers.user_id','=','users.id')->where('farmers.center_id',$center->id)->orderBy('users.id')->pluck('users.id')->toArray();
             $reports_id= DB::table('farmer_reports')->where(['year' => $year, 'month' => $month, 'session' => $session])->whereIn('user_id',$user_ids)->orderBy('user_id')->pluck('user_id')->toArray();
             $remain=array_diff($user_ids,$reports_id);
@@ -471,12 +500,23 @@ class FarmerDetailController extends Controller
 
                 $farmer->tc = 0;
                 $farmer->cc = 0;
+                $farmer->protsahan_amount = 0;
+                $farmer->transport = 0;
 
-                if ($farmer->usetc == 1 && $farmer->total > 0) {
+                if ($farmer->usetc == 1  && $farmer->total > 0) {
                     $farmer->tc = truncate_decimals((($center->tc * ($farmer->snf + $farmer->fat) / 100) * $farmer->milk), 2);
+                }
+                if($farmer->use_ts_amount==1 && $farmer->total > 0){
+                    $farmer->tc = truncate_decimals((($farmer->ts_amount) * $farmer->milk), 2);
                 }
                 if ($farmer->usecc == 1 && $farmer->total > 0) {
                     $farmer->cc = truncate_decimals($center->cc * $farmer->milk, 2);
+                }
+                if ($farmer->use_protsahan == 1 && $farmer->total > 0) {
+                    $farmer->protsahan_amount = truncate_decimals($farmer->protsahan * $farmer->milk, 2);
+                }
+                if ($farmer->use_transport == 1 && $farmer->total > 0) {
+                    $farmer->tranport = truncate_decimals($farmer->transport * $farmer->milk, 2);
                 }
                 $farmer->bonus = 0;
                 if (env('hasextra', 0) == 1) {

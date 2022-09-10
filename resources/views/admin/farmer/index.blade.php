@@ -81,6 +81,10 @@
             $('#euse_protsahan')[0].checked=farmer.use_protsahan==1;
             $('#eprotsahan').val(farmer.protsahan).change();
         @endif
+        @if(env('usetransportamount',0)==1)
+            $('#euse_transport')[0].checked=farmer.use_transport==1;
+            $('#etransport').val(farmer.transport).change();
+        @endif
 
         $('#euserate')[0].checked=farmer.userate==1;
         $('#erate').val(farmer.rate).change();

@@ -10,33 +10,55 @@ use Illuminate\Support\Facades\DB;
 
 class BankController extends Controller
 {
-    public function index(Account $account){
+    public function index(Account $account)
+    {
 
-        return view('admin.bank.index',['banks'=>DB::table('banks')->where('account_id',$account->id)->get(),'account'=>$account]);
+        return view('admin.bank.index', ['banks' => DB::table('banks')->where('account_id', $account->id)->get(), 'account' => $account]);
     }
-    public function add(Request $request){
-        $bank=new Bank();
-        $bank->name=$request->name;
-        $bank->address=$request->address;
-        $bank->phone=$request->phone;
-        $bank->accno=$request->accno;
-        $bank->balance=$request->balance;
-        $bank->account_id=$request->account_id;
+    public function add(Request $request)
+    {
+
+        $bank = new Bank();
+        $bank->name = $request->name;
+        $bank->address = $request->address;
+        $bank->phone = $request->phone;
+        $bank->accno = $request->accno;
+        // $bank->balance=$request->balance;
+        // $bank->account_id=$request->account_id;
         $bank->save();
-        return view('admin.bank.single',compact('bank'));
+
+        $parent = Account::where('id', $request->account_id)->first();
+        $fy = DB::table('fiscal_years')->where('id', $parent->fiscal_year_id)->first();
+        $identifire = $parent->identifire . "." . $bank->id;
+        $account = new Account();
+        $account->identifire = $identifire;
+        $account->parent_id = $parent->id;
+        $account->name = $request->name;
+        $account->type = $parent->type;
+        // $account->amount = $request->amount;
+        $account->fiscal_year_id = $fy->id;
+        $account->save();
+
+        $bank->account_id=$account->id;
+        $bank->save();
+
+
+        return view('admin.bank.single', compact('bank'));
     }
-    public function update(Request $request){
-        $bank= Bank::find($request->id);
-        $bank->name=$request->name;
-        $bank->address=$request->address;
-        $bank->phone=$request->phone;
-        $bank->accno=$request->accno;
-        $bank->balance=$request->balance;
+    public function update(Request $request)
+    {
+        $bank = Bank::find($request->id);
+        $bank->name = $request->name;
+        $bank->address = $request->address;
+        $bank->phone = $request->phone;
+        $bank->accno = $request->accno;
+        // $bank->balance=$request->balance;
         $bank->save();
         return redirect()->back();
     }
-    public function delete(Request $request){
-        $bank= Bank::find($request->id);
+    public function delete(Request $request)
+    {
+        $bank = Bank::find($request->id);
         $bank->delete();
         return response('ok');
     }

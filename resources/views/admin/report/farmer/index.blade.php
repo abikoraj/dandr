@@ -33,13 +33,15 @@
         <select name="month" id="month" class="form-control show-tick ms select2">
         </select>
     </div>
-    <div class="col-md-3">
-        <label for="date">Session</label>
-        <select name="session" id="session" class="form-control show-tick ms select2">
-            <option value="1">1</option>
-            <option value="2">2</option>
-        </select>
-    </div>
+    @if (env('session_type',1)==1)    
+        <div class="col-md-3">
+            <label for="date">Session</label>
+            <select name="session" id="session" class="form-control show-tick ms select2">
+                <option value="1">1</option>
+                <option value="2">2</option>
+            </select>
+        </div>
+    @endif
     <div class="col-md-3">
         <div class="form-group">
             <label for="date">Collection Center</label>

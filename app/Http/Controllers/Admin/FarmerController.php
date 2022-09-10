@@ -84,7 +84,7 @@ class FarmerController extends Controller
     {
         $farmers = User::join('farmers', 'farmers.user_id', '=', 'users.id')
         ->where('farmers.center_id', $request->center)->
-        select('users.id', 'users.name', 'users.phone', 'users.address', 'farmers.center_id', 'farmers.usecc', 'farmers.usetc', 'farmers.userate', 'farmers.rate', 'farmers.no','farmers.ts_amount','farmers.use_ts_amount','farmers.protsahan','farmers.use_protsahan')
+        select('users.id', 'users.name', 'users.phone', 'users.address', 'farmers.center_id', 'farmers.usecc', 'farmers.usetc', 'farmers.userate', 'farmers.rate', 'farmers.no','farmers.ts_amount','farmers.use_ts_amount','farmers.protsahan','farmers.use_protsahan','farmers.transport','farmers.use_transport')
         ->orderByRaw('abs(farmers.no) asc')->get();
         return view('admin.farmer.list', ['farmers' => $farmers]);
     }
@@ -379,6 +379,8 @@ class FarmerController extends Controller
         $farmer->use_ts_amount = $request->use_ts_amount ?? 0;
         $farmer->use_protsahan = $request->use_protsahan??0;
         $farmer->protsahan = $request->protsahan??0;
+        $farmer->use_transport = $request->use_transport??0;
+        $farmer->transport = $request->transport??0;
         $farmer->no = $max;
         $farmer->save();
 
@@ -392,6 +394,8 @@ class FarmerController extends Controller
         $user->center_id = $farmer->center_id;
         $user->use_protsahan = $farmer->use_protsahan;
         $user->protsahan = $farmer->protsahan;
+        $user->use_transport = $farmer->use_transport;
+        $user->transport = $farmer->transport;
         return view('admin.farmer.single', compact('user'));
     }
 
@@ -417,6 +421,8 @@ class FarmerController extends Controller
         $farmer->use_ts_amount = $request->use_ts_amount ?? 0;
         $farmer->use_protsahan = $request->use_protsahan??0;
         $farmer->protsahan = $request->protsahan??0;
+        $farmer->use_transport = $request->use_transport??0;
+        $farmer->transport = $request->transport??0;
         $farmer->save();
 
         $user->usecc = $farmer->usecc;
@@ -428,7 +434,8 @@ class FarmerController extends Controller
         $user->center_id = $farmer->center_id;
         $user->use_protsahan = $farmer->use_protsahan;
         $user->protsahan = $farmer->protsahan;
-
+        $user->use_transport = $farmer->use_transport;
+        $user->transport = $farmer->transport;
         return view('admin.farmer.single', compact('user'));
     }
 

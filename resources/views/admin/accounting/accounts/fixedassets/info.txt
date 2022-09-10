@@ -1,0 +1,3 @@
+depretiation type
+1= straight line
+2= Declining balance depreciation

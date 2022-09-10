@@ -24,12 +24,28 @@
             </div>
             <div class="col-md-4">
                 <strong>
-                    Manufacturing Date
+                    Status
                 </strong>
-                <div>
-                    {{_nepalidate($process->date)}}
+                <div class="text-{{$process->canceled?'danger':'success'}}">
+                    {{$process->canceled?'Canceled':'Manufactured'}}
                 </div>
             </div>
+            @if (!$process->canceled)
+                <div class="col-md-4">
+                    <strong>
+                        Manage
+                    </strong>
+                    <div>
+                        <form action="{{route('admin.simple.manufacture.cancel')}}" method="post">
+                            <input type="hidden" name="id" value="{{$process->id}}">
+                            @csrf
+                            <button class="btn btn-danger" onclick="return prompt('please enter yes to continue')=='yes';"> 
+                                Cancel Process
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            @endif
         </div>
     </div>
     @php

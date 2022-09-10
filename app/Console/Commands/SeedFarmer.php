@@ -89,7 +89,7 @@ class SeedFarmer extends Command
             $snffat = [];
             $advances = [];
             $manager=new LedgerManage($id);
-            for ($date = 20790301; $date <= 20790315; $date++) {
+            for ($date = 20790301; $date <= 20790332; $date++) {
                 array_push($milkdatas, [
                     'm_amount' => rand(100, 2000) / 100,
                     'e_amount' => rand(100, 2000) / 100,

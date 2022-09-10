@@ -177,10 +177,14 @@ class NepaliDate
     }
     public static function  getDateSessionLast($y, $m, $s)
     {
-        if ($s == 1) {
-            return ($y * 10000) + ($m * 100) + 15;
-        } else {
+        if(env('session_type',1)==1){
 
+            if ($s == 1) {
+                return ($y * 10000) + ($m * 100) + 15;
+            } else {
+    
+            }
+        }else{
             return ($y * 10000) + ($m * 100) + self::$_bs[$y - 2000][$m];
         }
     }
@@ -211,10 +215,16 @@ class NepaliDate
     }
     public static function getDate($year, $month, $session)
     {
-        $data = [];
         $date = $year * 10000 + $month * 100;
-        $data[1] = $date + ($session == 1 ? 1 : 16);
-        $data[2] = $date + ($session == 1 ? 15 : 32);
+        $data = [];
+        if(env('session_type',1)==1){
+
+            $data[1] = $date + ($session == 1 ? 1 : 16);
+            $data[2] = $date + ($session == 1 ? 15 : 32);
+        }else{
+            $data[1] = $date + 1;
+            $data[2] = $date + 32;
+        }
         return $data;
     }
 
@@ -248,6 +258,7 @@ class NepaliDate
             return true;
         } else {
             $s = $this->prevSession();
+
             return \App\Models\FarmerReport::where([
                 ['year', $s[0]],
                 ['month', $s[1]],

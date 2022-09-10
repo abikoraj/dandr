@@ -70,6 +70,8 @@ $prevbalancetotal = 0;
 $paidamounttotal = 0;
 $fpaidtotal = 0;
 $protsahan_amounttotal = 0;
+$transport_amounttotal = 0;
+$extratotal = 0;
 
 $_tctotal = 0;
 $_cctotal = 0;
@@ -86,6 +88,8 @@ $_prevbalancetotal = 0;
 $_paidamounttotal = 0;
 $_fpaidtotal = 0;
 $_protsahan_amounttotal = 0;
+$_transport_amounttotal = 0;
+$_extratotal = 0;
 
 @endphp
 
@@ -102,16 +106,23 @@ $_protsahan_amounttotal = 0;
                 <th>Snf%</th>
                 <th>Fat%</th>
                 <th>Price/l</th>
-                @if ($usecc || $usetc || $useprotsahan)
+                @if ($usecc || $usetc || $useprotsahan || $usetransport)
                     <th>MilK Total</th>
-                    @if ($usetc)
-                        <th>TS</th>
-                    @endif
-                    @if ($usecc)
-                        <th>Cooling Cost</th>
-                    @endif
-                    @if ($useprotsahan)
-                        <th>Protsahan Amount</th>
+                    @if (env('farmer_report_milk_extra', 0) == 1)
+                        @if ($usetc)
+                            <th>TS</th>
+                        @endif
+                        @if ($usecc)
+                            <th>Cooling <br>  Cost</th>
+                        @endif
+                        @if ($useprotsahan)
+                            <th>Protsahan  <br> Amount</th>
+                        @endif
+                        @if ($usetransport)
+                            <th>Transport <br>  Amount</th>
+                        @endif
+                    @else
+                        <th>Extra <br>  Amount</th>
                     @endif
                 @endif
                 <th>Total</th>
@@ -119,14 +130,14 @@ $_protsahan_amounttotal = 0;
                     <th>Bonus({{ round($center->bonus, 2) }}%)</th>
                 @endif
                 <th>Purchase</th>
-                <th>Purchase Paid</th>
+                <th>Purchase <br>  Paid</th>
                 <th>Advance</th>
-                <th>Prev Balance</th>
-                <th>Prev Due</th>
-                <th>Paid Amount</th>
+                <th>Prev <br>  Balance</th>
+                <th>Prev <br>  Due</th>
+                <th>Paid <br>  Amount</th>
 
-                <th>Net Total</th>
-                <th>Due Balance</th>
+                <th>Net <br>  Total</th>
+                <th>Due <br> Balance</th>
                 <th>Signature</th>
 
             </tr>
@@ -170,35 +181,51 @@ $_protsahan_amounttotal = 0;
                         {{-- <input type="hidden" name="rate[{{$t}}]" value="{{($farmer->rate)}}" > --}}
 
                     </td>
-                    @if ($usecc || $usetc || $useprotsahan)
+                    @if ($usecc || $usetc || $useprotsahan || $usetransport)
                         <td>
                             {{ $farmer->total }}
                             @php
                                 $totaltotal += $farmer->total;
                             @endphp
                         </td>
-                        @if ($usetc)
-                            <td>
-                                {{ $farmer->tc }}
-                                @php
-                                    $tctotal += $farmer->tc;
-                                @endphp
-                            </td>
-                        @endif
-                        @if ($usecc)
-                            <td>
-                                {{ $farmer->cc }}
+                        @if (env('farmer_report_milk_extra'))
+                            @if ($usetc)
+                                <td>
+                                    {{ $farmer->tc }}
+                                    @php
+                                        $tctotal += $farmer->tc;
+                                    @endphp
+                                </td>
+                            @endif
+                            @if ($usecc)
+                                <td>
+                                    {{ $farmer->cc }}
 
+                                    @php
+                                        $cctotal += $farmer->cc;
+                                    @endphp
+                                </td>
+                            @endif
+                            @if ($useprotsahan)
+                                <td>{{ $farmer->protsahan_amount }}</td>
                                 @php
-                                    $cctotal += $farmer->cc;
+                                    $protsahan_amounttotal += $farmer->protsahan_amount;
                                 @endphp
+                            @endif
+                            @if ($usetransport)
+                                <td>{{ $farmer->transport_amount }}</td>
+                                @php
+                                    $transport_amounttotal += $farmer->transport_amount;
+                                @endphp
+                            @endif
+                        @else
+                            <td>
+                                @php
+                                    $extra = $farmer->tc + $farmer->cc + $farmer->protsahan_amount + $farmer->transport_amount;
+                                    $extratotal += $extra;
+                                @endphp
+                                {{ $extra }}
                             </td>
-                        @endif
-                        @if ($useprotsahan)
-                            <th>{{ $farmer->protsahan_amount }}</th>
-                            @php
-                                $protsahan_amounttotal += $farmer->protsahan_amount;
-                            @endphp
                         @endif
                     @endif
                     <td>
@@ -290,19 +317,34 @@ $_protsahan_amounttotal = 0;
                 <td>--</td>
                 <td>--</td>
                 <td>--</td>
-                @if ($usecc || $usetc)
+                @if ($usecc || $usetc || $useprotsahan || $usetransport)
                     <td>
                         {{ $totaltotal }}
-
+                      
                     </td>
-                    @if ($usetc)
-                        <th>{{ $tctotal }}</th>
-                    @endif
-                    @if ($usecc)
-                        <th>{{ $cctotal }}</th>
-                    @endif
-                    @if ($useprotsahan)
-                        <th>{{ $protsahan_amounttotal }}</th>
+                    @if (env('farmer_report_milk_extra'))
+                        @if ($usetc)
+                            <td>
+                                {{ $tctotal }}
+
+                            </td>
+                        @endif
+                        @if ($usecc)
+                            <td>
+                                {{ $cctotal }}
+                            </td>
+                        @endif
+                        @if ($useprotsahan)
+                            <td>{{ $protsahan_amounttotal }}</td>
+                        @endif
+                        @if ($usetransport)
+                            <td>{{ $transport_amounttotal }}</td>
+                        @endif
+                    @else
+                        <td>
+
+                            {{ $extratotal }}
+                        </td>
                     @endif
                 @endif
                 <td>{{ $grandtotal }}</td>
@@ -359,6 +401,8 @@ $_protsahan_amounttotal = 0;
         $_paidamounttotal += $paidamounttotal;
         $_fpaidtotal += $fpaidtotal;
         $_protsahan_amounttotal += $protsahan_amounttotal;
+        $_transport_amounttotal += $transport_amounttotal;
+        $_extratotal += $extratotal;
         
         $point = false;
         $tctotal = 0;
@@ -376,6 +420,8 @@ $_protsahan_amounttotal = 0;
         $paidamounttotal = 0;
         $fpaidtotal = 0;
         $protsahan_amounttotal = 0;
+        $transport_amounttotal = 0;
+        $extratotal = 0;
     @endphp
 @endforeach
 
@@ -388,16 +434,23 @@ $_protsahan_amounttotal = 0;
             <th>Snf%</th>
             <th>Fat%</th>
             <th>Price/l</th>
-            @if ($usecc || $usetc || $useprotsahan)
+            @if ($usecc || $usetc || $useprotsahan || $usetransport)
                 <th>MilK Total</th>
-                @if ($usetc)
-                    <th>TS</th>
-                @endif
-                @if ($usecc)
-                    <th>Cooling Cost</th>
-                @endif
-                @if ($useprotsahan)
-                    <th>Protsahan Amount</th>
+                @if (env('farmer_report_milk_extra', 0) == 1)
+                    @if ($usetc)
+                        <th>TS</th>
+                    @endif
+                    @if ($usecc)
+                        <th>Cooling <br> Cost</th>
+                    @endif
+                    @if ($useprotsahan)
+                        <th>Protsahan <br> Amount</th>
+                    @endif
+                    @if ($usetransport)
+                        <th>Transport <br> Amount</th>
+                    @endif
+                @else
+                    <th>Extra <br> Amount</th>
                 @endif
             @endif
             <th>Total</th>
@@ -405,13 +458,13 @@ $_protsahan_amounttotal = 0;
                 <th>Bonus({{ round($center->bonus, 2) }}%)</th>
             @endif
             <th>Purchase</th>
-            <th>Purchase Paid</th>
+            <th>Purchase <br> Paid</th>
             <th>Advance</th>
-            <th>Prev Balance</th>
-            <th>Prev Due</th>
-            <th>Paid Amount</th>
-            <th>Net Total</th>
-            <th>Due Balance</th>
+            <th>Prev <br> Balance</th>
+            <th>Prev <br> Due</th>
+            <th>Paid <br> Amount</th>
+            <th>Net <br> Total</th>
+            <th>Due <br> Balance</th>
 
         </tr>
     </thead>
@@ -422,19 +475,34 @@ $_protsahan_amounttotal = 0;
             <td>--</td>
             <td>--</td>
             <td>--</td>
-            @if ($usecc || $usetc)
+            @if ($usecc || $usetc || $useprotsahan || $usetransport)
                 <td>
                     {{ $_totaltotal }}
-
+                  
                 </td>
-                @if ($usetc)
-                    <th>{{ $_tctotal }}</th>
-                @endif
-                @if ($usecc)
-                    <th>{{ $_cctotal }}</th>
-                @endif
-                @if ($useprotsahan)
-                    <th>{{ $_protsahan_amounttotal }}</th>
+                @if (env('farmer_report_milk_extra'))
+                    @if ($usetc)
+                        <td>
+                            {{ $_tctotal }}
+
+                        </td>
+                    @endif
+                    @if ($usecc)
+                        <td>
+                            {{ $_cctotal }}
+                        </td>
+                    @endif
+                    @if ($useprotsahan)
+                        <td>{{ $_protsahan_amounttotal }}</td>
+                    @endif
+                    @if ($usetransport)
+                        <td>{{ $_transport_amounttotal }}</td>
+                    @endif
+                @else
+                    <td>
+
+                        {{ $_extratotal }}
+                    </td>
                 @endif
             @endif
             <td>{{ $_grandtotal }}</td>

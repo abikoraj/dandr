@@ -47,11 +47,14 @@
                             <th>
                                 Show Protsahan
                             </th>
-                            <th>
-                                Protsahan <br>
-                                Amount
-                            </th>
+                      
                         @endif
+                        @if (env('usetransportamount', 0) == 1)
+                        <th>
+                            Show  <br> Transport <br> Amount
+                        </th>
+                  
+                    @endif
                     @endif
                     <th>Action</th>
                 </tr>
@@ -118,7 +121,7 @@
                                         </div>
                                     </div>
                                     <div class="col-lg-6 {{ env('usetc', 0) == 1 ? '' : 'd-none' }}">
-                                        <label for="name"> <input type="checkbox" name="show_ts" value="1s"> TS
+                                        <label for="name"> <input type="checkbox" name="show_ts" value="1"> TS
                                             Commission (%)</label>
                                         <div class="form-group">
                                             <input type="number" id="tc" name="tc" class="form-control"
@@ -133,14 +136,20 @@
                                                 step="0.001" placeholder="Enter Cooling Cost" value="0" required>
                                         </div>
                                     </div>
-                                    <div class="col-lg-6 {{ env('useprotsahan', 0) == 1 ? '' : 'd-none' }}">
+                                    @if ( env('useprotsahan', 0) == 1)
+                                    <div class="col-lg-6 ">
                                         <label for="name"> <input type="checkbox" name="use_protsahan"
                                                 value="1"> Protsahan Amount</label>
-                                        <div class="form-group">
-                                            <input type="number" id="protsahan" name="protsahan" class="form-control"
-                                                step="0.001" placeholder="Enter Cooling Cost" value="0" required>
-                                        </div>
                                     </div>
+                                        
+                                    @endif
+                                    @if ( env('usetransportamount', 0) == 1)
+                                    <div class="col-lg-6 ">
+                                        <label for="name"> <input type="checkbox" name="use_transport"
+                                                value="1"> Transport Amount</label>
+                                    </div>
+                                        
+                                    @endif
                                 @endif
                             </div>
                     </div>

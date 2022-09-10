@@ -17,7 +17,7 @@ class SimpleManufactureController extends Controller
     {
         if($request->getMethod()=="POST"){
 
-            $processes_query=DB::table('simple_manufacturings');
+            $processes_query=DB::table('simple_manufacturings')->where('canceled',0);
             $processes=rangeSelector($request,$processes_query)->get();
             if($processes->count()>0){
                 $ids="(". implode(",",$processes->pluck('id')->toArray()??[]).")";
@@ -87,5 +87,23 @@ class SimpleManufactureController extends Controller
         ->select('simple_manufacturing_items.*','items.title')->where('simple_manufacturing_items.simple_manufacturing_id',$process->id)->get();
         // dd($items);
         return view('admin.simplemanufacture.detail',compact('process','items'));
+    }
+
+    public function cancel(Request $request){
+        $process=SimpleManufacturing::where('id',$request->id)->first();
+        $items=DB::select('select item_id,center_id,amount,type from simple_manufacturing_items where simple_manufacturing_id=?', [$request->id]);
+        $process->canceled=true;
+        $process->save();
+
+        foreach ($items as $key => $item) {
+            if($item->type==2){
+                maintainStock($item->item_id,$item->amount,$item->center_id,'out');
+
+            }else{
+                maintainStock($item->item_id,$item->amount,$item->center_id,'in');
+            }
+        }
+
+        return redirect()->back();
     }
 }

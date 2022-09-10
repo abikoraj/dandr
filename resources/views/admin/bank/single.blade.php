@@ -27,12 +27,12 @@
                     <input type="text" id="accno" name="accno" class="form-control next" data-next="phone" placeholder="Enter Bank Balance" required value="{{$bank->accno}}">
                 </div>
             </div>
-            <div class="col-lg-12">
+            {{-- <div class="col-lg-12">
                 <label for="balance">Balance</label>
                 <div class="form-group">
                     <input type="number" min="0" value="{{$bank->balance}}"  id="balance" name="balance" class="form-control next" data-next="phone" placeholder="Enter Bank Account No" required>
                 </div>
-            </div>
+            </div> --}}
             <div class="col-md-6">
                 <button class="btn btn-primary w-100">Update</button>
             </div>

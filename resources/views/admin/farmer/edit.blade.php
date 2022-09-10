@@ -78,14 +78,25 @@
                                         @endif
                                         @if (env('useprotsahan',0)==1)
 
-                                        <div class="col-6 ck">
+                                            <div class="col-6 ck">
 
-                                            <input type="checkbox" id="euse_protsahan"  name="use_protsahan" class="mr-2" value="1"> Protsahan Amount
-                                        </div>
-                                        <div class="col-6">
+                                                <input type="checkbox" id="euse_protsahan"  name="use_protsahan" class="mr-2" value="1"> Protsahan Amount
+                                            </div>
+                                            <div class="col-6">
 
-                                            <input type="number" step="0.01" min="0" value="0" id="eprotsahan" name="protsahan">
-                                        </div>
+                                                <input type="number" step="0.01" min="0" value="0" id="eprotsahan" name="protsahan">
+                                            </div>
+                                        @endif
+                                        @if (env('usetransportamount',0)==1)
+                                            
+                                            <div class="col-6 ck">
+
+                                                <input type="checkbox" id="euse_transport"  name="use_transport" class="mr-2" value="1"> Transport Amount
+                                            </div>
+                                            <div class="col-6">
+
+                                                <input type="number" step="0.01" min="0" value="0" id="etransport" name="transport">
+                                            </div>
                                         @endif
                                     </div>
                                 </div>
