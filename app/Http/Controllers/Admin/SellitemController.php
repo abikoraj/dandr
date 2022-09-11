@@ -120,7 +120,7 @@ class SellitemController extends Controller
             }
 
             if($sell_item->paid>0){
-                new PaymentManager($request,$sell_item->id,106);
+                new PaymentManager($request,$sell_item->id,106,);
             }
 
             return view('admin.sellitem.single', compact('sell_item'));
@@ -212,15 +212,10 @@ class SellitemController extends Controller
         $ledger[0] = Ledger::where('identifire', '103')->where('foreign_key', $request->id)->first();
         if ($paid > 0) {
             $ledger[1] = Ledger::where('identifire', '106')->where('foreign_key', $request->id)->first();
+            delACByNOID(106,$request->id);
             PaymentManager::remove($request->id,106);
         }
-        // $ledger[0] = Ledger::where('identifire','106')->where('foreign_key',$request->id);
         LedgerManage::delLedger($ledger);
-        // $manager->addLedger('Cancel sell: '.$title,2,$total,$date,'116',$request->id);
-        // if($paid>0){
-        //     $manager->addLedger('Cancel paid: '.$title,1,$paid,$date,'117',$request->id);
-        // }
-
         return response('Sell Deleted Sucessfully');
     }
 

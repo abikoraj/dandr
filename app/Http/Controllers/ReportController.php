@@ -222,9 +222,13 @@ class ReportController extends Controller
                 if ($farmer->prevTotal > 0) {
                     $farmer->prevdue = $farmer->prevTotal;
                     $farmer->prevbalance = 0;
-                } else {
+                } else if($farmer->prevTotal<0) {
                     $farmer->prevdue = 0;
                     $farmer->prevbalance = (-1) * $farmer->prevTotal;
+                }else{
+                    $farmer->prevdue = 0;
+                    $farmer->prevbalance = 0;
+                    
                 }
 
                 $farmer->balance = 0;
@@ -271,6 +275,7 @@ class ReportController extends Controller
 
             $t2 = time();
             $sessionDate = NepaliDate::getDateSessionLast($year, $month, $session);
+            // dd($sessionDate);
             // dd($t2-$t1,$datas);
             return view('admin.report.farmer.data', compact('newsession', 'usetc', 'usecc', 'datas', 'year', 'month', 'session', 'center', 'sessionDate','useprotsahan','usetransport'));
         } else {

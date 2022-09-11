@@ -22,7 +22,7 @@
 
             </div>
             <div class="col-md-3"><label for="name">Name</label><input type="text" name="name" required minlength="2" class="form-control" id="name"></div>
-            <div class="col-md-3"><label for="amount">Balance</label><input type="number" required min="0" name="amount" class="form-control" id="amount"></div>
+            {{-- <div class="col-md-3"><label for="amount">Balance</label><input type="number" required min="0" name="amount" class="form-control" id="amount"></div> --}}
             <div class="col-md-3 pt-4" >
                 <button class="btn btn-primary">Save Account</button>
             </div>

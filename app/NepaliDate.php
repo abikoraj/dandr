@@ -182,6 +182,7 @@ class NepaliDate
             if ($s == 1) {
                 return ($y * 10000) + ($m * 100) + 15;
             } else {
+                return ($y * 10000) + ($m * 100) + self::$_bs[$y - 2000][$m];
     
             }
         }else{

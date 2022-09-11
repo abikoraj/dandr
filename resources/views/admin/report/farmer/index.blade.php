@@ -125,6 +125,7 @@
             // edit.nepaliDatePicker();
         })
         .catch(function(error){
+            console.log(error);
             alert('some error occured');
         });
     }

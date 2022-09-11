@@ -497,3 +497,6 @@ function makeFive($num)
 function scriptSafe($data){
     return str_replace('script','div',$data);
 }
+
+
+include_once 'custom_acounting.php';

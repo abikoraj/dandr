@@ -54,11 +54,16 @@ class BankController extends Controller
         $bank->accno = $request->accno;
         // $bank->balance=$request->balance;
         $bank->save();
+
+        $account=Account::where('id',$bank->account_id)->first();
+        $account->name=$bank->name;
+        $account->save();
         return redirect()->back();
     }
     public function delete(Request $request)
     {
         $bank = Bank::find($request->id);
+        DB::table('acounts')->where('id',$bank->id)->delete();
         $bank->delete();
         return response('ok');
     }

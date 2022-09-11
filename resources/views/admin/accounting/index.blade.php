@@ -1,7 +1,7 @@
 @extends('admin.layouts.app')
 @section('content')
     <div class="row">
-        <div class="col-md-2 section href" data-target="{{route('admin.accounting.stock.index')}}">
+        {{-- <div class="col-md-2 section href" data-target="{{route('admin.accounting.stock.index')}}">
             <span class="icon">
                 <i class="zmdi zmdi-accounts"></i>
             </span>
@@ -9,7 +9,7 @@
             <span class="text">
                Stocks
             </span>
-        </div>
+        </div> --}}
         <div class="col-md-2 section href" data-target="{{route('admin.accounting.accounts.index')}}">
             <span class="icon">
                 <i class="zmdi zmdi-accounts"></i>
@@ -35,6 +35,15 @@
             <span class="divider"></span>
             <span class="text">
                Extra incomes
+            </span>
+        </div>
+        <div class="col-md-2 section href" data-target="{{route('admin.accounting.opening.index')}}">
+            <span class="icon">
+                <i class="zmdi zmdi-accounts"></i>
+            </span>
+            <span class="divider"></span>
+            <span class="text">
+               Opening
             </span>
         </div>
     </div>

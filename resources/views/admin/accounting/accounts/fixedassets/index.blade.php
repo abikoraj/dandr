@@ -1,4 +1,4 @@
-@extends('admin.layouts.app')
+ @extends('admin.layouts.app')
 @section('title')
     Fixed Assets ( {{$account->fiscalyear->name}} ) / Accounts
 @endsection
@@ -15,7 +15,7 @@
         <form action="{{route('admin.accounting.accounts.fixed.assets.add')}}" method="post" id="addFixedAssetForm">
            @csrf
             <div class="row">
-                <div class="col-md-2">
+                <div class="col-md-4 mb-2">
                     <label for="fixed_asset_category_id">Category</label>
                     <select name="fixed_asset_category_id" id="fixed_asset_category_id" class="form-control ms">
                         @foreach ($cats as $cat)
@@ -23,27 +23,47 @@
                         @endforeach
                     </select>
                 </div>
-                <div class="col-md-4">
+                <div class="col-md-8 mb-2">
                     <label for="name">Name</label>
                     <input type="text" name="name" id="name" class="form-control" required>
                 </div>
-                <div class="col-md-2">
-                    <label for="depreciation">Depreciation %</label>
-                    <input type="number" step="0.01" min="0" max="100" name="depreciation" id="depreciation" class="form-control" required>
+                <div class="col-md-3 mb-2">
+                    <label for="depreciation_type">Depreciation Type</label>
+                    <select name="depreciation_type" id="depreciation_type" class="form-control ms">
+                        <option value="0">No Depreciation</option>
+                        <option value="1">Straight Line Method</option>
+                        <option value="2">Declining Balance Method</option>
+                    </select>
                 </div>
-                <div class="col-md-2">
+                <div class="col-md-3 mb-2">
+                    <label for="depreciation">Depreciation %</label>
+                    <input type="number" step="0.01" min="0" max="100" name="depreciation" id="depreciation" class="form-control" >
+                </div>
+                <div class="col-md-3 mb-2">
+                    <label for="appreciation_type">Appreciation Type</label>
+                    <select name="appreciation_type" id="appreciation_type" class="form-control ms">
+                        <option value="0">No Appreciation</option>
+                        <option value="1">Straight Line Method</option>
+                    </select>
+                </div>
+                <div class="col-md-3 mb-2">
+                    <label for="appreciation">Appreciation %</label>
+                    <input type="number" step="0.01" min="0" max="100" name="appreciation" id="appreciation" class="form-control" >
+                </div>
+              
+                <div class="col-md-3 mb-2">
                     <label for="startdate">Depreciation Start </label>
                     <input type="text" id="startdate" name="startdate" value="{{_nepalidate($account->fiscalYear->startdate)}}" class="form-control calender" required>
                 </div>
-                <div class="col-md-2">
+                <div class="col-md-3 mb-2">
                     <label for="amount">Current Value </label>
                     <input type="number" step="0.01" min="0"  name="amount" id="amount" class="form-control" required>
                 </div>
-                <div class="col-md-2">
+                <div class="col-md-3 mb-2">
                     <label for="full_amount">Purchase Value </label>
                     <input type="number" step="0.01" min="0"  name="full_amount" id="full_amount" class="form-control" required>
                 </div>
-                <div class="col-md-2">
+                <div class="col-md-3 mb-2">
                     <label for="salvage_amount">Scrap Value </label>
                     <input type="number" step="0.01" min="0"  name="salvage_amount" id="salvage_amount" class="form-control" required>
                 </div>

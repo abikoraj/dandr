@@ -157,7 +157,7 @@ class PaymentManager
     {
     }
 
-    function __construct($request, $id, $identifire,$title='',$date=null)
+    function __construct($request, $id, $identifire,$date=null)
     {
         if($date==null){
             $date=str_replace('-','',$request->date);
@@ -177,10 +177,9 @@ class PaymentManager
 
                     if ($method == 1) {
                         if ($type == 1) {
-                            $this->receiveCash($amount,$date,$identifire,$id,$title);
-
+                            $this->receiveCash($amount);
                         } else if ($type == 2) {
-                            $this->payCash($amount,$date,$identifire,$id,$title);
+                            $this->payCash($amount);
                         }
                         $data = [$amount];
                     } else if ($method == 2) {
@@ -196,7 +195,7 @@ class PaymentManager
                         $data = ['c' => 0, 'b' => []];
                         if ($cashAmount > 0) {
                             if ($type == 1) {
-                                $this->receiveCash($cashAmount,$date,$identifire,$id,$title);
+                                $this->receiveCash($cashAmount);
                             } else if ($type == 2) {
                                 $this->payCash($cashAmount);
                             }
@@ -253,14 +252,18 @@ class PaymentManager
         return $this->cash != null;
     }
 
-    public function receiveCash($amount,$date,$identifire,$id,$title='')
+    public function receiveCash($amount)
     {
-        pushCASH(2,$amount,$identifire,$date,$title,$id);
+        if ($this->loadCash()) {
+            
+            // DB::update("update accounts set amount=amount+{$amount} where id={$this->cash->id}");
+        }
     }
-    public function payCash($amount,$date,$identifire,$id,$title='')
+    public function payCash($amount)
     {
-        pushCASH(1,$amount,$identifire,$date,$title,$id);
-
+        if ($this->loadCash()) {
+            DB::update("update accounts set amount=amount-{$amount} where id={$this->cash->id}");
+        }
     }
 
     function receiveBank($id, $amount)

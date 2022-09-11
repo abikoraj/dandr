@@ -301,7 +301,7 @@ class AccountingController extends Controller
             $account->parent_id = $parent_id == 0 ? null : $parent_id;
             $account->name = $request->name;
             $account->type = $type;
-            $account->amount = $request->amount;
+            // $account->amount = $request->amount;
             $account->fiscal_year_id = $fy->id;
             $account->save();
 
@@ -330,16 +330,19 @@ class AccountingController extends Controller
                 if (!in_array($account->identifire,$nameEdit) ){
                     $account->name=$request->name;
                 }
-                if (!in_array($account->identifire,$calculated) ){
-                    $account->amount=$request->amount;
-                }
+                // if (!in_array($account->identifire,$calculated) ){
+                //     $account->amount=$request->amount;
+                // }
                 $account->save();
-                if($account->parent_id!=null){
-                    $this->manageAccounts($account);
-                }
+                // if($account->parent_id!=null){
+                //     $this->manageAccounts($account);
+                // }
                 return response()->json(['status'=>true]);
             }
         }else{
+            if (in_array($account->identifire,$nameEdit) && in_array($account->identifire,$calculated)){
+                return "Cannot Update Account.";
+            }
             return view('admin.accounting.accounts.edit',compact('account','calculated','nameEdit'));
         }
     }

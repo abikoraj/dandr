@@ -67,4 +67,9 @@ class AccountManager
         "3"=>"Loans",
 
     ];
+
+    const IRD=[
+        "1"=>'VAT',
+        "2"=>'TDS'
+    ];
 }

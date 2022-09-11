@@ -10,13 +10,26 @@ class AccountOpeningController extends Controller
 {
     public function index(Request $request)
     {
-        if($request->getMethod()=="POST"){
+        $calculated=['1.2','1.4'];
 
-        }else{
-            $fy=DB::table('fiscal_years')->where('name',env('fiscal_year'))->first();
-            $accounts=DB::table('accounts')->where('fiscal_year_id',$fy->id)->get(['name','id']);
-            $openings=DB::table('account_ledgers')->where('fiscal_year_id',$fy->id)->where('identifier','901')->get();
-            return view('admin.accounting.opening.index',compact('accounts','openings','fy'));
+        if ($request->getMethod() == "POST") {
+            dd($request->all());
+        } else {
+            $fy = DB::table('fiscal_years')->where('name', env('fiscal_year'))->first();
+            $openings = DB::table('account_ledgers')->where('fiscal_year_id', $fy->id)->where('identifier', '901')->get();
+            $ids = $openings->pluck('account_id');
+            $accounts = DB::table('accounts')
+                ->where('fiscal_year_id', $fy->id)
+                ->whereIn('type', [1, 2])
+                ->whereNotIn('identifire',$calculated)
+                ->get(['name', 'id','parent_id','identifire']);
+            $parent_ids=$accounts->whereNotNull('parent_id')->pluck('parent_id');
+            // dd($parent_ids);
+            if($parent_ids->count()>0){
+                $accounts=$accounts->whereNotIn('id',$parent_ids);
+                
+            }
+            return view('admin.accounting.opening.index', compact('accounts', 'openings', 'fy'));
         }
     }
 }

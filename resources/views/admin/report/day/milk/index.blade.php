@@ -20,11 +20,15 @@
 @section('js')
     <script>
         function loadData() { 
+            showProgress('Loading Data');
             axios.post("{{route('admin.report.day.milk')}}",{date:$('#date').val()})
             .then((res)=>{
+                hideProgress();
                 $('#allData').html(res.data);
             })
             .catch((err)=>{
+                hideProgress();
+
                 if(err.response){
                     showNotification('bg-danger',err.response.data.message);
 
@@ -32,6 +36,8 @@
                     showNotification('bg-danger','Some error occured, please try again');
                 }
             })
+
+
          }
     </script>
 @endsection

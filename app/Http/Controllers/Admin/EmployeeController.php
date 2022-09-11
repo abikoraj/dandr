@@ -356,6 +356,13 @@ class EmployeeController extends Controller
                 $ledger->addLedger('Salary Paid for ' . $request->year . "-" . ($request->month < 10 ? "0" . $request->month : $request->month) . $taxtitle, 2, $request->pay, $date, '124', $salaryPay->id);
             }
 
+            if(env('use_employeetax')){
+                pushTDS($sal[0],124,$date,
+                    "TDS for Salary {$ledger->user->name}" . $request->year . "-" . ($request->month < 10 ? "0" . $request->month : $request->month),
+                    $salaryPay->id
+                );
+            }
+
             $sessionClose = new EmployeeSession();
             $sessionClose->user_id = $employee->user_id;
             $sessionClose->month = $request->month;

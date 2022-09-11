@@ -18,7 +18,7 @@
                     <input type="text" name="name" id="ename" class="form-control" required value="{{$account->name}}">
                     @endif
                 </div>
-                <div class="col-md-4">
+                {{-- <div class="col-md-4">
                     <label for="amount">Amount</label>
                     @if (in_array($account->identifire,$calculated))
                     <div class="form-control">
@@ -27,7 +27,7 @@
                     @else
                     <input type="number" min="0" name="amount" id="eamount" class="form-control" required value="{{$account->amount}}">
                     @endif
-                </div>
+                </div> --}}
                 <div class="col-md-4 pt-4">
                     <button class="btn btn-primary">
                         Update Account

@@ -90,6 +90,8 @@ Route::get('/pass', function () {
     // $arr=str_split($data,3);
     // echo implode('/',$arr);
     // dd(currentStock()->sum);
+    // echo lorem();
+    dd(getVATAC(),getTDSAC());
 });
 
 
@@ -419,7 +421,6 @@ Route::name('admin.')->group(function () {
             Route::post('account-closing', [EmployeeController::class, 'closeSession'])->name('account.close');
                //XXX Employee Advance Management
             Route::middleware(['permmission:05.08'])->group(function () {
-
                 Route::get('ret', [EmployeeController::class,'ret'])->name('ret');
                 Route::post('addret', [EmployeeController::class,'addRet'])->name('ret.add');
                 Route::post('getret', [EmployeeController::class,'getRet'])->name('ret.list');
@@ -827,6 +828,7 @@ Route::name('admin.')->group(function () {
 
         Route::name('report.day.')->prefix('report/day')->group(function(){
             Route::match(['get', 'post'], 'milk', [DayReportController::class,'milk'])->name('milk');
+            Route::match(['get', 'post'], '', [DayReportController::class,'index'])->name('index');
         });
     });
 });

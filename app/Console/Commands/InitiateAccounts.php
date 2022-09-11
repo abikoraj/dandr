@@ -72,6 +72,19 @@ class InitiateAccounts extends Command
                 echo $libility." Account Created Sucessfully for Fiscal Year ". $fy->name . PHP_EOL ;
             }
         }
+        foreach (AccountManager::IRD  as $key => $ird) {
+            if(Account::where('fiscal_year_id',$fy->id)->where('identifire',"3.".$key)->count()>0){
+                echo $libility." Account Already Exists". PHP_EOL ;
+            }else{
+                $account=new Account();
+                $account->name=$ird;
+                $account->fiscal_year_id=$fy->id;
+                $account->type=3;
+                $account->identifire="3.".$key;
+                $account->save();
+                echo $ird." Account Created Sucessfully for Fiscal Year ". $fy->name . PHP_EOL ;
+            }
+        }
 
         return 0;
     }

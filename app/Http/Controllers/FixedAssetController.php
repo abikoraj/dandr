@@ -31,6 +31,9 @@ class FixedAssetController extends Controller
         $fixedAsset=new FixedAsset();
         $fixedAsset->name=$request->name;
         $fixedAsset->depreciation=$request->depreciation;
+        $fixedAsset->depreciation_type=$request->depreciation_type;
+        $fixedAsset->appreciation=$request->appreciation;
+        $fixedAsset->appreciation_type=$request->appreciation_type;
         $fixedAsset->startdate=$startdate;
         $fixedAsset->amount=$request->amount;
         $fixedAsset->full_amount=$request->full_amount;
@@ -63,11 +66,13 @@ class FixedAssetController extends Controller
             $fixedAsset->name=$request->name;
             $fixedAsset->depreciation=$request->depreciation;
             $fixedAsset->startdate=$startdate;
-            $fixedAsset->amount=$request->amount;
+            $fixedAsset->amount=$request->amount??0;
             $fixedAsset->full_amount=$request->full_amount;
             $fixedAsset->fixed_asset_category_id=$request->fixed_asset_category_id;
             $fixedAsset->salvage_amount=$request->salvage_amount??0;
-
+            $fixedAsset->depreciation_type=$request->depreciation_type;
+            $fixedAsset->appreciation=$request->appreciation??0;
+            $fixedAsset->appreciation_type=$request->appreciation_type;
             $fixedAsset->save();
             $fixedAsset->category=assetCategory($fixedAsset->fixed_asset_category_id);
             return view('admin.accounting.accounts.fixedassets.single',compact('fixedAsset'));
@@ -89,7 +94,7 @@ class FixedAssetController extends Controller
     {
         $cat=new FixedAssetCategory();
         $cat->name=$request->name;
-        $cat->depreciation=$request->depreciation;
+        $cat->depreciation=$request->depreciation??0;
         $cat->save();
         return redirect()->back();
     }
@@ -97,7 +102,7 @@ class FixedAssetController extends Controller
     {
         $cat=FixedAssetCategory::where('id',$request->id)->first();
         $cat->name=$request->name;
-        $cat->depreciation=$request->depreciation;
+        $cat->depreciation=$request->depreciation??0;
         $cat->save();
         return redirect()->back();
     }
