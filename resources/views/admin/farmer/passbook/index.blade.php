@@ -74,6 +74,9 @@
 
         function closeSession(e, ele) {
             e.preventDefault();
+            if(!xpayVerifyData()){
+                return;
+            }
             showProgress("Saving Payment");
             axios.post("{{ route('admin.farmer.passbook.close') }}", new FormData(ele))
                 .then((res) => {

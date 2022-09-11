@@ -139,6 +139,7 @@
 <script src="{{ asset('backend/plugins/select2/select2.min.js') }}"></script>
 <script src="{{ asset('backend/js/pages/forms/advanced-form-elements.js') }}"></script>
 <script>
+
     // $( "#x" ).prop( "disabled", true );
     initTableSearch('sid', 'farmerData', ['name']);
     @if(!$large)
@@ -161,6 +162,7 @@
         $('#editModal').modal('show');
     }
 
+    var lock=false;
     function saveData() {
         if ($('#nepali-datepicker').val() == '' || $('#u_id').val() == '' || $('#item_id').val() == '' || $('#total').val() == 0) {
             alert('Please enter data in empty field !');
@@ -170,6 +172,10 @@
             if(!xpayVerifyData()){
                 return;
             }
+            if(lock){
+                return ;
+            }
+            lock=true;
             var bodyFormData = new FormData(document.getElementById('sellitemData'));
             axios({
                     method: 'post',
@@ -192,11 +198,14 @@
                     $('#due').val(0);
                     $('#u_id').focus();
                     resetXPayment();
+                    lock=false;
+
                 })
                 .catch(function(error) {
                     showNotification('bg-danger', error.response.data);
                     //handle error
                     console.log(error.response);
+                    lock=false;
 
                 });
         }

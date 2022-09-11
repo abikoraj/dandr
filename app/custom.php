@@ -18,12 +18,21 @@ define('supplier', 4);
 define('customer', 5);
 
 $xxx_per = "data";
+
+class fy
+{
+    public static $value;
+}
+
 function lCanDelete($identifire)
 {
     return !in_array($identifire, [106]);
 }
 function _nepalidate($date)
 {
+    if($date==null){
+        return '--';
+    }
     $year = (int)($date / 10000);
     $date = $date % 10000;
     $month = (int)($date / 100);
@@ -231,11 +240,11 @@ function maintainStockCenter($item_id, $qty, $center_id, $dir = 'in')
 }
 function maintainStock($item_id, $qty, $center_id = null, $dir = 'in')
 {
-  
 
 
-    $item = Item::where('id', $item_id)->select('id', 'stock', 'wholesale', 'sell_price','trackstock')->first();
-    if($item->trackstock==0){
+
+    $item = Item::where('id', $item_id)->select('id', 'stock', 'wholesale', 'sell_price', 'trackstock')->first();
+    if ($item->trackstock == 0) {
         return;
     }
     if ($dir == 'in') {
@@ -247,7 +256,7 @@ function maintainStock($item_id, $qty, $center_id = null, $dir = 'in')
 
     if (env('multi_stock', false)) {
 
-        
+
         if ($center_id == null) {
             $center = Center::where('id', env('maincenter'))->first();
             if ($center == null) {
@@ -335,18 +344,16 @@ function renderEmpList()
     return $html;
 }
 
-function renderCenters($center_id=null,$blank = false)
+function renderCenters($center_id = null, $blank = false)
 {
     $centers = DB::select('select id,name from centers');
     $html = $blank ? "<option></option>" : "";
 
     foreach ($centers as $key => $center) {
-        if($center_id==$center->id){
+        if ($center_id == $center->id) {
             $html .= "<option selected value='{$center->id}'>{$center->name}</option>";
-
-        }else{
+        } else {
             $html .= "<option value='{$center->id}'>{$center->name}</option>";
-
         }
     }
     return $html;
@@ -355,18 +362,20 @@ function renderCenters($center_id=null,$blank = false)
 
 function getFiscalYear()
 {
-    $name = env('fiscal_year', null);
-    // dd($name);
-    if ($name != null) {
-        $fy = DB::table('fiscal_years')->where('name', $name)->first();
-        // dd($fy);
-    } else {
-        $nepaliDateHelper = new NepaliDateHelper();
-        $date = Carbon::now();
-        $currentdate = $nepaliDateHelper->eng_to_nepInt($date->year, $date->month, $date->day);
-        $fy = DB::table('fiscal_years')->where('startdate', '>=', $currentdate)->where('enddate', '<=', $currentdate)->first();
+    if (fy::$value == null) {
+        $name = env('fiscal_year', null);
+        // dd($name);
+        if ($name != null) {
+            fy::$value = DB::table('fiscal_years')->where('name', $name)->first();
+            // dd($fy);
+        } else {
+            $nepaliDateHelper = new NepaliDateHelper();
+            $date = Carbon::now();
+            $currentdate = $nepaliDateHelper->eng_to_nepInt($date->year, $date->month, $date->day);
+            fy::$value = DB::table('fiscal_years')->where('startdate', '>=', $currentdate)->where('enddate', '<=', $currentdate)->first();
+        }
     }
-    return $fy;
+    return fy::$value;
 }
 
 function subAccounts($id)
@@ -389,7 +398,10 @@ function getBanks()
     try {
         //code...
         $fy = getFiscalYear();
-        $banks = DB::select("select name,id from banks where account_id = (select id from accounts where identifire='1.2' and fiscal_year_id={$fy->id} limit 1) ");
+        $banks = DB::select("select name,id,account_id from banks 
+            where account_id in (select id from accounts 
+            where parent_id= (select id from accounts where identifire='1.2' and fiscal_year_id={$fy->id} limit 1)
+        )");
         // dd($banks);
         return $banks;
     } catch (\Throwable $th) {
@@ -480,7 +492,7 @@ function nepaliMonthName(int $i)
 function makeFive($num)
 {
     try {
-        
+
         $mod = $num % 5;
         // return $mod;
         if ($mod == 0) {
@@ -494,9 +506,20 @@ function makeFive($num)
 }
 
 
-function scriptSafe($data){
-    return str_replace('script','div',$data);
+function scriptSafe($data)
+{
+    return str_replace('script', 'div', $data);
 }
 
+function getNepaliDate($di)
+{
+    if (NepaliDate::isWrongDate($di)) {
+        throw new \Exception("Wrong Date Format", 1);
+    }
+    $dateParts = explode('-', $di);
+    return ($dateParts[0] * 10000) + ($dateParts[1] * 100) + ($dateParts[2] * 1);
+
+    // return str_replace('-','',$di);
+}
 
 include_once 'custom_acounting.php';

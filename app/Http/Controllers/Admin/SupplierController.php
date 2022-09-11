@@ -189,7 +189,7 @@ class SupplierController extends Controller
             if ($request->ipaid > 0) {
                 $ledger->addLedger('Paid to supplier for bill no - ' . $bill->billno, 2, $bill->paid, $date, '126', $bill->id);
             }
-            new PaymentManager($request,$bill->id,126);
+            new PaymentManager($request,$bill->id,126,'By Purchase A/C',$date);
             return view('admin.supplier.bill.single', compact('bill'));
         } else {
             $centers=DB::table('centers')->get(['id','name']);

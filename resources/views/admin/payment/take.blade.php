@@ -20,7 +20,7 @@
         @endif
         <select name="xpay_bank" id="xpay_bank" class="form-control ms">
             @foreach ($xpay_banks   as $xpay_bank)
-                <option value="{{$xpay_bank->id}}">{{$xpay_bank->name}}</option>
+                <option value="{{$xpay_bank->account_id}}">{{$xpay_bank->name}}</option>
             @endforeach
         </select>
 
@@ -51,8 +51,8 @@
                         min="0"
                         step="0.01"
                         class="xpay_custom_input"
-                        onchange="xpayCustomBank(this,{{$xpay_bank->id}})"
-                        oninput="xpayCustomBank(this,{{$xpay_bank->id}})">
+                        onchange="xpayCustomBank(this,{{$xpay_bank->account_id}})"
+                        oninput="xpayCustomBank(this,{{$xpay_bank->account_id}})">
                     </td>
                 </tr>
                 @endforeach

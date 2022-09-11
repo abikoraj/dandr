@@ -1,42 +1,23 @@
 <div id="expay_custom_holder" >
-    <input type="hidden" name="expay_method" id="expay_method" value="{{$method}}">
+    <input type="hidden" name="expay_method" id="expay_method" >
     <table class="table">
         <tr>
             <th>Acc</th>
             <th>Amount</th>
+            
         </tr>
-        <tr>
-            <th>
-                Cash
-            </th>
-            <td>
-                <input type="number" min="0"
-                class="expay_custom_input"
-                step="0.01" name="expay_custom_cash" id="expay_custom_cash" value="{{$detail->c}}" required>
-            </td>
-        </tr>
-        @foreach ($banks  as $bank)
+        @foreach ($ledgers as $ledger)
             <tr>
+                <input type="hidden" name="xpay_ledger_ids[]" value="{{$ledger->id}}">
                 <th>
-                    {{$bank['detail']->name}}
+                    {{$ledger->name}}
                 </th>
-                <td>
-                    <input type="hidden" name="expay_custom_bank[]" value="{{$bank['detail']->id}}">
-                    <input type="number"
-                    min="0"
-                    step="0.01"
-                    class="expay_custom_bank_amount"
-                    id="expay_custom_bank_amount_{{$bank['detail']->id}}"
-                    name="expay_custom_bank_amount_{{$bank['detail']->id}}"
-                    value="{{$bank['amount']}}"
-                    required
-                   >
-                </td>
+                <th>
+                    <input type="number" class="expay_ledger_amount" name="xpay_ledger_{{$ledger->id}}" id="xpay_ledger_{{$ledger->id}}" value="{{$ledger->amount}}">
+                </th>
             </tr>
-            @endforeach
-        </table>
-        <div id="xpay_custom_banks_holder">
 
-        </div>
+        @endforeach
+        
 
 </div>

@@ -60,7 +60,7 @@ class MilkPaymentController extends Controller
             }else{
                 $ledger->addLedger('Payment Milk Payment Given To Farmer',2,$request->amount,$date,'121',$payment->id);
             }
-            new PaymentManager($request,$payment->id,121);
+            new PaymentManager($request,$payment->id,121,'By '.$user->name);
             return view('admin.milk.payment.single',compact('payment'));
         }else{
             return '<tr class="text-center"><td colspan="4"> <strong> <span class="text-danger">Your payment has been failed due to Session is not closed yet !</span></strong></td></tr>';
@@ -85,7 +85,7 @@ class MilkPaymentController extends Controller
             $l->amount=$request->amount;
             // $l->date=$date;
             $l->save();
-            PaymentManager::update($payment->id,121,$request);
+            PaymentManager::update($request);
             $user=DB::table('users')->where('id',$payment->user_id)->first(['no','name']);
             $payment->no=$user->no;
             $payment->name=$user->name;
@@ -98,7 +98,10 @@ class MilkPaymentController extends Controller
                     ['foreign_id','=',$request->id]
                 ]
             )->first();
-            $paymentData=PaymentManager::loadUpdate($paymentSave);
+            $paymentData=PaymentManager::loadUpdate(121,$request->id);
+            $user=DB::table('users')->where('id',$payment->user_id)->first(['no','name']);
+            $payment->no=$user->no;
+            $payment->name=$user->name;
             return view('admin.milk.payment.edit',compact('payment','paymentData'));
         }
     }

@@ -312,6 +312,7 @@ class FarmerDetailController extends Controller
     public function close(Request $request){
         $date = str_replace('-', '', $request->date);;
         $ledger = new LedgerManage($request->id);
+        $user=DB::table('users')->where('id',$request->id)->first(['no','name']);
         $data=[];
         if($request->filled('payment_amount')){
             if($request->payment_amount>0){
@@ -336,7 +337,7 @@ class FarmerDetailController extends Controller
                 if($request->filled('passbookchecked')){
                     DB::update('update farmer_reports set has_passbook=1 where user_id=? and year=? and month= ? and session=? ',[$request->id,$request->year,$request->month,$request->session]);
                 }
-                new PaymentManager($request,$payment->id,121);
+                new PaymentManager($request,$payment->id,121,'By '.$user->name);
                 array_push($data,$payment);
             }
         }

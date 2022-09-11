@@ -12,8 +12,16 @@ class BankController extends Controller
 {
     public function index(Account $account)
     {
-
-        return view('admin.bank.index', ['banks' => DB::table('banks')->where('account_id', $account->id)->get(), 'account' => $account]);
+        $fy = getFiscalYear();
+        $banks = DB::select("select * from banks 
+            where account_id in (select id from accounts 
+            where parent_id= (select id from accounts where identifire='1.2' and fiscal_year_id={$fy->id} limit 1)
+        )");
+        foreach ($banks as $key => $bank) {
+            $bank->balance=getTotal($bank->account_id);
+        }
+        // dd($banks);
+        return view('admin.bank.index', compact('banks','account'));
     }
     public function add(Request $request)
     {

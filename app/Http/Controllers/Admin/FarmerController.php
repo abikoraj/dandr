@@ -484,11 +484,11 @@ class FarmerController extends Controller
         $ledger = new LedgerManage($user->id);
         if (env('acc_system', 'old') == "old") {
 
-            $ledger->addLedger('Paid by farmer amount', 2, $request->pay, $date, '107', $farmerPay->id);
+            $ledger->addLedger('Payment Received from farmer', 2, $request->pay, $date, '107', $farmerPay->id);
         } else {
-            $ledger->addLedger('Paid by farmer amount', 1, $request->pay, $date, '107', $farmerPay->id);
+            $ledger->addLedger('Payment Received from farmer', 1, $request->pay, $date, '107', $farmerPay->id);
         }
-        new PaymentManager($request,$farmerPay->id,107);
+        new PaymentManager($request,$farmerPay->id,107,'To '.$user->name);
         return response('Payment Added Sucessfully');
     }
 

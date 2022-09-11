@@ -153,7 +153,7 @@
                                     <input type="number"  step="0.01" value="0" id="itaxable"  readonly>
                                 </div>
                                 <div class="end">
-                                    <strong> Tax:</strong>
+                                    <strong> Vat:</strong>
                                     <input type="number"  oninput="calculateTotal()"  step="0.01" value="0" id="itax" name="itax">
                                 </div>
                                 <div class="end">

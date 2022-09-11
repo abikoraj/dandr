@@ -72,8 +72,6 @@ use App\NepaliDate;
 |
 */
 
-
-
 Route::get('/', [ControllersHomeController::class, 'home']);
 Route::get('/test/{id}', 'TestController@index')->name('test');
 Route::get('/test-all/{id}', 'TestController@all')->name('test-all');
@@ -577,6 +575,7 @@ Route::name('admin.')->group(function () {
             Route::prefix('accounts')->name('accounts.')->group(function(){
                 Route::match(['GET','POST'],'',[AccountingController::class,'accounts'] )->name('index');
                 Route::match(['GET','POST'],'edit/{id}',[AccountingController::class,'accountsEdit'] )->name('edit');
+                Route::match(['GET','POST'],'ledger/{id}',[AccountingController::class,'accountsLedger'] )->name('ledger');
                 Route::match(['GET','POST'],'add/{type}/{parent_id}',[AccountingController::class,'accountsAdd'] )->name('add');
                 // XXX Fixed assets
                 Route::prefix('fixed-assets')->name('fixed.assets.')->group(function(){

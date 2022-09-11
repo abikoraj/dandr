@@ -53,11 +53,16 @@
     function xpayHandleChange() {
         console.log(xpayHandle.value);
         $('#xpay_amount').val(xpayHandle.value);
+        
     }
 
     function expayHandleChange() {
         console.log(expayHandle.value);
         $('#expay_amount').val(expayHandle.value);
+        if($('.expay_ledger_amount').length==1){
+            $('.expay_ledger_amount').val(expayHandle.value);
+        }
+        console.log();;
     }
 
     function addEXPayHandle() {
@@ -128,29 +133,23 @@
 
     function expayVerifyData() {
         if (exists('#expay_method')) {
-            const method = $('#expay_method').val();
             const amount = $('#expay_amount').val();
             let totalamt = 0;
             const cashamt = parseFloat($('#expay_custom_cash').val());
-            if (!isNaN(cashamt)) {
-                totalamt += cashamt;
-            }
-            if (method == 3) {
-                $('.expay_custom_bank_amount').each(function(index, element) {
-                    const localamt = parseFloat(element.value);
-                    if (!isNaN(localamt)) {
-                        totalamt += localamt;
-                    }
-                });
-                if (amount == totalamt) {
-                    return true;
-                } else {
-                    alert('Amount not matching');
-                    return false;
+            $('.expay_ledger_amount').each(function(index, element) {
+                const localamt = parseFloat(element.value);
+                if (!isNaN(localamt)) {
+                    totalamt += localamt;
                 }
+            });
+
+            if (amount == totalamt) {
+                return true;
+            } else {
+                alert('Amount not matching');
+                return false;
             }
 
-            return true;
 
         }else{
             return true;

@@ -2,14 +2,14 @@
     <form action="{{route('admin.farmer.milk.payment.update',['id'=>$payment->id])}}" method="post" onsubmit="return update(this,event,{{$payment->id}});">
         @csrf
         <div class="row">
-            <div class="col-md-3">
+            <div class="col-md-1 d-flex align-items-center">
                 {{ $payment->no }}
             </div>
-            <div class="col-md-3">
+            <div class="col-md-2 d-flex align-items-center">
                 {{ _nepalidate($payment->date) }}
 
             </div>
-            <div class="col-md-3">
+            <div class="col-md-3 d-flex align-items-center">
                 {{ $payment->name }}
             </div>
             <div class="col-md-3">

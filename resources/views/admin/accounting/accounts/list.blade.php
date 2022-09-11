@@ -43,6 +43,8 @@
                             <a href="{{ route('admin.accounting.subaccounts', ['id' => $account->id]) }}" target="blank"
                                 class="btn btn-success">Manage Sub Accounts</a>
                         @endif
+                        <a href="{{route('admin.accounting.accounts.ledger',['id'=>$account->id])}}">Ledger</a>
+
                     </td>
                 </tr>
             @endforeach
@@ -74,6 +76,7 @@
                         <button class="btn btn-primary " onclick="initUpdate({{$account->id}});"> Edit </button>
                         <a href="{{ route('admin.accounting.subaccounts', ['id' => $account->id]) }}" target="blank"
                             class="btn btn-success">Manage Sub Accounts</a>
+                        <a href="{{route('admin.accounting.accounts.ledger',['id'=>$account->id])}}">Ledger</a>
                     </td>
                 </tr>
             @endforeach

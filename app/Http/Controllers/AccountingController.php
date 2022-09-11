@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\AccountManager;
 use App\Models\Account;
+use App\Models\AccountLedger;
 use App\Models\FiscalYear;
 use App\Models\Ledger;
 use App\NepaliDate;
@@ -397,5 +399,55 @@ class AccountingController extends Controller
         }else{
             
         }
+    }
+
+    public function accountsLedger($id){
+        $fy=getFiscalYear();
+        $account=DB::table('accounts')->where('id',$id)->first();
+        $opening=DB::table('account_ledgers')->where(['fiscal_year_id'=>$fy->id,'account_id'=>$id,'identifier'=>901])->first();
+
+        $ledgers=DB::table('account_ledgers')->where(['fiscal_year_id'=>$fy->id,'account_id'=>$id])->where('identifier','<>',901)->orderBy('date')->orderBy('created_at')->get();
+        if($opening!=null){
+            $ledgers->prepend($opening);
+        }
+
+        $crtotal=$ledgers->where('type',1)->sum('amount');
+        $drtotal=$ledgers->where('type',2)->sum('amount');
+        $nledger=new AccountLedger();
+        $nledger->title="Balance C/D";
+        $nledger->date=null;
+        if($crtotal>$drtotal){
+            $nledger->amount=$crtotal-$drtotal;
+            $nledger->type=2;
+            $ledgers->push($nledger);
+        }elseif($drtotal>$crtotal){
+            $nledger->amount=$drtotal-$crtotal;
+            $nledger->type=1;
+            $ledgers->push($nledger);
+        }
+        $crcount=$ledgers->where('type',1)->count();
+        $drcount=$ledgers->where('type',2)->count();
+        $max=0;
+
+        if($crcount>$drcount){
+            $max=$crcount;
+            $drcount=$crcount-$drcount;
+            $drcount=0;
+        }elseif($drcount>$crcount){
+            $max=$drcount;
+            $crcount=$drcount-$crcount;
+            $drcount=0;
+        }else{
+            $max=$crcount;
+            $drcount=0;
+            $crcount=0;
+        }
+
+        // dd($drcount,$crcount);
+
+        return view('admin.accounting.accounts.fixedassets.ledger.index',compact('ledgers','account','fy','drcount','crcount','drtotal','crtotal','max'));
+        // dd($ledgers);
+        // dd($opening,$ledgers);
+
     }
 }

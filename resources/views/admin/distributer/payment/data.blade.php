@@ -62,7 +62,7 @@
         </div>
         <div class="col-md-12 py-2">
             <label>
-                Payment Method
+                Payment Detail
             </label>
             <textarea id="method" class="form-control" placeholder="Enter Payment Method"></textarea>
         </div>

@@ -85,7 +85,7 @@
         </div>
 
         <div class="col-md-3">
-            <span class="btn btn-primary btn-block" onclick="duePayment();"> Pay Now </span>
+            <span class="btn btn-primary btn-block" onclick="duePayment();"> Receive Payment</span>
         </div>
         <div class="col-12"></div>
 
