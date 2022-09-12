@@ -23,7 +23,7 @@ class CreateBankTransactionsTable extends Migration
             $table->integer('method')->default(1);
             $table->string('number')->nullable();
             $table->text('remarks')->nullable();
-            $table->text('by')->nullable();
+            $table->text('transaction_by')->nullable();
             $table->decimal('amount',18,2)->default();
             $table->timestamps();
         });

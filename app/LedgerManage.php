@@ -75,6 +75,15 @@ class LedgerManage
     **Expense Section
     * "201" = "index"
     * "202" = "purchase expense"
+
+    **acc Section
+    * "901" = "acc ledger open"
+    * "902" = "acc ledger close"
+
+     **bank transaction Section
+    * "801" = "cash withdrawl"
+    * "802" = "cash deposit"
+    * "803" = "bank transfer"
     
     */
     public function addLedger($particular, $type, $amount, $date, $identifier, $foreign_id = null)

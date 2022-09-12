@@ -412,7 +412,7 @@ function getBanks()
 
 function getCashAcc()
 {
-    getFiscalYear();
+    $fy=getFiscalYear();
 }
 
 
