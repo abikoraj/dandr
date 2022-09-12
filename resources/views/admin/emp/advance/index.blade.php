@@ -127,6 +127,7 @@
         if(!expayVerifyData()){
             return;
         }
+        
         axios.post(ele.action,new FormData(ele))
         .then((res)=>{
             $('#advancerow-'+id).replaceWith(res.data);
@@ -189,6 +190,8 @@
                 $('#u_id').val('');
                 $('#amount').val(0);
                 $('#u_id').focus();
+                resetXPayment();
+
             })
             .catch(function(err) {
                 //handle error

@@ -214,14 +214,14 @@ class EmployeeController extends Controller
         } else {
             $ledger->addLedger('Advance Given-(' . $request->title . ')', 2, $request->amount, $date, '112', $advance->id);
         }
-        new PaymentManager($request, $advance->id, 112);
+        new PaymentManager($request, $advance->id, 112,'By '.$ledger->user->name);
         return view('admin.emp.advance.single', compact('advance'));
     }
 
     public function editAdvance(Request $request)
     {
         $advance = EmployeeAdvance::where('id', $request->id)->first();
-        $paymentData = PaymentManager::loadUpdateID($request->id, 112);
+        $paymentData = PaymentManager::loadUpdate(112,$request->id);
         // dd($paymentData);
         return view('admin.emp.advance.edit', compact('advance', 'paymentData'));
     }
@@ -242,7 +242,7 @@ class EmployeeController extends Controller
             $ledger->addLedger('Advance Canceled', 1, $tempamount, $date, '113', $advance->id);
             $ledger->addLedger('Advance Updated-(' . $request->title . ')', 2, $request->amount, $date, '112', $advance->id);
         }
-        PaymentManager::update($advance->id, 112, $request);
+        PaymentManager::update($request);
 
         // return response()->json(['status' => 'success']);
         return view('admin.emp.advance.single', compact('advance'));
@@ -369,7 +369,7 @@ class EmployeeController extends Controller
             $sessionClose->year = $request->year;
             $sessionClose->save();
 
-            new PaymentManager($request, $salaryPay->id, 124);
+            new PaymentManager($request, $salaryPay->id, 124,"By Salary");
             echo 'ok';
         }
     }
@@ -485,7 +485,7 @@ class EmployeeController extends Controller
         $employee = Employee::where('id', $request->employee_id)->first();
         $ledger = new LedgerManage($employee->user_id);
         $advance = $ledger->addLedger($request->title, 1, $request->amount, $date, '140');
-        new PaymentManager($request, $advance->id, 140);
+        new PaymentManager($request, $advance->id, 140,'To '.$ledger->user->name);
         return view('admin.emp.ret.single', compact('advance'));
     }
     public function getRet(Request $request)
@@ -506,7 +506,7 @@ class EmployeeController extends Controller
     public function editRet(Request $request)
     {
         $advance = Ledger::where('id', $request->id)->first();
-        $paymentData = PaymentManager::loadUpdateID($request->id, 140);
+        $paymentData = PaymentManager::loadUpdate($request->id, 140);
         return view('admin.emp.ret.edit', compact('advance', 'paymentData'));
     }
 
@@ -517,7 +517,7 @@ class EmployeeController extends Controller
         $advance->title = $request->title;
         $advance->amount = $request->amount;
         $advance->save();
-        PaymentManager::update($advance->id, 140, $request);
+        PaymentManager::update( $request);
         return view('admin.emp.ret.single', compact('advance'));
         // return response()->json(['status' => 'success']);
 

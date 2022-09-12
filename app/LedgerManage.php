@@ -74,6 +74,8 @@ class LedgerManage
 
     **Expense Section
     * "201" = "index"
+    * "202" = "purchase expense"
+    
     */
     public function addLedger($particular, $type, $amount, $date, $identifier, $foreign_id = null)
     {

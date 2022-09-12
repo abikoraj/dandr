@@ -17,7 +17,10 @@
                 Date
             </th>
             <th>
-                Branch
+                From Branch
+            </th>
+            <th>
+                To Branch
             </th>
             <th>
                 Status
@@ -38,6 +41,9 @@
                 xxx_date
             </xxx_td>
             <xxx_td>
+                xxx_from_center
+            </xxx_td>
+            <xxx_td>
                 xxx_center
             </xxx_td>
             <xxx_td>
@@ -52,16 +58,19 @@
 @endsection
 @section('js')
     <script>
+        const centers={!! json_encode($centers) !!};
         const items={!!json_encode($stockOuts)!!};
         window.onload=()=>{
             const template=$('#item-template').html();
             let html='';
             items.forEach(item => {
-
+                from=centers.find(o=>o.id==item.from_center_id);
+                to=centers.find(o=>o.id==item.center_id);
                 let ts=template.replaceAll('xxx_tr','tr');
                 ts=ts.replaceAll('xxx_td','td');
                 ts=ts.replaceAll('xxx_id',item.id);
-                ts=ts.replaceAll('xxx_center',item.name);
+                ts=ts.replaceAll('xxx_from_center',from.name);
+                ts=ts.replaceAll('xxx_center',to.name);
                 ts=ts.replaceAll('xxx_status',item.canceled==1?"Canceled":"");
                 ts=ts.replaceAll('xxx_date',toNepaliDate(item.date));
                 html+=ts;

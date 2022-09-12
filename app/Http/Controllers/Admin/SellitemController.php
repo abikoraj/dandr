@@ -214,8 +214,7 @@ class SellitemController extends Controller
         $ledger[0] = Ledger::where('identifire', '103')->where('foreign_key', $request->id)->first();
         if ($paid > 0) {
             $ledger[1] = Ledger::where('identifire', '106')->where('foreign_key', $request->id)->first();
-            delACByNOID(106,$request->id);
-            // PaymentManager::remove($request->id,106);
+            PaymentManager::remove($request->id,106);
         }
         LedgerManage::delLedger($ledger);
         return response('Sell Deleted Sucessfully');
@@ -262,11 +261,10 @@ class SellitemController extends Controller
 
                 }
                 echo "step2 <br>";
-                delACByNOID(106,$id);
+                PaymentManager::remove($id,106);
             }
             // $ledger[0] = Ledger::where('identifire','106')->where('foreign_key',$request->id);
             LedgerManage::delLedger($ledger);
-            PaymentManager::removeMultiple($paymentRemoveArr,106);
         }
     }
 }

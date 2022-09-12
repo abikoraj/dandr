@@ -66,6 +66,7 @@
                     $('#allData').html(res.data);
                     hideProgress();
                     setDate('date', true);
+                    addXPayHandle();
                 })
                 .catch((err) => {
                     hideProgress();
@@ -82,8 +83,12 @@
 
         function addPayment(e) {
             e.preventDefault();
+            if(!xpayVerifyData()){
+
+            }
             if (!lock) {
                 lock = true;
+
                 showProgress("Adding Payment for " + _name);
                 data = new FormData(document.getElementById('addPayment'));
                 axios.post("{{ route('admin.customer.payment.add') }}", data)
@@ -91,6 +96,7 @@
                         loadData();
                         hideProgress();
                         setDate('date', true);
+                        
                     })
                     .catch((err) => {
                         hideProgress();

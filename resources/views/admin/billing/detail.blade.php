@@ -64,6 +64,31 @@
             </tr>
         @endif
     </table>
+    @if (count($ledgers)>0)
+    <hr>
+    <table>
+        <tr>
+            <th>
+                Payment Method
+            </th>
+            <th>
+                Amount
+            </th>
+        </tr>
+        @foreach ($ledgers as $ledger)
+            <tr>
+                <th>
+                    {{$ledger->name}}
+                </th>
+                <td>
+                    {{$ledger->amount}}
+                </td>
+            </tr>
+
+        @endforeach
+    </table>
+    @endif
+
     <div>
         <a href="{{route('restaurant.print',['id'=>$bill->id])}}" class="btn btn-primary" target="_newblank"> Print</a>
     </div>

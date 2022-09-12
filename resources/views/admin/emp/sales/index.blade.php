@@ -103,7 +103,7 @@
                     <div class="col-12">
                         <hr>
                         <div class="row">
-                            @include('admin.payment.take', ['xpay_type' => 2]);
+                            @include('admin.payment.take');
                         </div>
                     </div>
 
@@ -251,7 +251,7 @@
                         $('#paid').val(null);
                         $('#due').val(null);
                         $('#employee_id').select2('focus');
-
+                        resetXPayment();
                     })
                     .catch(function(err) {
                         //handle error

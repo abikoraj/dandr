@@ -13,5 +13,7 @@
 
             @include('admin.payment.editholder')
         </div>
+        <hr>
+        <button class="btn btn-primary">Upddate Advance</button>
     </form>
 </div>

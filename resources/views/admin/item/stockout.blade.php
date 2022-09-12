@@ -101,6 +101,7 @@
         var searchable = false;
         var selectedIndex = -1;
         running=false;
+        var index=1;
         const items = {!! json_encode($items) !!}
 
         function searchItem(e, ele) {
@@ -205,7 +206,8 @@
                     selectedItems.push({
                         item_id: item.id,
                         qty: qty,
-                        title: item.title
+                        title: item.title,
+                        index:index++
                     })
                 } else {
                     if (confirm('Item already in list do you want to add to quantity?')) {
@@ -231,12 +233,21 @@
 
         }
 
+        function remove(index){
+            const i=selectedItems.findIndex(o=>o.index==index);
+            if(i>-1){
+                $('#row-'+index).remove();
+                selectedItems.splice(i,1);
+                renderList();
+            }
+        }
+
         function renderList() {
             let html = ""
             $.each(selectedItems, function(indexInArray, selectedItem) {
-                html += "<tr><td>" + selectedItem.title + "</td><td>" + selectedItem.qty +
-                    "</td><td><button class='btn btn-danger' onclick='remove(" + selectedItem.item_id +
-                    ")'>Remove</button></td></tr>"
+                html += "<tr id='row-"+(selectedItem.index)+"''><td>" + selectedItem.title + "</td><td>" + selectedItem.qty +
+                    "</td><td><button class='btn btn-danger' onclick='remove(" +selectedItem.index  +
+                    ")'>Remove</button></td></tr>";
             });
             $('#selectedItems').html(html);
         }

@@ -9,6 +9,7 @@ use App\NepaliDate;
 use App\PaymentManager;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class ExpenseController extends Controller
 {
@@ -63,13 +64,15 @@ class ExpenseController extends Controller
         $exp->expcategory_id = $request->cat_id;
         $exp->user_id = Auth::user()->id;
         $exp->save();
-        new PaymentManager($request,$exp->id,201);
+
+        $category=DB::table('expcategories')->where('id',$request->cat_id)->first(['name'])->name;
+        new PaymentManager($request,$exp->id,201,'By '.$category.' Expense A/C');
         return view('admin.expense.single', compact('exp'));
     }
     public function edit(Request $request)
     {
         $exp=Expense::where('id', $request->id)->first();
-        $paymentData=PaymentManager::loadUpdateID($exp->id,201);
+        $paymentData=PaymentManager::loadUpdate(201,$exp->id);
         return view('admin.expense.edit', compact('exp','paymentData'));
     }
 
@@ -86,7 +89,7 @@ class ExpenseController extends Controller
         $exp->expcategory_id = $request->cat_id;
         $exp->user_id = Auth::user()->id;
         $exp->save();
-        PaymentManager::update($exp->id,201,$request);
+        PaymentManager::update($request);
         return view('admin.expense.single', compact('exp'));
     }
 

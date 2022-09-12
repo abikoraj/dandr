@@ -7,9 +7,11 @@ use App\LedgerManage;
 use App\Models\Customer;
 use App\Models\CustomerPayment;
 use App\Models\Ledger;
+use App\Models\Payment;
 use App\Models\PosSetting;
 use App\Models\User;
 use App\NepaliDate;
+use App\PaymentManager;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -240,6 +242,7 @@ class CustomerController extends Controller
             $ledger->addLedger("Payment Received", 1, $payment->amount, $date, 135, $payment->id);
         }
         $user = User::find($request->id);
+        new PaymentManager($request,$payment->id,135,'To '.$user->name,$date);
         return response('ok');
     }
 
@@ -248,6 +251,7 @@ class CustomerController extends Controller
 
         DB::table('customer_payments')->where('id',$request->payment_id)->delete();
         DB::table('ledgers')->where('id',$request->id)->delete();
+        PaymentManager::remove($request->payment_id,135);
         return response('ok');
 
     }

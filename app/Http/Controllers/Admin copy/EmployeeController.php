@@ -174,6 +174,7 @@ class EmployeeController extends Controller
     public function addAdvance(Request $request)
     {
 
+        dd($request->all());
         $date = str_replace('-', '', $request->date);
         $np = new NepaliDate($date);
         $employee = Employee::where('id', $request->employee_id)->first();

@@ -29,5 +29,7 @@
     <script src="{{ asset('backend/js/jquery.hotkeys.js') }}"></script>
     @yield('scripts')
     @yield('scripts1')
+    @yield('scripts2')
+    @yield('scripts3')
   </body>
 </html>

@@ -96,7 +96,7 @@ class EmployeeSalesController extends Controller
         }
 
 
-        new PaymentManager($request, $sell_item->id, 301);
+        new PaymentManager($request, $sell_item->id, 302,'To Employee Sales');
         $sell_item->item=$item->title;
         $sell_item->name=$user->name;
         return view('admin.emp.sales.single',compact('sell_item'));
@@ -108,5 +108,6 @@ class EmployeeSalesController extends Controller
         maintainStock($sell_item->item_id,$sell_item->qty,$sell_item->center_id,'in');
         DB::table('sellitems')->where('id', $request->id)->delete();
         DB::delete('delete from ledgers where foreign_key = ? and (identifire=301 or identifire=302)', [$request->id]);
+        PaymentManager::remove($request->id,302);
     }
 }

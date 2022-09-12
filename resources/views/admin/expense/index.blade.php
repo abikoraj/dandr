@@ -61,7 +61,7 @@
             },addEXPayHandle);
         }
 
-        function saveData(e) {
+        function saveData(e,ele) {
             
             e.preventDefault();
             if(!xpayVerifyData()){
@@ -156,6 +156,7 @@
         window.onload = function() {
             $('#type').val(1).change();
             loadExp();
+            addXPayHandle();
         };
 
 

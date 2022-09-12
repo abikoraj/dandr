@@ -64,15 +64,18 @@
             </div>
             <div class="col-md-6">
                 <label for="amount">Amount</label>
-                <input type="number" name="amount" id="amount" class="form-control" min="0" required>
+                <input type="number" name="amount" id="amount" class="form-control xpay_handle" min="0" required>
             </div>
             <div class="col-md-12">
                 <label for="description">Description</label>
                 <textarea name="description" id="description" class="form-control" rows="2"></textarea>
             </div>
         </div>
-        <div class="py-2 text-right">
-            <button class="btn btn-primary">Add Payment</button>
+        <div class="row my-1">
+            @include('admin.payment.take')
+            <div class="col-md-3">
+                <button class="btn btn-primary">Add Payment</button>
+            </div>
         </div>
     </form>
 </div>

@@ -34,6 +34,7 @@ use App\Http\Controllers\Admin\SellitemController;
 use App\Http\Controllers\Admin\Setting\ConversionController;
 use App\Http\Controllers\Admin\SimpleManufactureController;
 use App\Http\Controllers\Admin\StockController;
+use App\Http\Controllers\Admin\SupplierBillController;
 use App\Http\Controllers\Admin\SupplierController;
 use App\Http\Controllers\Admin\TableController;
 use App\Http\Controllers\Admin\UserController;
@@ -367,6 +368,7 @@ Route::name('admin.')->group(function () {
             // XXX supplier bills
             Route::get('bills', [SupplierController::class, 'indexBill'])->name('bill')->middleware('permmission:07.05');
             Route::match(['GET', 'POST'], 'bill-add', [SupplierController::class, 'addBill'])->name('bill.add')->middleware('permmission:07.06');
+            Route::match(['GET', 'POST'], 'bill-expense', [SupplierBillController::class, 'expense'])->name('bill.expense')->middleware('permmission:07.06');
             Route::post('bill-list', [SupplierController::class, 'listBill'])->name('bill.list')->middleware('permmission:07.05');
             Route::post('bill-update', [SupplierController::class, 'updateBill'])->name('bill.update')->middleware('permmission:07.07');
             Route::get('bill-delete', [SupplierController::class, 'deleteBill'])->name('bill.delete')->middleware('permmission:07.08');

@@ -375,14 +375,10 @@ class ItemController extends Controller
 
     public function stockOutList()
     {
-        $stockOuts = DB::table('stock_outs')->join('centers', 'centers.id', '=', 'stock_outs.center_id')->select(
-            'stock_outs.date',
-            'stock_outs.id',
-            'stock_outs.canceled',
-            'centers.name'
-        )->orderBy('stock_outs.id', 'desc')->get();
+        $stockOuts = DB::table('stock_outs')->orderBy('stock_outs.id', 'desc')->get();
+        $centers=DB::table('centers')->get(['id','name']);
         // dd($stockOuts);
-        return view('admin.item.stockoutlist', compact('stockOuts'));
+        return view('admin.item.stockoutlist', compact('stockOuts','centers'));
     }
 
     public function stockOutView($id)

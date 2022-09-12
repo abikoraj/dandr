@@ -4,26 +4,6 @@
 
 @section('content')
     <style>
-        /* width */
-        ::-webkit-scrollbar {
-            width: 10px;
-        }
-
-        /* Track */
-        ::-webkit-scrollbar-track {
-            background: #f1f1f1;
-        }
-
-        /* Handle */
-        ::-webkit-scrollbar-thumb {
-            background: #888;
-        }
-
-        /* Handle on hover */
-        ::-webkit-scrollbar-thumb:hover {
-            background: #555;
-        }
-
         .prodtable,
         .prodtable td,
         .prodtable th {
@@ -62,11 +42,6 @@
             z-index: 99;
             cursor: pointer;
 
-        }
-
-        .prodviwer {
-            height: 100%;
-            overflow-y: auto;
         }
 
         .hovertr:hover {
@@ -113,15 +88,12 @@
             -moz-appearance: textfield;
         }
     </style>
-    {{-- @if (!$hasTable) --}}
-        {{-- @include('admin.billing.products') --}}
-    {{-- @endif --}}
-    @include('admin.billing.payment')
-    
+    @if (!$hasTable)
+        @include('admin.billing.products')
+    @endif
     @include('admin.billing.distributors')
     @include('admin.billing.add_customer')
     <div style="display:flex;flex-direction: column;height:100vh;">
-
         <div style="background: #355F79;">
             <div class="container py-2">
                 <div style="display:flex;justify-content: space-between;">
@@ -138,63 +110,54 @@
                 </div>
             </div>
         </div>
-        <div style="flex-grow: 1;border:1px #505050 solid;overflow:auto;">
-            <div class="row h-100 m-0">
-                <div class="col-9 h-100 p-0">
-                    <div class="row p-1">
-                        <div class="col-2 offset-8">
-                            Center
-                            <select name="center_id" class="form-control" id="center_id">
-                                @foreach ($centers as $center)
-                                    <option value="{{ $center->id }}">{{ $center->name }}</option>
-                                @endforeach
-                            </select>
-                        </div>
-                        <div class="col-2 ">
-                            Date :
-                            <input type="text" name="date" id="nepali-datepicker" placeholder="Date"
-                                class="form-control" required>
-                        </div>
-                    </div>
-                    <table class="table">
-                        <thead>
-                            <tr>
-                                <th>
-                                    #ID
-                                </th>
-                                <th>
-                                    Item
-                                </th>
-                                <th>
-                                    Rate
-                                </th>
-                                <th>
-                                    Qty
-                                </th>
-                                <th>
-                                    Total
-                                </th>
-                            </tr>
-                        </thead>
-                        <tbody id="billitemholder">
-
-                        </tbody>
-
-                    </table>
+        <div style="flex-grow: 1;border:1px #505050 solid;overflow:scroll;">
+            <div class="row p-1">
+                <div class="col-2 offset-8">
+                    Center
+                    <select name="center_id" class="form-control" id="center_id">
+                        @foreach ($centers as $center)
+                            <option value="{{ $center->id }}">{{ $center->name }}</option>
+                        @endforeach
+                    </select>
                 </div>
-                <div class="col-3 h-100 p-0">
-                    @include('admin.billing.products')
-
+                <div class="col-2 ">
+                    Date :
+                    <input type="text" name="date" id="nepali-datepicker" placeholder="Date" class="form-control"
+                        required>
                 </div>
             </div>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>
+                            #ID
+                        </th>
+                        <th>
+                            Item
+                        </th>
+                        <th>
+                            Rate
+                        </th>
+                        <th>
+                            Qty
+                        </th>
+                        <th>
+                            Total
+                        </th>
+                    </tr>
+                </thead>
+                <tbody id="billitemholder">
 
+                </tbody>
+
+            </table>
         </div>
         <div style="padding:15px;">
             <div class="row">
                 @if (!$hasTable)
                     <div class="col-md-2">
                         <label for="item">Item (F1)</label>
-                        <input type="text" list="product-list" id="item" class="form-control next" data-next="rate">
+                        <input type="text" id="item" class="form-control next" data-next="rate">
                     </div>
                     <div class="col-md-2">
                         <label for="item">Rate</label>
@@ -369,16 +332,7 @@
             var net = gross - dis;
             $('#nettotal').val(net);
             var paid = parseFloat($('#paid').val());
-            if(isNaN(paid)){
-                paid=0;
-            }
-            let cash=paid;
-            if(paid>net){
-                cash=net;
-            }
-            $('#xpay_amount').val(cash).change();
             final = paid - net;
-            
             if (final < 0) {
                 $('#return').val(0);
                 $('#due').val((-1 * final));
@@ -529,13 +483,18 @@
 
         }
 
-        function save() {
+        function saveBill() {
             var arr = [];
             $('.billitems').each(function() {
                 bdata = JSON.parse(this.value);
                 arr.push(bdata);
             });
-
+            if (arr.length == 0) {
+                toastr.error('Please add Products in bill', '{{ env('APP_NAME') }}', {
+                    timeOut: 1000
+                });
+                return false;
+            }
             var fd = {
                 billitems: arr,
                 gross: $('#grosstotal').val(),
@@ -549,17 +508,6 @@
                 id: customerid
 
             };
-
-            for (const key in paymentOBJ) {
-                if (Object.hasOwnProperty.call(paymentOBJ, key)) {
-                    const p = paymentOBJ[key];
-                    fd[key]=p;
-                }
-            }
-
-            console.log(fd);
-
-
             @if ($hasTable)
                 fd.table_id = {{ $table_id }};
             @endif
@@ -588,36 +536,6 @@
 
                     })
             }
-        }
-
-        function saveBill() {
-            var arr = [];
-            $('.billitems').each(function() {
-                bdata = JSON.parse(this.value);
-                arr.push(bdata);
-            });
-            if (arr.length == 0) {
-                toastr.error('Please add Products in bill', '{{ env('APP_NAME') }}', {
-                    timeOut: 1000
-                });
-                return false;
-            }
-
-            @if (hasPay())
-                var cash = parseFloat($('#xpay_amount').val());
-                if(isNaN(cash)){
-                    cash=0;
-                }
-                if(cash>0){
-                    openPayment(); 
-                }else{
-                    save();
-                }
-            @else
-                save();
-            @endif
-            
-
         }
 
         function selectCustomer(id, name) {
@@ -673,12 +591,5 @@
         var month = ('0' + NepaliFunctions.GetCurrentBsDate().month).slice(-2);
         var day = ('0' + NepaliFunctions.GetCurrentBsDate().day).slice(-2);
         $('#nepali-datepicker').val(NepaliFunctions.GetCurrentBsYear() + '-' + month + '-' + day);
-
-        function selectProduct(ele) {
-            const product = JSON.parse(ele.dataset.product);
-            $('#item').val(product.id);
-            $('#rate').val(product.sell_price);
-            $('#qty').focus();
-        }
     </script>
 @endsection

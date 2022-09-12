@@ -63,12 +63,12 @@
             </label>
             <textarea id="method" class="form-control"></textarea>
         </div>
-        <div class="col-md-4">
-            <button class="btn btn-success" onclick="pay()">Pay</button>
-        </div>
         <div class="col-12">
             <div class="row">
                 @include('admin.payment.take',['xpay_type'=>2])
+                <div class="col-md-3">
+                    <button class="btn btn-success" onclick="pay()">Add Payment</button>
+                </div>
             </div>
         </div>
 

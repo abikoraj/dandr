@@ -8,7 +8,7 @@ use App\Models\paymentSave;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 
-class PaymentManager
+class PaymentManagerCopy
 {
     const foreignChecks=[104,114,150,112,124,201,107,121,106,126,127];
     const idChecks=[140];

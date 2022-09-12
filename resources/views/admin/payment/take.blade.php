@@ -1,4 +1,5 @@
 @if (hasPay())
+    <!-- xpay_type=1|receive , xpay_type=2|pay -->
     <input type="hidden"  id="xpay" name="xpay" value="{{$xpay_type??1}}">
     <input type="hidden" id="xpay_amount" name="xpay_amount" value="0">
     <div class="{{$xclass??"col-md-3"}}">

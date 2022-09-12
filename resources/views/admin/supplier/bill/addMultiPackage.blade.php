@@ -120,7 +120,7 @@
             <div class="col-md-12">
                 <br>
             </div>
-            <div class="col-md-6 b-1">
+            <div class="col-md-12 b-1">
                 <div class="row">
                     <div class="col-md-12 mt-4 mb-3">
                         <table class="table table-bordered">
@@ -168,6 +168,16 @@
                                     <strong> Due:</strong>
                                     <input type="number"  step="0.01" value="0" id="idue">
                                 </div>
+                                <div class="end">
+                                   
+                                </div>
+                            </div>
+                        </div>
+                        <hr>
+                        <div class="row">
+                            @include('admin.payment.take',['xpay_type'=>2])
+                            <div class="col-md-3">
+                                <button class="btn btn-primary">Add Bill</button>
                             </div>
                         </div>
                     </div>
@@ -175,16 +185,15 @@
 
                 </div>
             </div>
-            <div class="col-md-6 b-1">
+            {{-- <div class="col-md-6 b-1">
                 @include('admin.supplier.bill.extracharge')
-            </div>
-            <div class="col-12 pt-2">
+            </div> --}}
+            {{-- <div class="col-12 pt-2">
                 <div class="row">
                     @include('admin.payment.take',['xpay_type'=>2])
+                    <div class"col-md-12 text-right">
+                    <div> --}}
                 </div>
-            </div>
-            <div class="col-md-12 text-right">
-                <button class="btn btn-primary">Add Bill</button>
             </div>
         </div>
     </form>
@@ -248,6 +257,9 @@
 
 
         function saveData(e) {
+            if(prompt('Enter yes to continue.')!='yes'){
+                return ;
+            }
             e.preventDefault();
             if ($('#supplier').val() == '') {
                 alert('Please select supplier.');
@@ -288,6 +300,7 @@
                         $('#supplier').val('').change();;
                         itemKeys=[];
                         suffle();
+                        window.open("{{route('admin.supplier.bill.expense')}}");
                     })
                     .catch(function(response) {
                         hideProgress();

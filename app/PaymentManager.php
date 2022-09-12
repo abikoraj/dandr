@@ -75,6 +75,10 @@ class PaymentManager
                 }
             }
         }
+        if(count($del_ids)>0){
+
+            DB::table('account_ledgers')->whereIn('id',$del_ids)->delete();
+        }
       
         // delACByNOID($id,$identifire);
         // new PaymentManager($request,$id,$identifire,$title,$date);

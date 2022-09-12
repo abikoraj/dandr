@@ -1,9 +1,9 @@
 <div class="p-3">
     <form id="editform" onsubmit="return editData(event);">
         @csrf
-        <input type="hidden" name="id" id="eid">
+        <input type="hidden" name="id" id="eid" value="{{$exp->id}}">
         <div class="row">
-            <div class="col-lg-6">
+            <div class="col-lg-3">
                 <label for="name">Date</label>
                 <div class="form-group">
                     <input type="text" name="date" id="editdate" class="form-control next" data-next="ecat_id"
@@ -11,7 +11,7 @@
                 </div>
             </div>
 
-            <div class="col-lg-6">
+            <div class="col-lg-3">
                 <label for="name">Expense Category</label>
                 <div class="form-group">
                     <select name="cat_id" id="ecat_id" class="form-control show-tick ms select2 next" data-next="etitle"
@@ -25,7 +25,7 @@
                 </div>
             </div>
 
-            <div class="col-lg-12">
+            <div class="col-lg-6">
                 <label for="name">Title</label>
                 <div class="form-group">
                     <input type="text" id="etitle" name="title" class="form-control next" data-next="amount"
@@ -33,7 +33,7 @@
                 </div>
             </div>
 
-            <div class="col-lg-6">
+            <div class="col-lg-3">
                 <label for="name">Amount</label>
                 <div class="form-group">
                     <input type="number" id="eamount" name="amount" min="0" class="form-control next expay_handle"
@@ -41,7 +41,7 @@
                 </div>
             </div>
 
-            <div class="col-lg-6">
+            <div class="col-lg-3">
                 <label for="name">Paid By</label>
                 <div class="form-group">
                     <input type="text" id="epaid_by" name="payment_by" class="form-control next"
@@ -50,7 +50,7 @@
                 </div>
             </div>
 
-            <div class="col-lg-12">
+            <div class="col-lg-6">
                 <label for="name">Payment Detail</label>
                 <div class="form-group">
                     <input type="text" id="epayd" name="payment_detail" class="form-control next" data-next="remark"
@@ -65,11 +65,12 @@
                         required value="{{ $exp->remark != 'null' ? $exp->remark : '' }}">
                 </div>
             </div>
+            @include('admin.payment.editholder')
+
             <div class="col-lg-12 pt-3 text-right">
                 <button class="btn btn-raised btn-primary waves-effect" type="submit">Update Expense</button>
                 <span class="btn btn-danger waves-effect" onclick="win.hide();">Close</span>
             </div>
-            @include('admin.payment.editholder')
         </div>
     </form>
 </div>

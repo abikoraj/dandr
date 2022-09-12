@@ -14,7 +14,7 @@
 <div class="collapse mb-3 " id="collapseExample">
     <div class="shadow p-3">
 
-        <form id="form_validation" method="POST" onsubmit="return saveData(event);">
+        <form id="form_validation" method="POST" onsubmit="return saveData(event,this);">
             @csrf
             <div class="row">
                 <div class="col-lg-4">
@@ -77,6 +77,7 @@
                             required>
                     </div>
                 </div>
+                @include('admin.payment.take',['xpay_type'=>2])
                 <div class="col-lg-12 ">
                     <div class="form-group" >
                         <button class="btn btn-primary ">Submit Data</button>
@@ -86,7 +87,6 @@
                         <input type="checkbox"  id="add_another"> <span>Add Another</span>
                     </div>
                 </div>
-                @include('admin.payment.take',['xpay_type'=>2])
             </div>
         </form>
     </div>

@@ -17,6 +17,7 @@ use App\NepaliDate;
 use App\PaymentManager;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Session;
 
 class SupplierController extends Controller
 {
@@ -190,7 +191,9 @@ class SupplierController extends Controller
                 $ledger->addLedger('Paid to supplier for bill no - ' . $bill->billno, 2, $bill->paid, $date, '126', $bill->id);
             }
             new PaymentManager($request,$bill->id,126,'By Purchase A/C',$date);
+            Session::put('bill_id',$bill->id);
             return view('admin.supplier.bill.single', compact('bill'));
+            // return response()->json(route('admin.supplier.bill.expense',['id'=>$bill->id]));
         } else {
             $centers=DB::table('centers')->get(['id','name']);
             if(env('multi_package',false)){
@@ -248,6 +251,7 @@ class SupplierController extends Controller
         if ($l2 != null) {
             $l2->delete();
         }
+        PaymentManager::remove($bill->id,126);
         return response('ok');
     }
 
@@ -454,6 +458,8 @@ class SupplierController extends Controller
             $data[1] = $ddd;
         }
         LedgerManage::delLedger($data);
+        PaymentManager::remove($id,126);
+        PaymentManager::remove($id,202);
         return response('ok');
     }
 
@@ -488,7 +494,7 @@ class SupplierController extends Controller
 
         $ledger = new LedgerManage($request->id);
         $ledger->addLedger("Payment to supplier", 2, $request->amount, $date, '127', $payment->id);
-        new PaymentManager($request,$payment->id,127);
+        new PaymentManager($request,$payment->id,127,'By '.$ledger->user->name,$date);
 
 
         $supplier = User::find($request->id);

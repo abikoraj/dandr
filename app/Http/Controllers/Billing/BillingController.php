@@ -11,6 +11,7 @@ use App\Models\Distributer;
 use App\Models\FiscalYear;
 use App\Models\User;
 use App\NepaliDate;
+use App\PaymentManager;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -31,7 +32,9 @@ class BillingController extends Controller
         foreach ($billItems as $key => $billItem) {
             maintainStock($billItem->item_id, $billItem->qty, $billItem->center_id);
         }
+       
         DB::delete('update bills set is_canceled =1 where id=?', [$id]);
+        PaymentManager::remove($id,402);
     }
 
     public function list(Request $request)
@@ -156,6 +159,10 @@ class BillingController extends Controller
         if ($bill->table_id != null) {
             DB::update('update tables set data=null where id=?', [$bill->table_id]);
         }
+        if ($request->paid > 0) {
+            new PaymentManager($request,$bill->id,402,"To Counter Sales A/C",$date);
+        }
+
         return response()->json(['status' => true,'id'=>$bill->id]);
     }
 
@@ -163,7 +170,18 @@ class BillingController extends Controller
     public function detail($id)
     {
         $bill = Bill::find($id);
+        $ledgers=[];
 
-        return view('admin.billing.detail', compact('bill'));
+        if($bill->paid>0){
+            $ledgers=DB::table('account_ledgers')
+            ->join('accounts','accounts.id','=','account_ledgers.account_id')
+            ->where([
+                'account_ledgers.foreign_key'=>$id,
+                'account_ledgers.identifier'=>402
+            ])
+            ->select('account_ledgers.amount','accounts.name')
+            ->get();
+        }
+        return view('admin.billing.detail', compact('bill','ledgers'));
     }
 }
