@@ -95,7 +95,7 @@
                 }
                 const date=toNepaliDate(transaction.date);
                 html+=`
-                <tr>
+                <tr id="transaction-${transaction.id}">
                     <th>
                         ${date}
                     </th>
@@ -112,13 +112,26 @@
                         ${to_bank_name}
                     </th>
                     <th>
-        
+                        <button class="btn btn-danger" onclick="cancel(${transaction.id})">Cancel Transaction</button>
                     </th>
                 </tr>
                 `;
             }
             $('#data').html(html);
         }
+
+        function cancel(id){
+            if(prompt('Enter yes to cancel transaction')=='yes'){
+                axios.post('{{route('admin.accounting.bank.transaction.cancel')}}',{id:id})
+                .then((res)=>{
+                    $('#transaction-'+id).remove();
+                })
+                .catch((err)=>{
+                    alert('Some error occured please try again');
+                })
+            }
+        }
+
         $(document).ready(function () {
             $('#type').val(1);
             loadData();

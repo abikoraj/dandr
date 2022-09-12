@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\BankTransaction;
+use App\PaymentManager;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -66,6 +67,9 @@ class BankTransactionController extends Controller
 
     public function cancel(Request $request)
     {
-        
+        $type=DB::table('bank_transactions')->where('id',$request->id)->first(['type'])->type;
+        DB::delete('delete from bank_transactions where id = ?', [$request->id]);
+        PaymentManager::remove($request->id,(800+$type));
+      
     }
 }
