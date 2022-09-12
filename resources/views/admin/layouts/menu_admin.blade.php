@@ -143,7 +143,13 @@
             <li><a href="javascript:void(0);" class="waves-effect waves-block menu-toggle"><i class="zmdi zmdi-shopping-cart"></i><span>Manufacture</span></a>
                 <ul class="ml-menu">
                     <li><a href="{{ route('admin.manufacture.product.index') }}" class="waves-effect waves-block">Manage Products</a></li>
-                    <li><a href="{{ route('admin.manufacture.process.index') }}" class="waves-effect waves-block">Manage Process</a></li>
+                    @if (env('use_full_manufacture',false))
+                        <li><a href="{{ route('admin.manufacture.process.index') }}" class="waves-effect waves-block">Manage Process</a></li>
+                    @endif
+                    @if (env('use_simple_manufacture',false))
+                        <li><a href="{{ route('admin.simple.manufacture.index') }}" class="waves-effect waves-block">Manage Process</a></li>
+                    @endif
+                        
 
                 </ul>
             </li>

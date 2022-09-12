@@ -46,5 +46,14 @@
                Opening
             </span>
         </div>
+        <div class="col-md-2 section href" data-target="{{route('admin.accounting.bank.transaction.index')}}">
+            <span class="icon">
+                <i class="zmdi zmdi-accounts"></i>
+            </span>
+            <span class="divider"></span>
+            <span class="text">
+               Bank Transactions
+            </span>
+        </div>
     </div>
 @endsection

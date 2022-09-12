@@ -136,6 +136,7 @@ class Menu
                 'children' => [
                     ["Manage Products", '13.01', route('admin.manufacture.product.index')],
                     ["Manage Process", '13.02', route('admin.manufacture.process.index')],
+                    ["Manage Process", '13.06', route('admin.simple.manufacture.index')],
                 ],
             ],
             "Restaurant"=>[

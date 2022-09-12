@@ -13,7 +13,6 @@
             <option value="4" >Yearly</option>
             <option value="5">Custom</option>
             @if (env('use_pos',false))
-
                 <option value="6" >Fiscal Year</option>
             @endif
         </select>

@@ -137,7 +137,9 @@ return [
             'product_template' => ['use' => [], 'code' => '13.01'],
             'list_process' => ['use' => [], 'code' => '13.02'],
             'add_process' => ['use' => [], 'code' => '13.03'],
-            'manage_process' => ['use' => [], 'code' => '13.04'],
+            'manage_process' => ['use' => ['use_full_manufacture'], 'code' => '13.04'],
+            'manage_process' => ['use' => ['use_simple_manufacture'], 'code' => '13.06'],
+            'api_list_process_api' => ['use' => [], 'code' => '13.05'],
             'api_list_process_api' => ['use' => [], 'code' => '13.05'],
         ]
     ],

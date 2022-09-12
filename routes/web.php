@@ -40,6 +40,7 @@ use App\Http\Controllers\Admin\TableController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\WastageController;
 use App\Http\Controllers\BackupController;
+use App\Http\Controllers\BankTransactionController;
 use App\Http\Controllers\BarcodeController;
 use App\Http\Controllers\Billing\BillingController as BillingBillingController;
 use App\Http\Controllers\DayReportController;
@@ -56,6 +57,7 @@ use App\Http\Controllers\Sahakari\HomeController;
 use App\Http\Controllers\Sahakari\Member\MemberController;
 use App\Http\Controllers\SMSController;
 use App\Http\Controllers\SummaryController;
+use App\Models\BankTransaction;
 use App\Models\ExtraIncome;
 use App\Models\ExtraIncomeCategory;
 use App\Models\Item;
@@ -488,7 +490,7 @@ Route::name('admin.')->group(function () {
             });
         });
 
-        Route::name('simple.manufacture.')->prefix('simple-manufacture')->group(function(){
+        Route::name('simple.manufacture.')->prefix('simple-manufacture')->middleware('permmission:13.06')->group(function(){
             Route::match(['get', 'post'], '', [SimpleManufactureController::class,'index'])->name('index');
             Route::match(['get', 'post'], 'add', [SimpleManufactureController::class,'add'])->name('add');
             Route::match(['get'], 'detail/{process}', [SimpleManufactureController::class,'detail'])->name('detail');
@@ -552,19 +554,25 @@ Route::name('admin.')->group(function () {
 
         //XXX accounting
         Route::prefix('accounting')->name('accounting.')->group(function(){
-            // XXX Manage Stock
+            //XXX Manage Stock
             Route::prefix('stock')->name('stock.')->group(function(){
                 Route::match(['GET','POST'],'',[StockController::class,'index'])->name('index');
                 Route::post('add',[StockController::class,'add'])->name('add');
                 Route::post('del',[StockController::class,'del'])->name('del');
             });
-            // XXX Extra Income
+            //XXX Manage Bank Transactions
+            Route::prefix('bank-transaction')->name('bank.transaction.')->group(function(){
+                Route::match(['GET','POST'],'',[BankTransactionController::class,'index'])->name('index');
+                Route::match(['GET','POST'],'add',[BankTransactionController::class,'add'])->name('add');
+                Route::post('cancel',[BankTransactionController::class,'cancel'])->name('cancel');
+            });
+            //XXX Extra Income
             Route::prefix('extra-income')->name('extra.income.')->group(function(){
                 Route::match(['get', 'post'], '', [ExtraIncomeController::class,'index'])->name('index');
                 Route::match(['get', 'post'], 'add', [ExtraIncomeController::class,'add'])->name('add');
                 Route::match(['get', 'post'], 'update/{id}', [ExtraIncomeController::class,'update'])->name('update');
                 Route::match(['get', 'post'], 'del', [ExtraIncomeController::class,'del'])->name('del');
-                // XXX Extra Income Cateories
+                //XXX Extra Income Cateories
                 Route::match(['get', 'post'], 'category', [ExtraIncomeController::class,'category'])->name('category');
                 Route::match(['get', 'post'], 'category-add', [ExtraIncomeController::class,'categoryAdd'])->name('category.add');
                 Route::match(['get', 'post'], 'category-update', [ExtraIncomeController::class,'categoryUpdate'])->name('category.update');

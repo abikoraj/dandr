@@ -217,7 +217,6 @@
                 })
                 .then(function(response) {
                     console.log(response.data);
-                    // showNotification('bg-success', 'Sellitem added successfully !');
                     $('#sellDisDataBody').prepend(response.data);
                     $('#id').val('');
                     $('#product_id').val('');
@@ -229,6 +228,7 @@
                     $('#xpay_amount').val(0);
                     $('#id').focus();
                     showNotification('bg-success', 'Sell item added successfully !');
+                    resetXPayment();
                     sellock=false;
                 })
                 .catch(function(response) {
