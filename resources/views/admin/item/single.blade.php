@@ -14,6 +14,8 @@
     <td>
         @if ($variantPer)
             <a href="{{route('admin.item.variants.index',['item'=>$item->id])}}" class="btn btn-primary">Variants</a>
+            <a href="{{route('admin.item.categories.index',['item'=>$item->id])}}" class="btn btn-primary">Categories</a>
+            <br>
         @endif
         @if ($editPer)
         <button  class="btn btn-primary btn-sm"  onclick="initEdit({{$item->id}});" >Edit</button>

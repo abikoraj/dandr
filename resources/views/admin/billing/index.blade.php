@@ -4,6 +4,9 @@
 
 @section('content')
     <style>
+        .nb .form-control{
+            border-radius: 0px !important;
+        }
         /* width */
         ::-webkit-scrollbar {
             width: 10px;
@@ -189,24 +192,29 @@
             </div>
 
         </div>
-        <div style="padding:15px;">
-            <div class="row">
+        <div style="padding:15px;" >
+            <div class="row m-0 nb">
                 @if (!$hasTable)
-                    <div class="col-md-2">
+                    <div class="col-md-2 p-0">
                         <label for="item">Item (F1)</label>
-                        <input type="text" list="product-list" id="item" class="form-control next" data-next="rate">
+                        <input type="text" list="product-list" id="item" class="form-control " >
                     </div>
-                    <div class="col-md-2">
+                    <div class="p-0 col-md-2" id="item_category_id_holder" style="display: none">
+                        <label for="item_category_id">Category (F1)</label>
+                        <select type="text" list="product-list" id="item_category_id" class="form-control next" data-next="rate">
+                        </select>
+                    </div>
+                    <div class="p-0 col-md-1">
                         <label for="item">Rate</label>
                         <input type="number" min="0" step="0.01" id="rate" class="form-control next"
                             data-next="qty">
                     </div>
-                    <div class="col-md-2">
+                    <div class="p-0 col-md-1">
                         <label for="item">Qty</label>
                         <input type="number" oninput="calculateTotal(this);" min="0" step="0.01" id="qty"
                             class="form-control next" data-next="total">
                     </div>
-                    <div class="col-md-2">
+                    <div class="p-0 col-md-2">
                         <label for="item">Total</label>
                         <input type="number" min="0" step="0.01" id="total" class="form-control">
                     </div>
@@ -319,11 +327,25 @@
 @section('scripts')
     <script src="{{ asset('calender/nepali.datepicker.v3.2.min.js') }}"></script>
     <script>
+        const cats={!! json_encode($cats) !!}
         toastr.options.progressBar = true;
         var i = 0;
         lock = false;
         $('#item').focusin(function() {
             $('.prodviwer').addClass('active');
+        });
+        $('#item_category_id').change(function (e) { 
+            e.preventDefault();
+            $('#rate').val(cats.find(o=>o.id==12))
+            
+        });
+       
+        $('#item').keydown(function(e) {
+            if(e.which==13){
+            var id = this.value;
+
+                selectProduct($('#prod_' + id)[0]);
+            }
         });
         $('#item').focusout(function() {
             // $('.prodviwer').removeClass('active');
@@ -337,8 +359,9 @@
                     $('#item').val('');
                 } else {
                     console.log($('#prod_' + id).data('product'));
-                    var data = $('#prod_' + id).data('product');
-                    $('#rate').val(data.sell_price);
+                    selectProduct($('#prod_' + id)[0]);
+                    // var data = $('#prod_' + id).data('product');
+                    // $('#rate').val(data.sell_price);
 
                 }
             }
@@ -676,9 +699,23 @@
 
         function selectProduct(ele) {
             const product = JSON.parse(ele.dataset.product);
-            $('#item').val(product.id);
-            $('#rate').val(product.sell_price);
-            $('#qty').focus();
+            const localCats=cats.filter(o=>o.item_id==product.id);
+            $('#item_category_id_holder').hide();
+            $('#item_category_id').html('');
+            if(localCats.length>0){
+                $('#item_category_id_holder').show();
+
+                $('#item_category_id').html(
+                    localCats.map(o=>`<option value="${o.id}">${o.name}</option>`).join('')
+                );
+                $('#item_category_id').focus();
+
+            }else{
+
+                $('#item').val(product.id);
+                $('#rate').val(product.sell_price);
+                $('#qty').focus();
+            }
         }
     </script>
 @endsection

@@ -22,7 +22,8 @@ class BillingController extends Controller
         $centers = DB::table('centers')->get(['id', 'name']);
         $hasTable = $request->filled('table');
         $table_id = $request->input('table');
-        return view('admin.billing.index', compact('centers', 'hasTable', 'table_id'));
+        $cats = DB::table('item_categories')->get(['id','name','item_id','price']);
+        return view('admin.billing.index', compact('centers', 'hasTable', 'table_id','cats'));
     }
 
     public function del($id)

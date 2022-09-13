@@ -362,6 +362,7 @@ class EmployeeController extends Controller
                     $salaryPay->id
                 );
             }
+            
 
             $sessionClose = new EmployeeSession();
             $sessionClose->user_id = $employee->user_id;
