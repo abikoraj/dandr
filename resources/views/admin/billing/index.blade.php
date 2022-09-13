@@ -490,6 +490,9 @@
             $('#qty').val('');
             $('#total').val('');
             $('#item').focus();
+            $('#item_category_id_holder').hide();
+            $('#item_category_id').html('');
+            $('#item_category_id').val(null);
             calculateAll();
         }
 
