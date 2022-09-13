@@ -4,9 +4,10 @@
 
 @section('content')
     <style>
-        .nb .form-control{
+        .nb .form-control {
             border-radius: 0px !important;
         }
+
         /* width */
         ::-webkit-scrollbar {
             width: 10px;
@@ -117,10 +118,10 @@
         }
     </style>
     {{-- @if (!$hasTable) --}}
-        {{-- @include('admin.billing.products') --}}
+    {{-- @include('admin.billing.products') --}}
     {{-- @endif --}}
     @include('admin.billing.payment')
-    
+
     @include('admin.billing.distributors')
     @include('admin.billing.add_customer')
     <div style="display:flex;flex-direction: column;height:100vh;">
@@ -192,16 +193,17 @@
             </div>
 
         </div>
-        <div style="padding:15px;" >
+        <div style="padding:15px;">
             <div class="row m-0 nb">
                 @if (!$hasTable)
                     <div class="col-md-2 p-0">
                         <label for="item">Item (F1)</label>
-                        <input type="text" list="product-list" id="item" class="form-control " >
+                        <input type="text" list="product-list" id="item" class="form-control ">
                     </div>
                     <div class="p-0 col-md-2" id="item_category_id_holder" style="display: none">
                         <label for="item_category_id">Category (F1)</label>
-                        <select type="text" list="product-list" id="item_category_id" class="form-control next" data-next="rate">
+                        <select type="text" list="product-list" id="item_category_id" class="form-control next"
+                            data-next="rate">
                         </select>
                     </div>
                     <div class="p-0 col-md-1">
@@ -327,22 +329,29 @@
 @section('scripts')
     <script src="{{ asset('calender/nepali.datepicker.v3.2.min.js') }}"></script>
     <script>
-        const cats={!! json_encode($cats) !!}
+        const cats = {!! json_encode($cats) !!}
         toastr.options.progressBar = true;
         var i = 0;
         lock = false;
         $('#item').focusin(function() {
             $('.prodviwer').addClass('active');
         });
-        $('#item_category_id').change(function (e) { 
+        $('#item_category_id').change(function(e) {
             e.preventDefault();
-            $('#rate').val(cats.find(o=>o.id==12))
-            
+            console.log(cats.find(o => o.id == this.value), this.value);
+            $('#rate').val(cats.find(o => o.id == this.value).price);
+
         });
-       
+
+        $('#item_category_id').focusout(function(e) {
+            e.preventDefault();
+            console.log(cats.find(o => o.id == this.value), this.value);
+            $('#rate').val(cats.find(o => o.id == this.value).price);
+        });
+
         $('#item').keydown(function(e) {
-            if(e.which==13){
-            var id = this.value;
+            if (e.which == 13) {
+                var id = this.value;
 
                 selectProduct($('#prod_' + id)[0]);
             }
@@ -385,6 +394,9 @@
             });
             $('#grosstotal').val(gross);
             var dis = parseFloat($('#discount').val());
+            if (isNaN(dis)) {
+                dis = 0;
+            }
             if (dis > gross) {
                 dis = gross;
                 $('#discount').val(gross)
@@ -392,16 +404,16 @@
             var net = gross - dis;
             $('#nettotal').val(net);
             var paid = parseFloat($('#paid').val());
-            if(isNaN(paid)){
-                paid=0;
+            if (isNaN(paid)) {
+                paid = 0;
             }
-            let cash=paid;
-            if(paid>net){
-                cash=net;
+            let cash = paid;
+            if (paid > net) {
+                cash = net;
             }
             $('#xpay_amount').val(cash).change();
             final = paid - net;
-            
+
             if (final < 0) {
                 $('#return').val(0);
                 $('#due').val((-1 * final));
@@ -428,10 +440,12 @@
             var billitem = {
                 id: data.id,
                 name: data.title,
+                item_category_id: $('#item_category_id').val(),
                 rate: $("#rate").val(),
                 qty: $("#qty").val(),
                 total: $("#total").val(),
             };
+            console.log(billitem, "billitem");
 
             if (billitem.qty == '' || billitem.qty <= 0) {
                 toastr.error('Please Enter Quantity', '{{ env('APP_NAME') }}', {
@@ -457,8 +471,15 @@
             }
 
             datastr = JSON.stringify(billitem)
+
+            let catname = '';
+
+            if (billitem.item_category_id != null) {
+                catname = " - " + (cats.find(o => o.id == billitem.item_category_id).name);
+            }
             str = "<tr id='row-" + i + "'> <td><input class='billitems' type='hidden' name='billitems[]' value='" +
-                datastr + "'/> " + billitem.id + "</td><td>" + billitem.name + "</td><td>" + billitem.rate + "</td><td>" +
+                datastr + "'/> " + billitem.id + "</td><td>" + billitem.name + catname + " </td><td>" + billitem.rate +
+                "</td><td>" +
                 billitem.qty + "</td><td>" + billitem.total +
                 "</td><td><span class='btn btn-danger btn-sm' onclick='removeProductItem(" + i +
                 ")'>Remove</span></td></tr>"
@@ -576,7 +597,7 @@
             for (const key in paymentOBJ) {
                 if (Object.hasOwnProperty.call(paymentOBJ, key)) {
                     const p = paymentOBJ[key];
-                    fd[key]=p;
+                    fd[key] = p;
                 }
             }
 
@@ -625,21 +646,26 @@
                 });
                 return false;
             }
+            const due = $('#due').val();
 
-            @if (hasPay())
-                var cash = parseFloat($('#xpay_amount').val());
-                if(isNaN(cash)){
-                    cash=0;
-                }
-                if(cash>0){
-                    openPayment(); 
-                }else{
+            if (due > 0 && customerid <= 0) {
+                $('.distviwer').addClass('active');
+                state = 2;
+            } else {
+                @if (hasPay())
+                    var cash = parseFloat($('#xpay_amount').val());
+                    if (isNaN(cash)) {
+                        cash = 0;
+                    }
+                    if (cash > 0) {
+                        openPayment();
+                    } else {
+                        save();
+                    }
+                @else
                     save();
-                }
-            @else
-                save();
-            @endif
-            
+                @endif
+            }
 
         }
 
@@ -699,18 +725,20 @@
 
         function selectProduct(ele) {
             const product = JSON.parse(ele.dataset.product);
-            const localCats=cats.filter(o=>o.item_id==product.id);
+            const localCats = cats.filter(o => o.item_id == product.id);
             $('#item_category_id_holder').hide();
             $('#item_category_id').html('');
-            if(localCats.length>0){
+            if (localCats.length > 0) {
                 $('#item_category_id_holder').show();
 
                 $('#item_category_id').html(
-                    localCats.map(o=>`<option value="${o.id}">${o.name}</option>`).join('')
+                    localCats.map(o => `<option value="${o.id}">${o.name}</option>`).join('')
                 );
+                $("#item_category_id").val(localCats[0].id);
+
                 $('#item_category_id').focus();
 
-            }else{
+            } else {
 
                 $('#item').val(product.id);
                 $('#rate').val(product.sell_price);

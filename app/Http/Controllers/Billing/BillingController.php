@@ -132,7 +132,9 @@ class BillingController extends Controller
         $titles=[];
         // dd($request->billitems);
         $billitem = [];
+
         foreach ($request->billitems as $t) {
+            
             // dd($bill->id);
             $item = new BillItem();
             $i = (object)$t;
@@ -141,6 +143,13 @@ class BillingController extends Controller
             $item->rate = $i->rate;
             $item->qty = $i->qty;
             $item->total = $i->total;
+            if($i->item_category_id!=null){
+                
+                $cat=DB::table('item_categories')->where('id',$i->item_category_id)->first(['name']);
+                $item->name = $i->name.' - '.$cat->name;
+
+                $item->item_category_id = $i->item_category_id;
+            }
             $item->bill_id = $bill->id;
             $item->amount = 0;
             $item->save();
