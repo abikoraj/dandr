@@ -7,10 +7,40 @@ use App\Models\Farmer;
 use App\Models\Ledger;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class TestController extends Controller
 {
-    public function index($id){
+    public function index($id)
+    {
+        // $ledgers=DB::select('select type,identifire,sum(amount) as amount from ledgers where date=20790528 group by identifire, type ');
+        // $accounts_ledgers=DB::select('select type,identifier,sum(amount) as amount from account_ledgers where date=20790528 group by identifier,type');
+        // dd($ledgers,$accounts_ledgers);
+
+        $dues=[];
+        $dueARR=['bills','sellitems','pos_bills'];
+        for ($i=20790501; $i <= 20790532 ; $i++) { 
+            $due=0;
+            foreach ($dueARR as $key => $table) {
+                $due+=DB::table($table)->where('date',$i)->sum('due');
+            }
+
+
+
+            array_push($dues,[
+                'name'=>'Account Rece'
+                'date'=>_nepalidate($i),
+                'DR'=>$due
+            ]);
+            
+        }
+        
+        dd($dues);
+        // dd(collect($ledgers)->groupBy('date'),collect($accounts_ledgers)->groupBy('date'));
+
+    
+    }
+    public function index1($id){
         $farmers=Farmer::where('center_id',$id)->get();
         $datas=[];
         foreach($farmers as $farmer)

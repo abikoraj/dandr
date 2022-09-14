@@ -488,7 +488,7 @@ class FarmerController extends Controller
         } else {
             $ledger->addLedger('Payment Received from farmer', 1, $request->pay, $date, '107', $farmerPay->id);
         }
-        new PaymentManager($request,$farmerPay->id,107,'To '.$user->name);
+        new PaymentManager($request,$farmerPay->id,107,'To '.$user->name.' A/C');
         return response('Payment Added Sucessfully');
     }
 

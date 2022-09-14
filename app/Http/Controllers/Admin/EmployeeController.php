@@ -214,7 +214,7 @@ class EmployeeController extends Controller
         } else {
             $ledger->addLedger('Advance Given-(' . $request->title . ')', 2, $request->amount, $date, '112', $advance->id);
         }
-        new PaymentManager($request, $advance->id, 112,'By '.$ledger->user->name);
+        new PaymentManager($request, $advance->id, 112,'By '.$ledger->user->name. ' A/C');
         return view('admin.emp.advance.single', compact('advance'));
     }
 
@@ -370,7 +370,7 @@ class EmployeeController extends Controller
             $sessionClose->year = $request->year;
             $sessionClose->save();
 
-            new PaymentManager($request, $salaryPay->id, 124,"By Salary");
+            new PaymentManager($request, $salaryPay->id, 124,"By Salary A/C");
             echo 'ok';
         }
     }
@@ -486,7 +486,7 @@ class EmployeeController extends Controller
         $employee = Employee::where('id', $request->employee_id)->first();
         $ledger = new LedgerManage($employee->user_id);
         $advance = $ledger->addLedger($request->title, 1, $request->amount, $date, '140');
-        new PaymentManager($request, $advance->id, 140,'To '.$ledger->user->name);
+        new PaymentManager($request, $advance->id, 140,'To '.$ledger->user->name. ' A/C');
         return view('admin.emp.ret.single', compact('advance'));
     }
     public function getRet(Request $request)

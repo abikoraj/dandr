@@ -60,7 +60,7 @@ class MilkPaymentController extends Controller
             }else{
                 $ledger->addLedger('Payment Milk Payment Given To Farmer',2,$request->amount,$date,'121',$payment->id);
             }
-            new PaymentManager($request,$payment->id,121,'By '.$user->name);
+            new PaymentManager($request,$payment->id,121,'By '.$user->name.' A/C');
             return view('admin.milk.payment.single',compact('payment'));
         }else{
             return '<tr class="text-center"><td colspan="4"> <strong> <span class="text-danger">Your payment has been failed due to Session is not closed yet !</span></strong></td></tr>';

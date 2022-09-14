@@ -494,7 +494,7 @@ class SupplierController extends Controller
 
         $ledger = new LedgerManage($request->id);
         $ledger->addLedger("Payment to supplier", 2, $request->amount, $date, '127', $payment->id);
-        new PaymentManager($request,$payment->id,127,'By '.$ledger->user->name,$date);
+        new PaymentManager($request,$payment->id,127,'By '.$ledger->user->name.' A/C',$date);
 
 
         $supplier = User::find($request->id);

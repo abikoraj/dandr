@@ -15,7 +15,7 @@ class AddVariantToBillItemsTable extends Migration
     {
         Schema::table('bill_items', function (Blueprint $table) {
             $table->unsignedBigInteger('item_variant_id')->nullable();
-            $table->foreign('item_variant_id')->references('id')->on('item_variant');
+            $table->foreign('item_variant_id')->references('id')->on('item_variants');
             $table->unsignedBigInteger('item_category_id')->nullable();
             $table->foreign('item_category_id')->references('id')->on('item_categories');
         });

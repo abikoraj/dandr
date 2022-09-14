@@ -34,7 +34,7 @@
                     <div class="col-lg-3">
                         <label for="name">Bill No.</label>
                         <div class="form-group">
-                            <input type="text" id="billno" name="billno" class="form-control next"
+                            <input type="text" id="billno" name="billno" class="form-control next disable-enter"
                                 data-next="nepali-datepicker" placeholder="Enter supplier bill no."
                                 required>
                         </div>
@@ -44,7 +44,7 @@
                         <div class="form-group">
                             <label for="date">Date</label>
                             <input type="text" name="date" id="nepali-datepicker"
-                                class="calender form-control" placeholder="Date" required>
+                                class="calender form-control" data-next="ptr" placeholder="Date" required>
                         </div>
                     </div>
 
@@ -97,7 +97,7 @@
                     <div class="col-md-2">
                         <div class="from-group">
                             <label for="rate"> Total </label>
-                            <input type="number" class="form-control" id="total" value="0"
+                            <input type="number" class="form-control disable-enter" id="total" value="0"
                                  step="0.001" readonly>
                         </div>
                     </div>
@@ -105,7 +105,7 @@
                     <div class="col-md-2">
                         <div class="from-group">
                             <label for="has_expairy"><input type="checkbox" id="has_expairy"> Expairy </label>
-                            <input type="date" class="form-control" id="exp_date" disabled>
+                            <input type="date" class="form-control  disable-enter" id="exp_date" disabled>
                         </div>
                     </div>
 
@@ -142,31 +142,31 @@
                             <div style="margin-top: 4px; margin-right: 5px;">
                                 <div class="end">
                                     <strong> Total:</strong>
-                                    <input type="number"  step="0.01" value="0" id="itotal" readonly>
+                                    <input class=" disable-enter" type="number"  step="0.01" value="0" id="itotal" readonly>
                                 </div>
                                 <div class="end">
                                     <strong> Discount:</strong>
-                                    <input type="number"  oninput="calculateTotal()"  step="0.01" value="0" id="idiscount" name="idiscount">
+                                    <input class=" disable-enter" type="number"  oninput="calculateTotal()"  step="0.01" value="0" id="idiscount" name="idiscount">
                                 </div>
                                 <div class="end">
                                     <strong> Taxable:</strong>
-                                    <input type="number"  step="0.01" value="0" id="itaxable"  readonly>
+                                    <input class=" disable-enter" type="number"  step="0.01" value="0" id="itaxable"  readonly>
                                 </div>
                                 <div class="end">
                                     <strong> Vat:</strong>
-                                    <input type="number"  oninput="calculateTotal()"  step="0.01" value="0" id="itax" name="itax">
+                                    <input class=" disable-enter" type="number"  oninput="calculateTotal()"  step="0.01" value="0" id="itax" name="itax">
                                 </div>
                                 <div class="end">
                                     <strong> Grand Total:</strong>
-                                    <input type="number"  step="0.01" value="0" id="igrandtotal"  readonly>
+                                    <input class=" disable-enter" type="number"  step="0.01" value="0" id="igrandtotal"  readonly>
                                 </div>
                                 <div class="end">
                                     <strong> Paid:</strong>
-                                    <input type="number" oninput="calculateTotal()" step="0.01" value="0" id="ipaid" name="ipaid">
+                                    <input class=" disable-enter" type="number" oninput="calculateTotal()" step="0.01" value="0" id="ipaid" name="ipaid">
                                 </div>
                                 <div class="end"  readonly>
                                     <strong> Due:</strong>
-                                    <input type="number"  step="0.01" value="0" id="idue">
+                                    <input class=" disable-enter" type="number"  step="0.01" value="0" id="idue">
                                 </div>
                                 <div class="end">
                                    
@@ -257,10 +257,10 @@
 
 
         function saveData(e) {
+            e.preventDefault();
             if(prompt('Enter yes to continue.')!='yes'){
                 return ;
             }
-            e.preventDefault();
             if ($('#supplier').val() == '') {
                 alert('Please select supplier.');
                 $('#supplier').focus();
@@ -429,6 +429,7 @@
                 })
                 .then(function(response) {
                     console.log(response);
+                    items.push(response.data);
                     showNotification('bg-success', 'Item added successfully!');
                     $('#createItems').modal('toggle');
                     $('#add-bill').trigger("reset")
@@ -436,10 +437,22 @@
                     $('#ptr').append(newOption).trigger('change');
                     // window.location.reload();
                 })
-                .catch(function(response) {
+                .catch(function(err) {
                     //handle error
-                    console.log(response);
+                    console.log(err);
+                    if(err.response){
+
+                    }else{
+                        
+                    }
                 });
+        }
+
+        function copyPrice(id) {
+            const wholesale = $('#center-wholesale-' + id).val();
+            const rate = $('#center-rate-' + id).val();
+            $('.center-rate').val(rate);
+            $('.center-wholesale').val(wholesale);
         }
 
         $('#qty').bind('keydown', function(e) {
@@ -457,6 +470,12 @@
                 $('#exp_date').removeAttr('disabled');
             }else{
                 $('#exp_date').attr('disabled', 'disabled');
+            }
+        });
+
+        $('.disable-enter').keydown(function(e){
+            if(e.which==13){
+                e.preventDefault();
             }
         });
 

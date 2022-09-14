@@ -337,7 +337,7 @@ class FarmerDetailController extends Controller
                 if($request->filled('passbookchecked')){
                     DB::update('update farmer_reports set has_passbook=1 where user_id=? and year=? and month= ? and session=? ',[$request->id,$request->year,$request->month,$request->session]);
                 }
-                new PaymentManager($request,$payment->id,121,'By '.$user->name);
+                new PaymentManager($request,$payment->id,121,'By '.$user->name. ' A/C');
                 array_push($data,$payment);
             }
         }

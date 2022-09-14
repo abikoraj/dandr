@@ -90,6 +90,9 @@ class LedgerManage
     {
         $nepalidate = new NepaliDate($date);
         $l = new \App\Models\Ledger();
+        if(strlen($particular)>187){
+            $particular=substr($particular,0,187).'...';
+        }
         $l->amount = $amount;
         $l->title = $particular;
         $l->date = $date;

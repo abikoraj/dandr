@@ -96,7 +96,7 @@ class EmployeeSalesController extends Controller
         }
 
 
-        new PaymentManager($request, $sell_item->id, 302,'To Employee Sales');
+        new PaymentManager($request, $sell_item->id, 302,'To Employee Sales A/C');
         $sell_item->item=$item->title;
         $sell_item->name=$user->name;
         return view('admin.emp.sales.single',compact('sell_item'));

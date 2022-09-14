@@ -119,9 +119,9 @@ class BillingController extends Controller
         }
         $bill->table_id = $request->table_id;
         $bill->grandtotal = $request->gross;
-        $bill->paid = $request->paid;
-        $bill->due = $request->due;
-        $bill->dis = $request->dis;
+        $bill->paid = $request->paid??0;
+        $bill->due = $request->due??0;
+        $bill->dis = $request->dis??0;
         $bill->net_total = $request->net;
         $bill->return = $request->return;
         $bill->date = $date;

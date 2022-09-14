@@ -242,7 +242,7 @@ class CustomerController extends Controller
             $ledger->addLedger("Payment Received", 1, $payment->amount, $date, 135, $payment->id);
         }
         $user = User::find($request->id);
-        new PaymentManager($request,$payment->id,135,'To '.$user->name,$date);
+        new PaymentManager($request,$payment->id,135,'To '.$user->name. ' A/C',$date);
         return response('ok');
     }
 

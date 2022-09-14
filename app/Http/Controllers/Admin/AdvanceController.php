@@ -46,7 +46,7 @@ class AdvanceController extends Controller
         } else {
             $ledger->addLedger('Advance to Farmer', 2, $request->amount, $date, '104', $adv->id);
         }
-        new PaymentManager($request, $adv->id, 104, 'By '.$user->name);
+        new PaymentManager($request, $adv->id, 104, 'By '.$user->name. ' A/C');
         return view('admin.farmer.advance.single', compact('adv'));
     }
 
