@@ -28,6 +28,16 @@
                 Farmer Report
             </span>
         </div>
+        <div class="col-md-2 section href" data-target="{{route('admin.report.farmer.with.milk')}}">
+            <span class="icon">
+                <i class="zmdi zmdi-accounts"></i>
+            </span>
+            <span class="divider"></span>
+            <span class="text">
+                Farmer Report <br>
+                With Milk Data
+            </span>
+        </div>
     @endif
     @if (env('use_farmer',false))
         <div class="col-md-2 section href" data-target="{{route('admin.report.milk')}}">

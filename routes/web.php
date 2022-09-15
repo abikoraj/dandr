@@ -45,6 +45,7 @@ use App\Http\Controllers\BankTransactionController;
 use App\Http\Controllers\BarcodeController;
 use App\Http\Controllers\Billing\BillingController as BillingBillingController;
 use App\Http\Controllers\DayReportController;
+use App\Http\Controllers\FarmerReportController;
 use App\Http\Controllers\FixedAssetController;
 use App\Http\Controllers\HomeController as ControllersHomeController;
 use App\Http\Controllers\PaymentController;
@@ -683,6 +684,10 @@ Route::name('admin.')->group(function () {
                 Route::match(['GET', 'POST'], 'bonus', [ReportController::class, 'bonus'])->name('bonus');
                 Route::match(['GET', 'POST'], 'stock', [ReportController::class, 'stock'])->name('stock');
                 Route::match(['GET', 'POST'], 'restaurant', [RestaurantReportController::class, 'index'])->name('restaurant');
+
+                Route::match(['GET', 'POST'], 'farmer-with-milk', [FarmerReportController::class, 'farmerWithMilk'])->name('farmer.with.milk');
+
+
             });
         });
 
