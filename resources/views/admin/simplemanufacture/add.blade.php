@@ -10,7 +10,7 @@
             text-align: center;
         }
 
-       
+
 
         .step-btn.active {
             background: rgb(0, 122, 204);
@@ -83,7 +83,25 @@
             </div>
         </div>
         <hr>
+        <div id="current-stock-holder" > 
 
+            <div class="row">
+    
+                <div class="col-md-4" >
+                    <strong>
+                        Current Stock : 
+                    </strong>
+                    <span id="current-stock"></span> 
+                </div>
+                <div class="col-md-4">
+                    <strong>
+                        Loaded Stock : 
+                    </strong>
+                    <span id="loaded-stock"></span>
+                </div>
+            </div>
+            <hr>
+        </div>
         <div>
             <div class="steps step-div step-1 active">
                 <table class="table">
@@ -157,12 +175,14 @@
 @section('js')
     <script src="{{ asset('backend/plugins/select2/select2.min.js') }}"></script>
     <script>
+        var centerStocks = {!! json_encode($centerStocks) !!};
+        console.log(centerStocks);
         var data = {
             rawMaterials: [],
             wastage: [],
             items: [],
             date: '',
-            types: ['rawMaterials', 'wastage', 'items'],
+            types: ['rawMaterials', 'items', 'wastage'],
             code: 'simplemanufacture',
             push: function(localdata) {
                 switch (CurrentStep) {
@@ -182,10 +202,10 @@
                 data.render();
                 data.save();
             },
-            clean:function(){
-                data.rawMaterials=[];
-                data.items=[];
-                data.wastage=[];
+            clean: function() {
+                data.rawMaterials = [];
+                data.items = [];
+                data.wastage = [];
                 data.save();
                 data.render();
             },
@@ -251,6 +271,12 @@
             $('.steps').removeClass('active');
             $('.step-' + CurrentStep).addClass('active');
             $('#add-type').html(steps[CurrentStep]);
+            if(CurrentStep==1){
+                $('#current-stock-holder').show();
+            }else{
+                $('#current-stock-holder').hide();
+
+            }
         }
 
         $(document).ready(function() {
@@ -269,6 +295,27 @@
                 }
             }).join('')));
             data.load();
+
+            $('#item_id').change((e) => {
+                $('#current-stock').html("");
+
+                if (CurrentStep == 1) {
+                    const item_id = parseInt($('#item_id').val());
+                    const center_id = parseInt($('#center_id').val());
+                    const stock = centerStocks.find(o => o.item_id == item_id && o.center_id == center_id);
+                    console.log(stock);
+                    if (stock != undefined) {
+                        $('#current-stock').html(stock.amount<0?0:stock.amount);
+                    }
+                    let loadedStockAmount =0;
+                    const loadedStocks=data.rawMaterials.filter(o=>o.item.id==item_id && o.center.id==center_id);
+                    loadedStocks.forEach(loadedStock => {
+                        loadedStockAmount+=loadedStock.amount;
+                    });
+                    $('#loaded-stock').html(loadedStockAmount);
+
+                }
+            })
         });
 
         function saveData() {
@@ -281,25 +328,25 @@
                 return;
             }
 
-            if(!prompt('Enter yes to continue')=='yes'){
+            if (!prompt('Enter yes to continue') == 'yes') {
                 return;
             }
             data.date = $('#nepali-date').val();
             const localData = {
                 date: data.date,
                 items: [],
-                item_ids:[]
+                item_ids: []
             };
 
             data.types.forEach(type => {
                 const localDatas = data[type];
                 localDatas.forEach(local => {
                     localData.items.push({
-                        item_id:local.item.id,
-                        item_title:local.item.title,
-                        center_id:local.center.id,
-                        amount:local.amount,
-                        type:local.type,
+                        item_id: local.item.id,
+                        item_title: local.item.title,
+                        center_id: local.center.id,
+                        amount: local.amount,
+                        type: local.type,
                     })
                     localData.item_ids.push(local.item.id);
                 });
@@ -319,13 +366,14 @@
                     } else {
                         showNotification("bg-danger", "Some Error Occured");
                     }
-            })
+                })
         }
 
         function AddData() {
             const amount = parseFloat($('#amount').val());
             const item_id = parseInt($('#item_id').val());
             const center_id = parseInt($('#center_id').val());
+
             let canAdd = true;
             if (isNaN(item_id)) {
                 alert('Please Enter Amount');
@@ -337,6 +385,28 @@
                 alert('Please Enter Amount');
                 canAdd = false;
 
+            }
+
+            if (CurrentStep == 1) {
+
+                const stock = centerStocks.find(o => o.item_id == item_id && o.center_id == center_id);
+                if (stock != undefined) {
+                    const stockAmount = parseFloat(stock.amount);
+                    let loadedStockAmount =0;
+                    const loadedStocks=data.rawMaterials.filter(o=>o.item.id==item_id && o.center.id==center_id);
+                    console.log(stock, amount, CurrentStep,loadedStocks,loadedStockAmount, "all data");
+                    loadedStocks.forEach(loadedStock => {
+                        loadedStockAmount+=loadedStock.amount;
+                    });
+                    
+                    if (amount > (stockAmount-loadedStockAmount)) {
+                        alert('Not Enough Stock');
+                        return;
+                    }
+                } else {
+                    alert('Not Enough Stock');
+                    return;
+                }
             }
             if (canAdd) {
                 const localdata = {
@@ -357,6 +427,7 @@
                     type: 'select2:open'
                 });
                 data.push(localdata);
+                $('#current-stock').html('');
             }
 
         }

@@ -45,6 +45,7 @@ use App\Http\Controllers\BankTransactionController;
 use App\Http\Controllers\BarcodeController;
 use App\Http\Controllers\Billing\BillingController as BillingBillingController;
 use App\Http\Controllers\DayReportController;
+use App\Http\Controllers\ExpenseReportController;
 use App\Http\Controllers\FarmerReportController;
 use App\Http\Controllers\FixedAssetController;
 use App\Http\Controllers\HomeController as ControllersHomeController;
@@ -686,8 +687,7 @@ Route::name('admin.')->group(function () {
                 Route::match(['GET', 'POST'], 'restaurant', [RestaurantReportController::class, 'index'])->name('restaurant');
 
                 Route::match(['GET', 'POST'], 'farmer-with-milk', [FarmerReportController::class, 'farmerWithMilk'])->name('farmer.with.milk');
-
-
+                Route::match(['GET', 'POST'], 'expenses-fy', [ExpenseReportController::class, 'fy'])->name('expene.fy');
             });
         });
 

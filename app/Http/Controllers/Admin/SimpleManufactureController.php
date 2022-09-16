@@ -39,6 +39,7 @@ class SimpleManufactureController extends Controller
             $date=str_replace("-","",$request->date);
             // $item_ids="(".implode(",",$request->item_ids) . ")";
             $items=DB::table('items')->select(DB::raw(' id,cost_price,sell_price'))->whereIn('id',$request->item_ids)->get();
+      
             $process=new SimpleManufacturing();
             $process->date=$date;
             $process->title='';
@@ -76,9 +77,11 @@ class SimpleManufactureController extends Controller
             $process->save();
             return response($process);
         }else{
+            
             $items=DB::table('items')->get(['id','title']);
+            $centerStocks=DB::table('center_stocks')->whereIn('item_id',$items->pluck('id'))->get(['center_id','amount','item_id']);
             $centers=DB::table('centers')->get(['id','name']);
-            return view('admin.simplemanufacture.add',compact('items','centers'));
+            return view('admin.simplemanufacture.add',compact('items','centers','centerStocks'));
         }
     }
 

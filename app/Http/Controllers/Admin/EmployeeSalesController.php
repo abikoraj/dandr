@@ -68,8 +68,8 @@ class EmployeeSalesController extends Controller
         $sell_item->total = $request->total;
         $sell_item->qty = $request->qty;
         $sell_item->rate = $request->rate;
-        $sell_item->due = $request->due;
-        $sell_item->paid = $request->paid;
+        $sell_item->due = $request->due??0;
+        $sell_item->paid = $request->paid??0;
         $sell_item->center_id = $request->center_id;
         $sell_item->user_id = $user->id;
         $sell_item->item_id = $item->id;

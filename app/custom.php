@@ -415,6 +415,10 @@ function getCashAcc()
     $fy=getFiscalYear();
 }
 
+function getFiscalYears(){
+    return DB::table('fiscal_years')->get(['id','name']);
+}
+
 
 function hasPay()
 {

@@ -8,7 +8,7 @@
 
 @endsection
 @section('toobar')
-
+    <a href="{{route('admin.report.expene.fy')}}" class="btn btn-primary">Fiscal Year Expense Report</a>
 @endsection
 @section('content')
 
