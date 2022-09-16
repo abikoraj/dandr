@@ -433,7 +433,7 @@ class FarmerDetailController extends Controller
             $farmerreport->center_id = $request->center_id;
             $farmerreport->has_passbook = 0;
             $farmerreport->protsahan_amount=$request->protsahan_amount??0;
-            $farmerreport->transport=$request->transport??0;
+            $farmerreport->transport_amount=$request->transport_amount??0;
             $farmerreport->save();
         }
 
@@ -461,7 +461,7 @@ class FarmerDetailController extends Controller
 
             // dd($user_ids,$reports_id,$remainList);
 
-            $query = "select  u.id,u.no,u.name,u.usecc,u.rate,u.usetc,u.userate,
+            $query = "select  u.id,u.no,u.name,u.usecc,u.rate,u.usetc,u.userate,u.ts_amount,u.use_ts_amount,u.protsahan,u.use_protsahan,u.transport,u.use_transport,
             (select sum(m_amount) + sum(e_amount) from milkdatas where user_id= u.id and date>={$range[1]} and date<={$range[2]}) as milk,
             (select avg(snf) from snffats where user_id= u.id and date>={$range[1]} and date<={$range[2]}) as snf,
             (select avg(fat) from snffats where user_id= u.id and date>={$range[1]} and date<={$range[2]}) as fat,
@@ -475,7 +475,7 @@ class FarmerDetailController extends Controller
             (select sum(amount) from ledgers where user_id= u.id and date>={$range[1]} and date<={$range[2]} and (identifire=101 or identifire=102) and type=2) as openingdr,
             (select sum(amount) from ledgers where user_id= u.id and date>={$range[1]} and date<={$range[2]} and identifire=120 and type=1) as closingcr,
             (select sum(amount) from ledgers where user_id= u.id and date>={$range[1]} and date<={$range[2]} and identifire=120  and type=2) as closingdr
-            from (select iu.name,iu.id,iu.no,f.usecc,f.rate,f.usetc,f.userate from users iu join farmers f on iu.id=f.user_id where f.center_id={$center->id} and iu.id in {$remainList}  ) u order by u.no asc";
+            from (select iu.name,iu.id,iu.no,f.usecc,f.rate,f.usetc,f.userate,f.ts_amount,f.use_ts_amount,f.protsahan,f.use_protsahan,f.transport,f.use_transport from users iu join farmers f on iu.id=f.user_id where f.center_id={$center->id} and iu.id in {$remainList}  ) u order by u.no asc";
 
             $farmers = DB::select($query);
 
@@ -502,7 +502,7 @@ class FarmerDetailController extends Controller
                 $farmer->tc = 0;
                 $farmer->cc = 0;
                 $farmer->protsahan_amount = 0;
-                $farmer->transport = 0;
+                $farmer->transport_amount = 0;
 
                 if ($farmer->usetc == 1  && $farmer->total > 0) {
                     $farmer->tc = truncate_decimals((($center->tc * ($farmer->snf + $farmer->fat) / 100) * $farmer->milk), 2);
@@ -517,7 +517,7 @@ class FarmerDetailController extends Controller
                     $farmer->protsahan_amount = truncate_decimals($farmer->protsahan * $farmer->milk, 2);
                 }
                 if ($farmer->use_transport == 1 && $farmer->total > 0) {
-                    $farmer->tranport = truncate_decimals($farmer->transport * $farmer->milk, 2);
+                    $farmer->tranport_amount = truncate_decimals($farmer->transport * $farmer->milk, 2);
                 }
                 $farmer->bonus = 0;
                 if (env('hasextra', 0) == 1) {
