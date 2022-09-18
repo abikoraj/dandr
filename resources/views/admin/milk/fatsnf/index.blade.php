@@ -301,6 +301,8 @@
 
                 const amt = parseFloat(element.innerText);
                 milk += isNaN(amt) ? 0 : amt;
+                milk=Number(milk.toFixed(2));
+
             });
 
         
