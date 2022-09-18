@@ -146,7 +146,12 @@
             <div class="row h-100 m-0">
                 <div class="col-9 h-100 p-0">
                     <div class="row p-1">
-                        <div class="col-2 offset-8">
+                        <div class="col-md-4  offset-4">
+                            <label for="item" id="customerName" onclick="showCustomer()">__________________________</label> <br>
+                            <button class="btn btn-primary btn-sm" onclick="showCustomer()">Select Customer</button>
+                            <button class="btn btn-danger btn-sm" onclick="resetCustomer()">Reset Customer</button>
+                        </div>
+                        <div class="col-md-2">
                             Center
                             <select name="center_id" class="form-control" id="center_id">
                                 @foreach ($centers as $center)
@@ -154,7 +159,7 @@
                                 @endforeach
                             </select>
                         </div>
-                        <div class="col-2 ">
+                        <div class="col-md-2 ">
                             Date :
                             <input type="text" name="date" id="nepali-datepicker" placeholder="Date"
                                 class="form-control" required>
@@ -221,11 +226,7 @@
                         <input type="number" min="0" step="0.01" id="total" class="form-control">
                     </div>
                 @endif
-                <div class="col-md-4">
-                    <label for="item" id="customerName" onclick="showCustomer()">__________________________</label> <br>
-                    <button class="btn btn-primary" onclick="showCustomer()">Select Customer</button>
-                    <button class="btn btn-danger" onclick="resetCustomer()">Reset Customer</button>
-                </div>
+              
             </div>
         </div>
         <div style="background:#365F78;display:flex;padding-left:25px;font-size: 1.2rem;font-weight:600;">

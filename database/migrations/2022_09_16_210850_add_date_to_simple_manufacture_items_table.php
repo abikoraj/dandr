@@ -1,0 +1,36 @@
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+class AddDateToSimpleManufactureItemsTable extends Migration
+{
+    /**
+     * Run the migrations.
+     *
+     * @return void
+     */
+    public function up()
+    {
+        Schema::table('simple_manufacturing_items', function (Blueprint $table) {
+            $table->unsignedBigInteger('batch_id')->nullable();
+            $table->string('batch_no')->nullable();
+            $table->integer('date')->nullable();
+        });
+    }
+
+    /**
+     * Reverse the migrations.
+     *
+     * @return void
+     */
+    public function down()
+    {
+        Schema::table('simple_manufacturing_items', function (Blueprint $table) {
+            $table->dropColumn('date');
+            $table->dropColumn('batch_id');
+            $table->dropColumn('batch_no');
+        });
+    }
+}

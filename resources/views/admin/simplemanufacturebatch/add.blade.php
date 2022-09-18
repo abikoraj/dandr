@@ -57,23 +57,30 @@
 
                 </div>
             </div>
-            <div class="col-md-4">
+            <div class="mb-2 col-md-4">
                 <label for="item_id">Item</label>
                 <select name="item_id" id="item_id" class="ms form-control">
 
                 </select>
             </div>
-            <div class="col-md-3">
+            <div class="mb-2 col-md-4" id="batch_id_holder">
+                <label for="batch_id">Batch</label>
+                <select name="batch_id" id="batch_id" class="ms form-control">
+
+                </select>
+            </div>
+
+            <div class="mb-2 col-md-3">
                 <label for="center_id">Centers</label>
                 <select name="center_id" id="center_id" class="ms form-control">
 
                 </select>
             </div>
-            <div class="col-md-2">
+            <div class="mb-2 col-md-2">
                 <label for="amount">Amount</label>
                 <input name="amount" id="amount" class="form-control" step="0.0001">
             </div>
-            <div class="col-md-3  d-flex align-items-end">
+            <div class="mb-2 col-md-3  d-flex align-items-end">
                 <button class="btn btn-primary w-100" onclick="AddData()">
                     Add <br>
                     <span id="add-type">
@@ -119,7 +126,6 @@
 
                     </tr>
                     <tbody id="rawMaterialsData">
-
                     </tbody>
                 </table>
             </div>
@@ -177,7 +183,10 @@
     <script>
         var centerStocks = {!! json_encode($centerStocks) !!};
         console.log(centerStocks);
+        const batchURL="{{route('admin.simple.manufacture.batches',['id'=>'xx_id'])}}";
         var data = {
+            batchtype:'milk',
+            batches:[],
             rawMaterials: [],
             wastage: [],
             items: [],
@@ -251,12 +260,54 @@
                         html += `<tr>
                                 <td>${localData.item.title}</td>
                                 <td>${localData.center.name}</td>
-                                <td>${localData.amount}</td>
-                                <td><button onclick="data.clear(${localData.uid},${localData.type})">Del</button></td>
+                                <td>${localData.batch_id}</td>`
+                        if(CurrentStep==1){
+                            html+=`<td>${localData.amount}</td>`;
+                        }
+                        html+= `<td><button onclick="data.clear(${localData.uid},${localData.type})">Del</button></td>
                             </tr>`;
                     });
                     $('#' + type + "Data").html(html);
                 });
+            },
+            loadBatch:function(){
+                if(CurrentStep==1){
+
+                    const item_id=$('#item_id').val();
+                    if(item_id==undefined){
+                        return;
+                    }
+                    const url=batchURL.replace('xx_id',item_id);
+                    axios.get(url)
+                    .then((res)=>{
+
+                        data.batchtype=res.data.type;
+                        if(data.batchtype=='nobatch'){
+
+                            $('#batch_id_holder').hide();
+                        }else{
+                            $('#batch_id_holder').show();
+
+    
+                            if(data.batchtype=='others'){
+                                data.batches=res.data.data;
+                                $('#batch_id').html(data.batches.map(o=>`<option value="${o.batch_id}">${o.batch_no} (${o.amount})</option>`).join(''));
+    
+                            }else if(res.data.type=='milk'){
+                                data.batches=res.data.data.map(o=>{
+                                    return {
+                                        batchno:toNepaliDate(o.batchno),
+                                        amount:o.amount
+                                    }
+                                })
+                                $('#batch_id').html(data.batches.map(o=>`<option value="${o.batchno}">${o.batchno} (${o.amount})</option>`).join(''));
+                            }
+                        }
+                    })
+                    .catch((err)=>{
+                        console.log(err);
+                    });
+                }
             }
         }
         var CurrentStep = 1;
@@ -273,11 +324,16 @@
             $('#add-type').html(steps[CurrentStep]);
             if(CurrentStep==1){
                 $('#current-stock-holder').show();
+                $('#batch_id_holder').show();
+                
             }else{
                 $('#current-stock-holder').hide();
+                $('#batch_id_holder').hide();
 
             }
         }
+
+       
 
         $(document).ready(function() {
             refresh();
@@ -296,25 +352,33 @@
             }).join('')));
             data.load();
 
+            $('#item_id').blur(function (e) { 
+                e.preventDefault();
+                $('#batch_id').html("");
+                data.loadBatch();
+                
+            });
             $('#item_id').change((e) => {
+                
                 $('#current-stock').html("");
+                $('#batch_id').html("");
+                data.loadBatch();
+                // if (CurrentStep == 1) {
+                //     const item_id = parseInt($('#item_id').val());
+                //     const center_id = parseInt($('#center_id').val());
+                //     const stock = centerStocks.find(o => o.item_id == item_id && o.center_id == center_id);
+                //     console.log(stock);
+                //     if (stock != undefined) {
+                //         $('#current-stock').html(stock.amount<0?0:stock.amount);
+                //     }
+                //     let loadedStockAmount =0;
+                //     const loadedStocks=data.rawMaterials.filter(o=>o.item.id==item_id && o.center.id==center_id);
+                //     loadedStocks.forEach(loadedStock => {
+                //         loadedStockAmount+=loadedStock.amount;
+                //     });
+                //     $('#loaded-stock').html(loadedStockAmount);
 
-                if (CurrentStep == 1) {
-                    const item_id = parseInt($('#item_id').val());
-                    const center_id = parseInt($('#center_id').val());
-                    const stock = centerStocks.find(o => o.item_id == item_id && o.center_id == center_id);
-                    console.log(stock);
-                    if (stock != undefined) {
-                        $('#current-stock').html(stock.amount<0?0:stock.amount);
-                    }
-                    let loadedStockAmount =0;
-                    const loadedStocks=data.rawMaterials.filter(o=>o.item.id==item_id && o.center.id==center_id);
-                    loadedStocks.forEach(loadedStock => {
-                        loadedStockAmount+=loadedStock.amount;
-                    });
-                    $('#loaded-stock').html(loadedStockAmount);
-
-                }
+                // }
             })
         });
 
@@ -347,7 +411,7 @@
                         center_id: local.center.id,
                         amount: local.amount,
                         type: local.type,
-                        batch_id=null
+                        batch_id:local.type==1?local.batch_id:null,
                     })
                     localData.item_ids.push(local.item.id);
                 });
@@ -374,6 +438,7 @@
             const amount = parseFloat($('#amount').val());
             const item_id = parseInt($('#item_id').val());
             const center_id = parseInt($('#center_id').val());
+            const batch_id = $('#batch_id').val();
 
             let canAdd = true;
             if (isNaN(item_id)) {
@@ -390,23 +455,58 @@
 
             if (CurrentStep == 1) {
 
-                const stock = centerStocks.find(o => o.item_id == item_id && o.center_id == center_id);
-                if (stock != undefined) {
-                    const stockAmount = parseFloat(stock.amount);
-                    let loadedStockAmount =0;
-                    const loadedStocks=data.rawMaterials.filter(o=>o.item.id==item_id && o.center.id==center_id);
-                    console.log(stock, amount, CurrentStep,loadedStocks,loadedStockAmount, "all data");
-                    loadedStocks.forEach(loadedStock => {
-                        loadedStockAmount+=loadedStock.amount;
-                    });
-                    
-                    if (amount > (stockAmount-loadedStockAmount)) {
+                if(data.batchtype=='nobatch'){
+                    const stock = centerStocks.find(o => o.item_id == item_id && o.center_id == center_id);
+                    if (stock != undefined) {
+                        const stockAmount = parseFloat(stock.amount);
+                        let loadedStockAmount =0;
+                        const loadedStocks=data.rawMaterials.filter(o=>o.item.id==item_id && o.center.id==center_id);
+                        console.log(stock, amount, CurrentStep,loadedStocks,loadedStockAmount, "all data");
+                        loadedStocks.forEach(loadedStock => {
+                            loadedStockAmount+=loadedStock.amount;
+                        });
+                        
+                        if (amount > (stockAmount-loadedStockAmount)) {
+                            alert('Not Enough Stock');
+                            return;
+                        }
+                    } else {
                         alert('Not Enough Stock');
                         return;
                     }
-                } else {
-                    alert('Not Enough Stock');
-                    return;
+                }else{
+                    if(batch_id!=undefined && batch_id!=null){
+                        let stock;
+                        if(data.batchtype=='milk'){
+                            stock=data.batches.find(o=>o.batchno==batch_id);
+                        }else{
+                            stock=data.batches.find(o=>o.batch_id==batch_id);
+                        }
+                        
+                        if(stock!=undefined){
+                            const stockAmount=stock.amount;
+                            const loadedStocks=data.rawMaterials.filter(o=>o.item.id==item_id && o.batch_id==batch_id);
+                            loadedStockAmount=0;
+                            loadedStocks.forEach(loadedStock => {
+                                loadedStockAmount+=loadedStock.amount;
+                            });
+                        
+                        if (amount > (stockAmount-loadedStockAmount)) {
+                            alert('Not Enough Stock');
+                            return;
+                        }
+                            if(stock.amount<amount){
+                                alert('Not Enough Stock');
+                                return;
+                            }
+                        }else{
+                            alert('Not Enough Stock');
+                            return;
+                        }
+                    }else{
+                        alert("Please choose batch;")
+                        return;
+                    }
                 }
             }
             if (canAdd) {
@@ -414,6 +514,7 @@
                     item: items.find(o => o.id == item_id),
                     center: centers.find(o => o.id == center_id),
                     amount: amount,
+                    batch_id:batch_id,
                     uid: uid++,
                     type: CurrentStep
                 };
@@ -429,6 +530,7 @@
                 });
                 data.push(localdata);
                 $('#current-stock').html('');
+                $('#batch_id').html('');
             }
 
         }

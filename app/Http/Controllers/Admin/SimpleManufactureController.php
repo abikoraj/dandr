@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\ManufacturedProduct;
+use App\Models\MilkDay;
 use App\Models\SimpleManufacturing;
 use App\Models\SimpleManufacturingItem;
 use App\NepaliDate;
@@ -13,6 +15,34 @@ use Illuminate\Support\Facades\DB;
 
 class SimpleManufactureController extends Controller
 {
+
+    public function retriveBatches($id){
+        $milk_id=env('milk_id',null);
+        if($id==$milk_id){
+            $startdate=env('use_batch_from',20790601);
+            // $batches=DB::select("select c.amount,date as batchno from 
+            // (select sum(m_amount+e_amount)-ifnull((select sum(amount) from milk_days where date=milkdatas.date ),0) as amount,date from milkdatas  where date>= {$startdate} group by date) c 
+            // where c.amount>0");
+            $batches=DB::select("select c.amount,date as batchno from 
+            (select sum(m_amount+e_amount)-
+            ifnull((select sum(amount) from milk_days where date=milkdatas.date ),0) -
+            ifnull((select sum(bi.qty) from bill_items bi join bills b on bi.bill_id=b.id where bi.item_id={$id} and b.date=milkdatas.date ),0)-
+            ifnull((select sum(qty) from sellitems where item_id={$id} and date=milkdatas.date ),0)
+            as amount,date from milkdatas  where date>={$startdate}  group by date) c 
+            where c.amount>0");
+            return response()->json(['data'=>$batches,'type'=>'milk']);
+        }else{
+            $type=ManufacturedProduct::where('item_id',$id)->count()>0?'others':'nobatch';
+            if($type!='nobatch'){
+                $data=DB::select("select c.id as batch_id,c.amount,c.batch_no from(select id,(amount-
+                ifnull((select sum(qty) from bill_items where batch_id=simple_manufacturing_items.id ),0) -
+                ifnull((select sum(s.amount) from simple_manufacturing_items s where s.batch_id=simple_manufacturing_items.id ),0)) as amount,batch_no
+                 from simple_manufacturing_items where item_id={$id} and batch_no is not null) c where c.amount>0");
+            }
+            return response()->json(['data'=>$data,'type'=>$type]);
+
+        }
+    }
     public function index(Request $request)
     {
         if($request->getMethod()=="POST"){
@@ -36,15 +66,17 @@ class SimpleManufactureController extends Controller
     public function add(Request $request)
     {
         if($request->getMethod()=="POST"){
-            $date=str_replace("-","",$request->date);
+            $date=getNepaliDate($request->date);
             // $item_ids="(".implode(",",$request->item_ids) . ")";
             $items=DB::table('items')->select(DB::raw(' id,cost_price,sell_price'))->whereIn('id',$request->item_ids)->get();
-      
+            // dd($request->all());
             $process=new SimpleManufacturing();
             $process->date=$date;
             $process->title='';
             $process->save();
             $titles=[];
+            $milk_id=env('milk_id',null);
+
             foreach ($request->items as $key => $_value) {
                 $value=(object)$_value;
                 $item=new SimpleManufacturingItem();
@@ -52,11 +84,29 @@ class SimpleManufactureController extends Controller
                 $item->center_id=$value->center_id;
                 $item->item_id=$value->item_id;
                 $item->amount=$value->amount;
+                $item->amount=$value->amount;
                 $item->simple_manufacturing_id=$process->id;
                 $localItem=$items->where('id',$item->item_id)->first();
+                if($value->batch_id!=null){
+                    if($item->item_id==$milk_id){
+                        $batchDate=getNepaliDate($value->batch_id);
+                        $day=MilkDay::where('date',$batchDate)->first();
+                        if($day==null){
+                            $day=new MilkDay();
+                            $day->date=$batchDate;
+                            $day->amount=0;
+                        }
+                        $day->amount+=$item->amount;
+                        $day->save();
+                        $item->date=$batchDate;
+                    }else{
+                        $item->batch_id=$value->batch_id;
+                    }
+                }
                 if($localItem!=null){
                     $item->rate=implode("|",[$localItem->cost_price,$localItem->sell_price]);
                 }
+
                 if($item->type==2){
                     $product=DB::table('manufactured_products')->where('item_id',$item->item_id)->first();
                     if($product!=null){
@@ -65,7 +115,7 @@ class SimpleManufactureController extends Controller
                     }
                     maintainStock($item->item_id,$item->amount,$item->center_id,'in');
                     array_push($titles,"({$value->item_title} X {$item->amount})");
-                
+                    $item->batch_no=$request->date." - ".$value->item_title;
                 }else{
                     maintainStock($item->item_id,$item->amount,$item->center_id,'out');
                 }
@@ -81,7 +131,13 @@ class SimpleManufactureController extends Controller
             $items=DB::table('items')->get(['id','title']);
             $centerStocks=DB::table('center_stocks')->whereIn('item_id',$items->pluck('id'))->get(['center_id','amount','item_id']);
             $centers=DB::table('centers')->get(['id','name']);
-            return view('admin.simplemanufacture.add',compact('items','centers','centerStocks'));
+            if(env('use_batch_manufacture',false)){
+                return view('admin.simplemanufacturebatch.add',compact('items','centers','centerStocks'));
+
+            }else{
+                return view('admin.simplemanufacture.add',compact('items','centers','centerStocks'));
+
+            }
         }
     }
 

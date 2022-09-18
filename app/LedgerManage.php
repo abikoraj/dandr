@@ -90,8 +90,8 @@ class LedgerManage
     {
         $nepalidate = new NepaliDate($date);
         $l = new \App\Models\Ledger();
-        if(strlen($particular)>187){
-            $particular=substr($particular,0,187).'...';
+        if (strlen($particular) > 187) {
+            $particular = substr($particular, 0, 187) . '...';
         }
         $l->amount = $amount;
         $l->title = $particular;
@@ -306,7 +306,7 @@ class LedgerManage
             $farmer1->bonus = (int)($farmer1->grandtotal * $center->bonus / 100);
         }
         $farmer1->fpaid = (Ledger::where('user_id', $user_id)->where('date', '>=', $range[1])->where('date', '<=', $range[2])->where('identifire', '106')->sum('amount')
-        + Ledger::where('user_id', $user_id)->where('date', '>=', $range[1])->where('date', '<=', $range[2])->where('identifire', '107')->sum('amount'));
+            + Ledger::where('user_id', $user_id)->where('date', '>=', $range[1])->where('date', '<=', $range[2])->where('identifire', '107')->sum('amount'));
         $farmer1->due = Ledger::where('user_id', $user_id)->where('date', '>=', $range[1])->where('date', '<=', $range[2])->where('identifire', '103')->sum('amount');;
 
         $previousMonth = Ledger::where('user_id', $user_id)->where('date', '>=', $range[1])->where('date', '<=', $range[2])->where('identifire', '101')->sum('amount');
@@ -361,6 +361,4 @@ class LedgerManage
 
         return $farmer1;
     }
-
-
 }

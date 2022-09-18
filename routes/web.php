@@ -49,6 +49,7 @@ use App\Http\Controllers\ExpenseReportController;
 use App\Http\Controllers\FarmerReportController;
 use App\Http\Controllers\FixedAssetController;
 use App\Http\Controllers\HomeController as ControllersHomeController;
+use App\Http\Controllers\MilkReportController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\POS\BillingController;
 use App\Http\Controllers\POS\POSController;
@@ -501,7 +502,9 @@ Route::name('admin.')->group(function () {
             Route::match(['get', 'post'], 'add', [SimpleManufactureController::class, 'add'])->name('add');
             Route::match(['get'], 'detail/{process}', [SimpleManufactureController::class, 'detail'])->name('detail');
             Route::match(['post'], 'cancel', [SimpleManufactureController::class, 'cancel'])->name('cancel');
+            Route::match(['get'], 'batches/{id}', [SimpleManufactureController::class, 'retriveBatches'])->name('batches');
         });
+        
 
         //XXX item expire wastage
         Route::prefix('wastage')->name('wastage.')->middleware('permmission:03.09')->group(function () {
@@ -688,6 +691,7 @@ Route::name('admin.')->group(function () {
 
                 Route::match(['GET', 'POST'], 'farmer-with-milk', [FarmerReportController::class, 'farmerWithMilk'])->name('farmer.with.milk');
                 Route::match(['GET', 'POST'], 'expenses-fy', [ExpenseReportController::class, 'fy'])->name('expene.fy');
+                Route::match(['GET', 'POST'], 'milk-fy', [MilkReportController::class, 'fy'])->name('milk.fy');
             });
         });
 

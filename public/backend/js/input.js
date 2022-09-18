@@ -468,6 +468,7 @@ function newTab(url){
 
 
 function toNepaliDate(d){
+    console.log(d);
     const year=parseInt(d/10000);
     let _d=d%10000;
     const month=parseInt(_d/100);
