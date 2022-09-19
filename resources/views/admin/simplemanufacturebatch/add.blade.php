@@ -90,19 +90,19 @@
             </div>
         </div>
         <hr>
-        <div id="current-stock-holder" > 
+        <div id="current-stock-holder" >
 
             <div class="row">
-    
+
                 <div class="col-md-4" >
                     <strong>
-                        Current Stock : 
+                        Current Stock :
                     </strong>
-                    <span id="current-stock"></span> 
+                    <span id="current-stock"></span>
                 </div>
                 <div class="col-md-4">
                     <strong>
-                        Loaded Stock : 
+                        Loaded Stock :
                     </strong>
                     <span id="loaded-stock"></span>
                 </div>
@@ -157,6 +157,9 @@
                         </th>
                         <th>
                             Center
+                        </th>
+                        <th>
+                            Batch
                         </th>
                         <th>
                             Qty
@@ -259,19 +262,18 @@
                     localDatas.forEach(localData => {
                         html += `<tr>
                                 <td>${localData.item.title}</td>
-                                <td>${localData.center.name}</td>
-                                <td>${localData.batch_id}</td>`
-                        if(CurrentStep==1){
-                            html+=`<td>${localData.amount}</td>`;
+                                <td>${localData.center.name}</td>`;
+                        if(type=='rawMaterials' || type=='wastage'){
+                                html += `<td>${localData.batch_id}</td>`;
                         }
-                        html+= `<td><button onclick="data.clear(${localData.uid},${localData.type})">Del</button></td>
+                            html+=`<td>${localData.amount}</td><td><button onclick="data.clear(${localData.uid},${localData.type})">Del</button></td>
                             </tr>`;
                     });
                     $('#' + type + "Data").html(html);
                 });
             },
             loadBatch:function(){
-                if(CurrentStep==1){
+                if(CurrentStep==1 || CurrentStep==3){
 
                     const item_id=$('#item_id').val();
                     if(item_id==undefined){
@@ -288,11 +290,11 @@
                         }else{
                             $('#batch_id_holder').show();
 
-    
+
                             if(data.batchtype=='others'){
                                 data.batches=res.data.data;
                                 $('#batch_id').html(data.batches.map(o=>`<option value="${o.batch_id}">${o.batch_no} (${o.amount})</option>`).join(''));
-    
+
                             }else if(res.data.type=='milk'){
                                 data.batches=res.data.data.map(o=>{
                                     return {
@@ -322,18 +324,16 @@
             $('.steps').removeClass('active');
             $('.step-' + CurrentStep).addClass('active');
             $('#add-type').html(steps[CurrentStep]);
-            if(CurrentStep==1){
+            if(CurrentStep==1 || CurrentStep==3){
                 $('#current-stock-holder').show();
                 $('#batch_id_holder').show();
-                
             }else{
                 $('#current-stock-holder').hide();
                 $('#batch_id_holder').hide();
-
             }
         }
 
-       
+
 
         $(document).ready(function() {
             refresh();
@@ -352,14 +352,14 @@
             }).join('')));
             data.load();
 
-            $('#item_id').blur(function (e) { 
+            $('#item_id').blur(function (e) {
                 e.preventDefault();
                 $('#batch_id').html("");
                 data.loadBatch();
-                
+
             });
             $('#item_id').change((e) => {
-                
+
                 $('#current-stock').html("");
                 $('#batch_id').html("");
                 data.loadBatch();
@@ -453,7 +453,7 @@
 
             }
 
-            if (CurrentStep == 1) {
+            if (CurrentStep == 1 || CurrentStep == 3 ) {
 
                 if(data.batchtype=='nobatch'){
                     const stock = centerStocks.find(o => o.item_id == item_id && o.center_id == center_id);
@@ -465,7 +465,7 @@
                         loadedStocks.forEach(loadedStock => {
                             loadedStockAmount+=loadedStock.amount;
                         });
-                        
+
                         if (amount > (stockAmount-loadedStockAmount)) {
                             alert('Not Enough Stock');
                             return;
@@ -482,15 +482,23 @@
                         }else{
                             stock=data.batches.find(o=>o.batch_id==batch_id);
                         }
-                        
+
                         if(stock!=undefined){
                             const stockAmount=stock.amount;
-                            const loadedStocks=data.rawMaterials.filter(o=>o.item.id==item_id && o.batch_id==batch_id);
                             loadedStockAmount=0;
+                            const loadedStocks=data.rawMaterials.filter(o=>o.item.id==item_id && o.batch_id==batch_id);
+                           if(loadedStocks!=null && loadedStocks !=null)
                             loadedStocks.forEach(loadedStock => {
                                 loadedStockAmount+=loadedStock.amount;
                             });
-                        
+
+                            const loadedStockswastage=data.wastage.filter(o=>o.item.id==item_id && o.batch_id==batch_id);
+                            if(loadedStockswastage!=null && loadedStockswastage!= undefined){
+                                loadedStockswastage.forEach(loadedStock => {
+                                    loadedStockAmount+=loadedStock.amount;
+                                });
+                            }
+
                         if (amount > (stockAmount-loadedStockAmount)) {
                             alert('Not Enough Stock');
                             return;

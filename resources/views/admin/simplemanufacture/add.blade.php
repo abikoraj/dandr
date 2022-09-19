@@ -83,19 +83,19 @@
             </div>
         </div>
         <hr>
-        <div id="current-stock-holder" > 
+        <div id="current-stock-holder" >
 
             <div class="row">
-    
+
                 <div class="col-md-4" >
                     <strong>
-                        Current Stock : 
+                        Current Stock :
                     </strong>
-                    <span id="current-stock"></span> 
+                    <span id="current-stock"></span>
                 </div>
                 <div class="col-md-4">
                     <strong>
-                        Loaded Stock : 
+                        Loaded Stock :
                     </strong>
                     <span id="loaded-stock"></span>
                 </div>
@@ -374,7 +374,7 @@
             const amount = parseFloat($('#amount').val());
             const item_id = parseInt($('#item_id').val());
             const center_id = parseInt($('#center_id').val());
-
+            console.log(amount);
             let canAdd = true;
             if (isNaN(item_id)) {
                 alert('Please Enter Amount');
@@ -385,7 +385,6 @@
             if (isNaN(amount)) {
                 alert('Please Enter Amount');
                 canAdd = false;
-
             }
 
             if (CurrentStep == 1) {
@@ -399,7 +398,7 @@
                     loadedStocks.forEach(loadedStock => {
                         loadedStockAmount+=loadedStock.amount;
                     });
-                    
+
                     if (amount > (stockAmount-loadedStockAmount)) {
                         alert('Not Enough Stock');
                         return;
