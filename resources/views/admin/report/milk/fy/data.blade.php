@@ -3,113 +3,75 @@
     <table class="table table-bordered">
         <thead>
             <tr>
-                <th>
-                    Name
+                <th rowspan="2">
+                    Collection Center
                 </th>
                 @foreach ($monthArray as $month)
-                    <th>
-    
+                    <th colspan="3">
                         {{ $month[1] }}
                     </th>
                 @endforeach
-                <th>
-                    Total
+                <th rowspan="2">
+                    Total Milk
                 </th>
+                <th rowspan="2">
+                    Total Milk Aount
+                </th>
+            </tr>
+            <tr>
+             @foreach ($monthArray as $month)
+                <th>Total</th>
+                <th>Milk Amount</th>
+                <th>Per Liter</th>
+             @endforeach
             </tr>
         </thead>
+
         <tbody>
-            @php
-                $data = [];
-                foreach ($monthArray as $month) {
-                    $data[$month[1]] = 0;
-                }
-                
-            @endphp
-            @foreach ($cats as $cat)
+            @foreach ($centers as $center)
                 <tr>
-                    <th>
-                        {{ $cat->name }}
-                    </th>
-    
-                    @foreach ($monthArray as $month)
-                        @php
-                            $expense = $expenses
-                                ->where('month', $month[0])
-                                ->where('id', $cat->id)
-                                ->first();
-                            $data[$month[1]] += $expense != null ? $expense->amount : 0;
-                        @endphp
-                        <td class="{{ $month[1] }}" data-value="{{ $expense != null ? $expense->amount : 0 }}">
-                            {{(float) ($expense != null ? $expense->amount : 0) }}
-                        </td>
-                    @endforeach
-                    <td class="total">
-                        {{ $expense = $expenses->where('id', $cat->id)->sum('amount') }}
-                    </td>
+                   <td> {{ $center->name }} </td>
+                   @foreach ($monthArray as $month)
+                       @php
+                           $data=$datas->where('year',$month[2][0])->where('month',$month[2][1])->where('center_id',$center->id)->first();
+                       @endphp
+                       @if ($data!=null)
+                       <td>{{$data->milk}}</td>
+                       <td>{{$data->amount}}</td>
+                       <td>{{truncate_decimals($data->amount/$data->milk)}}</td>
+                       @else
+                       <td></td>
+                       <td></td>
+                       <td></td>
+                       @endif
+                   @endforeach
+                   <td>{{ $datas->where('center_id',$center->id)->sum('milk') }}</td>
+                   <td>{{ $datas->where('center_id',$center->id)->sum('amount') }}</td>
+
                 </tr>
             @endforeach
-            <tr>
+           <tr>
+               <th>Total</th>
+               @foreach ($monthArray as $month)
+               @php
+                   $totalmilk = $datas->where('year',$month[2][0])->where('month',$month[2][1])->sum('milk');
+                   $totalamount = $datas->where('year',$month[2][0])->where('month',$month[2][1])->sum('amount');
+               @endphp
                 <th>
-                    Salary
+                    {{ $totalmilk }}
                 </th>
-                @php
-                    $total=0;
-                @endphp
-                @foreach ($monthArray as $month)
-                    @php
-                        $salary = $salaries->where('month', $month[0])->first();
-                        $data[$month[1]] += $salary != null ? $salary->amount : 0;
-                        $total+=$salary != null ? $salary->amount : 0;
-                    @endphp
-                    <td class="{{ $month[1] }}" data-value="{{ $salary != null ? $salary->amount : 0 }}">
-                        {{ (float)($salary != null ? $salary->amount : 0) }}
-                    </td>
-                @endforeach
-                <td>
-                    {{$total}}
-                </td>
-            </tr>
-            <tr>
                 <th>
-                    Purchase Expenses
+                    {{ $totalamount }}
                 </th>
-                @php
-                    $total=0;
-                @endphp
-                @foreach ($monthArray as $month)
-                    @php
-                        $purchaseExp = $purchaseExps->where('month', $month[0])->first();
-                        $data[$month[1]] += $purchaseExp != null ? $purchaseExp->amount : 0;
-                        $total+=$purchaseExp != null ? $purchaseExp->amount : 0;
-                    @endphp
-                    <td class="{{ $month[1] }}" data-value="{{ $purchaseExp != null ? $purchaseExp->amount : 0 }}">
-                        {{ (float)($purchaseExp != null ? $purchaseExp->amount : 0) }}
-                    </td>
-                @endforeach
-                <td>
-                    {{$total}}
-                </td>
-            </tr>
-      
-            <tr>
-                <th>
-                    Total
-                </th>
-                @php
-                    $total = 0;
-                @endphp
-                @foreach ($monthArray as $month)
-                    <td>
-                        @php
-                            $total += $data[$month[1]];
-                        @endphp
-                        {{ $data[$month[1]] }}
-                    </td>
-                @endforeach
-                <td>
-                    {{ $total }}
-                </td>
-            </tr>
+                @if ($totalmilk!=0)
+                <th>{{ truncate_decimals($totalamount/$totalmilk) }} </th>
+                @else
+                <th></th>
+                @endif
+               @endforeach
+                <th></th>
+           </tr>
         </tbody>
+
     </table>
 

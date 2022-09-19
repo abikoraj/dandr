@@ -19,7 +19,7 @@
 <div class="row">
     <div class="col-md-4">
         <label for="fy">Fiscal Year</label>
-        <select name="fy" id="fy" class="form-control ms"> 
+        <select name="fy" id="fy" class="form-control ms">
             @foreach (getFiscalYears() as $fy)
                 @php
                     $current=getFiscalYear();
@@ -50,10 +50,10 @@
 <script type="text/JavaScript" src="https://cdnjs.cloudflare.com/ajax/libs/jQuery.print/1.6.0/jQuery.print.js"></script>
 
 <script>
-    
+
     function loadData(){
 
-        axios.post('{{route('admin.report.expene.fy')}}',{
+        axios.post('{{route('admin.report.milk.fy')}}',{
             fy:$('#fy').val()
         })
         .then((res)=>{
@@ -63,7 +63,7 @@
 
     window.onload = function() {
         loadData();
-       
+
     };
 
     function printDiv(id)
