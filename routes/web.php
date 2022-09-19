@@ -499,7 +499,7 @@ Route::name('admin.')->group(function () {
 
         Route::name('simple.manufacture.')->prefix('simple-manufacture')->middleware('permmission:13.06')->group(function () {
             Route::match(['get', 'post'], '', [SimpleManufactureController::class, 'index'])->name('index');
-            Route::match(['get', 'post'], 'add', [SimpleManufactureController::class, 'admilkfatsnfnamed'])->name('add');
+            Route::match(['get', 'post'], 'add', [SimpleManufactureController::class, 'add'])->name('add');
             Route::match(['get'], 'detail/{process}', [SimpleManufactureController::class, 'detail'])->name('detail');
             Route::match(['post'], 'cancel', [SimpleManufactureController::class, 'cancel'])->name('cancel');
             Route::match(['get'], 'batches/{id}', [SimpleManufactureController::class, 'retriveBatches'])->name('batches');

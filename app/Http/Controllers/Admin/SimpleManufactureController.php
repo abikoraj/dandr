@@ -39,7 +39,7 @@ class SimpleManufactureController extends Controller
                 ifnull((select sum(s.amount) from simple_manufacturing_items s where s.batch_id=simple_manufacturing_items.id ),0)) as amount,batch_no
                  from simple_manufacturing_items where item_id={$id} and batch_no is not null) c where c.amount>0");
             }
-            return response()->json(['data'=>$data,'type'=>$type]);
+            return response()->json(['data'=>$data,'type'=>$type])->setEncodingOptions(JSON_NUMERIC_CHECK);
 
         }
     }

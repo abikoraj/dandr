@@ -1,6 +1,6 @@
 <div class="prodviwer">
     @php
-        $products=\App\Models\Item::where('posonly',1)->get(['id','number','title','sell_price']);
+        $products=\App\Models\Item::where('posonly',1)->get(['id','number','title','sell_price','unit']);
     @endphp
     <table class="w-100 prodtable">
         <tr>

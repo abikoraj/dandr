@@ -783,8 +783,9 @@
 
         }
 
+        var product;
         function selectProduct(ele) {
-            const product = JSON.parse(ele.dataset.product);
+            product = JSON.parse(ele.dataset.product);
             const localCats = cats.filter(o => o.item_id == product.id);
             $('#item_category_id_holder').hide();
             $('#item_batch_id_holder').hide();
@@ -820,7 +821,7 @@
                     console.log(res.data);
                     batches=res.data.data;
                     $('#item_batch_id').html(
-                        res.data.data.map(o=>`<option value="${o.batch_id}">${o.batch_no}</option>`).join('')
+                        res.data.data.map(o=>`<option value="${o.batch_id}">${o.batch_no} (${o.amount.toString() } ${product.unit})</option>`).join('')
                     );
                 })
             }
