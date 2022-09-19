@@ -296,7 +296,7 @@ function currentStock()
     return DB::selectOne('select round(sum(stock * ( case when sell_price = 0   then cost_price when sell_price<cost_price then cost_price else sell_price end)),2) as sum from items');
 }
 
-function rangeSelector($request, $query)
+function rangeSelector($request, $query,$column='date')
 {
     $year = $request->year;
     $month = $request->month;
@@ -308,27 +308,27 @@ function rangeSelector($request, $query)
     $date = 1;
     if ($type == 0) {
         $range = NepaliDate::getDate($year, $month, $session);
-        $query = $query->where('date', '>=', $range[1])->where('date', '<=', $range[2]);
+        $query = $query->where($column, '>=', $range[1])->where($column, '<=', $range[2]);
     } elseif ($type == 1) {
         $date = $date = str_replace('-', '', $request->date1);
-        $query = $query->where('date', '=', $date);
+        $query = $query->where($column, '=', $date);
     } elseif ($type == 2) {
         $range = NepaliDate::getDateWeek($year, $month, $week);
-        $query = $query->where('date', '>=', $range[1])->where('date', '<=', $range[2]);
+        $query = $query->where($column, '>=', $range[1])->where($column, '<=', $range[2]);
     } elseif ($type == 3) {
         $range = NepaliDate::getDateMonth($year, $month);
-        $query = $query->where('date', '>=', $range[1])->where('date', '<=', $range[2]);
+        $query = $query->where($column, '>=', $range[1])->where($column, '<=', $range[2]);
     } elseif ($type == 4) {
         $range = NepaliDate::getDateYear($year);
-        $query = $query->where('date', '>=', $range[1])->where('date', '<=', $range[2]);
+        $query = $query->where($column, '>=', $range[1])->where($column, '<=', $range[2]);
     } elseif ($type == 5) {
         $range[1] = str_replace('-', '', $request->date1);;
         $range[2] = str_replace('-', '', $request->date2);;
-        $query = $query->where('date', '>=', $range[1])->where('date', '<=', $range[2]);
+        $query = $query->where($column, '>=', $range[1])->where($column, '<=', $range[2]);
     } else if ($type == 6) {
         $fy = DB::selectOne('select startdate,enddate from fiscal_years where id=?', [$request->fiscalyear]);
         // dd($fy);
-        $query = $query->where('date', '>=', $fy->startdate)->where('date', '<=', $fy->enddate);
+        $query = $query->where($column, '>=', $fy->startdate)->where($column, '<=', $fy->enddate);
     }
     return $query;
 }

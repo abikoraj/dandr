@@ -75,6 +75,7 @@
                     <li><a href="{{ route('admin.item.items-center-stock') }}" class="waves-effect waves-block">Branch Stock </a></li>
                     <li><a href="{{ route('admin.item.packaging.index') }}" class="waves-effect waves-block">Repackaging</a></li>
                     <li><a href="{{ route('admin.wastage.index') }}" class="waves-effect waves-block">Wastage</a></li>
+                    <li><a href="{{ route('admin.item.stock.tracking') }}" class="waves-effect waves-block">Stock Tracking</a></li>
                 </ul>
             </li>
             {{-- @if (env('tier',1)==1) --}}
@@ -103,7 +104,7 @@
                 </li>
             @endif
             @if (env('use_supplier',false))
-                
+
             <li><a href="javascript:void(0);" class="waves-effect waves-block menu-toggle"><i class="zmdi zmdi-shopping-cart"></i><span>Suppliers</span></a>
                 <ul class="ml-menu">
                     <li><a href="{{ route('admin.supplier.index') }}" class="waves-effect waves-block">Supplier List</a></li>
@@ -114,7 +115,7 @@
             </li>
             @endif
             @if (env('use_employee',false))
-                
+
                 <li><a href="javascript:void(0);" class="waves-effect waves-block menu-toggle"><i class="zmdi zmdi-shopping-cart"></i><span>Staff Manage</span></a>
                     <ul class="ml-menu">
                         <li><a href="{{ route('admin.employee.index') }}" class="waves-effect waves-block">Employees </a></li>
@@ -149,7 +150,7 @@
                     @if (env('use_simple_manufacture',false))
                         <li><a href="{{ route('admin.simple.manufacture.index') }}" class="waves-effect waves-block">Manage Process</a></li>
                     @endif
-                        
+
 
                 </ul>
             </li>
@@ -197,7 +198,7 @@
                 </ul>
             </li> --}}
             @endif
-            
+
             <li><a href="javascript:void(0);" class="waves-effect waves-block menu-toggle"><i class="zmdi zmdi-shopping-cart"></i><span> Setting</span></a>
                 <ul class="ml-menu">
                     <li><a href="{{ route('admin.setting.conversion.index') }}" class="waves-effect waves-block">Units </a></li>
@@ -206,10 +207,10 @@
 
             @if (env('use_reports',false))
             <li><a href="{{route('admin.report.home')}}" class="waves-effect waves-block"><i class="zmdi zmdi-shopping-cart"></i><span>Reports</span></a></li>
-                
+
             @endif
             @if (env('use_accounting',false))
-    
+
             <li><a href="{{route('admin.accounting.index')}}" class="waves-effect waves-block"><i class="zmdi zmdi-shopping-cart"></i><span>Accounting</span></a></li>
             @endif
             <li><a href="{{route('admin.user.users')}}" class="waves-effect waves-block"><i class="zmdi zmdi-shopping-cart"></i><span>Users</span></a></li>

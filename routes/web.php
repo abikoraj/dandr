@@ -308,6 +308,8 @@ Route::name('admin.')->group(function () {
             Route::match(['GET', 'POST'], 'barcode', [ItemController::class, 'barcode'])->name('barcode');
             Route::match(['GET', 'POST'], 'product', [ItemController::class, 'product'])->name('product');
             Route::match(['GET', 'POST'], 'product-barcode', [ItemController::class, 'productBarcode'])->name('product-barcode');
+
+            Route::match(['GET', 'POST'], 'stock-tracking', [ItemController::class, 'stockTracking'])->name('stock.tracking');
             //XXX variants
             Route::prefix('variants')->name('variants.')->middleware('permmission:03.10')->group(function () {
                 Route::match(['GET', 'POST'], 'list/{item}', [ItemVariantController::class, 'index'])->name('index');
@@ -504,7 +506,7 @@ Route::name('admin.')->group(function () {
             Route::match(['post'], 'cancel', [SimpleManufactureController::class, 'cancel'])->name('cancel');
             Route::match(['get'], 'batches/{id}', [SimpleManufactureController::class, 'retriveBatches'])->name('batches');
         });
-        
+
 
         //XXX item expire wastage
         Route::prefix('wastage')->name('wastage.')->middleware('permmission:03.09')->group(function () {

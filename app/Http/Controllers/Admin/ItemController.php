@@ -8,6 +8,7 @@ use App\Models\CenterStock;
 use App\Models\Item;
 use App\Models\StockOut;
 use App\Models\StockOutItem;
+use App\NepaliDate;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -428,5 +429,48 @@ class ItemController extends Controller
             ->where('stock_out_items.stock_out_id', $id)
             ->get(['stock_out_items.amount', 'items.title']);
         return view('admin.item.stockoutprint', compact('stockOut', 'stockOutItems', 'id'));
+    }
+
+    // XXX item stock tracking
+
+    public function stockTracking(Request $request){
+        if($request->isMethod('post')){
+            // dd($request->all());
+            $type=$request->type;
+            $range=[];
+            $data=[];
+            $item = Item::orderBy('id','desc');
+            $sellitemquery=DB::table('sellitems')->select(DB::raw('sum(qty),date'));
+            $sellitems=rangeSelector($request,$sellitemquery)->groupBy('date')->get();
+            dd($sellitems);
+            // if($type==0){
+
+            // }elseif($type==1){
+            //     $date=$date = str_replace('-','',$request->date1);
+            //     $data=$data->where('date','=',$date);
+
+            // }elseif($type==2){
+            //     $range=NepaliDate::getDateWeek($request->year,$request->month,$request->week);
+            //    $data=$data->where('date','>=',$range[1])->where('date','<=',$range[2]);
+
+
+            // }elseif($type==3){
+            //     $range=NepaliDate::getDateMonth($request->year,$request->month);
+            //    $data=$data->where('date','>=',$range[1])->where('date','<=',$range[2]);
+            // }elseif($type==4){
+            //     $range=NepaliDate::getDateYear($request->year);
+            //    $data=$data->where('date','>=',$range[1])->where('date','<=',$range[2]);
+
+
+            // }elseif($type==5){
+            //     $range[1]=str_replace('-','',$request->date1);;
+            //     $range[2]=str_replace('-','',$request->date2);;
+            //     $data=$data->where('date','>=',$range[1])->where('date','<=',$range[2]);
+            // }
+
+        }else{
+            $items = Item::all();
+            return view('admin.item.stock_tracking',compact('items'));
+        }
     }
 }
