@@ -23,7 +23,16 @@ class BillingController extends Controller
         $hasTable = $request->filled('table');
         $table_id = $request->input('table');
         $cats = DB::table('item_categories')->get(['id','name','item_id','price']);
-        return view('admin.billing.index', compact('centers', 'hasTable', 'table_id','cats'));
+        $hasBatches=[];
+      
+        $products=DB::select('select distinct(item_id) from simple_manufacturing_items where batch_no is not null');
+        foreach ($products as $key => $product) {
+            array_push($hasBatches,$product->item_id);
+        }
+
+
+
+        return view('admin.billing.index', compact('centers', 'hasTable', 'table_id','cats','hasBatches'));
     }
 
     public function del($id)
@@ -143,13 +152,14 @@ class BillingController extends Controller
             $item->rate = $i->rate;
             $item->qty = $i->qty;
             $item->total = $i->total;
-            if($i->item_category_id!=null){
+            $item->batch_id = $i->batch_id;
+            $item->item_category_id = $i->item_category_id;
+            // if($i->item_category_id!=null){
                 
-                $cat=DB::table('item_categories')->where('id',$i->item_category_id)->first(['name']);
-                $item->name = $i->name.' - '.$cat->name;
+            //     $cat=DB::table('item_categories')->where('id',$i->item_category_id)->first(['name']);
+            //     $item->name = $i->name.' - '.$cat->name;
 
-                $item->item_category_id = $i->item_category_id;
-            }
+            // }
             $item->bill_id = $bill->id;
             $item->amount = 0;
             $item->save();

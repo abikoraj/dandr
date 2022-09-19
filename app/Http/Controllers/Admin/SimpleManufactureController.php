@@ -115,7 +115,7 @@ class SimpleManufactureController extends Controller
                     }
                     maintainStock($item->item_id,$item->amount,$item->center_id,'in');
                     array_push($titles,"({$value->item_title} X {$item->amount})");
-                    $item->batch_no=$request->date." - ".$value->item_title;
+                    $item->batch_no=$request->date. "#".$process->id;
                 }else{
                     maintainStock($item->item_id,$item->amount,$item->center_id,'out');
                 }

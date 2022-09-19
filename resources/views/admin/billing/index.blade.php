@@ -146,10 +146,16 @@
             <div class="row h-100 m-0">
                 <div class="col-9 h-100 p-0">
                     <div class="row p-1">
-                        <div class="col-md-4  offset-4">
+                        <div class="col-md-4 d-flex align-items-end">
+
                             <label for="item" id="customerName" onclick="showCustomer()">__________________________</label> <br>
-                            <button class="btn btn-primary btn-sm" onclick="showCustomer()">Select Customer</button>
-                            <button class="btn btn-danger btn-sm" onclick="resetCustomer()">Reset Customer</button>
+                        </div>
+                        <div class="col-md-4 d-flex align-items-end justify-content-end">
+                            <div >
+
+                                <button class="btn btn-primary btn-sm" onclick="showCustomer()">Select Customer</button>
+                                <button class="btn btn-danger btn-sm" onclick="resetCustomer()">Reset Customer</button>
+                            </div>
                         </div>
                         <div class="col-md-2">
                             Center
@@ -211,6 +217,7 @@
                             data-next="rate">
                         </select>
                     </div>
+                  
                     <div class="p-0 col-md-1">
                         <label for="item">Rate</label>
                         <input type="number" min="0" step="0.01" id="rate" class="form-control next"
@@ -220,6 +227,12 @@
                         <label for="item">Qty</label>
                         <input type="number" oninput="calculateTotal(this);" min="0" step="0.01" id="qty"
                             class="form-control next" data-next="total">
+                    </div>
+                    <div class="p-0 col-md-2" id="item_batch_id_holder"  style="display: none">
+                        <label for="item_batch_id">batch (F1)</label>
+                        <select type="text" list="product-list" id="item_batch_id" class="form-control next"
+                            data-next="rate">
+                        </select>
                     </div>
                     <div class="p-0 col-md-2">
                         <label for="item">Total</label>
@@ -331,6 +344,7 @@
     <script src="{{ asset('calender/nepali.datepicker.v3.2.min.js') }}"></script>
     <script>
         const cats = {!! json_encode($cats) !!}
+        const hasBatches = {!! json_encode($hasBatches) !!}
         toastr.options.progressBar = true;
         var i = 0;
         lock = false;
@@ -350,11 +364,13 @@
             $('#rate').val(cats.find(o => o.id == this.value).price);
         });
 
+
         $('#item').keydown(function(e) {
             if (e.which == 13) {
                 var id = this.value;
 
                 selectProduct($('#prod_' + id)[0]);
+
             }
         });
         $('#item').focusout(function() {
@@ -425,6 +441,7 @@
 
         }
 
+        
         function addToBill() {
             i += 1;
             var id = $('#item').val();
@@ -443,10 +460,35 @@
                 name: data.title,
                 item_category_id: $('#item_category_id').val(),
                 rate: $("#rate").val(),
-                qty: $("#qty").val(),
+                qty: parseFloat($("#qty").val()),
                 total: $("#total").val(),
+                batch_id:null
             };
-            console.log(billitem, "billitem");
+            if(hasBatches.includes(data.id)){
+                const batch_id=$('#item_batch_id').val();
+                if(batch_id==undefined){
+                    alert('Please Choose a batch');
+                    return
+                }else{
+                    let batch_amount=batches.find(o=>o.batch_id==batch_id).amount;
+                    let loadedAmount=0;
+                    $('.billitems').each(function (index, element) {
+                        const localBillItem=JSON.parse(element.value);
+                        console.log(batch_amount,localBillItem,batch_id,"local bill item;");
+                        if(localBillItem.batch_id==batch_id){
+                            loadedAmount+=localBillItem.qty;
+
+                        }
+                    });
+                    batch_amount=batch_amount-loadedAmount;
+
+                    if(billitem.qty>batch_amount){
+                        alert('Not enough quantity in batch');
+                        return;
+                    }
+                    billitem.batch_id=batch_id;
+                }
+            }
 
             if (billitem.qty == '' || billitem.qty <= 0) {
                 toastr.error('Please Enter Quantity', '{{ env('APP_NAME') }}', {
@@ -474,12 +516,17 @@
             datastr = JSON.stringify(billitem)
 
             let catname = '';
-
+            
             if (billitem.item_category_id != null) {
                 catname = " - " + (cats.find(o => o.id == billitem.item_category_id).name);
             }
+            let batchname = '';
+            if (billitem.batch_id != null) {
+                batchname = " - " + (batches.find(o => o.batch_id == billitem.batch_id).batch_no) ;
+            }
+            billitem.name += catname;
             str = "<tr id='row-" + i + "'> <td><input class='billitems' type='hidden' name='billitems[]' value='" +
-                datastr + "'/> " + billitem.id + "</td><td>" + billitem.name + catname + " </td><td>" + billitem.rate +
+                datastr + "'/> " + billitem.id + "</td><td>" + billitem.name  + batchname +" </td><td>" + billitem.rate +
                 "</td><td>" +
                 billitem.qty + "</td><td>" + billitem.total +
                 "</td><td><span class='btn btn-danger btn-sm' onclick='removeProductItem(" + i +
@@ -494,6 +541,11 @@
             $('#item_category_id_holder').hide();
             $('#item_category_id').html('');
             $('#item_category_id').val(null);
+
+            $('#item_batch_id_holder').hide();
+            $('#item_batch_id').html('');
+            $('#item_batch_id').val(null);
+
             calculateAll();
         }
 
@@ -727,11 +779,17 @@
         var day = ('0' + NepaliFunctions.GetCurrentBsDate().day).slice(-2);
         $('#nepali-datepicker').val(NepaliFunctions.GetCurrentBsYear() + '-' + month + '-' + day);
 
+        function loadBatch(){
+
+        }
+
         function selectProduct(ele) {
             const product = JSON.parse(ele.dataset.product);
             const localCats = cats.filter(o => o.item_id == product.id);
             $('#item_category_id_holder').hide();
+            $('#item_batch_id_holder').hide();
             $('#item_category_id').html('');
+            console.log(localCats);
             if (localCats.length > 0) {
                 $('#item_category_id_holder').show();
 
@@ -741,13 +799,32 @@
                 $("#item_category_id").val(localCats[0].id);
 
                 $('#item_category_id').focus();
-
+                selectBatch(product.id);
             } else {
 
                 $('#item').val(product.id);
                 $('#rate').val(product.sell_price);
                 $('#qty').focus();
+                selectBatch(product.id);
             }
+            
+        }
+        // batchLoa
+        var batches=[];
+        const batchURL='{{route('admin.simple.manufacture.batches',['id'=>'xxx_id'])}}';
+        function selectBatch(id){
+            if(hasBatches.includes(id)){
+                $('#item_batch_id_holder').show();    
+                axios.get(batchURL.replace('xxx_id',id))
+                .then((res)=>{
+                    console.log(res.data);
+                    batches=res.data.data;
+                    $('#item_batch_id').html(
+                        res.data.data.map(o=>`<option value="${o.batch_id}">${o.batch_no}</option>`).join('')
+                    );
+                })
+            }
+
         }
     </script>
 @endsection

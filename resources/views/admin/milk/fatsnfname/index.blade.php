@@ -272,6 +272,8 @@
             $('.milkdata').each(function(index, element) {
                 const amt = parseFloat(element.value);
                 milk += isNaN(amt) ? 0 : amt;
+                milk=Number(milk.toFixed(2));
+
             });
 
         
