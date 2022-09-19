@@ -398,8 +398,8 @@ function getBanks()
     try {
         //code...
         $fy = getFiscalYear();
-        $banks = DB::select("select name,id,account_id from banks 
-            where account_id in (select id from accounts 
+        $banks = DB::select("select name,id,account_id from banks
+            where account_id in (select id from accounts
             where parent_id= (select id from accounts where identifire='1.2' and fiscal_year_id={$fy->id} limit 1)
         )");
         // dd($banks);
@@ -524,6 +524,22 @@ function getNepaliDate($di)
     return ($dateParts[0] * 10000) + ($dateParts[1] * 100) + ($dateParts[2] * 1);
 
     // return str_replace('-','',$di);
+}
+
+function getFiscalYearMonth($fy){
+    $monthArray=[];
+    $startYear = (int)($fy->startdate / 10000);
+    $month = 4;
+    for ($i = 0; $i < 12; $i++) {
+        $monthSTR = $month < 10 ? ('0' . $month) : $month;
+        array_push($monthArray, [$startYear * 100 + $month, "{$startYear}-{$monthSTR}",[$startYear,$month]]);
+        $month += 1;
+        if ($month > 12) {
+            $month = 1;
+            $startYear += 1;
+        }
+    }
+    return $monthArray;
 }
 
 include_once 'custom_acounting.php';
