@@ -16,10 +16,14 @@ class MilkReportController extends Controller
             $fy = FiscalYear::where('id', $request->fy)->first();
             $month = getFiscalYearMonth($fy);
             $monthArray = getFiscalYearMonth($fy);
-            $data = Collect(DB::select("select sum(grandtotal) as amount, year, month, sum(milk) as milk,center_id from farmer_reports group by center_id, year, month"));
+            // $data = Collect(DB::select("select sum(grandtotal) as amount, year, month, sum(milk) as milk,center_id from farmer_reports group by center_id, year, month "));
             // dd($monthArray);
             // where date>={$fy->startdate} and date<={$fy->enddate}
-             $datas = (object)$data;
+
+             $datas = collect(DB::select("select  sum(grandtotal) as amount, year, month, sum(milk) as milk,center_id  
+             from farmer_reports where (year*10000+month*100+1)>={$fy->startdate} and (year*10000+month*100+1)<={$fy->enddate}
+              group by center_id, year, month "));
+            //   dd($datas);
              $centers=DB::table('centers')->get(['name','id']);
             //  $centerData=[];
             //  foreach ($datas as $key => $value) {

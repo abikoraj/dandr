@@ -19,4 +19,8 @@ class Account extends Model
     public function fiscalyear(){
         return $this->belongsTo(FiscalYear::class,'fiscal_year_id','id');
     }
+
+    public function hasChildren(){
+        return DB::table('accounts')->where('parent_id',$this->id)->count()>0;
+    }
 }

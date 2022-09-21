@@ -9,6 +9,7 @@ use App\Models\Item;
 use App\Models\StockOut;
 use App\Models\StockOutItem;
 use App\NepaliDate;
+use App\NepaliDateHelper;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -261,9 +262,9 @@ class ItemController extends Controller
         }
 
         $query = "select " . implode("+", $smallQuery) . " as used";
-        if(DB::selectOne($query)->used>0){
+        if (DB::selectOne($query)->used > 0) {
             DB::update('update items set archive = 1 where id = ?', [$id]);
-        }else{
+        } else {
             DB::delete('delete items where id = ?', [$id]);
         }
 
@@ -377,9 +378,9 @@ class ItemController extends Controller
     public function stockOutList()
     {
         $stockOuts = DB::table('stock_outs')->orderBy('stock_outs.id', 'desc')->get();
-        $centers=DB::table('centers')->get(['id','name']);
+        $centers = DB::table('centers')->get(['id', 'name']);
         // dd($stockOuts);
-        return view('admin.item.stockoutlist', compact('stockOuts','centers'));
+        return view('admin.item.stockoutlist', compact('stockOuts', 'centers'));
     }
 
     public function stockOutView($id)
@@ -404,7 +405,7 @@ class ItemController extends Controller
             ->where('stock_out_id', $id)->get(['item_id', 'amount']);
         foreach ($stockOutItems as $key => $item) {
             $cstock = CenterStock::where('item_id', $item->item_id)->where('center_id', $stockOut->center_id)->first();
-            $istock = CenterStock::where('item_id', $item->item_id)->where('center_id', $stockOut->from_center_id??env('maincenter'))->first();
+            $istock = CenterStock::where('item_id', $item->item_id)->where('center_id', $stockOut->from_center_id ?? env('maincenter'))->first();
             if ($cstock != null) {
                 $cstock->amount -= $item->amount;
                 $cstock->save();
@@ -433,44 +434,122 @@ class ItemController extends Controller
 
     // XXX item stock tracking
 
-    public function stockTracking(Request $request){
-        if($request->isMethod('post')){
+    public function stockTracking(Request $request)
+    {
+        if ($request->isMethod('post')) {
             // dd($request->all());
-            $type=$request->type;
-            $range=[];
-            $data=[];
-            $item = Item::orderBy('id','desc');
-            $sellitemquery=DB::table('sellitems')->select(DB::raw('sum(qty),date'));
-            $sellitems=rangeSelector($request,$sellitemquery)->groupBy('date')->get();
-            dd($sellitems);
-            // if($type==0){
+            $milk_id = env('milk_id', null);
+            $type = $request->type;
+            $range = [];
+            $data = [];
 
-            // }elseif($type==1){
-            //     $date=$date = str_replace('-','',$request->date1);
-            //     $data=$data->where('date','=',$date);
+            // dd($manufactured_product_id,$manufactured_product_item_ids);
+            
+            $manufactured_product=DB::table('manufactured_products')->where('item_id',$request->item_id)->first(['id']);
+            if($manufactured_product!=null){
 
-            // }elseif($type==2){
-            //     $range=NepaliDate::getDateWeek($request->year,$request->month,$request->week);
-            //    $data=$data->where('date','>=',$range[1])->where('date','<=',$range[2]);
+                $manufacture1=rangeSelectorEng($request,DB::table('manufacture_processes')
+                ->select(DB::raw('sum(actual) as qty,cast(start as date) as date,"manu" as type'))
+                ->where('stage',3)
+                ->where('manufactured_product_id',$manufactured_product->id)
+                ->whereNotNull('start'),
+                DB::raw('cast(start as date)'))->groupBy(DB::raw('cast(start as date)'))->get();
+
+                foreach ($manufacture1 as $key => $local) {
+                    // dd($local->date);
+                    $local->date=NepaliDateHelper::nepDate($local->date);
+                }
+                $data = array_merge($data, $manufacture1->toArray());
+
+            }
 
 
-            // }elseif($type==3){
-            //     $range=NepaliDate::getDateMonth($request->year,$request->month);
-            //    $data=$data->where('date','>=',$range[1])->where('date','<=',$range[2]);
-            // }elseif($type==4){
-            //     $range=NepaliDate::getDateYear($request->year);
-            //    $data=$data->where('date','>=',$range[1])->where('date','<=',$range[2]);
+            $manufactured_product_item_ids=DB::table('manufactured_product_items')->where('item_id',$request->item_id)->pluck('id');
+            if(count($manufactured_product_item_ids)>0){
+                $rawMaterial1=rangeSelectorEng($request,DB::table('manufacture_process_items')
+                ->join('manufacture_processes','manufacture_processes.id','=','manufacture_process_items.manufacture_process_id')
+                ->select(DB::raw('sum(manufacture_process_items.amount) as qty,cast(manufacture_processes.start as date) as date,"raw" as type'))
+                ->where('manufacture_processes.stage',3)
+                ->whereIn('manufactured_product_item_id',$manufactured_product_item_ids)
+                ->whereNotNull('manufacture_processes.start'),
+                DB::raw('cast(manufacture_processes.start as date)'))->groupBy(DB::raw('cast(manufacture_processes.start as date)'))->get();
+                foreach ($rawMaterial1 as $key => $local) {
+            
+                    $local->date=NepaliDateHelper::nepDate($local->date);
+                }
+                $data = array_merge($data, $rawMaterial1->toArray());
+            }
+
+            
+            $wastage1=rangeSelectorEng($request,DB::table('manufacture_wastages')
+            ->join('manufacture_processes','manufacture_processes.id','=','manufacture_wastages.manufacture_process_id')
+            ->select(DB::raw('sum(manufacture_wastages.amount) as qty,cast(manufacture_processes.start as date) as date,"waste" as type'))
+            ->where('manufacture_processes.stage',3)
+            ->whereNotNull('manufacture_processes.start')
+            ->whereNull('date'),
+            DB::raw('cast(manufacture_processes.start as date)'))->groupBy(DB::raw('cast(manufacture_processes.start as date)'))->get();
+            foreach ($wastage1 as $key => $local) {
+        
+                $local->date=NepaliDateHelper::nepDate($local->date);
+            }
+            $data = array_merge($data, $wastage1->toArray());
 
 
-            // }elseif($type==5){
-            //     $range[1]=str_replace('-','',$request->date1);;
-            //     $range[2]=str_replace('-','',$request->date2);;
-            //     $data=$data->where('date','>=',$range[1])->where('date','<=',$range[2]);
-            // }
+            $wastage=rangeSelectorEng($request,DB::table('manufacture_wastages')
+            ->whereNotNull('date')
+            ->select(DB::raw('sum(amount) as qty,date,"waste" as type')))->groupBy('date')->get();
+            // dd($wastage);
+            $data = array_merge($data, $wastage->toArray());
 
-        }else{
+            // $item = Item::orderBy('id','desc');
+            if ($request->item_id == $milk_id) {
+                #Milk collected
+                $milkCollection = rangeSelector($request, DB::table('milkdatas')->select(DB::raw('sum(m_amount+e_amount) as qty,date,"collect" as type')))->groupBy('date')->get();
+                $data = array_merge($data, $milkCollection->toArray());
+            }
+
+            #raw material qty
+            $rawMaterial = rangeSelector($request, DB::table('simple_manufacturing_items')
+                ->join('simple_manufacturings', 'simple_manufacturings.id', "=", 'simple_manufacturing_items.simple_manufacturing_id')
+                ->where('item_id', $request->item_id)
+                ->where('type', 1)
+                ->select(DB::raw('sum(amount) as qty,simple_manufacturings.date,"raw" as type')), 'simple_manufacturings.date')->groupBy('simple_manufacturings.date')->get();
+            $data = array_merge($data, $rawMaterial->toArray());
+
+            #manufactured qty
+            $manufactured = rangeSelector($request, DB::table('simple_manufacturing_items')
+                ->join('simple_manufacturings', 'simple_manufacturings.id', "=", 'simple_manufacturing_items.simple_manufacturing_id')
+                ->where('item_id', $request->item_id)
+                ->where('type', 2)
+                ->select(DB::raw('sum(amount) as qty,simple_manufacturings.date,"manu" as type')), 'simple_manufacturings.date')->groupBy('simple_manufacturings.date')->get();
+            $data = array_merge($data, $manufactured->toArray());
+
+            #manufacture wastage qty
+            $manufactured = rangeSelector($request, DB::table('simple_manufacturing_items')
+                ->join('simple_manufacturings', 'simple_manufacturings.id', "=", 'simple_manufacturing_items.simple_manufacturing_id')
+                ->where('item_id', $request->item_id)
+                ->where('type', 3)
+                ->select(DB::raw('sum(amount) as qty,simple_manufacturings.date,"waste" as type')), 'simple_manufacturings.date')->groupBy('simple_manufacturings.date')->get();
+            $data = array_merge($data, $manufactured->toArray());
+
+
+            #data from sell item
+            $sellitemquery = DB::table('sellitems')->select(DB::raw('sum(qty) as qty,date,"sell" as type'))->where('item_id', $request->item_id);
+            $sellitems = rangeSelector($request, $sellitemquery)->groupBy('date')->get();
+            $data = array_merge($data, $sellitems->toArray());
+
+            #data from billitem
+            $billitemquery = DB::table('bill_items')
+                ->join('bills', 'bills.id', '=', 'bill_items.bill_id')
+                ->select(DB::raw('sum(bill_items.qty) as qty,bills.date,"sell" as type'))->where('bill_items.item_id', $request->item_id);
+            $billitems = rangeSelector($request, $billitemquery, 'bills.date')->groupBy('bills.date')->get();
+            $data = array_merge($data, $billitems->toArray());
+
+            $managedData = collect($data)->sortBy('date')->groupBy('date');
+            return view('admin.item.stock_traking_data',compact('managedData'));
+        } else {
             $items = Item::all();
-            return view('admin.item.stock_tracking',compact('items'));
+            return view('admin.item.stock_tracking', compact('items'));
         }
     }
 }

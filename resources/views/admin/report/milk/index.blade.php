@@ -7,6 +7,7 @@
     <a href="{{route('admin.report.home')}}">Report</a> / Milk
 @endsection
 @section('toobar')
+<a href="{{route('admin.report.milk.fy')}}" class="btn btn-primary">Fiscal Year Milk Report</a>
 
 @endsection
 @section('content')

@@ -803,9 +803,9 @@
                 selectBatch(product.id);
             } else {
 
-                $('#item').val(product.id);
+                // $('#item').val(product.id);
                 $('#rate').val(product.sell_price);
-                $('#qty').focus();
+                $('#rate').focus();
                 selectBatch(product.id);
             }
             

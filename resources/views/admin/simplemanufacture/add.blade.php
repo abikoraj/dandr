@@ -70,7 +70,7 @@
                 </select>
             </div>
             <div class="col-md-2">
-                <label for="amount">Amount</label>
+                <label for="amount">Qty</label>
                 <input name="amount" id="amount" class="form-control" step="0.0001">
             </div>
             <div class="col-md-3  d-flex align-items-end">

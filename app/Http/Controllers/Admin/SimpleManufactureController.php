@@ -34,10 +34,12 @@ class SimpleManufactureController extends Controller
         }else{
             $type=ManufacturedProduct::where('item_id',$id)->count()>0?'others':'nobatch';
             if($type!='nobatch'){
+                $finisedBatches=DB::table('batch_finisheds')->where('item_id')->pluck('batch_id');
+                $finisedBatcheSTR=count($finisedBatches)>0?' and id not in ('. implode(',',$finisedBatches->toArray()).")":"";
                 $data=DB::select("select c.id as batch_id,c.amount,c.batch_no from(select id,(amount-
                 ifnull((select sum(qty) from bill_items where batch_id=simple_manufacturing_items.id ),0) -
                 ifnull((select sum(s.amount) from simple_manufacturing_items s where s.batch_id=simple_manufacturing_items.id ),0)) as amount,batch_no
-                 from simple_manufacturing_items where item_id={$id} and batch_no is not null) c where c.amount>0");
+                 from simple_manufacturing_items where item_id={$id} and batch_no is not null {$finisedBatcheSTR}) c where c.amount>0");
             }
             return response()->json(['data'=>$data,'type'=>$type])->setEncodingOptions(JSON_NUMERIC_CHECK);
 
