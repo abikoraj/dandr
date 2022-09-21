@@ -790,6 +790,10 @@
             $('#item_category_id_holder').hide();
             $('#item_batch_id_holder').hide();
             $('#item_category_id').html('');
+            if ($('#item').val().length == 0) {
+                $('#item').val(product.number);
+            }
+
             console.log(localCats);
             if (localCats.length > 0) {
                 $('#item_category_id_holder').show();

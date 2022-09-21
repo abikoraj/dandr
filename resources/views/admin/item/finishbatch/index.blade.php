@@ -41,10 +41,7 @@
                 axios.get(batchURL.replace('xxx_id',$('#item_id').val()))
                 .then((res)=>{
                     batches=res.data.data;
-                    html+=""
-                    .forEach(element => {
-                        
-                    });
+                    $('#batch_id').html(batches.map(o=>`<option value="${o.batch_id}">${o.batch_no}</option>`).join(''));
                     console.log(res.data);
                 });
             });
