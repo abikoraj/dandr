@@ -343,8 +343,8 @@
 @section('scripts')
     <script src="{{ asset('calender/nepali.datepicker.v3.2.min.js') }}"></script>
     <script>
-        const cats = {!! json_encode($cats) !!}
-        const hasBatches = {!! json_encode($hasBatches) !!}
+        const cats = {!! json_encode($cats,JSON_NUMERIC_CHECK) !!}
+        const hasBatches = {!! json_encode($hasBatches,JSON_NUMERIC_CHECK) !!}
         toastr.options.progressBar = true;
         var i = 0;
         lock = false;

@@ -33,6 +33,7 @@ class SimpleManufactureController extends Controller
             return response()->json(['data'=>$batches,'type'=>'milk']);
         }else{
             $type=ManufacturedProduct::where('item_id',$id)->count()>0?'others':'nobatch';
+            $data=[];
             if($type!='nobatch'){
                 $finisedBatches=DB::table('batch_finisheds')->where('item_id')->pluck('batch_id');
                 $finisedBatcheSTR=count($finisedBatches)>0?' and id not in ('. implode(',',$finisedBatches->toArray()).")":"";
