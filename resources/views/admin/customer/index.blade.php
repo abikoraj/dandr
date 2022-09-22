@@ -84,21 +84,21 @@
                 if (prompt('Please Type Yes To Delete').toLowerCase() == "yes") {
 
                     lock = true;
-                    showProgress('Updating Customer');
+                    showProgress('Deleting Customer');
                     var data = {
                         'id': id
                     };
                     axios.post('{{ route('admin.customer.del') }}', data)
                         .then((res) => {
 
-                            $('#customer_' + id).replaceWith(res.data);
+                            $('#customer_' + id).remove();
+                            showNotification('bg-success','Customer Delete Sucessfully');
                             hideProgress();
                             lock = false;
-                            $('#editModal').modal('hide');
-                            document.getElementById('editCustomer').reset();
                         })
                         .catch((err) => {
                             hideProgress();
+                            showNotification('bg-danger','Customer cannot be deleted,Please try again.');
                             lock = false;
                         })
                 }

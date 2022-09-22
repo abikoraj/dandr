@@ -97,19 +97,26 @@ class CustomerController extends Controller
         $customer->address = $user->address;
         $customer->phone = $user->phone;
         // $customer->user=$user;
-        if ($request->filled('amount')) {
-            if ($request->amount > 0) {
+        // if ($request->filled('amount')) {
+        //     if ($request->amount > 0) {
 
-                $ledger = new LedgerManage($user->id);
-                $date = PosSetting::getdate();
-                $ledger->addLedger('Opening Balance', $request->amounttype, $request->amount, $date, 134);
-            }
-        }
+        //         $ledger = new LedgerManage($user->id);
+        //         $date = PosSetting::getdate();
+        //         $ledger->addLedger('Opening Balance', $request->amounttype, $request->amount, $date, 134);
+        //     }
+        // }
         if ($request->filled('json')) {
             return response()->json($customer);
         } else {
             return view('admin.customer.single', compact('customer'));
         }
+    }
+
+    public function del(Request $request){
+
+        $user_id=Customer::where('id',$request->id)->first(['user_id'])->user_id;
+        DB::table('customers')->where('id',$request->id)->delete();
+        DB::table('users')->where('id',$user_id)->delete();
     }
 
     public function update(Request $request)

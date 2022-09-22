@@ -37,7 +37,7 @@
                                 </div>
                             </div>
 
-                            <div class="col-lg-3">
+                            {{-- <div class="col-lg-3">
                                 <label for="amount">Opening Balance</label>
                                 <div class="form-group">
                                     <input type="number" id="amount" name="amount" min="0" step="0.01" class="form-control next" data-next="address" placeholder="Enter Current Balance" required>
@@ -51,7 +51,7 @@
                                         <option value="2">DR</option>
                                     </select>
                                 </div>
-                            </div>
+                            </div> --}}
 
                             {{-- <div class="col-lg-6">
                                 <label for="rate">Rate</label>
@@ -94,8 +94,11 @@
                     lock=false;
                     $('#addModal').modal('hide');
                     document.getElementById('addCustomer').reset();
+                    showNotification('bg-success','Customer Added Sucessfully');
+
                 })
                 .catch((err)=>{
+                    showNotification('bg-danger','Customer cannot be added,Please try again.');
                     hideProgress();
                     lock=false;
                 })
