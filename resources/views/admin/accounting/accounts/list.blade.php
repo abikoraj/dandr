@@ -21,7 +21,7 @@
                     <td>
                         {{ $account->name }}
                     </td>
-                    <td>
+                    {{-- <td>
                         @if ($account->identifire == '1.2')
                             {{ $account->bankbalance() }}
                         @elseif ($account->identifire == '1.4')
@@ -30,7 +30,7 @@
                             {{ $account->amount }}
                         @endif
 
-                    </td>
+                    </td> --}}
                     <td>
                         <button class="btn btn-primary " onclick="initUpdate({{$account->id}});"> Edit </button>
                         @if ($account->identifire == '1.1')
@@ -43,7 +43,9 @@
                             <a href="{{ route('admin.accounting.subaccounts', ['id' => $account->id]) }}" target="blank"
                                 class="btn btn-success">Manage Sub Accounts</a>
                         @endif
-                        <a href="{{route('admin.accounting.accounts.ledger',['id'=>$account->id])}}">Ledger</a>
+                        @if (!$account->hasChildren()) 
+                            <a class="btn btn-warning" href="{{route('admin.accounting.accounts.ledger',['id'=>$account->id])}}">Ledger</a>
+                        @endif
 
                     </td>
                 </tr>
@@ -69,14 +71,14 @@
                     <td>
                         {{ $account->name }}
                     </td>
-                    <td>
+                    {{-- <td>
                         {{ $account->amount }}
-                    </td>
+                    </td> --}}
                     <td>
                         <button class="btn btn-primary " onclick="initUpdate({{$account->id}});"> Edit </button>
                         <a href="{{ route('admin.accounting.subaccounts', ['id' => $account->id]) }}" target="blank"
                             class="btn btn-success">Manage Sub Accounts</a>
-                        <a href="{{route('admin.accounting.accounts.ledger',['id'=>$account->id])}}">Ledger</a>
+                        <a class="btn btn-warning" href="{{route('admin.accounting.accounts.ledger',['id'=>$account->id])}}">Ledger</a>
                     </td>
                 </tr>
             @endforeach

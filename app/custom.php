@@ -30,7 +30,7 @@ function lCanDelete($identifire)
 }
 function _nepalidate($date)
 {
-    if($date==null){
+    if ($date == null) {
         return '--';
     }
     $year = (int)($date / 10000);
@@ -296,7 +296,7 @@ function currentStock()
     return DB::selectOne('select round(sum(stock * ( case when sell_price = 0   then cost_price when sell_price<cost_price then cost_price else sell_price end)),2) as sum from items');
 }
 
-function rangeSelector($request, $query,$column='date')
+function rangeSelector($request, $query, $column = 'date')
 {
     $year = $request->year;
     $month = $request->month;
@@ -333,6 +333,55 @@ function rangeSelector($request, $query,$column='date')
     return $query;
 }
 
+function rangeSelectorEng($request, $query, $column = 'date')
+{
+    $year = $request->year;
+    $month = $request->month;
+    $week = $request->week;
+    $session = $request->session;
+    $type = $request->type;
+    $range = [];
+    $data = [];
+    $date = 1;
+
+    if ($type == 0) {
+        $range = NepaliDate::getDate($year, $month, $session);
+        $range=NepaliDateHelper::engRange($range);
+        $query = $query->where($column, '>=', $range[1])->where($column, '<=', $range[2]);
+    } elseif ($type == 1) {
+        $date = $date = str_replace('-', '', $request->date1);
+        $date=NepaliDateHelper::engDate($date);
+        $query = $query->where($column, '=', $date);
+    } elseif ($type == 2) {
+        $range = NepaliDate::getDateWeek($year, $month, $week);
+        $range=NepaliDateHelper::engRange($range);
+
+        $query = $query->where($column, '>=', $range[1])->where($column, '<=', $range[2]);
+    } elseif ($type == 3) {
+        $range = NepaliDate::getDateMonth($year, $month);
+        $range=NepaliDateHelper::engRange($range);
+
+        $query = $query->where($column, '>=', $range[1])->where($column, '<=', $range[2]);
+    } elseif ($type == 4) {
+        $range = NepaliDate::getDateYear($year);
+        $range=NepaliDateHelper::engRange($range);
+
+        $query = $query->where($column, '>=', $range[1])->where($column, '<=', $range[2]);
+    } elseif ($type == 5) {
+        $range[1] = str_replace('-', '', $request->date1);;
+        $range[2] = str_replace('-', '', $request->date2);;
+        $range=NepaliDateHelper::engRange($range);
+
+        $query = $query->where($column, '>=', $range[1])->where($column, '<=', $range[2]);
+    } else if ($type == 6) {
+        $fy = DB::selectOne('select startdate,enddate from fiscal_years where id=?', [$request->fiscalyear]);
+        $range[1]= $fy->startdate;
+        $range[2]= $fy->enddate;
+        $range=NepaliDateHelper::engRange($range);
+        $query = $query->where($column, '>=', $range[1])->where($column, '<=', $range[2]);
+    }
+    return $query;
+}
 function renderEmpList()
 {
     $emps = DB::select('select u.name from employees e join users u on e.user_id=u.id');
@@ -412,11 +461,12 @@ function getBanks()
 
 function getCashAcc()
 {
-    $fy=getFiscalYear();
+    $fy = getFiscalYear();
 }
 
-function getFiscalYears(){
-    return DB::table('fiscal_years')->get(['id','name']);
+function getFiscalYears()
+{
+    return DB::table('fiscal_years')->get(['id', 'name']);
 }
 
 
@@ -526,13 +576,14 @@ function getNepaliDate($di)
     // return str_replace('-','',$di);
 }
 
-function getFiscalYearMonth($fy){
-    $monthArray=[];
+function getFiscalYearMonth($fy)
+{
+    $monthArray = [];
     $startYear = (int)($fy->startdate / 10000);
     $month = 4;
     for ($i = 0; $i < 12; $i++) {
         $monthSTR = $month < 10 ? ('0' . $month) : $month;
-        array_push($monthArray, [$startYear * 100 + $month, "{$startYear}-{$monthSTR}",[$startYear,$month]]);
+        array_push($monthArray, [$startYear * 100 + $month, "{$startYear}-{$monthSTR}", [$startYear, $month]]);
         $month += 1;
         if ($month > 12) {
             $month = 1;
@@ -541,5 +592,12 @@ function getFiscalYearMonth($fy){
     }
     return $monthArray;
 }
+
+
+function prependZero($num)
+{
+    return $num < 10 ? ('0' . $num) : $num;
+}
+
 
 include_once 'custom_acounting.php';

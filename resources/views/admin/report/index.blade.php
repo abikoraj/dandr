@@ -9,15 +9,17 @@
 @endsection
 @section('content')
 <div class="row">
-    <div class="col-md-2 section href" data-target="{{route('admin.report.day.index')}}">
-        <span class="icon">
-            <i class="zmdi zmdi-accounts"></i>
-        </span>
-        <span class="divider"></span>
-        <span class="text">
-          Daily Report / Books
-        </span>
-    </div>
+    @if (env('use_daily_report',false))
+        <div class="col-md-2 section href" data-target="{{route('admin.report.day.index')}}">
+            <span class="icon">
+                <i class="zmdi zmdi-accounts"></i>
+            </span>
+            <span class="divider"></span>
+            <span class="text">
+            Daily Report / Books
+            </span>
+        </div>
+    @endif
     @if (env('use_farmer',false))
         <div class="col-md-2 section href" data-target="{{route('admin.report.farmer')}}">
             <span class="icon">

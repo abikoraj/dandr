@@ -343,8 +343,8 @@
 @section('scripts')
     <script src="{{ asset('calender/nepali.datepicker.v3.2.min.js') }}"></script>
     <script>
-        const cats = {!! json_encode($cats) !!}
-        const hasBatches = {!! json_encode($hasBatches) !!}
+        const cats = {!! json_encode($cats,JSON_NUMERIC_CHECK) !!}
+        const hasBatches = {!! json_encode($hasBatches,JSON_NUMERIC_CHECK) !!}
         toastr.options.progressBar = true;
         var i = 0;
         lock = false;
@@ -790,6 +790,10 @@
             $('#item_category_id_holder').hide();
             $('#item_batch_id_holder').hide();
             $('#item_category_id').html('');
+            if ($('#item').val().length == 0) {
+                $('#item').val(product.number);
+            }
+
             console.log(localCats);
             if (localCats.length > 0) {
                 $('#item_category_id_holder').show();
@@ -803,9 +807,9 @@
                 selectBatch(product.id);
             } else {
 
-                $('#item').val(product.id);
+                // $('#item').val(product.id);
                 $('#rate').val(product.sell_price);
-                $('#qty').focus();
+                $('#rate').focus();
                 selectBatch(product.id);
             }
             

@@ -43,6 +43,7 @@ use App\Http\Controllers\Admin\WastageController;
 use App\Http\Controllers\BackupController;
 use App\Http\Controllers\BankTransactionController;
 use App\Http\Controllers\BarcodeController;
+use App\Http\Controllers\BatchFinishedController;
 use App\Http\Controllers\Billing\BillingController as BillingBillingController;
 use App\Http\Controllers\DayReportController;
 use App\Http\Controllers\ExpenseReportController;
@@ -327,6 +328,13 @@ Route::name('admin.')->group(function () {
 
             Route::prefix('packaging')->name('packaging.')->middleware('permmission:03.08')->group(function () {
                 Route::get('', [PackagingController::class, 'index'])->name('index');
+                Route::match(['GET', 'POST'], 'add', [PackagingController::class, 'add'])->name('add');
+                Route::match(['GET', 'POST'], 'cancel/{id}', [PackagingController::class, 'cancel'])->name('cancel');
+                Route::match(['GET', 'POST'], 'view/{id}', [PackagingController::class, 'view'])->name('view');
+            });
+
+            Route::prefix('batch-finished')->name('batch.finished.')->middleware('permmission:03.08')->group(function () {
+                Route::match(['GET', 'POST'],'', [BatchFinishedController::class, 'index'])->name('index');
                 Route::match(['GET', 'POST'], 'add', [PackagingController::class, 'add'])->name('add');
                 Route::match(['GET', 'POST'], 'cancel/{id}', [PackagingController::class, 'cancel'])->name('cancel');
                 Route::match(['GET', 'POST'], 'view/{id}', [PackagingController::class, 'view'])->name('view');

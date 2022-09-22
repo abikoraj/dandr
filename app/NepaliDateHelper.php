@@ -3,6 +3,7 @@
 namespace App;
 
 use Carbon\Carbon;
+use phpDocumentor\Reflection\Types\Self_;
 
 class NepaliDateHelper
 {
@@ -588,7 +589,6 @@ class NepaliDateHelper
 
                 $total_eDays--;
             }
-            $numDay = $day;
             return $y*10000+$m*100+ $total_nDays;
 
         }
@@ -767,6 +767,29 @@ class NepaliDateHelper
         }
 
 
+    }
+
+      
+    public static function engRange($range){
+        $newrange=[];
+        $eng1= Self::withDate($range[1]);
+        $newrange[1]=$eng1->_eng_date['year']."-". prependZero($eng1->_eng_date['month'])."-". prependZero( $eng1->_eng_date['date']);
+        $eng2= Self::withDate($range[2]);
+        $newrange[2]=$eng2->_eng_date['year']."-". prependZero($eng2->_eng_date['month'])."-". prependZero( $eng2->_eng_date['date']);
+        return $newrange;
+    }
+
+    public static function engDate($nepDate){
+        $eng2= Self::withDate($nepDate);
+        return $eng2->_eng_date['year']."-". prependZero($eng2->_eng_date['month'])."-". prependZero( $eng2->_eng_date['date']);
+    }
+
+    public static function nepDate($date)
+    {
+        $dateParts=explode('-',$date);
+        // dd($dateParts);
+        $n=new NepaliDateHelper();
+        return $n->eng_to_nepInt($dateParts[0],$dateParts[1],$dateParts[2]);
     }
 
 }

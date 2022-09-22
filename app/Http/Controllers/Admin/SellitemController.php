@@ -102,6 +102,7 @@ class SellitemController extends Controller
                 }
             }
 
+            
             $manager = new LedgerManage($user->id);
             // $manager->addLedger($item->title . ' ( Rs.' . $sell_item->rate . ' x ' . $sell_item->qty . ')', 1, $request->total, $date, '103', $sell_item->id);
             // if ($request->paid > 0) {

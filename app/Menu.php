@@ -32,7 +32,6 @@ class Menu
                 'icon' => 'apps',
                 'text' => "Milk Collection",
                 'children' => [
-                
                     ["Manage Collection Center", '02.12', route('admin.center.index')],
                     ["Milk Collection", '02.01', route('admin.milk.index')],
                     ["SNF FAT", '02.04', route('admin.snf-fat.index')],
@@ -52,6 +51,7 @@ class Menu
                     ["Branch Stock", '03.07', route('admin.item.items-center-stock')],
                     ["Repackaging", '03.08', route('admin.item.packaging.index')],
                     ["Wastage", '03.09', route('admin.wastage.index')],
+                    ["Stock Tracking", '03.11', route('admin.item.stock.tracking')],
                 ],
             ],
             "distributer" => [

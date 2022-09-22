@@ -44,6 +44,7 @@ class RestaurantController extends Controller
                     "qty" => $data->qty,
                     "total" => ($data->item->rate * $data->qty),
                     "item_category_id" =>null,
+                    "batch_id" =>null,
                 ];
             } else {
                 $current = $items['data_' . $item_id];
