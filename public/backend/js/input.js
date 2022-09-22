@@ -216,7 +216,7 @@ $("connectmax").change(function () {
 
 $(".checkitem").focusout(function () {
     id = dotSanitize( $(this).val());
-
+    
     console.log("running", id);
     if (id != "") {
         if (!exists("#item-" + id)) {
@@ -228,6 +228,11 @@ $(".checkitem").focusout(function () {
             rate_id = $(this).data("rate");
             rate = $("#item-" + id).data("rate");
             $("#" + rate_id).val(rate);
+            try {
+                loadBatch($("#item-" + id).data("id"));
+            } catch (error) {
+                
+            }
         }
     }
 });

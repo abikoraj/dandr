@@ -12,13 +12,19 @@ use App\Models\User;
 use App\NepaliDate;
 use App\PaymentManager;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class SellitemController extends Controller
 {
     public function index()
     {
         $large = env('large', false);
-        return view('admin.sellitem.index', compact('large'));
+        $hasBatches=[];
+        $products=DB::select('select distinct(item_id) from simple_manufacturing_items where batch_no is not null');
+        foreach ($products as $key => $product) {
+            array_push($hasBatches,$product->item_id);
+        }
+        return view('admin.sellitem.index', compact('large','hasBatches'));
     }
 
     public function addSellItem(Request $request)
@@ -84,6 +90,9 @@ class SellitemController extends Controller
             $sell_item->rate = $request->rate;
             $sell_item->due = $request->due;
             $sell_item->paid = $request->paid;
+            if($request->filled('use_batch')){
+                $sell_item->batch_id = $request->batch_id;
+            }
             // $user = User::where('no',$request->user_id)->first();
             $sell_item->user_id = $user->id;
             $sell_item->item_id = $item->id;

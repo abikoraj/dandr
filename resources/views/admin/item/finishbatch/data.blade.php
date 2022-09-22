@@ -1,15 +1,30 @@
+<div>
+    <input type="checkbox" name="multi_batch" id="multi_batch" onchange="checkMultiBatch(this)" >
+    <label for="multi_batch">
+        Multiple Batch
+    </label>
+</div>
+<hr>
 <div class="row">
+
     <div class="col-md-3">
-        <label for="batch_id">Batch</label>
+        <label id="batch_id_label" for="batch_id"> Batch</label>
         <select name="batch_id" id="batch_id" class="form-control ms">
 
         </select>
     </div>
+    <div class="col-md-3 to_batch_id_holder d-none" >
+        <label for="to_batch_id">To Batch</label>
+        <select name="to_batch_id" id="to_batch_id" class="form-control ms">
+
+        </select>
+    </div>
     <div class="col-md-3 d-flex align-items-end">
-        <button class="btn btn-primary">
-            Mark Finish Batch
+        <button class="btn btn-primary" onclick="loadInfo()">
+            Load Info
         </button>
     </div>
+    
 </div>
 <hr>
 <table class="table table-bordered">
@@ -19,14 +34,12 @@
             Batch no
         </th>
         <th>
-            Produced
+            Produced QTY
         </th>
         <th>
-            Sold / Used
+            Sold / Used QTY
         </th>
-        <th>
-            Loss in weight
-        </th>
+        
     </tr>
     @foreach ($finishedBatches as $finishedBatch)
         <tr>
@@ -38,9 +51,6 @@
            </td>
            <td>
             {{$finishedBatch->sold_qty}}
-           </td>
-           <td>
-            {{$finishedBatch->loss_qty}}
            </td>
         </tr>
     @endforeach

@@ -229,7 +229,7 @@
                             class="form-control next" data-next="total">
                     </div>
                     <div class="p-0 col-md-2" id="item_batch_id_holder"  style="display: none">
-                        <label for="item_batch_id">batch (F1)</label>
+                        <label for="item_batch_id"><input type="checkbox" id="use_batch">  batch </label>
                         <select type="text" list="product-list" id="item_batch_id" class="form-control next"
                             data-next="rate">
                         </select>
@@ -464,7 +464,7 @@
                 total: $("#total").val(),
                 batch_id:null
             };
-            if(hasBatches.includes(data.id)){
+            if(hasBatches.includes(data.id) && $('#use_batch')[0].checked){
                 const batch_id=$('#item_batch_id').val();
                 if(batch_id==undefined){
                     alert('Please Choose a batch');
@@ -819,6 +819,7 @@
         const batchURL='{{route('admin.simple.manufacture.batches',['id'=>'xxx_id'])}}';
         function selectBatch(id){
             if(hasBatches.includes(id)){
+                $('#use_batch')[0].checked=true;
                 $('#item_batch_id_holder').show();    
                 axios.get(batchURL.replace('xxx_id',id))
                 .then((res)=>{
@@ -828,6 +829,9 @@
                         res.data.data.map(o=>`<option value="${o.batch_id}">${o.batch_no} (${o.amount.toString() } ${product.unit})</option>`).join('')
                     );
                 })
+            }else{
+                $('#use_batch')[0].checked=false;
+
             }
 
         }

@@ -336,7 +336,7 @@ Route::name('admin.')->group(function () {
             Route::prefix('batch-finished')->name('batch.finished.')->middleware('permmission:03.08')->group(function () {
                 Route::match(['GET', 'POST'],'', [BatchFinishedController::class, 'index'])->name('index');
                 Route::match(['GET', 'POST'], 'add', [PackagingController::class, 'add'])->name('add');
-                Route::match(['GET', 'POST'], 'cancel/{id}', [PackagingController::class, 'cancel'])->name('cancel');
+                Route::match(['GET', 'POST'], 'info', [PackagingController::class, 'info'])->name('info');
                 Route::match(['GET', 'POST'], 'view/{id}', [PackagingController::class, 'view'])->name('view');
             });
         });

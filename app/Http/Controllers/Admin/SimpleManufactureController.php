@@ -39,6 +39,7 @@ class SimpleManufactureController extends Controller
                 $finisedBatcheSTR=count($finisedBatches)>0?' and id not in ('. implode(',',$finisedBatches->toArray()).")":"";
                 $data=DB::select("select c.id as batch_id,c.amount,c.batch_no from(select id,(amount-
                 ifnull((select sum(qty) from bill_items where batch_id=simple_manufacturing_items.id ),0) -
+                ifnull((select sum(qty) from sellitems where batch_id=simple_manufacturing_items.id ),0) -
                 ifnull((select sum(s.amount) from simple_manufacturing_items s where s.batch_id=simple_manufacturing_items.id ),0)) as amount,batch_no
                  from simple_manufacturing_items where item_id={$id} and batch_no is not null {$finisedBatcheSTR}) c where c.amount>0");
             }
@@ -145,26 +146,37 @@ class SimpleManufactureController extends Controller
     }
 
     public function detail(SimpleManufacturing $process){
-        $items=DB::table('simple_manufacturing_items')->join('items','items.id','=','simple_manufacturing_items.item_id')
-        ->select('simple_manufacturing_items.*','items.title')->where('simple_manufacturing_items.simple_manufacturing_id',$process->id)->get();
+        $items=DB::table('simple_manufacturing_items')
+        ->join('items','items.id','=','simple_manufacturing_items.item_id')
+        ->select('simple_manufacturing_items.*','items.title')
+        ->where('simple_manufacturing_items.simple_manufacturing_id',$process->id)->get();
         // dd($items);
         return view('admin.simplemanufacture.detail',compact('process','items'));
     }
 
     public function cancel(Request $request){
+        
         $process=SimpleManufacturing::where('id',$request->id)->first();
         $items=DB::select('select item_id,center_id,amount,type from simple_manufacturing_items where simple_manufacturing_id=?', [$request->id]);
-        $process->canceled=true;
-        $process->save();
+        // $process->canceled=true;
+        // $process->save();
+
+        $milk_id=env('milk_id');
 
         foreach ($items as $key => $item) {
             if($item->type==2){
                 maintainStock($item->item_id,$item->amount,$item->center_id,'out');
-
             }else{
+
                 maintainStock($item->item_id,$item->amount,$item->center_id,'in');
+                if($item->item_id==$milk_id){
+                 
+                    DB::update('update milkdays set amount=amount-? where date=?',[$item->amount,$process->date]);
+                }
             }
         }
+        DB::delete('delete from simple_manufacturing_items where simple_manufacturing_id=?',[$request->id]);
+        $process->delete();
 
         return redirect()->back();
     }

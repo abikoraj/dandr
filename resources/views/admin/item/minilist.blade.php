@@ -1,5 +1,5 @@
 @php
-    $items=\App\Models\Item::where('farmeronly',1)->select('number','sell_price','title')->get();
+    $items=\App\Models\Item::where('farmeronly',1)->select('id','number','sell_price','title')->get();
 @endphp
 <div class="table-responsive" >
     <table class="table table-bordered">
@@ -13,7 +13,7 @@
             @if (env('large',false))
             @else
                 @foreach($items as $i)
-                <tr id="item-{{ $i->number }}" data-rate="{{$i->sell_price}}" data-number="{{ $i->number }}" data-name="{{ $i->title }}" onclick="itemSelected(this.dataset);">
+                <tr id="item-{{ $i->number }}" data-id="{{$i->id}}"  data-rate="{{$i->sell_price}}" data-number="{{ $i->number }}" data-name="{{ $i->title }}" onclick="itemSelected(this.dataset);">
                     <td class="p-1"><span style="cursor: pointer;">{{ $i->number }}</span></td>
                     <td class="p-1"><span style="cursor: pointer;">{{ $i->title }}</span></td>
                 </tr>
