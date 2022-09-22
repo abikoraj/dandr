@@ -452,6 +452,15 @@ Route::name('admin.')->group(function () {
             });
         });
 
+        //  XXX employee chalan
+
+        Route::prefix('employee-chalan')->name('chalan.')->group(function () {
+            Route::get('/','Admin\ChalanController@index')->name('index');
+            Route::match(['get','post'],'/item-sell','Admin\ChalanController@chalanItemSale')->name('item.sell');
+            Route::match(['get','post'],'/items','Admin\ChalanController@ItemList')->name('item.list');
+
+        });
+
         // XXX sms
         Route::prefix('sms')->name('sms.')->group(function () {
             Route::post('distributer-credit', [SMSController::class, 'distributerCredit'])->name('distributer.credit');
@@ -859,6 +868,9 @@ Route::name('admin.')->group(function () {
             Route::match(['get', 'post'], '', [DayReportController::class, 'index'])->name('index');
         });
     });
+
+
+
 });
 
 Route::name('restaurant.')->prefix('restaurant')->middleware('permmission:14.02')->group(function () {
@@ -925,6 +937,8 @@ Route::group(['middleware' => 'role:distributer', 'prefix' => 'distributor'], fu
         Route::get('make-a-request/{id}', 'Users\DistributorDashboardController@requestDelete')->name('request.delete');
     });
 });
+
+
 
 Route::name('sahakari.')->prefix('sahakari')->group(function () {
     Route::get('', [HomeController::class, 'index'])->name('home');

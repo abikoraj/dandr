@@ -28,7 +28,7 @@ use Illuminate\Support\Facades\DB;
 Artisan::command('loadFiscalYears', function () {
     $bs=(new NepaliDate(20000101))->getBS();
 
-    for ($i=75; $i < 89; $i++) { 
+    for ($i=75; $i < 89; $i++) {
         $fy=new FiscalYear();
         $n=$i+1;
         $fy->name="0".$i."/0".$n;
@@ -68,7 +68,7 @@ Artisan::command('loadBanks', function () {
     "Century Commercial Bank Ltd. (Century)",
     "Sanima Bank Ltd. (Sanima)"];
     $phone=9800110000;
-    for ($i=0; $i < 5; $i++) { 
+    for ($i=0; $i < 5; $i++) {
         $bank=new Bank();
         $bank->name=$banks[ mt_rand(0,(count($banks)-1))];
         $bank->address=$faker->address;
@@ -107,7 +107,7 @@ Artisan::command('loadGateways', function () {
     "Century Commercial Bank Ltd. (Century)",
     "Sanima Bank Ltd. (Sanima)"];
     $phone=9800110000;
-    for ($i=0; $i < 5; $i++) { 
+    for ($i=0; $i < 5; $i++) {
         $gateway=new PaymentGateway();
         $gateway->name=$banks[ mt_rand(0,(count($banks)-1))];
         $gateway->save();
@@ -128,8 +128,8 @@ Artisan::command('password', function(){
 Artisan::command('load-items',function(){
     $data=include(__DIR__."/../data/drugs.php");
     $units=['Sack','kg','litre','Pcs'];
-    for ($j=1; $j <= 15; $j++) { 
-       
+    for ($j=1; $j <= 15; $j++) {
+
         foreach ($data as $key => $name) {
             $d=mt_rand(100,999);
             $i=new Item();
@@ -162,8 +162,8 @@ Artisan::command('ttt',function(){
 });
 Artisan::command('load-customers',function(){
     $faker = Faker\Factory::create();
-    for ($i=0; $i < 10000; $i++) { 
-    
+    for ($i=0; $i < 10000; $i++) {
+
         $user = new User();
         $user->phone = $faker->phoneNumber;
         $user->name = $faker->name;
@@ -175,6 +175,8 @@ Artisan::command('load-customers',function(){
         $user->save();
         $customer = new Customer();
         $customer->user_id=$user->id;
+        $customer->center_id = 1;
+        $customer->foreign_id = 0;
         $customer->panvat=mt_rand(1000000,9999999);
         $customer->save();
         echo "saved - ".$user->name ."\n";

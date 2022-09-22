@@ -53,6 +53,9 @@ Route::middleware(['auth:api'])->group(function () {
     Route::match(['GET','POST'],'items',[ItemController::class,'index']);
     Route::post('pos-user',[LoginController::class,'addPosUser']);
 
+    Route::get('customer-list',[GeneralController::class,'customerList']);
+    Route::post('employee-chalan',[GeneralController::class,'employeeChalan']);
+
     Route::middleware('permmission:09.05')->group(function(){
         Route::prefix('customers')->group(function(){
             Route::get('customers/{center_id}',[customerController::class,'index']);
@@ -73,7 +76,7 @@ Route::middleware(['auth:api'])->group(function () {
         Route::get('detail/{id}',[ManufactureController::class,'detail'])->middleware('permmission:13.04');
         Route::post('finish/{id}',[ManufactureController::class,'finish'])->middleware('permmission:13.04');
     });
-    
+
     route::prefix('farmers')->group(function(){
         Route::get('list', [FarmerController::class,'list'])->middleware('permmission:01.12');
         Route::get('centers', [FarmerController::class,'centers']);
@@ -102,6 +105,9 @@ Route::get('test',function(){
 Route::get('',function(){
    return "Welcome To ".env('tag','');
 });
+
+
+
 
 
 // Route::get('send-sms/@{pass}',function($pass){

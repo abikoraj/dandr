@@ -335,7 +335,9 @@ class ItemController extends Controller
                         'amount' => $item['qty'],
                         'stock_out_id' => $sout->id
                     ]);
+
                     array_push($ids, $sout_item->id);
+
                     $item = DB::table('items')->where('id', $sout_item->item_id)->first(['sell_price', 'wholesale']);
                     $outstock = CenterStock::where('item_id', $sout_item->item_id)->where('center_id', $from_center_id)->first();
                     $instock = CenterStock::where('item_id', $sout_item->item_id)->where('center_id', $center_id)->first();
