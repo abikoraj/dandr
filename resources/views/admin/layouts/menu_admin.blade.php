@@ -143,6 +143,7 @@
                 <ul class="ml-menu">
                     <li><a href="{{ route('admin.customer.home') }}" class="waves-effect waves-block">List </a></li>
                     <li><a href="{{ route('admin.customer.payment.index') }}" class="waves-effect waves-block">Payment</a></li>
+                    <li><a href="{{ route('admin.customer.opening') }}" class="waves-effect waves-block">Account Opening</a></li>
                     <li><a href="{{ route('admin.customer.credit-list.index') }}" class="waves-effect waves-block">Due  SMS</a></li>
                     <li><a href="{{ route('admin.customer.promo') }}" class="waves-effect waves-block">Promo  SMS</a></li>
                 </ul>

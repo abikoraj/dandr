@@ -101,12 +101,15 @@ class CustomerController extends Controller
             $customer->phone = $user->phone;
             $customer->user=$user;
     
-            if ($request->filled('amount')) {
-                if ($request->amount > 0) {
-    
-                    $date = getNepaliDate($request->date);
-                    $ledger = new LedgerManage($user->id);
-                    $ledger->addLedger('Opening Balance', $request->amounttype, $request->amount, $date, 134);
+            if (auth_has_per('08.03')){
+
+                if ($request->filled('amount')) {
+                    if ($request->amount > 0) {
+        
+                        $date = getNepaliDate($request->date);
+                        $ledger = new LedgerManage($user->id);
+                        $ledger->addLedger('Opening Balance', $request->amounttype, $request->amount, $date, 134);
+                    }
                 }
             }
         } catch (\Throwable $th) {

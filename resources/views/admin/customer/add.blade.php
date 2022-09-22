@@ -129,32 +129,35 @@
                             placeholder="Enter customer PAN/VAT">
                     </div>
                 </div>
-                <div class="col-12"></div>
-                <div class="col-lg-4">
-                    <label for="date">Opening Balance Date</label>
-                    <div class="form-group">
-                        <input type="text" id="date" name="date" min="0" step="0.01"
-                            class="form-control next calender" data-next="amount" placeholder="Enter Current Balance"
-                            required>
+                @if (auth_has_per('08.03'))
+                    
+                    <div class="col-12"></div>
+                    <div class="col-lg-4">
+                        <label for="date">Opening Balance Date</label>
+                        <div class="form-group">
+                            <input type="text" id="date" name="date" min="0" step="0.01"
+                                class="form-control next calender" data-next="amount" placeholder="Enter Current Balance"
+                                required>
+                        </div>
                     </div>
-                </div>
 
-                <div class="col-lg-4">
-                    <label for="amount">Opening Balance</label>
-                    <div class="form-group">
-                        <input type="number" id="amount" name="amount" min="0" step="0.01"
-                            class="form-control next" data-next="address" placeholder="Enter Current Balance" required>
+                    <div class="col-lg-4">
+                        <label for="amount">Opening Balance</label>
+                        <div class="form-group">
+                            <input type="number" id="amount" name="amount" min="0" step="0.01"
+                                class="form-control next" data-next="address" placeholder="Enter Current Balance" required>
+                        </div>
                     </div>
-                </div>
-                <div class="col-lg-4">
-                    <label for="amounttype">Balance Type</label>
-                    <div class="form-group">
-                        <select name="amounttype" id="amounttype" class="form-control show-tick ms">
-                            <option value="1">CR</option>
-                            <option value="2">DR</option>
-                        </select>
+                    <div class="col-lg-4">
+                        <label for="amounttype">Balance Type</label>
+                        <div class="form-group">
+                            <select name="amounttype" id="amounttype" class="form-control show-tick ms">
+                                <option value="1">CR</option>
+                                <option value="2">DR</option>
+                            </select>
+                        </div>
                     </div>
-                </div>
+                @endif
             </div>
         </div>
 
