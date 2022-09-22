@@ -200,6 +200,14 @@ return [
             'Manage Tables' => ['use' => [], 'code' => '14.01'],
             'Manage Orders' => ['use' => [], 'code' => '14.02'],
         ]
+        ],
+
+    'employee_calan' => [
+        'use' => ['use_employee_calan'],
+        'code' => '14',
+        'children' => [
+
+        ]
     ]
 
 

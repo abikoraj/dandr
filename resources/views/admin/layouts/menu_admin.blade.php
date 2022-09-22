@@ -126,6 +126,16 @@
                         <li><a href="{{ route('admin.employee.ret') }}" class="waves-effect waves-block">Return Advance</a></li>
                     </ul>
                 </li>
+
+                {{-- employee chalan --}}
+
+                <li><a href="javascript:void(0);" class="waves-effect waves-block menu-toggle"><i class="zmdi zmdi-shopping-cart"></i><span>Employee Chalan</span></a>
+                    <ul class="ml-menu">
+                        <li><a href="{{ route('admin.chalan.index')}}" class="waves-effect waves-block">Employees Chalan </a></li>
+
+                    </ul>
+                </li>
+
             @endif
 
             @if (env('use_employee',false)||env('use_restaurant'))
