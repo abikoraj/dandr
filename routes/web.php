@@ -671,6 +671,10 @@ Route::name('admin.')->group(function () {
                 Route::post('update', [CustomerController::class, 'update'])->name('update')->middleware('authority');
                 Route::post('del', [CustomerController::class, 'del'])->name('del')->middleware('authority');
 
+                //opening balance
+                Route::match(['GET','POST'],'opening', [CustomerController::class, 'opening'])->name('opening')->middleware('authority');
+                Route::match(['GET','POST'],'opening-del', [CustomerController::class, 'openingDel'])->name('opening.del')->middleware('authority');
+                
                 //detail
                 Route::match(['get', 'post'], 'detail/{id}', [CustomerController::class, 'detail'])->name('detail');
 

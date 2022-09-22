@@ -3,6 +3,9 @@
         {{$d->user->distributer()->id}}
     </td>
     <td>
+        {{_nepalidate($d->date)}}
+    </td>
+    <td>
         {{$d->user->name}}
     </td>
     <td>

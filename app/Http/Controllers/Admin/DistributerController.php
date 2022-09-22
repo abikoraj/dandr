@@ -199,7 +199,8 @@ class DistributerController extends Controller
     public function loadLedger(Request $request)
     {
         $date = str_replace('-', '', $request->date);
-        $ledgers = Ledger::where('date', $date)->where('identifire', '119')->get();
+        $ledgers = Ledger::where('identifire', '119')->get();
+        // $ledgers = Ledger::where('date', $date)->where('identifire', '119')->get();
         return view('admin.distributer.balance.list', compact('ledgers'));
     }
     public function ledger(Request $request)

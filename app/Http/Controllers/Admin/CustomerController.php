@@ -124,6 +124,9 @@ class CustomerController extends Controller
     public function del(Request $request){
 
         $user_id=Customer::where('id',$request->id)->first(['user_id'])->user_id;
+        if(DB::table('ledgers')->where('user_id',$user_id)->count()>0){
+            throw new \Exception('This customer already has transactions.');
+        }
         DB::table('customers')->where('id',$request->id)->delete();
         DB::table('users')->where('id',$user_id)->delete();
     }
@@ -304,10 +307,35 @@ class CustomerController extends Controller
             return response()->json(
                 DB::select('select u.name,u.id,u.phone,u.address from users u join customers c on u.id=c.user_id where c.center_id in ('. implode(",",$request->centers) .')')
             );
+            
         }else{
 
             $centers=DB::table('centers')->get(['id','name']);
             return view('admin.customer.promo.index',compact('centers'));
         }
+    }
+
+    public function opening(Request $request){
+        if($request->getMethod()=="POST"){
+            if(DB::table('ledgers')->where('user_id',$request->user_id)->where('identifire',134)->count()>0){
+                throw new \Exception('Account already opened for '.$request->name);
+            }
+            $date=getNepaliDate($request->date);
+            $l = new LedgerManage($request->user_id);
+            $opening=$l->addLedger('Opening Balance', $request->type, $request->amount, $date, 134);
+            $opening->name=$request->name;
+            return view('admin.customer.opening.single',compact('opening'));
+        }else{
+            
+            $openings=DB::select('select l.id,l.date,l.amount,l.user_id,u.name,l.type from ledgers l join users u on l.user_id=u.id where l.identifire=134');
+            // dd($openings);
+            $customers=DB::select('select u.id,u.name from users u join customers c on u.id=c.user_id');
+            return view('admin.customer.opening.index',compact('openings','customers'));
+        }
+    }
+
+    function openingDel(Request $request){
+        DB::table('ledgers')->where('id',$request->id)->delete();
+
     }
 }
