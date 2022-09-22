@@ -29,16 +29,16 @@
     </style>
 @endsection --}}
 @section('toobar')
-    <button type="button" class="btn btn-primary waves-effect m-r-20" data-toggle="modal" data-target="#addModal">New
+    <button type="button" class="btn btn-primary waves-effect m-r-20" onclick="showAdd();">New
         Customer</button>
 @endsection
 @section('content')
+    @include('admin.customer.add')
 
     <div class="pt-2 pb-2" >
         <input type="text" oninput="search(this)"  class="w-50" placeholder="Search with name or phone number">
     </div>
 
-    @include('admin.customer.add')
     @include('admin.customer.edit')
     <div class="table-responsive">
         <table class="table table-bordered  dataTable">

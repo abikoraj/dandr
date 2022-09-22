@@ -77,34 +77,43 @@ class CustomerController extends Controller
 
     public function add(Request $request)
     {
-        $user = new User();
-        $user->phone = $request->phone;
-        $user->name = $request->name;
-        $user->address = $request->address;
-        // $user->amount = $request->amount??0;
-        // $user->amounttype = $request->amounttype??0;
-        $user->role = 2;
-        $user->password = bcrypt($request->phone);
-        $user->save();
-        $customer = new Customer();
-        $customer->user_id = $user->id;
-        $customer->panvat = $request->panvat;
-        $customer->center_id = $request->center_id??env('maincenter');
-        $customer->foreign_id = 0;
-        $customer->save();
+        try {
+            //code...
+            $user = new User();
+            $user->phone = $request->phone;
+            $user->name = $request->name;
+            $user->address = $request->address;
+            // $user->amount = $request->amount??0;
+            // $user->amounttype = $request->amounttype??0;
+            $user->role = 2;
+            $user->password = bcrypt($request->phone);
+            $user->save();
 
-        $customer->name = $user->name;
-        $customer->address = $user->address;
-        $customer->phone = $user->phone;
-        // $customer->user=$user;
-        // if ($request->filled('amount')) {
-        //     if ($request->amount > 0) {
-
-        //         $ledger = new LedgerManage($user->id);
-        //         $date = PosSetting::getdate();
-        //         $ledger->addLedger('Opening Balance', $request->amounttype, $request->amount, $date, 134);
-        //     }
-        // }
+            $customer = new Customer();
+            $customer->user_id = $user->id;
+            $customer->panvat = $request->panvat;
+            $customer->center_id = $request->center_id??env('maincenter');
+            $customer->foreign_id = 0;
+            $customer->save();
+    
+            $customer->name = $user->name;
+            $customer->address = $user->address;
+            $customer->phone = $user->phone;
+            $customer->user=$user;
+    
+            if ($request->filled('amount')) {
+                if ($request->amount > 0) {
+    
+                    $date = getNepaliDate($request->date);
+                    $ledger = new LedgerManage($user->id);
+                    $ledger->addLedger('Opening Balance', $request->amounttype, $request->amount, $date, 134);
+                }
+            }
+        } catch (\Throwable $th) {
+            $customer->delete();
+            $user->delete();
+            throw $th;
+        }
         if ($request->filled('json')) {
             return response()->json($customer);
         } else {
@@ -192,11 +201,12 @@ class CustomerController extends Controller
             $prev = 0;
             if ($type == 1) {
                 $prev = Ledger::where('date', '<', $date)->where('user_id', $user->id)->where('type', 2)->sum('amount') - Ledger::where('date', '<', $date)->where('user_id', $user->id)->where('type', 1)->sum('amount');
-            } else if ($type = -1) {
+            } elseif ($type == -1) {
                 $prev = 0;
             } else {
                 $prev = Ledger::where('date', '<', $range[1])->where('user_id', $user->id)->where('type', 2)->sum('amount') - Ledger::where('date', '<', $range[1])->where('user_id', $user->id)->where('type', 1)->sum('amount');
             }
+            // dd($prev,$range,$type);
             $base = $prev;
             $ledger_data = $ledger->orderBy('date', 'asc')->orderBy('id', 'asc')->get();
             $ledgers = [];
