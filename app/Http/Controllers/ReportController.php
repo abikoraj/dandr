@@ -137,7 +137,7 @@ class ReportController extends Controller
             (select sum(amount) from ledgers where user_id= u.id and date>={$range[1]} and date<={$range[2]} and (identifire=101 or identifire=102) and type=2) as openingdr,
             (select sum(amount) from ledgers where user_id= u.id and date>={$range[1]} and date<={$range[2]} and identifire=120 and type=1) as closingcr,
             (select sum(amount) from ledgers where user_id= u.id and date>={$range[1]} and date<={$range[2]} and identifire=120  and type=2) as closingdr
-            from (select iu.name,iu.id,iu.no,f.usecc,f.rate,f.usetc,f.userate,f.ts_amount,f.use_ts_amount,f.protsahan,f.use_protsahan,f.transport,f.use_transport  from users iu join farmers f on iu.id=f.user_id where f.center_id={$center->id}  {$farmerRange}) u order by u.no asc";
+            from (select iu.name,iu.id,iu.no,f.usecc,f.rate,f.usetc,f.userate,f.ts_amount,f.use_ts_amount,f.protsahan,f.use_protsahan,f.transport,f.use_transport  from users iu join farmers f on iu.id=f.user_id where  f.center_id={$center->id}  {$farmerRange}) u order by u.no asc";
             $reports = DB::table('farmer_reports')->where(['year' => $year, 'month' => $month, 'session' => $session])->get();
 
             $farmers = DB::select($query);
@@ -250,20 +250,24 @@ class ReportController extends Controller
                     $farmer->nettotal = $balance;
                 }
 
-                array_push($minList, $farmer);
-                $index += 1;
-                if ($firstLoaded) {
-                    if ($index == $secondPage) {
-                        array_push($datas, ['farmers' => $minList, 'full' => true, 'count' => count($minList)]);
-                        $index = 1;
-                        $minList = [];
-                    }
-                } else {
-                    if ($index == $firstPage) {
-                        array_push($datas, ['farmers' => $minList, 'full' => true, 'count' => count($minList)]);
-                        $firstLoaded = true;
-                        $index = 1;
-                        $minList = [];
+                
+                if($balance!=0 && $farmer->milk!=0 ){
+
+                    array_push($minList, $farmer);
+                    $index += 1;
+                    if ($firstLoaded) {
+                        if ($index == $secondPage) {
+                            array_push($datas, ['farmers' => $minList, 'full' => true, 'count' => count($minList)]);
+                            $index = 1;
+                            $minList = [];
+                        }
+                    } else {
+                        if ($index == $firstPage) {
+                            array_push($datas, ['farmers' => $minList, 'full' => true, 'count' => count($minList)]);
+                            $firstLoaded = true;
+                            $index = 1;
+                            $minList = [];
+                        }
                     }
                 }
             }
