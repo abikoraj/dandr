@@ -38,6 +38,7 @@ Artisan::command('loadFiscalYears', function () {
         echo $fy->name.",".$fy->startdate." - ".$fy->enddate ."||".$bs[$n][0]. PHP_EOL;
     }
 })->purpose('Display an inspiring quote');
+
 Artisan::command('loadBanks', function () {
     $faker = Faker\Factory::create();
     $banks=["Nepal Bank Ltd. (NBL)",
