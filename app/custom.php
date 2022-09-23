@@ -599,5 +599,9 @@ function prependZero($num)
     return $num < 10 ? ('0' . $num) : $num;
 }
 
+function canDelOpening($user_id){
+    return DB::table('ledgers')->where('user_id',$user_id)->count()<=1;
+}
+
 
 include_once 'custom_acounting.php';

@@ -347,7 +347,7 @@
                         center_id: local.center.id,
                         amount: local.amount,
                         type: local.type,
-                        batch_id=null
+                        batch_id:null
                     })
                     localData.item_ids.push(local.item.id);
                 });

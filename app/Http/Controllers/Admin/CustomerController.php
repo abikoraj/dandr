@@ -77,39 +77,61 @@ class CustomerController extends Controller
 
     public function add(Request $request)
     {
-        $user = new User();
-        $user->phone = $request->phone;
-        $user->name = $request->name;
-        $user->address = $request->address;
-        // $user->amount = $request->amount??0;
-        // $user->amounttype = $request->amounttype??0;
-        $user->role = 2;
-        $user->password = bcrypt($request->phone);
-        $user->save();
-        $customer = new Customer();
-        $customer->user_id = $user->id;
-        $customer->panvat = $request->panvat;
-        $customer->center_id = $request->center_id??env('maincenter');
-        $customer->foreign_id = 0;
-        $customer->save();
+        try {
+            //code...
+            $user = new User();
+            $user->phone = $request->phone;
+            $user->name = $request->name;
+            $user->address = $request->address;
+            // $user->amount = $request->amount??0;
+            // $user->amounttype = $request->amounttype??0;
+            $user->role = 2;
+            $user->password = bcrypt($request->phone);
+            $user->save();
 
-        $customer->name = $user->name;
-        $customer->address = $user->address;
-        $customer->phone = $user->phone;
-        // $customer->user=$user;
-        if ($request->filled('amount')) {
-            if ($request->amount > 0) {
+            $customer = new Customer();
+            $customer->user_id = $user->id;
+            $customer->panvat = $request->panvat;
+            $customer->center_id = $request->center_id??env('maincenter');
+            $customer->foreign_id = 0;
+            $customer->save();
+    
+            $customer->name = $user->name;
+            $customer->address = $user->address;
+            $customer->phone = $user->phone;
+            $customer->user=$user;
+    
+            if (auth_has_per('08.03')){
 
-                $ledger = new LedgerManage($user->id);
-                $date = PosSetting::getdate();
-                $ledger->addLedger('Opening Balance', $request->amounttype, $request->amount, $date, 134);
+                if ($request->filled('amount')) {
+                    if ($request->amount > 0) {
+        
+                        $date = getNepaliDate($request->date);
+                        $ledger = new LedgerManage($user->id);
+                        $ledger->addLedger('Opening Balance', $request->amounttype, $request->amount, $date, 134);
+                    }
+                }
             }
+        } catch (\Throwable $th) {
+            $customer->delete();
+            $user->delete();
+            throw $th;
         }
         if ($request->filled('json')) {
             return response()->json($customer);
         } else {
             return view('admin.customer.single', compact('customer'));
         }
+    }
+
+    public function del(Request $request){
+
+        $user_id=Customer::where('id',$request->id)->first(['user_id'])->user_id;
+        if(DB::table('ledgers')->where('user_id',$user_id)->count()>0){
+            throw new \Exception('This customer already has transactions.');
+        }
+        DB::table('customers')->where('id',$request->id)->delete();
+        DB::table('users')->where('id',$user_id)->delete();
     }
 
     public function update(Request $request)
@@ -185,11 +207,12 @@ class CustomerController extends Controller
             $prev = 0;
             if ($type == 1) {
                 $prev = Ledger::where('date', '<', $date)->where('user_id', $user->id)->where('type', 2)->sum('amount') - Ledger::where('date', '<', $date)->where('user_id', $user->id)->where('type', 1)->sum('amount');
-            } else if ($type = -1) {
+            } elseif ($type == -1) {
                 $prev = 0;
             } else {
                 $prev = Ledger::where('date', '<', $range[1])->where('user_id', $user->id)->where('type', 2)->sum('amount') - Ledger::where('date', '<', $range[1])->where('user_id', $user->id)->where('type', 1)->sum('amount');
             }
+            // dd($prev,$range,$type);
             $base = $prev;
             $ledger_data = $ledger->orderBy('date', 'asc')->orderBy('id', 'asc')->get();
             $ledgers = [];
@@ -287,10 +310,35 @@ class CustomerController extends Controller
             return response()->json(
                 DB::select('select u.name,u.id,u.phone,u.address from users u join customers c on u.id=c.user_id where c.center_id in ('. implode(",",$request->centers) .')')
             );
+            
         }else{
 
             $centers=DB::table('centers')->get(['id','name']);
             return view('admin.customer.promo.index',compact('centers'));
         }
+    }
+
+    public function opening(Request $request){
+        if($request->getMethod()=="POST"){
+            if(DB::table('ledgers')->where('user_id',$request->user_id)->where('identifire',134)->count()>0){
+                throw new \Exception('Account already opened for '.$request->name);
+            }
+            $date=getNepaliDate($request->date);
+            $l = new LedgerManage($request->user_id);
+            $opening=$l->addLedger('Opening Balance', $request->type, $request->amount, $date, 134);
+            $opening->name=$request->name;
+            return view('admin.customer.opening.single',compact('opening'));
+        }else{
+            
+            $openings=DB::select('select l.id,l.date,l.amount,l.user_id,u.name,l.type from ledgers l join users u on l.user_id=u.id where l.identifire=134');
+            // dd($openings);
+            $customers=DB::select('select u.id,u.name from users u join customers c on u.id=c.user_id');
+            return view('admin.customer.opening.index',compact('openings','customers'));
+        }
+    }
+
+    function openingDel(Request $request){
+        DB::table('ledgers')->where('id',$request->id)->delete();
+
     }
 }

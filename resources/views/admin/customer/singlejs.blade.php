@@ -19,7 +19,7 @@
     <xxx_td>
         <button class="btn btn-sm btn-primary" data-info='XXX_basicInfo' onclick="initEdit(this)">Edit</button>
         <a  target="_blank" href="{{ route("admin.customer.detail",['id'=>'xxx_id']) }}" class="btn btn-sm btn-secondary">Detail</a>
-        <button class="btn btn-sm btn-danger">Del</button>
+        <button class="btn btn-sm btn-danger" onclick="del(xxx_id)">Del</button>
     </xxx_td>
 
 </xxx_tr>

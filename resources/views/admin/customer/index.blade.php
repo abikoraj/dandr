@@ -29,16 +29,16 @@
     </style>
 @endsection --}}
 @section('toobar')
-    <button type="button" class="btn btn-primary waves-effect m-r-20" data-toggle="modal" data-target="#addModal">New
+    <button type="button" class="btn btn-primary waves-effect m-r-20" onclick="showAdd();">New
         Customer</button>
 @endsection
 @section('content')
+    @include('admin.customer.add')
 
     <div class="pt-2 pb-2" >
         <input type="text" oninput="search(this)"  class="w-50" placeholder="Search with name or phone number">
     </div>
 
-    @include('admin.customer.add')
     @include('admin.customer.edit')
     <div class="table-responsive">
         <table class="table table-bordered  dataTable">
@@ -84,21 +84,21 @@
                 if (prompt('Please Type Yes To Delete').toLowerCase() == "yes") {
 
                     lock = true;
-                    showProgress('Updating Customer');
+                    showProgress('Deleting Customer');
                     var data = {
                         'id': id
                     };
                     axios.post('{{ route('admin.customer.del') }}', data)
                         .then((res) => {
 
-                            $('#customer_' + id).replaceWith(res.data);
+                            $('#customer_' + id).remove();
+                            showNotification('bg-success','Customer Delete Sucessfully');
                             hideProgress();
                             lock = false;
-                            $('#editModal').modal('hide');
-                            document.getElementById('editCustomer').reset();
                         })
                         .catch((err) => {
                             hideProgress();
+                            showNotification('bg-danger','Customer cannot be deleted,Please try again.');
                             lock = false;
                         })
                 }
