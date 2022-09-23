@@ -4,6 +4,7 @@
             <th>Date</th>
             <th>Items</th>
             <th>Total</th>
+            <th>Action</th>
         </tr>
         @foreach ($datas as $data)
             <tr>
@@ -20,6 +21,7 @@
                     @endforeach
                 </td>
                 <td>Rs.{{ $tot }}</td>
+                <td><a href="{{ route('admin.chalan.chalan.details',$data->id) }}" class="btn btn-primary btn-sm">View</a></td>
             </tr>
 
         @endforeach

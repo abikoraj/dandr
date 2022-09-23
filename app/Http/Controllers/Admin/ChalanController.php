@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\ChalanItem;
+use App\Models\ChalanSale;
 use App\Models\EmployeeChalan;
 use App\Models\Item;
 use App\Models\User;
@@ -83,5 +84,52 @@ class ChalanController extends Controller
         // $data=DB::select(
         //     "select id,title,date,(select count(*) from chalan_items where employee_chalan_"
         // );
+    }
+
+    public function chalanDetails($id){
+        $users = DB::table('users')->where('role', 2)->get(['id', 'name']);
+        $datas = DB::table('employee_chalans')
+        ->where('id', $id)->first();
+        $items = DB::table('chalan_items')->where('employee_chalan_id',$datas->id)
+        ->join('items','items.id','=','chalan_items.item_id')->select('chalan_items.item_id','items.title','chalan_items.rate')
+        ->get();
+        // dd($items);
+        return view('admin.chalan.detail',compact('users','datas','items'));
+    }
+
+    public function chalanSave(Request $request){
+        // dd($request->all());
+        $date = getNepaliDate($request->date);
+        $sell = new ChalanSale();
+        $sell->total = $request->total;
+        $sell->qty = $request->qty;
+        $sell->rate = $request->rate;
+        $sell->paid = 0;
+        $sell->due = 0;
+        $sell->date = $date;
+        $sell->user_id = $request->user_id;
+        $sell->employee_chalan_id = $request->employee_chalan_id;
+        $sell->item_id = $request->item_id;
+        $sell->save();
+        $name = $request->item_name;
+        $user = DB::table('users')->where('id',$sell->user_id)->select('name')->first();
+        return view('admin.chalan.sell_data',compact('sell','name','user'));
+
+    }
+
+    public function chalanList(Request $request){
+        $date = getNepaliDate($request->date);
+
+        $sells = DB::table('chalan_sales')->where('date',$date)
+        ->join('users','users.id','=','chalan_sales.user_id')
+        ->join('items','items.id','=','chalan_sales.item_id')
+        ->select('chalan_sales.id','chalan_sales.rate','chalan_sales.qty','chalan_sales.total','users.name','items.title')->get();
+        // dd($sells);
+        return view('admin.chalan.sell_datas',compact('sells'));
+    }
+
+
+    public function chalanDelete(Request $request){
+        DB::table('chalan_sales')->where('id',$request->id)->delete();
     }
 }
