@@ -24,7 +24,6 @@
 @endsection
 @section('content')
 <div class="row">
-    @include('admin.distributer.sell.productmodal')
     <div class="col-md-3">
         <div>
             <input type="hidden" id="currentdate">

@@ -458,7 +458,10 @@ Route::name('admin.')->group(function () {
             Route::get('/','Admin\ChalanController@index')->name('index');
             Route::match(['get','post'],'/item-sell','Admin\ChalanController@chalanItemSale')->name('item.sell');
             Route::match(['get','post'],'/items','Admin\ChalanController@ItemList')->name('item.list');
-
+            Route::get('/chalan-details/{id}','Admin\ChalanController@chalanDetails')->name('chalan.details');
+            Route::post('/chalan-details/save','Admin\ChalanController@chalanSave')->name('chalan.save');
+            Route::post('/chalan-list','Admin\ChalanController@chalanList')->name('chalan.list');
+            Route::post('/chalan-delete','Admin\ChalanController@chalanDelete')->name('chalan.delete');
         });
 
         // XXX sms

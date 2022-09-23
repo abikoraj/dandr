@@ -36,9 +36,14 @@ class GeneralController extends Controller
     }
 
     public function customerList(){
-        $customers = DB::table('customers')
+        $customer = DB::table('customers')
         ->join('users','users.id','=','customers.user_id')
         ->select(['users.name','users.phone'])->get();
+        $distributors = DB::table('distributers')
+        ->join('users','users.id','=','customers.user_id')
+        ->select(['users.name','users.phone'])->get();
+        $customers=array_merge($customer,$distributors);
+
         return response()->json($customers);
     }
 
