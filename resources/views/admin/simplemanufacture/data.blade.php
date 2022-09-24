@@ -71,7 +71,7 @@
                         {{$process->title}}
                     </td>
                     <td>
-                        <a class="btn btn-primary" href="{{route('admin.simple.manufacture.detail',['process'=>$process->id])}}">
+                        <a target="_blank" class="btn btn-primary" href="{{route('admin.simple.manufacture.detail',['process'=>$process->id])}}">
                             Detail
                         </a>
                     </td>
