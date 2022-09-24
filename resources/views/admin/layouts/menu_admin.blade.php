@@ -161,8 +161,9 @@
                     @if (env('use_simple_manufacture',false))
                         <li><a href="{{ route('admin.simple.manufacture.index') }}" class="waves-effect waves-block">Manage Process</a></li>
                     @endif
-
-
+                     @if (env('use_cheese_manufacture',false))
+                        <li><a href="{{ route('admin.manufacture.cheese.index') }}" class="waves-effect waves-block">Manage Cheese Items</a></li>
+                    @endif
                 </ul>
             </li>
             @endif

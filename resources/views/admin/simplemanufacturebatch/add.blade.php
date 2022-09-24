@@ -392,9 +392,10 @@
                 return;
             }
 
-            if (!prompt('Enter yes to continue') == 'yes') {
+            if (prompt('Enter yes to continue') != 'yes') {
                 return;
             }
+            
             data.date = $('#nepali-date').val();
             const localData = {
                 date: data.date,

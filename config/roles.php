@@ -142,7 +142,7 @@ return [
             'manage_process' => ['use' => ['use_full_manufacture'], 'code' => '13.04'],
             'manage_process' => ['use' => ['use_simple_manufacture'], 'code' => '13.06'],
             'api_list_process_api' => ['use' => [], 'code' => '13.05'],
-            'api_list_process_api' => ['use' => [], 'code' => '13.05'],
+            'cheese_item_map' => ['use' => [], 'code' => '13.07'],
         ]
     ],
 

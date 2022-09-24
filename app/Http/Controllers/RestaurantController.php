@@ -43,8 +43,10 @@ class RestaurantController extends Controller
                     "rate" => $item->rate,
                     "qty" => $data->qty,
                     "total" => ($data->item->rate * $data->qty),
-                    "item_category_id" =>null,
-                    "batch_id" =>null,
+                    "item_category_id" => null,
+                    "batch_id" => null,
+                    "to_batch_id" => null,
+                    "target_item_id" => null
                 ];
             } else {
                 $current = $items['data_' . $item_id];
@@ -54,57 +56,56 @@ class RestaurantController extends Controller
             }
         }
 
-       return view('restaurant.table.billitem',compact('items'));
+        return view('restaurant.table.billitem', compact('items'));
     }
 
     public function print(Request $request)
     {
-        $bill=Bill::where('id',$request->id)->first();
-        if($bill==null){
+        $bill = Bill::where('id', $request->id)->first();
+        if ($bill == null) {
             echo "invalid bill";
-        }else{  
-            $bill->billitems=BillItem::where('bill_id',$bill->id)->get();
-            return view('restaurant.table.bill',compact('bill'));
+        } else {
+            $bill->billitems = BillItem::where('bill_id', $bill->id)->get();
+            return view('restaurant.table.bill', compact('bill'));
         }
     }
 
     public function kot(Request $request)
     {
 
-        $table=Table::where('id',$request->table_id)->first();
-        $datas=json_decode($table->data);
-        $localData=[];
+        $table = Table::where('id', $request->table_id)->first();
+        $datas = json_decode($table->data);
+        $localData = [];
         foreach ($datas as $key => $data) {
-            if(in_array($data->id,$request->ids)){
-                array_push($localData,[$data->id,$data->item->title,$data->qty]);
+            if (in_array($data->id, $request->ids)) {
+                array_push($localData, [$data->id, $data->item->title, $data->qty]);
             }
         }
-        return view('restaurant.table.kotprint',compact('localData','table'));
+        return view('restaurant.table.kotprint', compact('localData', 'table'));
     }
 
 
     public function kotDel(Request $request)
     {
         $user = Auth::user();
-        if($request->phone== $user->phone){
-            $table=Table::where('id',$request->table_id)->first();
-            $datas=json_decode($table->data);
-            $newDatas=[];
+        if ($request->phone == $user->phone) {
+            $table = Table::where('id', $request->table_id)->first();
+            $datas = json_decode($table->data);
+            $newDatas = [];
             foreach ($datas as $key => $data) {
-                if($data->id!=$request->id){
-                    array_push($newDatas,$data);
+                if ($data->id != $request->id) {
+                    array_push($newDatas, $data);
                 }
             }
-            if(count($newDatas)>0){
-                $table->data=json_encode($newDatas);
-            }else{
-                $table->data=null;
+            if (count($newDatas) > 0) {
+                $table->data = json_encode($newDatas);
+            } else {
+                $table->data = null;
             }
             $table->save();
-            return response()->json(['data'=>$table->data,'table_id'=>$request->table_id,'nodel'=>count($newDatas)>0]);
-        }else{
-            return response()->json(['status'=>false]);
+            return response()->json(['data' => $table->data, 'table_id' => $request->table_id, 'nodel' => count($newDatas) > 0]);
+        } else {
+            return response()->json(['status' => false]);
         }
     }
-   
 }

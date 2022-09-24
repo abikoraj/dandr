@@ -27,6 +27,10 @@
     
 </div>
 <hr>
+<div id="info">
+
+</div>
+<hr>
 <table class="table table-bordered">
     <tr>
        

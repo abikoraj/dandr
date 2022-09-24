@@ -31,9 +31,10 @@
     <script>
         const batchURL='{{route('admin.simple.manufacture.batches',['id'=>'xxx_id'])}}';
         var batches=[];
-      
+        var multiple=false;
         function checkMultiBatch(ele){
-            if(ele.checked){
+            multiple=ele.checked;
+            if(multiple){
                 $('.to_batch_id_holder').removeClass('d-none');
                 $('#batch_id_label').html('From Batch');
             }else{
@@ -53,13 +54,37 @@
                     batches=res.data.data;
                     $('#batch_id').html(batches.map(o=>`<option value="${o.batch_id}">${o.batch_no}</option>`).join(''));
                     $('#to_batch_id').html(batches.reverse().map(o=>`<option value="${o.batch_id}">${o.batch_no}</option>`).join(''));
+                    multiple=false;
                     console.log(res.data);
                 });
             });
         }
 
         function loadInfo(){
-            
+            const batch_id=parseInt($('#batch_id').val());
+            const to_batch_id=parseInt($('#to_batch_id').val());
+            const item_id=parseInt($('#item_id').val());
+            if(multiple){
+                if(batch_id==to_batch_id){
+                    alert('Same Batch are selected');
+                    return;
+                }
+
+                if(batch_id>to_batch_id){
+                    alert('Starting batch is newer than ending batch');
+                    return;
+                }
+            }
+            var data={
+                type:multiple?'multiple':'single',
+                batch_id:batch_id,
+                to_batch_id:to_batch_id,
+                item_id:item_id
+            };
+            axios.post('{{route('admin.item.batch.finished.info')}}',data)
+            .then((res)=>{
+                $('#info').html(res.data);
+            });
         }
     </script>
 @endsection
