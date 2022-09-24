@@ -169,7 +169,7 @@ class SimpleManufactureController extends Controller
     {
 
         $process = SimpleManufacturing::where('id', $request->id)->first();
-        $items = DB::select('select item_id,center_id,amount,type from simple_manufacturing_items where simple_manufacturing_id=?', [$request->id]);
+        $items = DB::select('select item_id,center_id,amount,type,date from simple_manufacturing_items where simple_manufacturing_id=?', [$request->id]);
         // $process->canceled=true;
         // $process->save();
 
@@ -182,8 +182,7 @@ class SimpleManufactureController extends Controller
 
                 maintainStock($item->item_id, $item->amount, $item->center_id, 'in');
                 if ($item->item_id == $milk_id) {
-
-                    DB::update('update milk_days set amount=amount-? where date=?', [$item->amount, $process->date]);
+                    DB::update('update milk_days set amount=amount-? where date=?', [$item->amount, $item->date]);
                 }
             }
         }
