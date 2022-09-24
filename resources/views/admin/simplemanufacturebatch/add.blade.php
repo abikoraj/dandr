@@ -120,6 +120,9 @@
                             Center
                         </th>
                         <th>
+                            Batch
+                        </th>
+                        <th>
                             Qty
                         </th>
                         <th></th>
@@ -298,11 +301,11 @@
                             }else if(res.data.type=='milk'){
                                 data.batches=res.data.data.map(o=>{
                                     return {
-                                        batchno:toNepaliDate(o.batchno),
+                                        batch_no:toNepaliDate(o.batch_no),
                                         amount:o.amount
                                     }
                                 })
-                                $('#batch_id').html(data.batches.map(o=>`<option value="${o.batchno}">${o.batchno} (${o.amount})</option>`).join(''));
+                                $('#batch_id').html(data.batches.map(o=>`<option value="${o.batch_no}">${o.batch_no} (${o.amount})</option>`).join(''));
                             }
                         }
                     })
@@ -479,7 +482,7 @@
                     if(batch_id!=undefined && batch_id!=null){
                         let stock;
                         if(data.batchtype=='milk'){
-                            stock=data.batches.find(o=>o.batchno==batch_id);
+                            stock=data.batches.find(o=>o.batch_no==batch_id);
                         }else{
                             stock=data.batches.find(o=>o.batch_id==batch_id);
                         }
