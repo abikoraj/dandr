@@ -55,8 +55,8 @@ class LedgerManage
     * "302" = "Employee Payment while Purchase"
     * "113" = "Advance cancel"
 
-
-
+    * "501" = "Item sell"
+    * "502" = "Payment received"
 
     * "125" = "purchase from suppliers"
     * "126" = "paid to suppliers through billing entry"
@@ -84,7 +84,7 @@ class LedgerManage
     * "801" = "cash withdrawl"
     * "802" = "cash deposit"
     * "803" = "bank transfer"
-    
+
     */
     public function addLedger($particular, $type, $amount, $date, $identifier, $foreign_id = null)
     {

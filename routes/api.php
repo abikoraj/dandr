@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Admin\CustomerController as AdminCustomerController;
+use App\Http\Controllers\Api\AppsellController;
 use App\Http\Controllers\Api\customerController;
 use App\Http\Controllers\Api\FarmerController;
 use App\Http\Controllers\Api\GeneralController;
@@ -104,6 +105,10 @@ Route::get('test',function(){
 
 Route::get('',function(){
    return "Welcome To ".env('tag','');
+});
+
+Route::prefix('appsell')->group(function () {
+    Route::post('/',[AppsellController::class,'appSell']);
 });
 
 
