@@ -76,6 +76,7 @@
                     <li><a href="{{ route('admin.item.packaging.index') }}" class="waves-effect waves-block">Repackaging</a></li>
                     <li><a href="{{ route('admin.wastage.index') }}" class="waves-effect waves-block">Wastage</a></li>
                     <li><a href="{{ route('admin.item.stock.tracking') }}" class="waves-effect waves-block">Stock Tracking</a></li>
+                    <li><a href="{{ route('admin.item.batch.finished.index') }}" class="waves-effect waves-block">Cheese Batch Management</a></li>
                 </ul>
             </li>
             {{-- @if (env('tier',1)==1) --}}

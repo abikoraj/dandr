@@ -326,7 +326,7 @@ Route::name('admin.')->group(function () {
                 Route::match(['POST'], 'update/{id}', [ItemCategoryController::class, 'update'])->name('update');
                 Route::match(['POST'], 'del/{id}', [ItemCategoryController::class, 'del'])->name('del');
             });
-
+ 
             Route::prefix('packaging')->name('packaging.')->middleware('permmission:03.08')->group(function () {
                 Route::get('', [PackagingController::class, 'index'])->name('index');
                 Route::match(['GET', 'POST'], 'add', [PackagingController::class, 'add'])->name('add');

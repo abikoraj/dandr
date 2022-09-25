@@ -89,7 +89,6 @@
 @endsection
 @section('js')
 <script src="{{ asset('backend/plugins/select2/select2.min.js') }}"></script>
-<script src="{{ asset('calender/nepali.datepicker.v3.2.min.js') }}"></script>
 <script type="text/JavaScript" src="https://cdnjs.cloudflare.com/ajax/libs/jQuery.print/1.6.0/jQuery.print.js"></script>
 
 <script>

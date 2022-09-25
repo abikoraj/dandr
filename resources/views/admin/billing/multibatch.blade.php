@@ -122,10 +122,11 @@
                 return;
             }
 
+            const item_category_id=$('#connected_item_category_id').val();
             var billitem = {
                 id: item_id,
                 name: connectedLoadeditem.title,
-                item_category_id: $('#connected_item_category_id').val(),
+                item_category_id: item_category_id==undefined?null:item_category_id,
                 rate: rate,
                 qty: qty,
                 total: qty*rate,

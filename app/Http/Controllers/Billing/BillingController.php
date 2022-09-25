@@ -187,17 +187,20 @@ class BillingController extends Controller
             $item->to_batch_id = $i->to_batch_id;
             $item->batch_id = $i->batch_id;
             $item->item_category_id = $i->item_category_id;
-            // if($i->item_category_id!=null){
+            if($i->item_category_id!=null){
 
-            //     $cat=DB::table('item_categories')->where('id',$i->item_category_id)->first(['name']);
-            //     $item->name = $i->name.' - '.$cat->name;
+                $cat=DB::table('item_categories')->where('id',$i->item_category_id)->first(['name']);
+                $item->name = $i->name.' - '.$cat->name;
 
-            // }
+            }
             $item->bill_id = $bill->id;
             $item->amount = 0;
             $item->save();
             array_push($billitem, $item);
-            maintainStock($item->item_id, $item->qty, $bill->center_id, 'out');
+            if( $item->target_item_id == null){
+
+                maintainStock($item->item_id, $item->qty, $bill->center_id, 'out');
+            }
             array_push($titles, $item->name . " X " . $item->qty);
         }
 

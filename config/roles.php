@@ -52,6 +52,7 @@ return [
             'wastage' => ['use' => [], 'code' => '03.09'],
             'manage_variants' => ['use' => [], 'code' => '03.10'],
             'stock_tracking' => ['use' => [], 'code' => '03.11'],
+            'cheese_batch_management' => ['use' => [], 'code' => '03.12'],
         ]
     ],
     "distributer" => [
