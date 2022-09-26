@@ -59,7 +59,7 @@ class UserController extends Controller
             [
             'n_password.min' => 'Password should be at least 8 characters !'
         ]);
-        $user = User::where('id',$request->id)->where('role',0)->first();
+        $user = User::where('id',$request->id)->first();
         if (Hash::check($request->c_password, $user->password)){
             $user->password = bcrypt($request->n_password);
             $user->save();
