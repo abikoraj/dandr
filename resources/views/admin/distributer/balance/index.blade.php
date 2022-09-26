@@ -104,6 +104,7 @@
                         <thead>
                             <tr>
                                 <th>No</th>
+                                <th>Date</th>
                                 <th>Name</th>
                                 <th>Amount</th>
                                 <th></th>
@@ -207,7 +208,7 @@
     });
 
     $('#nepali-datepicker').bind('changed', function() {
-        loadData();
+        // loadData();
     });
 
 </script>

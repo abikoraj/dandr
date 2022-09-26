@@ -128,6 +128,7 @@ return [
         'children' => [
             'customer list' => ['use' => [], 'code' => '08.01'],
             'payment' => ['use' => [], 'code' => '08.02'],
+            'opening' => ['use' => [], 'code' => '08.03'],
         ]
     ],
 

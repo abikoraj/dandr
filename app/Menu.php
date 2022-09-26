@@ -124,6 +124,7 @@ class Menu
                 'children' => [
                     ["List", '08.01', route('admin.customer.home')],
                     ["Payment", '08.02', route('admin.customer.payment.index')],
+                    ["Opening", '08.03', route('admin.customer.opening')],
                 ],
             ],
             "manufacture" => [

@@ -46,8 +46,11 @@
         }
     };
     lock=false;
-    function initEditLedger(title, id){
+    var ledgerCallBack;
+    function initEditLedger(title, id,callback){
+        ledgerCallBack=callback;
         win.showPost("Edit Ledger - "+title,"{{route('admin.ledger.edit')}}",{"id":id},addEXPayHandle);
+
     }
 
     function s_calculate(){
@@ -68,11 +71,16 @@
                     console.log(response);
                     lock=false;
                     win.hide();
-                    loadData();
+                    if(ledgerCallBack!=undefined){
+                        ledgerCallBack();
+                    }else{
+                        loadData();
+                    }
 
                 })
                 .catch(function(err){
                     lock=false;
+                    console.log(err);
                     alert('Ledger Cannot be Updated');
                 })
             }
