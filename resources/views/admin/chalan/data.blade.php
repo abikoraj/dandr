@@ -21,7 +21,15 @@
                     @endforeach
                 </td>
                 <td>Rs.{{ $tot }}</td>
-                <td><a href="{{ route('admin.chalan.chalan.details',$data->id) }}" class="btn btn-primary btn-sm">View</a></td>
+                <td>
+                    @if ($data->closed)
+                    <a href="{{ route('admin.chalan.chalan.final.details',$data->id) }}" class="btn btn-primary btn-sm">View Detail</a>
+
+                    @else
+                    <a href="{{ route('admin.chalan.chalan.details',$data->id) }}" class="btn btn-primary btn-sm">Manage</a>
+                    <a href="{{ route('admin.chalan.closing.index',$data->id) }}" class="btn btn-primary btn-sm">Close</a>
+                    @endif
+                </td>
             </tr>
 
         @endforeach

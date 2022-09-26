@@ -474,6 +474,7 @@ Route::name('admin.')->group(function () {
             Route::match(['get','post'],'/item-sell',[ChalanController::class,'chalanItemSale'])->name('item.sell');
             Route::match(['get','post'],'/items',[ChalanController::class,'ItemList'])->name('item.list');
             Route::get('/chalan-details/{id}',[ChalanController::class,'chalanDetails'])->name('chalan.details');
+            Route::get('/chalan-final-details/{id}',[ChalanController::class,'chalanFinalDetails'])->name('chalan.final.details');
             Route::post('/chalan-details/save',[ChalanController::class,'chalanSave'])->name('chalan.save');
             Route::post('/chalan-list',[ChalanController::class,'chalanList'])->name('chalan.list');
             Route::post('/chalan-delete',[ChalanController::class,'chalanDelete'])->name('chalan.delete');

@@ -20,7 +20,7 @@
 @endsection
 @section('head-title','Distributer Sell')
 @section('toobar')
-<a href="{{ route('admin.chalan.item.sell') }}" class="btn btn-primary">Employee Chalan Items </a>
+<a href="{{ route('admin.chalan.item.sell') }}" class="btn btn-primary">Create Employee Chalan</a>
 @endsection
 @section('content')
 <div class="row">

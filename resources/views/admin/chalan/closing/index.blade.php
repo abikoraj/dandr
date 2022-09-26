@@ -110,7 +110,7 @@
 
                     </td>
                     <td>
-                        {{ $item->remaning }} {{ $item->unit }}
+                        {{ $item->newremaning }} {{ $item->unit }}
 
                     </td>
 
@@ -120,7 +120,7 @@
     </div>
     @php
     @endphp
-    <form action="">
+    <form action="{{ route('admin.chalan.closing.index', ['id' => $chalan->id]) }}" onsubmit="return save(this,event);">
         @csrf
         <div class="row">
             <div class="col-6">
@@ -182,8 +182,8 @@
                                     {{ $bank->name }}
                                 </th>
                                 <th>
-                                    <input type="number" class="form-control banks" name="bank_{{ $bank->account_id }}"
-                                        id="bank_{{ $bank->account_id }}" min="0" value="0"
+                                    <input type="number" class="form-control banks" name="bank_{{ $bank->id }}"
+                                        id="bank_{{ $bank->id }}" min="0" value="0"
                                         onchange="calculateNote()" oninput="calculateNote()">
                                 </th>
                             </tr>
@@ -202,11 +202,16 @@
                     <div class="row">
                         <div class="col-4">
                             <strong>Payment Amount</strong>
-                            <div>{{$users->sum('payments_amount')}}</div>
+                            <div>{{ $users->sum('payments_amount') }}</div>
                         </div>
                         <div class="col-4">
                             <strong>Collection Amount</strong>
                             <div id="collectionTotal">0</div>
+                        </div>
+                        <div class="col-4 d-flex align-items-end">
+                            <button class="btn btn-success w-100">
+                                Close Data
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -215,9 +220,14 @@
         </div>
     </form>
 
+
+
 @endsection
 @section('js')
     <script>
+        const paymentsAmount = {{ $users->sum('payments_amount') }};
+        var totalAmount = 0;
+
         function calculateNote() {
             let noteAmount = 0;
             $('.notes').each(function(index, element) {
@@ -243,7 +253,37 @@
                 }
             });
             $('#bankTotal').html(bankAmount);
-            $('#collectionTotal').html((bankAmount+noteAmount));
+            totalAmount = bankAmount + noteAmount;
+            $('#collectionTotal').html(totalAmount);
+
+        }
+
+        function save(ele, e) {
+            e.preventDefault();
+
+            if (paymentsAmount != totalAmount) {
+
+                alert('Payment amount and collection amount does not matches.');
+                return;
+
+            }
+
+            if (prompt('Please confirm all datas are correct and enter yes to continue') == 'yes') {
+                showProgress('Closing Employee Chalan');
+                axios.post(ele.action, new FormData(ele))
+                    .then((res) => {
+                        if (res.data.status) {
+                            window.location.replace( res.data.url);
+                        } else {
+                            hideProgress();
+                            showNotification('bg-danger', res.data.message);
+                        }
+                    }).catch((err) => {
+                        hideProgress();
+                        const msg=err.response?err.response.data.message:'Please try again';
+                        showNotification('bg-danger', 'Some error occured,'+msg);
+                    });
+            }
         }
     </script>
 

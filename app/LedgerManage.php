@@ -66,6 +66,10 @@ class LedgerManage
     * "131" = "customer Payment"
     * "401" = "Sold to customer old pos"
     * "402" = "customer Payment old pos"
+    * "403" = "sales employee chalan sales"
+    * "404" = "sales payment while chalan sales"
+    * "405" = "cash payment while chalan sales"
+    * "406" = "bank payment while chalan sales"
     * "135" = "customer Payment extra"
     * "134" = "customer opening Balance"
 
