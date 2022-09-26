@@ -4,6 +4,8 @@ use App\Http\Controllers\AccountingController;
 use App\Http\Controllers\AccountOpeningController;
 use App\Http\Controllers\Admin\BankController;
 use App\Http\Controllers\Admin\CategoryController;
+use App\Http\Controllers\Admin\ChalanClosingController;
+use App\Http\Controllers\Admin\ChalanController;
 use App\Http\Controllers\Admin\ChalanPaymentController;
 use App\Http\Controllers\Admin\CheeseController;
 use App\Http\Controllers\Admin\CounterController;
@@ -454,9 +456,10 @@ Route::name('admin.')->group(function () {
             });
         });
 
-        //  XXX employee chalan
+        //XXX employee chalan
 
         Route::prefix('employee-chalan')->name('chalan.')->group(function () {
+        
             Route::get('/','Admin\ChalanController@index')->name('index');
             Route::match(['get','post'],'/item-sell','Admin\ChalanController@chalanItemSale')->name('item.sell');
             Route::match(['get','post'],'/items','Admin\ChalanController@ItemList')->name('item.list');
@@ -467,14 +470,29 @@ Route::name('admin.')->group(function () {
             Route::post('/chalan-wastage','Admin\ChalanController@chalanWastage')->name('chalan.wastage');
             Route::post('/chalan-wastage-delete','Admin\ChalanController@chalanWastageDelete')->name('chalan.wastage.delete');
 
+            Route::get('/',[ChalanController::class,'index'])->name('index');
+            Route::match(['get','post'],'/item-sell',[ChalanController::class,'chalanItemSale'])->name('item.sell');
+            Route::match(['get','post'],'/items',[ChalanController::class,'ItemList'])->name('item.list');
+            Route::get('/chalan-details/{id}',[ChalanController::class,'chalanDetails'])->name('chalan.details');
+            Route::post('/chalan-details/save',[ChalanController::class,'chalanSave'])->name('chalan.save');
+            Route::post('/chalan-list',[ChalanController::class,'chalanList'])->name('chalan.list');
+            Route::post('/chalan-delete',[ChalanController::class,'chalanDelete'])->name('chalan.delete');
+
         });
 
-        // chalan payments
+        //XXX chalan payments
 
             Route::prefix('chalan-payments')->name('chalan.payment.')->group(function () {
                Route::post('del',[ChalanPaymentController::class, 'delPayment'])->name('del');
                Route::post('add',[ChalanPaymentController::class, 'addPayment'])->name('add');
                Route::post('',[ChalanPaymentController::class, 'index'])->name('index');
+            });
+
+        //XXX chalan closing 
+            Route::prefix('chalan-closing')->name('chalan.closing.')->group(function(){
+                Route::match(['GET','POST'],'start/{id}',[ChalanClosingController::class,'index'])->name('index');
+                Route::get('add',[ChalanClosingController::class,'add'])->name('add');
+
             });
 
         // XXX sms

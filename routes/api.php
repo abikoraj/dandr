@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Admin\CustomerController as AdminCustomerController;
+use App\Http\Controllers\Api\AppsellController;
 use App\Http\Controllers\Api\customerController;
 use App\Http\Controllers\Api\EmployeeChalanController;
 use App\Http\Controllers\Api\FarmerController;
@@ -109,6 +110,13 @@ Route::get('test',function(){
 
 Route::get('',function(){
    return "Welcome To ".env('tag','');
+});
+
+Route::prefix('app')->group(function () {
+    Route::post('/sell',[AppsellController::class,'appSell']);
+    Route::post('/customer-pay',[AppsellController::class,'customerPay']);
+    Route::post('/buy',[AppsellController::class,'appBuy']);
+    Route::get('/due-list',[AppsellController::class,'dueList']);
 });
 
 
