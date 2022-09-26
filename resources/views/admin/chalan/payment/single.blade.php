@@ -6,6 +6,6 @@
         {{$payment->amount}}
     </th>
     <th>
-        <button class="btn btn-danger" onclick="delPayment({{$payment->id}})">Del</button>
+        <button class="btn btn-danger btn-sm" onclick="delPayment({{$payment->id}})">Del</button>
     </th>
 </tr>

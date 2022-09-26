@@ -327,7 +327,7 @@ Route::name('admin.')->group(function () {
                 Route::match(['POST'], 'update/{id}', [ItemCategoryController::class, 'update'])->name('update');
                 Route::match(['POST'], 'del/{id}', [ItemCategoryController::class, 'del'])->name('del');
             });
- 
+
             Route::prefix('packaging')->name('packaging.')->middleware('permmission:03.08')->group(function () {
                 Route::get('', [PackagingController::class, 'index'])->name('index');
                 Route::match(['GET', 'POST'], 'add', [PackagingController::class, 'add'])->name('add');
@@ -464,6 +464,9 @@ Route::name('admin.')->group(function () {
             Route::post('/chalan-details/save','Admin\ChalanController@chalanSave')->name('chalan.save');
             Route::post('/chalan-list','Admin\ChalanController@chalanList')->name('chalan.list');
             Route::post('/chalan-delete','Admin\ChalanController@chalanDelete')->name('chalan.delete');
+            Route::post('/chalan-wastage','Admin\ChalanController@chalanWastage')->name('chalan.wastage');
+            Route::post('/chalan-wastage-delete','Admin\ChalanController@chalanWastageDelete')->name('chalan.wastage.delete');
+
         });
 
         // chalan payments
@@ -696,7 +699,7 @@ Route::name('admin.')->group(function () {
                 //opening balance
                 Route::match(['GET','POST'],'opening', [CustomerController::class, 'opening'])->name('opening')->middleware('authority');
                 Route::match(['GET','POST'],'opening-del', [CustomerController::class, 'openingDel'])->name('opening.del')->middleware('authority');
-                
+
                 //detail
                 Route::match(['get', 'post'], 'detail/{id}', [CustomerController::class, 'detail'])->name('detail');
 

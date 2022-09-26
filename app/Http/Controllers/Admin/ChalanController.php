@@ -95,10 +95,12 @@ class ChalanController extends Controller
         $datas = DB::table('employee_chalans')
         ->where('id', $id)->first();
         $items = DB::table('chalan_items')->where('employee_chalan_id',$datas->id)
-        ->join('items','items.id','=','chalan_items.item_id')->select('chalan_items.item_id','items.title','chalan_items.rate')
+        ->join('items','items.id','=','chalan_items.item_id')->select('chalan_items.id','chalan_items.item_id','items.title','chalan_items.rate')
         ->get();
         // dd($items);
-        return view('admin.chalan.detail',compact('users','datas','items'));
+        $wastageItem = DB::table('chalan_items')->where('chalan_items.wastage','>',0)->where('chalan_items.employee_chalan_id',$id)
+        ->join('items','items.id','=','chalan_items.item_id')->select('chalan_items.id','items.title','chalan_items.wastage')->get();
+        return view('admin.chalan.detail',compact('users','datas','items','wastageItem'));
     }
 
     public function chalanSave(Request $request){
@@ -118,7 +120,6 @@ class ChalanController extends Controller
         $name = $request->item_name;
         $user = DB::table('users')->where('id',$sell->user_id)->select('name')->first();
         return view('admin.chalan.sell_data',compact('sell','name','user'));
-
     }
 
     public function chalanList(Request $request){
@@ -134,5 +135,26 @@ class ChalanController extends Controller
 
     public function chalanDelete(Request $request){
         DB::table('chalan_sales')->where('id',$request->id)->delete();
+    }
+
+    public function chalanWastage(Request $request){
+        // dd($request->all());
+        $chalanItem = ChalanItem::where('id',$request->chalan_item_id)->first();
+        if($chalanItem->wastage>0){
+            $chalanItem->wastage += $request->wastage_qty;
+            $chalanItem->save();
+        }else{
+            $chalanItem->wastage = $request->wastage_qty;
+            $chalanItem->save();
+        }
+        $data = DB::table('chalan_items')->where('chalan_items.id',$request->chalan_item_id)
+        ->join('items','items.id','=','chalan_items.item_id')->select('chalan_items.id','items.title','chalan_items.wastage')->first();
+        return view('admin.chalan.wastage.single',compact('data'));
+    }
+
+    public function chalanWastageDelete(Request $request){
+        $chalanItem = ChalanItem::where('id',$request->id)->first();
+        $chalanItem->wastage = 0;
+        $chalanItem->save();
     }
 }
