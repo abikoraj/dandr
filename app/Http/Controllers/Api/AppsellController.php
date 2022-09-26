@@ -10,6 +10,7 @@ use Illuminate\Http\Request;
 use App\LedgerManage;
 use App\Models\Appbuy;
 use App\Models\Supplier;
+use Illuminate\Support\Facades\DB;
 
 class AppsellController extends Controller
 {
@@ -45,7 +46,7 @@ class AppsellController extends Controller
             $ledger = new LedgerManage($appsell->user_id);
             $ledger->addLedger($appsell->title, 2, $appsell->total, $appsell->date, 501, $appsell->id);
             if ($appsell->paid > 0) {
-                $ledger->addLedger('Payment Receipt', 1, $appsell->paid,$appsell->date, 502, $appsell->id);
+                $ledger->addLedger('Payment Received', 1, $appsell->paid,$appsell->date, 502, $appsell->id);
             }
             return response()->json([
                 'status' => 'success',
@@ -133,6 +134,26 @@ class AppsellController extends Controller
         }
 
     }
+
+    public function dueList()
+    {
+        // $appsell = Appsell::where('due', '>', 0)->get();
+        // $ledger = DB::table('ledgers')->where('type', 2)->where('amount', '>', 0)->whereIn('user_id',$appsell->pluck('user_id'))->get();
+
+        $users=DB::select('select d.* from (select
+         ((select sum(amount) from ledgers where user_id=u.id and type=2)-
+         (select sum(amount) from ledgers where user_id=u.id and type=1)) as due,
+         u.name,
+         u.phone
+         from users u join customers c on u.id=c.user_id) d where d.due>0');
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Due List',
+            'users' => $users
+        ]);
+    }
+
 
 
 

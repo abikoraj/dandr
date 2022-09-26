@@ -111,6 +111,7 @@ Route::prefix('app')->group(function () {
     Route::post('/sell',[AppsellController::class,'appSell']);
     Route::post('/customer-pay',[AppsellController::class,'customerPay']);
     Route::post('/buy',[AppsellController::class,'appBuy']);
+    Route::get('/due-list',[AppsellController::class,'dueList']);
 });
 
 
