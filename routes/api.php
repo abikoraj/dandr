@@ -107,8 +107,10 @@ Route::get('',function(){
    return "Welcome To ".env('tag','');
 });
 
-Route::prefix('appsell')->group(function () {
-    Route::post('/',[AppsellController::class,'appSell']);
+Route::prefix('app')->group(function () {
+    Route::post('/sell',[AppsellController::class,'appSell']);
+    Route::post('/customer-pay',[AppsellController::class,'customerPay']);
+    Route::post('/buy',[AppsellController::class,'appBuy']);
 });
 
 

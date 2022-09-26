@@ -55,9 +55,6 @@ class LedgerManage
     * "302" = "Employee Payment while Purchase"
     * "113" = "Advance cancel"
 
-    * "501" = "Item sell"
-    * "502" = "Payment received"
-
     * "125" = "purchase from suppliers"
     * "126" = "paid to suppliers through billing entry"
     * "127" = "Payment to supplier"
@@ -80,10 +77,17 @@ class LedgerManage
     * "901" = "acc ledger open"
     * "902" = "acc ledger close"
 
-     **bank transaction Section
+    **bank transaction Section
     * "801" = "cash withdrawl"
     * "802" = "cash deposit"
     * "803" = "bank transfer"
+
+    **mobile application Section
+    * "501" = "Item sell"
+    * "502" = "Payment received"
+    * "503" = "Costumer Payment Received"
+    * "504" = "Item Buy"
+    * "505" = "Payment Made"
 
     */
     public function addLedger($particular, $type, $amount, $date, $identifier, $foreign_id = null)
