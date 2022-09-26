@@ -132,7 +132,6 @@
                 <li><a href="javascript:void(0);" class="waves-effect waves-block menu-toggle"><i class="zmdi zmdi-shopping-cart"></i><span>Employee Chalan</span></a>
                     <ul class="ml-menu">
                         <li><a href="{{ route('admin.chalan.index')}}" class="waves-effect waves-block">Employees Chalan </a></li>
-
                     </ul>
                 </li>
 

@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Admin\CustomerController as AdminCustomerController;
 use App\Http\Controllers\Api\customerController;
+use App\Http\Controllers\Api\EmployeeChalanController;
 use App\Http\Controllers\Api\FarmerController;
 use App\Http\Controllers\Api\GeneralController;
 use App\Http\Controllers\Api\ItemController;
@@ -55,6 +56,10 @@ Route::middleware(['auth:api'])->group(function () {
 
     Route::get('customer-list',[GeneralController::class,'customerList']);
     Route::post('employee-chalan',[GeneralController::class,'employeeChalan']);
+
+
+    Route::post('upload-chalansales',[EmployeeChalanController::class,'uploadChalanSales']);
+    Route::post('upload-chalanpayment',[EmployeeChalanController::class,'uploadChalanPayment']);
 
     Route::middleware('permmission:09.05')->group(function(){
         Route::prefix('customers')->group(function(){

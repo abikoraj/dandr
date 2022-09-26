@@ -181,5 +181,6 @@ Artisan::command('load-customers',function(){
         $customer->save();
         echo "saved - ".$user->name ."\n";
     }
+
 });
 
