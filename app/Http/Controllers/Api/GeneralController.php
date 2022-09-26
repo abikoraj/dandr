@@ -40,9 +40,9 @@ class GeneralController extends Controller
         ->join('users','users.id','=','customers.user_id')
         ->select(['users.name','users.phone'])->get();
         $distributors = DB::table('distributers')
-        ->join('users','users.id','=','customers.user_id')
+        ->join('users','users.id','=','distributers.user_id')
         ->select(['users.name','users.phone'])->get();
-        $customers=array_merge($customer,$distributors);
+        $customers=array_merge($customer->toArray(),$distributors->toArray());
 
         return response()->json($customers);
     }
@@ -56,10 +56,14 @@ class GeneralController extends Controller
         $chalanItems = DB::table('chalan_items')->where('employee_chalan_id',$data->id)
         ->join('items','items.id','=','chalan_items.item_id')
         ->select('items.title','chalan_items.id','chalan_items.rate','chalan_items.item_id')->get();
-            return response()->json($chalanItems);
+            return response()->json([
+               'data' => $chalanItems,
+               'status' => true
+                ]);
         }else{
             return response()->json([
-                'message' => 'Record Not Found'
+                'message' => 'Record Not Found',
+                'status' => false
             ]);
         }
     }

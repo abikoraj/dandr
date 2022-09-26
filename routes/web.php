@@ -4,6 +4,7 @@ use App\Http\Controllers\AccountingController;
 use App\Http\Controllers\AccountOpeningController;
 use App\Http\Controllers\Admin\BankController;
 use App\Http\Controllers\Admin\CategoryController;
+use App\Http\Controllers\Admin\ChalanPaymentController;
 use App\Http\Controllers\Admin\CheeseController;
 use App\Http\Controllers\Admin\CounterController;
 use App\Http\Controllers\Admin\CustomerController;
@@ -465,6 +466,14 @@ Route::name('admin.')->group(function () {
             Route::post('/chalan-delete','Admin\ChalanController@chalanDelete')->name('chalan.delete');
         });
 
+        // chalan payments
+
+            Route::prefix('chalan-payments')->name('chalan.payment.')->group(function () {
+               Route::post('del',[ChalanPaymentController::class, 'delPayment'])->name('del');
+               Route::post('add',[ChalanPaymentController::class, 'addPayment'])->name('add');
+               Route::post('',[ChalanPaymentController::class, 'index'])->name('index');
+            });
+
         // XXX sms
         Route::prefix('sms')->name('sms.')->group(function () {
             Route::post('distributer-credit', [SMSController::class, 'distributerCredit'])->name('distributer.credit');
@@ -506,6 +515,7 @@ Route::name('admin.')->group(function () {
         //     });
         // });
         //XXX Manufacture Product
+
         Route::group(['prefix' => 'manufacture-product'], function () {
             Route::name('manufacture.product.')->middleware('permmission:13.01')->group(function () {
 

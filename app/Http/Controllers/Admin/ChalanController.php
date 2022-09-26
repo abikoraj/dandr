@@ -87,7 +87,11 @@ class ChalanController extends Controller
     }
 
     public function chalanDetails($id){
-        $users = DB::table('users')->where('role', 2)->get(['id', 'name']);
+        $customers = DB::table('users')
+        ->join('customers','users.id','customers.user_id')->select('users.name','users.id')->get()->toArray();
+        $distributors = DB::table('users')
+        ->join('distributers','users.id','distributers.user_id')->select('users.name','users.id')->get()->toArray();
+        $users = array_merge($customers,$distributors);
         $datas = DB::table('employee_chalans')
         ->where('id', $id)->first();
         $items = DB::table('chalan_items')->where('employee_chalan_id',$datas->id)
@@ -118,9 +122,8 @@ class ChalanController extends Controller
     }
 
     public function chalanList(Request $request){
-        $date = getNepaliDate($request->date);
 
-        $sells = DB::table('chalan_sales')->where('date',$date)
+        $sells = DB::table('chalan_sales')->where('employee_chalan_id',$request->employee_chalan_id)
         ->join('users','users.id','=','chalan_sales.user_id')
         ->join('items','items.id','=','chalan_sales.item_id')
         ->select('chalan_sales.id','chalan_sales.rate','chalan_sales.qty','chalan_sales.total','users.name','items.title')->get();
