@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\ChalanPayment;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -23,19 +24,20 @@ class ChalanPaymentController extends Controller
 
     public function delPayment(Request $request)
     {
-        DB::delete('delete from chalan_payments  where id=?',[$request->id]);
+        DB::delete('delete from chalan_payments where id=?',[$request->id]);
 
     }
 
     public function addPayment(Request $request){
-        $date = getNepaliDate($request->date);
-        $pay = new ChalanPayment();
-        $pay->date = $date;
-        $pay->employee_chalan_id = $request->employee_chalan_id;
-        $pay->user_id = $request->user_id;
-        $pay->save();
-        return response([
-            // 'data' = $pay
-        ]);
+        // dd($request->all());
+        $payment = new ChalanPayment();
+        $payment->employee_chalan_id = $request->employee_chalan_id;
+        $payment->user_id = $request->user_id;
+        $payment->amount = $request->amount;
+        $payment->save();
+        $user = DB::table('users')->where('id',$request->user_id)->select('name')->first();
+        $payment->name=$user->name;
+        // dd($payment);
+        return view('admin.chalan.payment.single',compact('payment'));
     }
 }

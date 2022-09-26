@@ -90,7 +90,8 @@
 
                             <input type="hidden" id="employee_chalan_id" name="employee_chalan_id"
                                 value="{{ $datas->id }}">
-                            <input type="hidden" name="date" id="nepali-datepicker" value="{{ _nepalidate($datas->date) }}">
+                            <input type="hidden" name="date" id="nepali-datepicker"
+                                value="{{ _nepalidate($datas->date) }}">
                             <div class="col-md-6">
                                 <p><strong> Select Customer </strong></p>
                                 <div class="mb-1">
@@ -186,10 +187,10 @@
             <div class="col-md-12 bg-light pt-2">
                 <div>
                     <input type="hidden" id="curdate">
-                    <form action="" id="chalanItems">
+                    <form action="" id="chalanPayment">
                         @csrf
 
-                        <div class="row" id="bill">
+                        <div class="row">
 
 
                             <input type="hidden" id="employee_chalan_id" name="employee_chalan_id"
@@ -197,9 +198,10 @@
                             <input type="hidden" name="date" id="nepali-datepicker"
                                 value="{{ _nepalidate($datas->date) }}">
                             <div class="col-md-5">
-                                <p><strong> Select Customer </strong></p>
+                                <p style="margin-bottom: 6px;"><strong> Select Customer </strong></p>
                                 <div class="mb-1">
-                                    <select name="user_id" class="form-control show-tick select ms" data-live-search="true">
+                                    <select name="user_id" id="payment_user" class="form-control show-tick select ms"
+                                        data-live-search="true">
                                         <option></option>
                                         @foreach ($users as $user)
                                             <option value="{{ $user->id }}">{{ $user->name }}</option>
@@ -234,7 +236,6 @@
                                         <tr>
                                             <th>Customer</th>
                                             <th>Amount</th>
-                                            <th>Total</th>
                                             <th></th>
                                         </tr>
                                     </thead>
@@ -252,7 +253,77 @@
             </div>
         </div>
         <div class="steps step-div step-3">
+            <div class="col-md-12 bg-light pt-2">
+                <div>
+                    <input type="hidden" id="curdate">
+                    <form action="" id="wastage_item">
+                        @csrf
 
+                        <div class="row">
+                            <div class="col-md-5">
+                                <div class="form-group">
+                                    <p style="margin-bottom: 6px;"><strong> Select Items </strong></p>
+                                    <div class="mb-1">
+                                        <select id="chalan_item_id" name="chalan_item_id"
+                                            class="form-control show-tick select ms" data-live-search="true">
+                                            <option></option>
+                                            @foreach ($items as $item)
+                                                <option value="{{ $item->id }}">{{ $item->title }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-3">
+                                <label for="amount">Qty</label>
+                                <input type="number" name="wastage_qty" id="wastage_qty" placeholder="Qty" value="1"
+                                    class="form-control next connectmax" min="1">
+                            </div>
+
+
+                            <div class="col-md-4 mt-4">
+                                <input type="button" value="Save" class="btn btn-primary btn-block" onclick="wastageItem();"
+                                    id="save">
+                                {{-- <span class="btn btn-primary btn-block" >Save</span> --}}
+                            </div>
+
+                        </div>
+                    </form>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="mt-5">
+                                <div class="pt-2 pb-2">
+                                    <input type="text" id="sellItemId" placeholder="Search" style="width: 200px;">
+                                </div>
+                                <table class="table table-bordered">
+                                    <thead>
+                                        <tr>
+                                            <th>Wastage Item Name</th>
+                                            <th>Qty</th>
+                                            <th></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="wastageItemBody">
+                                        @foreach ($wastageItem as $item)
+                                            <tr id="wastage-{{ $item->id }}">
+                                                <td>{{ $item->title }}</td>
+                                                <td>{{ $item->wastage }}</td>
+                                                <td><span onclick="wastageDelete({{ $item->id }});"
+                                                        class="btn btn-danger btn-sm">Del</span></td>
+                                                </td>
+                                            </tr>
+                                        @endforeach
+                                    </tbody>
+                                </table>
+
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
         </div>
     </div>
 
@@ -317,6 +388,7 @@
 
             calTotal();
         });
+
 
         function calTotal() {
             var rate = parseFloat($('#rate').val());
@@ -432,10 +504,10 @@
                 return false;
             } else {
 
-                var bodyFormData = new FormData(document.getElementById('chalanItems'));
+                var bodyFormData = new FormData(document.getElementById('chalanPayment'));
                 axios({
                         method: 'post',
-                        url: '{{ route('admin.chalan.chalan.save') }}',
+                        url: '{{ route('admin.chalan.payment.add') }}',
                         data: bodyFormData,
                         headers: {
                             'Content-Type': 'multipart/form-data'
@@ -443,13 +515,10 @@
                     })
                     .then(function(response) {
                         console.log(response.data);
-                        showNotification('bg-success', 'Sellitem added successfully !');
-                        $('#sellDataBody').prepend(response.data);
-                        $('#item_id').val('');
-                        $('#rate').val('');
-                        $('#qty').val(1);
-                        $('#total').val(0);
-                        calculateTotal();
+                        showNotification('bg-success', 'Payment added successfully !');
+                        $('#chalan-payments').prepend(response.data);
+                        $('#amount').val(0);
+                        // calculateTotal();
                     })
                     .catch(function(error) {
                         showNotification('bg-danger', error.response.data);
@@ -459,6 +528,66 @@
                     });
             }
         }
+
+
+        function wastageItem() {
+            if ($('#chalan_item_id').val() == '' || $('#wastage_qty').val() == 0) {
+                alert('Please enter data in empty field !');
+                $('#chalan_item_id').focus();
+                return false;
+            } else {
+                var rowid = $('#chalan_item_id').val();
+                var bodyFormData = new FormData(document.getElementById('wastage_item'));
+                axios({
+                        method: 'post',
+                        url: '{{ route('admin.chalan.chalan.wastage') }}',
+                        data: bodyFormData,
+                        headers: {
+                            'Content-Type': 'multipart/form-data'
+                        }
+                    })
+                    .then(function(response) {
+                        console.log(response.data);
+                        showNotification('bg-success', 'Wastage Item added successfully !');
+                        $('#wastage_qty').val(0);
+                        // calculateTotal();
+                        if(exists('#wastage-'+rowid)){
+                            $('#wastage-'+rowid).replaceWith(response.data);
+                            // alert(response.data);
+                        }else{
+                         $('#wastageItemBody').prepend(response.data);
+                        }
+                    })
+                    .catch(function(error) {
+                        showNotification('bg-danger', error.response.data);
+                        //handle error
+                        console.log(error.response);
+                        lock = false;
+                    });
+            }
+        }
+
+
+        function wastageDelete(id) {
+            if (prompt('Enter yes to continue') == 'yes') {
+
+                showProgress('Deleting  wastage Item');
+                axios.post('{{ route('admin.chalan.chalan.wastage.delete') }}', {id: id})
+                    .then(function(response) {
+                        // console.log(response.data);
+                        showNotification('bg-success', 'wastage deleted successfully !');
+                        $('#wastage-' + id).remove();
+                        hideProgress();
+                    })
+                    .catch(function(err) {
+                        hideProgress();
+                        const msg = err.response ? err.response.data.message : 'Please try again';
+                        showNotification('bg-danger', 'Payment not deleted,' + msg);
+                    });
+            }
+        }
+
+
 
     </script>
 
