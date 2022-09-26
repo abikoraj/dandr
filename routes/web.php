@@ -5,6 +5,7 @@ use App\Http\Controllers\AccountOpeningController;
 use App\Http\Controllers\Admin\BankController;
 use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\ChalanPaymentController;
+use App\Http\Controllers\Admin\CheeseController;
 use App\Http\Controllers\Admin\CounterController;
 use App\Http\Controllers\Admin\CustomerController;
 use App\Http\Controllers\Admin\DashboardController;
@@ -326,7 +327,7 @@ Route::name('admin.')->group(function () {
                 Route::match(['POST'], 'update/{id}', [ItemCategoryController::class, 'update'])->name('update');
                 Route::match(['POST'], 'del/{id}', [ItemCategoryController::class, 'del'])->name('del');
             });
-
+ 
             Route::prefix('packaging')->name('packaging.')->middleware('permmission:03.08')->group(function () {
                 Route::get('', [PackagingController::class, 'index'])->name('index');
                 Route::match(['GET', 'POST'], 'add', [PackagingController::class, 'add'])->name('add');
@@ -336,9 +337,9 @@ Route::name('admin.')->group(function () {
 
             Route::prefix('batch-finished')->name('batch.finished.')->middleware('permmission:03.08')->group(function () {
                 Route::match(['GET', 'POST'],'', [BatchFinishedController::class, 'index'])->name('index');
-                Route::match(['GET', 'POST'], 'add', [PackagingController::class, 'add'])->name('add');
-                Route::match(['GET', 'POST'], 'info', [PackagingController::class, 'info'])->name('info');
-                Route::match(['GET', 'POST'], 'view/{id}', [PackagingController::class, 'view'])->name('view');
+                Route::match(['GET', 'POST'], 'add', [BatchFinishedController::class, 'add'])->name('add');
+                Route::match(['GET', 'POST'], 'info', [BatchFinishedController::class, 'info'])->name('info');
+                Route::match(['GET', 'POST'], 'view/{id}', [BatchFinishedController::class, 'view'])->name('view');
             });
         });
 
@@ -517,6 +518,7 @@ Route::name('admin.')->group(function () {
 
         Route::group(['prefix' => 'manufacture-product'], function () {
             Route::name('manufacture.product.')->middleware('permmission:13.01')->group(function () {
+
                 Route::get('', [ManufactreProductController::class, 'index'])->name('index');
                 Route::post('add', [ManufactreProductController::class, 'add'])->name('add');
                 Route::post('del', [ManufactreProductController::class, 'del'])->name('del');
@@ -543,6 +545,13 @@ Route::name('admin.')->group(function () {
             Route::match(['get', 'post'], '', [WastageController::class, 'index'])->name('index');
             Route::match(['post'], 'add', [WastageController::class, 'add'])->name('add');
             Route::match(['post'], 'del', [WastageController::class, 'del'])->name('del');
+        });
+
+        //XXX cheese item mapping
+        Route::prefix('manufacture-cheese')->name('manufacture.cheese.')->middleware('permmission:13.07')->group(function () {
+            Route::match(['get', 'post'], '', [CheeseController::class, 'index'])->name('index');
+            Route::match(['post'], 'add', [CheeseController::class, 'add'])->name('add');
+            Route::match(['post'], 'del', [CheeseController::class, 'del'])->name('del');
         });
 
 
@@ -760,6 +769,7 @@ Route::name('admin.')->group(function () {
                     Route::post('save', 'Billing\BillingController@save')->name('save');
                 });
                 Route::match(['get', 'post'], "list", [BillingBillingController::class, 'list'])->name('list')->middleware('permmission:15.02');
+                Route::match(['get', 'post'], "loadConnectedItem", [BillingBillingController::class, 'loadConnectedItem'])->name('loadConnectedItem')->middleware('permmission:15.02');
             });
         });
 

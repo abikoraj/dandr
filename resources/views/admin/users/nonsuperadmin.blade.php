@@ -4,6 +4,7 @@
 <a href="{{route('admin.user.users')}}">
     Users
 </a>
+/{{$user->name}}
 /Change Password
  @endsection
 

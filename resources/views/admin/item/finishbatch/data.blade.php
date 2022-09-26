@@ -1,10 +1,3 @@
-<div>
-    <input type="checkbox" name="multi_batch" id="multi_batch" onchange="checkMultiBatch(this)" >
-    <label for="multi_batch">
-        Multiple Batch
-    </label>
-</div>
-<hr>
 <div class="row">
 
     <div class="col-md-3">
@@ -25,6 +18,10 @@
         </button>
     </div>
     
+</div>
+<hr>
+<div id="info">
+
 </div>
 <hr>
 <table class="table table-bordered">

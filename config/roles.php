@@ -52,6 +52,7 @@ return [
             'wastage' => ['use' => [], 'code' => '03.09'],
             'manage_variants' => ['use' => [], 'code' => '03.10'],
             'stock_tracking' => ['use' => [], 'code' => '03.11'],
+            'cheese_batch_management' => ['use' => [], 'code' => '03.12'],
         ]
     ],
     "distributer" => [
@@ -142,7 +143,7 @@ return [
             'manage_process' => ['use' => ['use_full_manufacture'], 'code' => '13.04'],
             'manage_process' => ['use' => ['use_simple_manufacture'], 'code' => '13.06'],
             'api_list_process_api' => ['use' => [], 'code' => '13.05'],
-            'api_list_process_api' => ['use' => [], 'code' => '13.05'],
+            'cheese_item_map' => ['use' => [], 'code' => '13.07'],
         ]
     ],
 

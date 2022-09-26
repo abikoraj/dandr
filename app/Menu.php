@@ -52,6 +52,7 @@ class Menu
                     ["Repackaging", '03.08', route('admin.item.packaging.index')],
                     ["Wastage", '03.09', route('admin.wastage.index')],
                     ["Stock Tracking", '03.11', route('admin.item.stock.tracking')],
+                    ["Cheese Batch Management", '03.12', route('admin.items')],
                 ],
             ],
             "distributer" => [

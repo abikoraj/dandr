@@ -6,9 +6,11 @@ use App\Http\Controllers\Controller;
 use App\LedgerManage;
 use App\Models\Bill;
 use App\Models\BillItem;
+use App\Models\ConnectedItem;
 use App\Models\Customer;
 use App\Models\Distributer;
 use App\Models\FiscalYear;
+use App\Models\ItemCategory;
 use App\Models\User;
 use App\NepaliDate;
 use App\PaymentManager;
@@ -17,22 +19,50 @@ use Illuminate\Support\Facades\DB;
 
 class BillingController extends Controller
 {
+
+    public function loadConnectedItem(Request $request)
+    {
+        $connectedItem = ConnectedItem::where('id', $request->id)->first();
+        $targetItem = DB::table('items')->where('id', $connectedItem->target_item_id)->first(['id', 'title']);
+        $id=$targetItem->id;
+        $finisedBatches = DB::table('batch_finisheds')->where('item_id',$id)->pluck('batch_id');
+        $finisedBatcheSTR = count($finisedBatches) > 0 ? ' and id not in (' . implode(',', $finisedBatches->toArray()) . ")" : "";
+        $batches = DB::select("select c.id as batch_id,c.amount,c.batch_no from(select id,(amount-
+        ifnull((select sum(qty) from bill_items where batch_id=simple_manufacturing_items.id  and to_batch_id is null),0) -
+        ifnull((select sum(qty) from sellitems where batch_id=simple_manufacturing_items.id ),0) -
+        ifnull((select sum(s.amount) from simple_manufacturing_items s where s.batch_id=simple_manufacturing_items.id ),0)) as amount,batch_no
+        from simple_manufacturing_items where item_id={$id} and batch_no is not null {$finisedBatcheSTR}) c where c.amount>0");
+        $item=DB::table('items')->where('id',$connectedItem->item_id)->first(['id','title','sell_price']);
+        $cats=ItemCategory::where('item_id',$connectedItem->item_id)->get();
+        $rate=$cats->count()==0?$item->sell_price:$cats->first()->price;
+        return view('admin.billing.multibatch_batch',compact('batches','targetItem','cats','item','rate'));
+        
+    }
+
     public function index(Request $request)
     {
         $centers = DB::table('centers')->get(['id', 'name']);
         $hasTable = $request->filled('table');
         $table_id = $request->input('table');
-        $cats = DB::table('item_categories')->get(['id','name','item_id','price']);
-        $hasBatches=[];
-      
-        $products=DB::select('select distinct(item_id) from simple_manufacturing_items where batch_no is not null');
-        foreach ($products as $key => $product) {
-            array_push($hasBatches,$product->item_id);
+        $cats = DB::table('item_categories')->get(['id', 'name', 'item_id', 'price']);
+        $hasBatches = [];
+        if(env('user_oldpos_batch',false)){
+            $products = DB::select('select distinct(item_id) from simple_manufacturing_items where batch_no is not null and type=2');
+            $connected = DB::select('select distinct(item_id) from connected_items');
+            foreach ($products as $key => $product) {
+                array_push($hasBatches, $product->item_id);
+            }
+            foreach ($connected as $key => $product) {
+                array_push($hasBatches, $product->item_id);
+            }
         }
 
 
+        // dd($hasBatches);
 
-        return view('admin.billing.index', compact('centers', 'hasTable', 'table_id','cats','hasBatches'));
+
+
+        return view('admin.billing.index', compact('centers', 'hasTable', 'table_id', 'cats', 'hasBatches'));
     }
 
     public function del($id)
@@ -42,9 +72,9 @@ class BillingController extends Controller
         foreach ($billItems as $key => $billItem) {
             maintainStock($billItem->item_id, $billItem->qty, $billItem->center_id);
         }
-       
+
         DB::delete('update bills set is_canceled =1 where id=?', [$id]);
-        PaymentManager::remove($id,402);
+        PaymentManager::remove($id, 402);
     }
 
     public function list(Request $request)
@@ -128,9 +158,9 @@ class BillingController extends Controller
         }
         $bill->table_id = $request->table_id;
         $bill->grandtotal = $request->gross;
-        $bill->paid = $request->paid??0;
-        $bill->due = $request->due??0;
-        $bill->dis = $request->dis??0;
+        $bill->paid = $request->paid ?? 0;
+        $bill->due = $request->due ?? 0;
+        $bill->dis = $request->dis ?? 0;
         $bill->net_total = $request->net;
         $bill->return = $request->return;
         $bill->date = $date;
@@ -138,38 +168,44 @@ class BillingController extends Controller
 
         $bill->save();
 
-        $titles=[];
+        $titles = [];
         // dd($request->billitems);
         $billitem = [];
 
         foreach ($request->billitems as $t) {
-            
+
             // dd($bill->id);
             $item = new BillItem();
             $i = (object)$t;
             $item->item_id = $i->id;
+            $item->target_item_id = $i->target_item_id;
             $item->name = $i->name;
             $item->rate = $i->rate;
             $item->qty = $i->qty;
             $item->total = $i->total;
             $item->batch_id = $i->batch_id;
+            $item->to_batch_id = $i->to_batch_id;
+            $item->batch_id = $i->batch_id;
             $item->item_category_id = $i->item_category_id;
-            // if($i->item_category_id!=null){
-                
-            //     $cat=DB::table('item_categories')->where('id',$i->item_category_id)->first(['name']);
-            //     $item->name = $i->name.' - '.$cat->name;
+            if($i->item_category_id!=null){
 
-            // }
+                $cat=DB::table('item_categories')->where('id',$i->item_category_id)->first(['name']);
+                $item->name = $i->name.' - '.$cat->name;
+
+            }
             $item->bill_id = $bill->id;
             $item->amount = 0;
             $item->save();
             array_push($billitem, $item);
-            maintainStock($item->item_id, $item->qty, $bill->center_id, 'out');
-            array_push($titles,$item->name ." X ". $item->qty);
+            if( $item->target_item_id == null){
+
+                maintainStock($item->item_id, $item->qty, $bill->center_id, 'out');
+            }
+            array_push($titles, $item->name . " X " . $item->qty);
         }
 
         if ($request->id != -1) {
-            $ledger->addLedger(implode(",",$titles), 2, $request->net, $date, 401, $bill->id);
+            $ledger->addLedger(implode(",", $titles), 2, $request->net, $date, 401, $bill->id);
 
             if ($request->paid > 0) {
                 $ledger->addLedger('Received Amount', 1, $paidamount, $date, 402, $bill->id);
@@ -180,28 +216,28 @@ class BillingController extends Controller
             DB::update('update tables set data=null where id=?', [$bill->table_id]);
         }
         if ($request->paid > 0) {
-            new PaymentManager($request,$bill->id,402,"To Counter Sales A/C",$date);
+            new PaymentManager($request, $bill->id, 402, "To Counter Sales A/C", $date);
         }
 
-        return response()->json(['status' => true,'id'=>$bill->id]);
+        return response()->json(['status' => true, 'id' => $bill->id]);
     }
 
 
     public function detail($id)
     {
         $bill = Bill::find($id);
-        $ledgers=[];
+        $ledgers = [];
 
-        if($bill->paid>0){
-            $ledgers=DB::table('account_ledgers')
-            ->join('accounts','accounts.id','=','account_ledgers.account_id')
-            ->where([
-                'account_ledgers.foreign_key'=>$id,
-                'account_ledgers.identifier'=>402
-            ])
-            ->select('account_ledgers.amount','accounts.name')
-            ->get();
+        if ($bill->paid > 0) {
+            $ledgers = DB::table('account_ledgers')
+                ->join('accounts', 'accounts.id', '=', 'account_ledgers.account_id')
+                ->where([
+                    'account_ledgers.foreign_key' => $id,
+                    'account_ledgers.identifier' => 402
+                ])
+                ->select('account_ledgers.amount', 'accounts.name')
+                ->get();
         }
-        return view('admin.billing.detail', compact('bill','ledgers'));
+        return view('admin.billing.detail', compact('bill', 'ledgers'));
     }
 }

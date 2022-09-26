@@ -76,6 +76,7 @@
                     <li><a href="{{ route('admin.item.packaging.index') }}" class="waves-effect waves-block">Repackaging</a></li>
                     <li><a href="{{ route('admin.wastage.index') }}" class="waves-effect waves-block">Wastage</a></li>
                     <li><a href="{{ route('admin.item.stock.tracking') }}" class="waves-effect waves-block">Stock Tracking</a></li>
+                    <li><a href="{{ route('admin.item.batch.finished.index') }}" class="waves-effect waves-block">Cheese Batch Management</a></li>
                 </ul>
             </li>
             {{-- @if (env('tier',1)==1) --}}
@@ -160,8 +161,9 @@
                     @if (env('use_simple_manufacture',false))
                         <li><a href="{{ route('admin.simple.manufacture.index') }}" class="waves-effect waves-block">Manage Process</a></li>
                     @endif
-
-
+                     @if (env('use_cheese_manufacture',false))
+                        <li><a href="{{ route('admin.manufacture.cheese.index') }}" class="waves-effect waves-block">Manage Cheese Items</a></li>
+                    @endif
                 </ul>
             </li>
             @endif

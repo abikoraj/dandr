@@ -121,6 +121,7 @@
     {{-- @include('admin.billing.products') --}}
     {{-- @endif --}}
     @include('admin.billing.payment')
+    @include('admin.billing.multibatch')
 
     @include('admin.billing.distributors')
     @include('admin.billing.add_customer')
@@ -130,14 +131,20 @@
             <div class="container py-2">
                 <div style="display:flex;justify-content: space-between;">
                     <span>
-                        <h3 style="color:White;">
+                        <h5 style="color:White;">
                             {{ env('APP_NAME') }}
-                        </h3>
+                        </h5>
                     </span>
-                    <span>
-                        <h3>
+                    <span style="display: flex;
+                    align-items: center;
+                    color: white;">
+                        <h6>
                             <a style="color:White;" href="{{ route('admin.dashboard') }}">Home</a>
-                        </h3>
+                            @if (env('user_oldpos_batch', false))
+                                |
+                                <span style="color:White;" onclick="connectedShow()">Multi Batch Item</span>
+                            @endif
+                            </h3>
                     </span>
                 </div>
             </div>
@@ -148,10 +155,11 @@
                     <div class="row p-1">
                         <div class="col-md-4 d-flex align-items-end">
 
-                            <label for="item" id="customerName" onclick="showCustomer()">__________________________</label> <br>
+                            <label for="item" id="customerName"
+                                onclick="showCustomer()">__________________________</label> <br>
                         </div>
                         <div class="col-md-4 d-flex align-items-end justify-content-end">
-                            <div >
+                            <div>
 
                                 <button class="btn btn-primary btn-sm" onclick="showCustomer()">Select Customer</button>
                                 <button class="btn btn-danger btn-sm" onclick="resetCustomer()">Reset Customer</button>
@@ -217,7 +225,7 @@
                             data-next="rate">
                         </select>
                     </div>
-                  
+
                     <div class="p-0 col-md-1">
                         <label for="item">Rate</label>
                         <input type="number" min="0" step="0.01" id="rate" class="form-control next"
@@ -228,8 +236,8 @@
                         <input type="number" oninput="calculateTotal(this);" min="0" step="0.01" id="qty"
                             class="form-control next" data-next="total">
                     </div>
-                    <div class="p-0 col-md-2" id="item_batch_id_holder"  style="display: none">
-                        <label for="item_batch_id"><input type="checkbox" id="use_batch">  batch </label>
+                    <div class="p-0 col-md-2" id="item_batch_id_holder" style="display: none">
+                        <label for="item_batch_id"><input type="checkbox" id="use_batch"> batch </label>
                         <select type="text" list="product-list" id="item_batch_id" class="form-control next"
                             data-next="rate">
                         </select>
@@ -239,7 +247,7 @@
                         <input type="number" min="0" step="0.01" id="total" class="form-control">
                     </div>
                 @endif
-              
+
             </div>
         </div>
         <div style="background:#365F78;display:flex;padding-left:25px;font-size: 1.2rem;font-weight:600;">
@@ -264,8 +272,8 @@
                                 </div>
                             </td>
                             <td>
-                                <input type="number" oninput="calculateAll()" value="0" step="0.01" min="0"
-                                    id="discount" class="form-control1">
+                                <input type="number" oninput="calculateAll()" value="0" step="0.01"
+                                    min="0" id="discount" class="form-control1">
                             </td>
                         </tr>
                     </table>
@@ -343,8 +351,8 @@
 @section('scripts')
     <script src="{{ asset('calender/nepali.datepicker.v3.2.min.js') }}"></script>
     <script>
-        const cats = {!! json_encode($cats,JSON_NUMERIC_CHECK) !!}
-        const hasBatches = {!! json_encode($hasBatches,JSON_NUMERIC_CHECK) !!}
+        const cats = {!! json_encode($cats, JSON_NUMERIC_CHECK) !!}
+        const hasBatches = {!! json_encode($hasBatches, JSON_NUMERIC_CHECK) !!}
         toastr.options.progressBar = true;
         var i = 0;
         lock = false;
@@ -441,7 +449,7 @@
 
         }
 
-        
+
         function addToBill() {
             i += 1;
             var id = $('#item').val();
@@ -462,31 +470,39 @@
                 rate: $("#rate").val(),
                 qty: parseFloat($("#qty").val()),
                 total: $("#total").val(),
-                batch_id:null
+                batch_id: null,
+                to_batch_id: null,
+                target_item_id: null,
             };
-            if(hasBatches.includes(data.id) && $('#use_batch')[0].checked){
-                const batch_id=$('#item_batch_id').val();
-                if(batch_id==undefined){
+            if (hasBatches.includes(data.id) && $('#use_batch')[0].checked  && batches.length>0) {
+                const batch_id = $('#item_batch_id').val();
+                if (batch_id == undefined) {
                     alert('Please Choose a batch');
                     return
-                }else{
-                    let batch_amount=batches.find(o=>o.batch_id==batch_id).amount;
-                    let loadedAmount=0;
-                    $('.billitems').each(function (index, element) {
-                        const localBillItem=JSON.parse(element.value);
-                        console.log(batch_amount,localBillItem,batch_id,"local bill item;");
-                        if(localBillItem.batch_id==batch_id){
-                            loadedAmount+=localBillItem.qty;
+                } else {
+                    if (batchtype == 'connected') {
+                        billitem.batch_id = batch_id;
+                        billitem.target_item_id = batch_item_id;
+                    } else {
 
+                        let batch_amount = batches.find(o => o.batch_id == batch_id).amount;
+                        let loadedAmount = 0;
+                        $('.billitems').each(function(index, element) {
+                            const localBillItem = JSON.parse(element.value);
+                            console.log(batch_amount, localBillItem, batch_id, "local bill item;");
+                            if (localBillItem.batch_id == batch_id) {
+                                loadedAmount += localBillItem.qty;
+
+                            }
+                        });
+                        batch_amount = batch_amount - loadedAmount;
+
+                        if (billitem.qty > batch_amount) {
+                            alert('Not enough quantity in batch');
+                            return;
                         }
-                    });
-                    batch_amount=batch_amount-loadedAmount;
-
-                    if(billitem.qty>batch_amount){
-                        alert('Not enough quantity in batch');
-                        return;
+                        billitem.batch_id = batch_id;
                     }
-                    billitem.batch_id=batch_id;
                 }
             }
 
@@ -516,17 +532,17 @@
             datastr = JSON.stringify(billitem)
 
             let catname = '';
-            
+
             if (billitem.item_category_id != null) {
                 catname = " - " + (cats.find(o => o.id == billitem.item_category_id).name);
             }
             let batchname = '';
             if (billitem.batch_id != null) {
-                batchname = " - " + (batches.find(o => o.batch_id == billitem.batch_id).batch_no) ;
+                batchname = " - " + (batches.find(o => o.batch_id == billitem.batch_id).batch_no);
             }
             billitem.name += catname;
             str = "<tr id='row-" + i + "'> <td><input class='billitems' type='hidden' name='billitems[]' value='" +
-                datastr + "'/> " + billitem.id + "</td><td>" + billitem.name  + batchname +" </td><td>" + billitem.rate +
+                datastr + "'/> " + billitem.id + "</td><td>" + billitem.name + batchname + " </td><td>" + billitem.rate +
                 "</td><td>" +
                 billitem.qty + "</td><td>" + billitem.total +
                 "</td><td><span class='btn btn-danger btn-sm' onclick='removeProductItem(" + i +
@@ -779,11 +795,12 @@
         var day = ('0' + NepaliFunctions.GetCurrentBsDate().day).slice(-2);
         $('#nepali-datepicker').val(NepaliFunctions.GetCurrentBsYear() + '-' + month + '-' + day);
 
-        function loadBatch(){
+        function loadBatch() {
 
         }
 
         var product;
+
         function selectProduct(ele) {
             product = JSON.parse(ele.dataset.product);
             const localCats = cats.filter(o => o.item_id == product.id);
@@ -812,28 +829,41 @@
                 $('#rate').focus();
                 selectBatch(product.id);
             }
-            
+
         }
         // batchLoa
-        var batches=[];
-        const batchURL='{{route('admin.simple.manufacture.batches',['id'=>'xxx_id'])}}';
-        function selectBatch(id){
-            if(hasBatches.includes(id)){
-                $('#use_batch')[0].checked=true;
-                $('#item_batch_id_holder').show();    
-                axios.get(batchURL.replace('xxx_id',id))
-                .then((res)=>{
-                    console.log(res.data);
-                    batches=res.data.data;
-                    $('#item_batch_id').html(
-                        res.data.data.map(o=>`<option value="${o.batch_id}">${o.batch_no} (${o.amount.toString() } ${product.unit})</option>`).join('')
-                    );
-                })
-            }else{
-                $('#use_batch')[0].checked=false;
+        var batches = [];
+        var batchtype = '';
+        var batch_item_id;
+
+        const batchURL = '{{ route('admin.simple.manufacture.batches', ['id' => 'xxx_id']) }}';
+        @if (env('user_oldpos_batch', false))
+            function selectBatch(id) {
+                if (hasBatches.includes(id)) {
+                    $('#use_batch')[0].checked = true;
+                    $('#item_batch_id_holder').show();
+                    axios.get(batchURL.replace('xxx_id', id))
+                        .then((res) => {
+                            console.log(res.data);
+                            batchtype = res.data.type;
+                            batch_item_id = res.data.id;
+                            batches = res.data.data;
+                            $('#item_batch_id').html(
+                                res.data.data.map(o =>
+                                    `<option value="${o.batch_id}">${o.batch_no} (${o.amount.toString() } ${product.unit})</option>`
+                                    ).join('')
+                            );
+                        })
+                } else {
+                    $('#use_batch')[0].checked = false;
+
+                }
+
+            } 
+        @else
+            function selectBatch(id) {
 
             }
-
-        }
+        @endif
     </script>
 @endsection
