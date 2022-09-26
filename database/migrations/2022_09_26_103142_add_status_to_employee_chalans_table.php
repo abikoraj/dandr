@@ -14,7 +14,7 @@ class AddStatusToEmployeeChalansTable extends Migration
     public function up()
     {
         Schema::table('employee_chalans', function (Blueprint $table) {
-            $table->boolean('closed')->default('false');
+            $table->boolean('closed')->default(false);
             $table->text('notes')->nullable();
         });
     }
