@@ -8,6 +8,7 @@ use App\Models\Employee;
 use App\Models\User;
 use App\Models\UserPermission;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
@@ -146,6 +147,24 @@ class UserController extends Controller
             }
             // dd($data);
             return view('admin.users.per.api',compact('centers','data','user'));
+        }
+    }
+
+    public function mobilePermission(Request $request,$user)
+    {
+        if($request->getMethod()=="POST"){
+
+        }else{
+            $permission=DB::table('phone_configs')->where('user_id',$user)->first();
+            if($permission==null){
+                $permission=(object)[
+                    'uuid'=>'',
+                    'use_sellitem'=>0,
+                    'use_milk'=>0,
+                    'use_snffat'=>0,
+                    'use_sync'=>0,
+                ];
+            }
         }
     }
 

@@ -30,9 +30,9 @@ return [
             'SNF_FAT_delete' => ['use' => ['singleFatSNF'], 'code' => '02.06'],
             'MILK_SNF_FAT_add' => ['use' => ['singleMilkFatSNF'], 'code' => '02.07'],
             'MILK_SNF_FAT_NAME_add' => ['use' => ['multipleMilkFatSNF'], 'code' => '02.08'],
-            "push_milk_data" => ['use' => [], 'code' => "02.09"],
+            "mobile_entry_milk_data" => ['use' => [], 'code' => "02.09"],
             "pull_milk_data" => ['use' => [], 'code' => "02.10"],
-            "push_fatsnf" => ['use' => [], 'code' => "02.11"],
+            "mobile_entry_fatsnf" => ['use' => [], 'code' => "02.11"],
             "collection_center" => ['use' => [], 'code' => "02.12"],
 
         ]
@@ -203,15 +203,18 @@ return [
             'Manage Tables' => ['use' => [], 'code' => '14.01'],
             'Manage Orders' => ['use' => [], 'code' => '14.02'],
         ]
-        ],
+    ],
 
     'employee_calan' => [
         'use' => ['use_employee_calan'],
-        'code' => '14',
+        'code' => '15',
         'children' => [
-
+            'List' => ['use' => [], 'code' => '15.01'],
+            'add' => ['use' => [], 'code' => '15.02'],
+            'manage' => ['use' => [], 'code' => '15.03'],
+            'close' => ['use' => [], 'code' => '15.04'],
+            'api upload' => ['use' => [], 'code' => '15.06'],
+            'mobile entry' => ['use' => [], 'code' => '15.07'],
         ]
     ]
-
-
 ];

@@ -54,6 +54,7 @@
                                 <a href="{{ route('admin.user.non.super.admin.change.password',$user->id) }}" class="btn btn-primary btn-sm">Change Password</a>
                                 <a href="{{ route('admin.user.per',['user'=>$user->id]) }}" class="btn btn-primary btn-sm" target="blank">Permissions</a>
                                 <a href="{{ route('admin.user.api.per',['user'=>$user->id]) }}" class="btn btn-primary btn-sm" target="blank">Api Permissions</a>
+                                {{-- <a href="{{ route('admin.user.mobile.per',['user'=>$user->id]) }}" class="btn btn-primary btn-sm" target="blank">Mobile Permissions</a> --}}
                             @else
                                 <button type="button" class="btn btn-primary btn-sm waves-effect m-r-20"  data-toggle="modal" onclick="getUserId({{$user->id}});" data-target="#ChangePass">Change Password</button>
                             @endif
@@ -75,7 +76,7 @@
                         <a href="{{ route('admin.user.non.super.admin.change.password',$user->id) }}" class="btn btn-primary btn-sm">Change Password</a>
                         <a href="{{ route('admin.user.per',['user'=>$user->id]) }}" class="btn btn-primary btn-sm" target="blank">Permissions</a>
                         <a href="{{ route('admin.user.api.per',['user'=>$user->id]) }}" class="btn btn-primary btn-sm" target="blank">Api Permissions</a>
-
+                        {{-- <a href="{{ route('admin.user.mobile.per',['user'=>$user->id]) }}" class="btn btn-primary btn-sm" target="blank">Mobile Permissions</a> --}}
                         @else
                             <button type="button" class="btn btn-primary btn-sm waves-effect m-r-20"  data-toggle="modal" onclick="getUserId({{$user->id}});" data-target="#ChangePass" >Change Password</button>
                         @endif
