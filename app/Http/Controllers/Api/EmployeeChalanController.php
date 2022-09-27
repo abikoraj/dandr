@@ -16,6 +16,12 @@ class EmployeeChalanController extends Controller
         $chalan=DB::table('employee_chalans')
         ->where('date',$request->date)
         ->where('user_id',$request->user_id)->first(['id']);
+        if($chalan->closed==1){
+            return response()->json([
+                'status'=>false,
+                'message'=>'Chalan Is already closed'
+            ]);
+        }
         $chalanItem=DB::table('chalan_items')->where('employee_chalan_id',$chalan->id)
         ->where('item_id',$request->item_id)->first(['id']);
         $sellItem=new ChalanSale();
@@ -42,7 +48,12 @@ class EmployeeChalanController extends Controller
         $chalan=DB::table('employee_chalans')
         ->where('date',$request->date)
         ->where('user_id',$request->user_id)->first(['id']);
-
+        if($chalan->closed==1){
+            return response()->json([
+                'status'=>false,
+                'message'=>'Chalan Is already closed'
+            ]);
+        }
         $chalanPayment=new ChalanPayment();
         $chalanPayment->amount=$request->amount;
         $chalanPayment->user_id=$user->id;
