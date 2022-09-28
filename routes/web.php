@@ -6,6 +6,7 @@ use App\Http\Controllers\Admin\BankController;
 use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\ChalanClosingController;
 use App\Http\Controllers\Admin\ChalanController;
+use App\Http\Controllers\Admin\ChalanDueController;
 use App\Http\Controllers\Admin\ChalanPaymentController;
 use App\Http\Controllers\Admin\CheeseController;
 use App\Http\Controllers\Admin\CounterController;
@@ -338,7 +339,7 @@ Route::name('admin.')->group(function () {
             });
 
             Route::prefix('batch-finished')->name('batch.finished.')->middleware('permmission:03.08')->group(function () {
-                Route::match(['GET', 'POST'],'', [BatchFinishedController::class, 'index'])->name('index');
+                Route::match(['GET', 'POST'], '', [BatchFinishedController::class, 'index'])->name('index');
                 Route::match(['GET', 'POST'], 'add', [BatchFinishedController::class, 'add'])->name('add');
                 Route::match(['GET', 'POST'], 'info', [BatchFinishedController::class, 'info'])->name('info');
                 Route::match(['GET', 'POST'], 'view/{id}', [BatchFinishedController::class, 'view'])->name('view');
@@ -454,46 +455,60 @@ Route::name('admin.')->group(function () {
                 Route::post('updateret', [EmployeeController::class, 'updateRet'])->name('ret.update');
                 Route::post('editret', [EmployeeController::class, 'editRet'])->name('ret.edit');
             });
+
+            Route::middleware( 'permmission:05.11')->group(function () {
+                Route::prefix('chalan-due')->name('chalan.due.')->group(function(){
+                    Route::match(['get', 'post'], '', [ChalanDueController::class,'index'])->name('index');
+                });
+            });
         });
 
         //XXX employee chalan
 
         Route::prefix('employee-chalan')->name('chalan.')->group(function () {
+            Route::middleware('permmission:15.01')->group(function () {
 
-            Route::get('/','Admin\ChalanController@index')->name('index');
-            Route::match(['get','post'],'/item-sell','Admin\ChalanController@chalanItemSale')->name('item.sell');
-            Route::match(['get','post'],'/items','Admin\ChalanController@ItemList')->name('item.list');
-            Route::get('/chalan-details/{id}','Admin\ChalanController@chalanDetails')->name('chalan.details');
-            Route::post('/chalan-details/save','Admin\ChalanController@chalanSave')->name('chalan.save');
-            Route::post('/chalan-list','Admin\ChalanController@chalanList')->name('chalan.list');
-            Route::post('/chalan-delete','Admin\ChalanController@chalanDelete')->name('chalan.delete');
-            Route::post('/chalan-wastage','Admin\ChalanController@chalanWastage')->name('chalan.wastage');
-            Route::post('/chalan-wastage-delete','Admin\ChalanController@chalanWastageDelete')->name('chalan.wastage.delete');
+                Route::get('/', [ChalanController::class, 'index'])->name('index');
+                Route::match(['get', 'post'], '/items', [ChalanController::class, 'ItemList'])->name('item.list');
+               
+            });
 
-            Route::get('/',[ChalanController::class,'index'])->name('index');
-            Route::match(['get','post'],'/item-sell',[ChalanController::class,'chalanItemSale'])->name('item.sell');
-            Route::match(['get','post'],'/items',[ChalanController::class,'ItemList'])->name('item.list');
-            Route::get('/chalan-details/{id}',[ChalanController::class,'chalanDetails'])->name('chalan.details');
-            Route::post('/chalan-details/save',[ChalanController::class,'chalanSave'])->name('chalan.save');
-            Route::post('/chalan-list',[ChalanController::class,'chalanList'])->name('chalan.list');
-            Route::post('/chalan-delete',[ChalanController::class,'chalanDelete'])->name('chalan.delete');
+            Route::match(['get', 'post'], '/item-sell', [ChalanController::class, 'chalanItemSale'])->name('item.sell')->middleware('permmission:15.02');
+
+            Route::middleware('permmission:15.03')->group(function () {
+                Route::post('/chalan-list', [ChalanController::class, 'chalanList'])->name('chalan.list');
+                Route::post('/chalan-delete', [ChalanController::class, 'chalanDelete'])->name('chalan.delete');
+
+                Route::post('/chalan-details/save', [ChalanController::class, 'chalanSave'])->name('chalan.save');
+                Route::get('/chalan-details/{id}', [ChalanController::class, 'chalanDetails'])->name('chalan.details');
+
+                Route::get('/chalan-final-details/{id}', [ChalanController::class, 'chalanFinalDetails'])->name('chalan.final.details');
+
+                Route::post('/chalan-wastage', 'Admin\ChalanController@chalanWastage')->name('chalan.wastage');
+                Route::post('/chalan-wastage-delete', 'Admin\ChalanController@chalanWastageDelete')->name('chalan.wastage.delete');
+            });
+
 
         });
 
+        Route::prefix('chalan-manage')->middleware('permmission:15.05')->name('chalan.manage.')->group(function () {
+            Route::match(['GET','POST'],'approve/{id}', [ChalanController::class, 'approve'])->name('approve');
+            Route::match(['GET','POST'],'edit/{id}', [ChalanController::class, 'edit'])->name('edit');
+            Route::match(['GET','POST'],'cancel/{id}', [ChalanController::class, 'cancel'])->name('cancel');
+            Route::match(['GET','POST'],'print/{id}', [ChalanController::class, 'print'])->name('print');
+        });
         //XXX chalan payments
+        Route::prefix('chalan-payments')->middleware('permmission:15.03')->name('chalan.payment.')->group(function () {
+            Route::post('del', [ChalanPaymentController::class, 'delPayment'])->name('del');
+            Route::post('add', [ChalanPaymentController::class, 'addPayment'])->name('add');
+            Route::post('', [ChalanPaymentController::class, 'index'])->name('index');
+        });
 
-            Route::prefix('chalan-payments')->name('chalan.payment.')->group(function () {
-               Route::post('del',[ChalanPaymentController::class, 'delPayment'])->name('del');
-               Route::post('add',[ChalanPaymentController::class, 'addPayment'])->name('add');
-               Route::post('',[ChalanPaymentController::class, 'index'])->name('index');
-            });
-
-        //XXX chalan closing
-            Route::prefix('chalan-closing')->name('chalan.closing.')->group(function(){
-                Route::match(['GET','POST'],'start/{id}',[ChalanClosingController::class,'index'])->name('index');
-                Route::get('add',[ChalanClosingController::class,'add'])->name('add');
-
-            });
+        //XXX chalan closing 
+        Route::prefix('chalan-closing')->middleware('permmission:15.04')->name('chalan.closing.')->group(function () {
+            Route::match(['GET', 'POST'], 'start/{id}', [ChalanClosingController::class, 'index'])->name('index');
+            Route::get('add', [ChalanClosingController::class, 'add'])->name('add');
+        });
 
         // XXX sms
         Route::prefix('sms')->name('sms.')->group(function () {
@@ -715,8 +730,8 @@ Route::name('admin.')->group(function () {
                 Route::post('del', [CustomerController::class, 'del'])->name('del')->middleware('authority');
 
                 //opening balance
-                Route::match(['GET','POST'],'opening', [CustomerController::class, 'opening'])->name('opening')->middleware('authority');
-                Route::match(['GET','POST'],'opening-del', [CustomerController::class, 'openingDel'])->name('opening.del')->middleware('authority');
+                Route::match(['GET', 'POST'], 'opening', [CustomerController::class, 'opening'])->name('opening')->middleware('authority');
+                Route::match(['GET', 'POST'], 'opening-del', [CustomerController::class, 'openingDel'])->name('opening.del')->middleware('authority');
 
                 //detail
                 Route::match(['get', 'post'], 'detail/{id}', [CustomerController::class, 'detail'])->name('detail');
@@ -901,6 +916,7 @@ Route::name('admin.')->group(function () {
                 Route::match(['GET', 'POST'], 'add', [UserController::class, 'userAdd'])->name('add');
                 Route::match(['GET', 'POST'], 'delete/{id}', [UserController::class, 'delete'])->name('delete');
                 Route::match(['GET', 'POST'], 'per/{user}', [UserController::class, 'per'])->name('per');
+                Route::match(['GET', 'POST'], 'mobile-permission/{user}', [UserController::class, 'mobilePermission'])->name('mobile.per');
                 Route::match(['GET', 'POST'], 'api-per/{user}', [UserController::class, 'perAPI'])->name('api.per');
                 Route::match(['GET', 'POST'], 'update/{update}', [UserController::class, 'update'])->name('update')->middleware('authority');
                 Route::match(['GET', 'POST'], 'change/password', [UserController::class, 'changePassword'])->name('change.password');
@@ -916,9 +932,6 @@ Route::name('admin.')->group(function () {
             Route::match(['get', 'post'], '', [DayReportController::class, 'index'])->name('index');
         });
     });
-
-
-
 });
 
 Route::name('restaurant.')->prefix('restaurant')->middleware('permmission:14.02')->group(function () {

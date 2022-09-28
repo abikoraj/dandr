@@ -605,3 +605,4 @@ function canDelOpening($user_id){
 
 
 include_once 'custom_acounting.php';
+include_once 'custom_ext1.php';

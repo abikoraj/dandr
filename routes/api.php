@@ -55,12 +55,18 @@ Route::middleware(['auth:api'])->group(function () {
     Route::match(['GET','POST'],'items',[ItemController::class,'index']);
     Route::post('pos-user',[LoginController::class,'addPosUser']);
 
-    Route::get('customer-list',[GeneralController::class,'customerList']);
-    Route::post('employee-chalan',[GeneralController::class,'employeeChalan']);
+    Route::middleware('permmission:15.07')->group(function(){
+            Route::get('customer-list',[GeneralController::class,'customerList']);
+            Route::post('employee-chalan',[GeneralController::class,'employeeChalan']);
+    });
 
 
-    Route::post('upload-chalansales',[EmployeeChalanController::class,'uploadChalanSales']);
-    Route::post('upload-chalanpayment',[EmployeeChalanController::class,'uploadChalanPayment']);
+
+    Route::middleware('permmission:15.06')->group(function(){
+        Route::post('upload-chalansales',[EmployeeChalanController::class,'uploadChalanSales']);
+        Route::post('upload-chalanpayment',[EmployeeChalanController::class,'uploadChalanPayment']);
+    });
+
 
     Route::middleware('permmission:09.05')->group(function(){
         Route::prefix('customers')->group(function(){

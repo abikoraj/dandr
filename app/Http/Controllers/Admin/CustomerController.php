@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\LedgerManage;
+use App\Models\ChalanduePayment;
 use App\Models\Customer;
 use App\Models\CustomerPayment;
 use App\Models\Ledger;
@@ -249,6 +250,10 @@ class CustomerController extends Controller
 
     public function addPayment(Request $request)
     {
+        $dues=DB::select('select c.* from
+        (select chalan_dues.amount,chalan_dues.date,chalan_dues.id,ifnull((select sum(amount) from chalandue_payments where chalan_due_id=chalan_dues.id),0) as paid from chalan_dues where user_id=? ) c
+        where c.amount>c.paid',[$request->id]);
+
         $date = str_replace('-', '', $request->date);
         $user = User::find($request->id);
         $payment = new CustomerPayment();
@@ -264,6 +269,28 @@ class CustomerController extends Controller
         } else {
             $ledger->addLedger("Payment Received", 1, $payment->amount, $date, 135, $payment->id);
         }
+
+       
+
+        $amountRemaning=$payment->amount;
+        foreach ( $dues as $key => $due) {
+            $remaning=$due->amount-$due->paid;
+            $duePayment=new ChalanduePayment();
+            $duePayment->chalan_due_id=$due->id;
+            $duePayment->identifire=135;
+            $duePayment->foreign_key=$payment->id;
+            $duePayment->date=$payment->date;
+            if($remaning>$amountRemaning || $remaning==$amountRemaning ){
+                $duePayment->amount=$amountRemaning;
+                $duePayment->save();
+                break;
+            }elseif($remaning<$amountRemaning){
+                $duePayment->amount=$remaning;
+                $duePayment->save();
+                $amountRemaning-=$remaning;
+            }
+        }
+
         $user = User::find($request->id);
         new PaymentManager($request,$payment->id,135,'To '.$user->name. ' A/C',$date);
         return response('ok');
@@ -274,6 +301,8 @@ class CustomerController extends Controller
 
         DB::table('customer_payments')->where('id',$request->payment_id)->delete();
         DB::table('ledgers')->where('id',$request->id)->delete();
+        DB::table('chalandue_payments')->where('foreign_key',$request->payment_id)->where('identifire',135)->delete();
+
         PaymentManager::remove($request->payment_id,135);
         return response('ok');
 

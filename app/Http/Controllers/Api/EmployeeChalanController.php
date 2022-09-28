@@ -5,17 +5,33 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Models\ChalanPayment;
 use App\Models\ChalanSale;
+use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
 class EmployeeChalanController extends Controller
 {
     public function uploadChalanSales(Request $request)
     {
-        $user = DB::table('users')->where('phone', $request->phone)->first(['id', 'name']);
+        
         $chalan=DB::table('employee_chalans')
         ->where('date',$request->date)
-        ->where('user_id',$request->user_id)->first(['id']);
+        ->where('user_id',Auth::user()->id)->first(['id','closed']);
+
+        if($chalan->approved==0){
+            return response()->json([
+                'status'=>false,
+                'message'=>'Chalan not approved'
+            ]);
+        }
+        if($chalan->closed==1){
+            return response()->json([
+                'status'=>false,
+                'message'=>'Chalan is already closed'
+            ]);
+        }
+        $user = getCustomer($request->phone,$request->name);
         $chalanItem=DB::table('chalan_items')->where('employee_chalan_id',$chalan->id)
         ->where('item_id',$request->item_id)->first(['id']);
         $sellItem=new ChalanSale();
@@ -38,11 +54,23 @@ class EmployeeChalanController extends Controller
 
      public function uploadChalanPayment(Request $request)
     {
-        $user = DB::table('users')->where('phone', $request->phone)->first(['id', 'name']);
         $chalan=DB::table('employee_chalans')
         ->where('date',$request->date)
-        ->where('user_id',$request->user_id)->first(['id']);
+        ->where('user_id',Auth::user()->id)->first(['id','closed']);
+        if($chalan->closed==1){
+            return response()->json([
+                'status'=>false,
+                'message'=>'Chalan Is already closed'
+            ]);
+        }
 
+        if($chalan->approved==0){
+            return response()->json([
+                'status'=>false,
+                'message'=>'Chalan not approved'
+            ]);
+        }
+        $user = getCustomer($request->phone,$request->name);
         $chalanPayment=new ChalanPayment();
         $chalanPayment->amount=$request->amount;
         $chalanPayment->user_id=$user->id;
@@ -51,4 +79,6 @@ class EmployeeChalanController extends Controller
 
         return response()->json(['status'=>true]);
     }
+
+
 }
