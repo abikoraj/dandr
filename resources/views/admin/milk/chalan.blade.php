@@ -1,12 +1,13 @@
 @extends('admin.layouts.app')
 @section('content')
+
 <div class="row">
     <div class="col-md-3">
         <label for="date">Date</label>
         <input type="text" class="form-control calender" name="date" id="date">
     </div>
     <div class="col-md-3 pt-4">
-        <button class="btn btn-primary w-100" onclick="loadData()"> 
+        <button class="btn btn-primary w-100" onclick="loadData()">
             Load Chalan
         </button>
     </div>
@@ -35,7 +36,7 @@
                 axios.post(ele.action,new FormData(ele))
                 .then((res)=>{
                     loadData();
-                
+
                 })
                 .catch((err)=>{
                     hideProgress();
@@ -47,7 +48,7 @@
         function loadAllChalan(){
             $('.milkdata').each(function (index, element) {
                 element.click();
-                
+
             });
         }
 

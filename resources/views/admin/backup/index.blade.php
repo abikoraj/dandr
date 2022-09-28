@@ -71,7 +71,7 @@
         if(lock){
             return;
         }
-        if(prompt('Enter YES TO BACKUP').toLowerCase()=='yes'){
+        if(prompt('Enter YES TO Delete').toLowerCase()=='yes'){
             showProgress('Deleting Backup');
             lock=true;
             axios.post('{{route('admin.backup.del')}}',{"file":file})

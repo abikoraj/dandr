@@ -1,5 +1,6 @@
 @extends('admin.layouts.app')
 @section('content')
+@section('head-title', 'Accounting')
     <div class="row">
         {{-- <div class="col-md-2 section href" data-target="{{route('admin.accounting.stock.index')}}">
             <span class="icon">
@@ -16,7 +17,7 @@
             </span>
             <span class="divider"></span>
             <span class="text">
-               Assets & <br> Libilities
+               Assets & <br> Liabilities
             </span>
         </div>
         <div class="col-md-2 section href" data-target="{{route('admin.accounting.final')}}">

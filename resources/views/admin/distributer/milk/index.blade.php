@@ -98,7 +98,7 @@
                         </div>
                     </div>
                     <div class="col-md-4 add-section">
-                        <label for="id">Milk Amount</label>
+                        <label for="id">Milk Quantity</label>
 
                         <input type="number" name="amount" id="amount" step="0.001" min="0.001"
                             placeholder="Milk in liter" class="form-control next" data-next="saveData">
@@ -120,7 +120,7 @@
                             <thead>
                                 <tr>
                                     <th>Distributer</th>
-                                    <th>Amount (ℓ)</th>
+                                    <th>Quantity (ℓ)</th>
                                     <th>Session</th>
                                     <th></th>
                                 </tr>
@@ -165,7 +165,7 @@
                     $('#id').focus();
                     return false;
                 } else {
-    
+
                     sellock = true;
                     var bodyFormData = new FormData(document.getElementById('sellMilkData'));
                     axios({

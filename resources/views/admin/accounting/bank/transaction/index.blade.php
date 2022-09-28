@@ -20,7 +20,7 @@
 <hr>
     <div class="row">
         <div class="col-md-3">
-            <input type="checkbox" value="1" class="check-type"> Bank Withdrawl
+            <input type="checkbox" value="1" class="check-type"> Bank Withdrawal
         </div>
         <div class="col-md-3">
             <input type="checkbox" value="2" class="check-type"> Bank Deposit
@@ -50,7 +50,7 @@
                     To Bank
                 </th>
                 <th>
-    
+
                 </th>
             </tr>
         </thead>
@@ -72,7 +72,7 @@
             .then((res)=>{
                 transactions=res.data;
                 render();
-            })  
+            })
             .catch((err)=>{
 
             });
@@ -80,7 +80,7 @@
         }
 
         function render(){
-            
+
             let html='';
             $('#data').html(html);
             for (let index = 0; index < transactions.length; index++) {

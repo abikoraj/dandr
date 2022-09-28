@@ -99,7 +99,7 @@ class DistributersellController extends Controller
             new PaymentManager($request,$sell_item->id,114,"To Distributer Sales A/C");
             return view('admin.distributer.sell.single', ['sell' => $sell_item]);
         } else {
-            return response('item Stock is not available', 500);
+            return 'noStock';
         }
     }
 

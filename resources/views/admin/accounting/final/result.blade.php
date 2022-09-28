@@ -1,4 +1,7 @@
 @extends('admin.layouts.app')
+@section('head-title')
+    <a href="{{ url('admin/accounting') }}"> Accounting</a> / Final
+@endsection
 @section('css')
 <style>
     .w-40{
@@ -35,7 +38,7 @@
                         </select>
                     </div>
                     <div class="col-md-3">
-                        <label for="fy">FiscalYear</label>
+                        <label for="fy">Fiscal Year</label>
                         <select name="fy" id="fy" class="form-control ms">
 
                         </select>

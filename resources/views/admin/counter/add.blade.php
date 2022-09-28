@@ -19,7 +19,7 @@
                             <div class="col-lg-6">
                                 <label for="center_id"> Branch</label>
                                 <div class="form-group">
-                                    <select type="text" id="center_id" name="center_id" class="form-control next"  placeholder="Enter Counter name" required>
+                                    <select type="text" id="center_id" name="center_id" class="form-control ms next"  placeholder="Enter Counter name" required>
                                         @foreach (\App\Models\Center::all() as $center)
                                             <option value="{{$center->id}}">{{$center->name}}</option>
                                         @endforeach

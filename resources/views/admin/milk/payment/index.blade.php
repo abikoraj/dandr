@@ -92,9 +92,9 @@
                     <table class="table">
                         <thead>
                             <tr>
-                                <th>no</th>
-                                <th>name</th>
-                                <th>amount</th>
+                                <th>No.</th>
+                                <th>Name</th>
+                                <th>Amount</th>
                                 <th></th>
                             </tr>
                         </thead>

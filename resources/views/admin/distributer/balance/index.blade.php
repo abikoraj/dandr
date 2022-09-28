@@ -151,7 +151,7 @@
                 })
                 .then(function(response) {
                     console.log(response.data);
-                    showNotification('bg-success', 'Sellitem added successfully !');
+                    showNotification('bg-success', 'Distributer Balance added successfully !');
                     $('#sellDisDataBody').prepend(response.data);
                     $('#id').val('');
                     $('#amount').val('0');
@@ -180,7 +180,7 @@
             console.log(response);
         });
     }
-   
+
 
     window.onload = function() {
         $('#id').focus();
