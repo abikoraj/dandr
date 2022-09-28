@@ -87,6 +87,7 @@ return [
             'advance return' => ['use' => [], 'code' => '05.08'],
             'sales' => ['use' => [], 'code' => '05.09'],
             'sales delete' => ['use' => [], 'code' => '05.10'],
+            'chalan due' => ['use' => [], 'code' => '05.11'],
         ]
     ],
 

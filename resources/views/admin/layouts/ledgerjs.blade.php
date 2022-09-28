@@ -109,4 +109,13 @@
     }
 
 
+    function errAlert($err,$msg=""){
+        hideProgress();
+        $msg+=" "+ ($err.response?$err.response.data.message:'Please Try again');
+        showNotification('bg-danger',$msg)
+    }
+    function successAlert($msg){
+        hideProgress();
+        showNotification('bg-success',$msg)
+    }
 </script>

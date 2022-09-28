@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\LedgerManage;
 use App\Models\ChalanDue;
+use App\Models\ChalanduePayment;
 use App\Models\Employee;
 use App\Models\EmployeeChalan;
 use Illuminate\Http\Request;
@@ -47,16 +48,16 @@ class ChalanClosingController extends Controller
             $chalanItem->newremaning = $chalanItem->qty - $chalanItem->sold - $chalanItem->wastage;
         }
         $notes = self::notes;
-        $banks = DB::table('banks')->get(['name', 'account_id','id']);
+        $banks = DB::table('banks')->get(['name', 'account_id', 'id']);
 
         if ($request->getMethod() == "GET") {
 
             return view('admin.chalan.closing.index', compact('chalan', 'users', 'chalanItems', 'notes', 'banks'));
         } else {
-            if($chalan->closed==1){
+            if ($chalan->closed == 1) {
                 return response()->json([
-                    'status'=>false,
-                    'msg'=>'Chalan is already closed'
+                    'status' => false,
+                    'msg' => 'Chalan is already closed'
                 ]);
             }
             foreach ($chalanItems as $key => $chalanItem) {
@@ -78,53 +79,53 @@ class ChalanClosingController extends Controller
             // 403 = sales employee chalan sales
             // 404 = sales payment while chalan sales
 
-            $collections=[
-                "bank"=>[],
-                "notes"=>[]
+            $collections = [
+                "bank" => [],
+                "notes" => []
             ];
 
-            $totalCollection=0;
-            $noteCollection=0;
-            $bankCollection=0;
+            $totalCollection = 0;
+            $noteCollection = 0;
+            $bankCollection = 0;
 
             foreach ($notes as $key => $note) {
-                if($request->filled('note_'.$note)){
-                    $noteAmount=$request->input('note_'.$note);
-                    if($noteAmount>0){
-                       array_push( $collections['notes'],(object)['note'=>$note,'amount'=>$noteAmount]);
-                       $noteCollection+=$noteAmount;
+                if ($request->filled('note_' . $note)) {
+                    $noteAmount = $request->input('note_' . $note);
+                    if ($noteAmount > 0) {
+                        array_push($collections['notes'], (object)['note' => $note, 'amount' => $noteAmount]);
+                        $noteCollection += $noteAmount;
                     }
                 }
             }
 
             foreach ($banks as $key => $bank) {
-                if($request->filled('bank_'.$bank->id)){
-                    $bankAmount=$request->input('bank_'.$bank->id);
-                    if($bankAmount>0){
-                        array_push( $collections['bank'],(object)['account_id'=>$bank->account_id,'name'=>$bank->name,'bank_id'=>$bank->id,'amount'=>$bankAmount]);
-                        $bankCollection+=$bankAmount;
+                if ($request->filled('bank_' . $bank->id)) {
+                    $bankAmount = $request->input('bank_' . $bank->id);
+                    if ($bankAmount > 0) {
+                        array_push($collections['bank'], (object)['account_id' => $bank->account_id, 'name' => $bank->name, 'bank_id' => $bank->id, 'amount' => $bankAmount]);
+                        $bankCollection += $bankAmount;
                     }
                 }
             }
 
-            $totalCollection=$noteCollection+$bankCollection;
+            $totalCollection = $noteCollection + $bankCollection;
 
 
-            if($totalCollection!=$users->sum('payments_amount')){
+            if ($totalCollection != $users->sum('payments_amount')) {
                 return response()->json([
-                    'status'=>false,
-                    'msg'=>'Collection amount and total payment doesnot matches'
+                    'status' => false,
+                    'msg' => 'Collection amount and total payment doesnot matches'
                 ]);
             }
 
-            if(hasPay()){
+            if (hasPay()) {
 
-                if($noteCollection>0){
-                    pushCASH(2,$noteCollection,405,$chalan->date,'To Chalan Sales/Collection',$chalan->id);
+                if ($noteCollection > 0) {
+                    pushCASH(2, $noteCollection, 405, $chalan->date, 'To Chalan Sales/Collection', $chalan->id);
                 }
 
                 foreach ($collections['bank'] as $key => $bank) {
-                    pushBANK($bank->account_id,2,$bank->amount,406,$chalan->date,'To Chalan Sales/Collection',$chalan->id);
+                    pushBANK($bank->account_id, 2, $bank->amount, 406, $chalan->date, 'To Chalan Sales/Collection', $chalan->id);
                 }
             }
 
@@ -142,25 +143,48 @@ class ChalanClosingController extends Controller
                     }
                 }
 
-                if($user->due>0){
-                    $chalanDue=new ChalanDue();
-                    $chalanDue->user_id=$user->id;
-                    $chalanDue->employee_id=$chalan->user_id;
-                    $chalanDue->amount=$user->due;
-                    $chalanDue->date=$chalan->date;
-                    $chalanDue->employee_chalan_id=$chalan->id;
+                if ($user->due > 0) {
+                    $chalanDue = new ChalanDue();
+                    $chalanDue->user_id = $user->id;
+                    $chalanDue->employee_id = $chalan->user_id;
+                    $chalanDue->amount = $user->due;
+                    $chalanDue->date = $chalan->date;
+                    $chalanDue->employee_chalan_id = $chalan->id;
                     $chalanDue->save();
+                }
+                $amountRemaning = $user->balance;
+                if ($amountRemaning > 0) {
+                    $dues = DB::select('select c.* from
+                    (select chalan_dues.amount,chalan_dues.date,chalan_dues.id,ifnull((select sum(amount) from chalandue_payments where chalan_due_id=chalan_dues.id),0) as paid from chalan_dues where user_id=? ) c
+                    where c.amount>c.paid', [$user->id]);
+                    $amountRemaning = $payment->amount;
+                    foreach ($dues as $key => $due) {
+                        $remaning = $due->amount - $due->paid;
+                        $duePayment = new ChalanduePayment();
+                        $duePayment->chalan_due_id = $due->id;
+                        $duePayment->identifire = 407;
+                        $duePayment->foreign_key = $chalan->id;
+                        $duePayment->date =$chalan->date;
+                        if ($remaning > $amountRemaning || $remaning == $amountRemaning) {
+                            $duePayment->amount = $amountRemaning;
+                            $duePayment->save();
+                            break;
+                        } elseif ($remaning < $amountRemaning) {
+                            $duePayment->amount = $remaning;
+                            $duePayment->save();
+                            $amountRemaning -= $remaning;
+                        }
+                    }
                 }
             }
 
-            $chalan->closed=1;
-            $chalan->notes=json_encode($collections,JSON_NUMERIC_CHECK);
+            $chalan->closed = 1;
+            $chalan->notes = json_encode($collections, JSON_NUMERIC_CHECK);
             $chalan->save();
             return response()->json([
-                'status'=>true,
-                'url'=>route('admin.chalan.chalan.final.details',['id'=>$chalan->id])
+                'status' => true,
+                'url' => route('admin.chalan.chalan.final.details', ['id' => $chalan->id])
             ]);
-
         }
     }
 }

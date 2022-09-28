@@ -70,6 +70,7 @@ class LedgerManage
     * "404" = "sales payment while chalan sales"
     * "405" = "cash payment while chalan sales"
     * "406" = "bank payment while chalan sales"
+    * "407" = "chalan due payment while chalan closing"
     * "135" = "customer Payment extra"
     * "134" = "customer opening Balance"
 
