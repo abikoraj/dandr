@@ -34,7 +34,11 @@
 
 
             <hr>
-
+            <div>
+                <input type="checkbox"  id="use_wholesale" > <label for="use_wholesale">Use Wholesale Price </label> <br>
+                <input type="checkbox"  id="check_stock" checked> <label for="check_stock"> Check Stock</label>
+            </div>
+            <hr>
             <div id="test" tabindex="-1" class="" onfocus="searchable=true;listItems(this.value);"   onblur="searchable=false;listItems(this.value);">
                 <div style="max-height: 100px;padding:5px;overflow-y:auto;" id="item-search">
 
@@ -110,6 +114,7 @@
         running=false;
         var index=1;
         const items = {!! json_encode($items) !!}
+        const centerStocks = {!! json_encode($centerStocks) !!}
 
         function searchItem(e, ele) {
 
@@ -208,13 +213,29 @@
                     showNotification('bg-danger', 'Please Input quantity');
                     return;
                 }
+                const useWholesale=$('#use_wholesale')[0].checked;
+                const checkStock=$('#check_stock')[0].checked;
                 const _localitem = selectedItems.find(o => o.item_id == item.id);
+                const center_id=$('#center_id').val();
+                const centerStock= centerStocks.find(o=>o.item_id == item.id && o.center_id == center_id);
+
+                if(checkStock){
+                    if(centerStock==undefined){
+                        alert('Stock Not Found');
+                        return;
+                    }
+                    if(centerStock.amount<qty){
+                        alert('Stock No Enough');
+                        return;
+                    }
+                }
+
                 if (_localitem == undefined) {
                     selectedItems.push({
                         item_id: item.id,
                         qty: qty,
                         title: item.title,
-                        rate:item.sell_price,
+                        rate:useWholesale?item.wholesale:item.sell_price,
                         index:index++
                     })
                 } else {
@@ -287,6 +308,7 @@
                 // }
                 // _data['items']=selectedItems;
 
+                showProgress('Adding chalan');
                 axios.post('{{route('admin.chalan.item.sell')}}',_data)
                 .then((res)=>{
                     selectedItems=[];
@@ -294,12 +316,13 @@
                     // const print_url="{{route('admin.item.stockout-print',['id'=>'xxx_id'])}}";
                     // console.log(res.data);
                     // window.open(print_url.replace('xxx_id',res.data));
-                    showNotification('bg-success', 'Employee Chalan saved successfully!');
+                    successAlert("Employee Chalan saved successfully!");
+                    // showNotification('bg-success', '');
                     running=false;
                 })
                 .catch((err)=>{
-                    showNotification('bg-danger', 'Some Error Occured Please Try again');
                     running=false;
+                    errAlert(err,"chalan cannot be added");
 
                 })
             }

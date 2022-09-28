@@ -9,6 +9,7 @@ use App\Models\EmployeeChalan;
 use App\Models\Item;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
 class ChalanController extends Controller
@@ -19,53 +20,56 @@ class ChalanController extends Controller
         return view('admin.chalan.index', compact('users'));
     }
 
+
+   
+
     public function chalanItemSale(Request $request)
     {
         if ($request->isMethod('get')) {
             // $users = User::where('role',4)->get();
             $users = DB::table('users')->where('role', 4)->get(['id', 'name']);
             $centers = DB::table('centers')->get(['id', 'name']);
-            $items = DB::table('items')->get(['id', 'title', 'number', 'sell_price']);
-            return view('admin.chalan.chalan_sell', compact('centers', 'items', 'users'));
+            $items = DB::table('items')->get(['id', 'title', 'number', 'sell_price','wholesale']);
+            $centerStocks=DB::table('center_stocks')->whereIn('item_id',$items->pluck('id'))->get(['item_id','center_id','amount']);
+            return view('admin.chalan.chalan_sell', compact('centers', 'items', 'users','centerStocks'));
+
         } else {
             $date = getNepaliDate($request->info['date']);
             $center_id =  $request->info['center_id'];
             $from_employee_id =  $request->info['from_employee_id'];
-            // dd($request->items);
-            $chalanCheck = EmployeeChalan::where('user_id', $request->info['from_employee_id'])->where('date', $date)->first();
-            if ($chalanCheck != null) {
-                foreach ($request->items as $key => $item) {
-
-                    //    dd($item_rate->sell_price);
-                    $chalanItem = new ChalanItem();
-                    $chalanItem->item_id = $item['item_id'];
-                    $chalanItem->qty = $item['qty'];
-                    $chalanItem->rate = $item['rate'];
-                    $chalanItem->employee_chalan_id = $chalanCheck->id;
-                    $chalanItem->center_id = $center_id;
-                    $chalanItem->save();
-
-                    maintainStock($item['item_id'], $item['qty'], $center_id, 'out');
-                }
-            } else {
+            $chalan = EmployeeChalan::where('user_id', $request->info['from_employee_id'])->where('date', $date)->first();
+            if ($chalan == null) {
                 $chalan =  new EmployeeChalan();
                 $chalan->date = $date;
                 $chalan->user_id = $from_employee_id;
-                $chalan->save();
-
-                foreach ($request->items as $key => $item) {
-
-                    //    dd($item_rate->sell_price);
-                    $chalanItem = new ChalanItem();
-                    $chalanItem->item_id = $item['item_id'];
-                    $chalanItem->qty = $item['qty'];
-                    $chalanItem->rate = $item['rate'];
-                    $chalanItem->employee_chalan_id = $chalan->id;
-                    $chalanItem->center_id = $center_id;
-                    $chalanItem->save();
-
-                    maintainStock($item['item_id'], $item['qty'], $center_id, 'out');
+                if(isSuper()){
+                    $chalan->approved=1;
+                    $chalan->approvedBy=Auth::user()->name;
                 }
+                $chalan->save();
+            }else{
+                if($chalan->approved==1){
+                    throw new \Exception('Chalan already approved.');
+                }
+                if($chalan->closed==1 ){
+                    throw new \Exception('Chalan already closed for this employee.');
+                }
+            }
+
+            
+
+            foreach ($request->items as $key => $item) {
+
+                //    dd($item_rate->sell_price);
+                $chalanItem = new ChalanItem();
+                $chalanItem->item_id = $item['item_id'];
+                $chalanItem->qty = $item['qty'];
+                $chalanItem->rate = $item['rate'];
+                $chalanItem->employee_chalan_id = $chalan->id;
+                $chalanItem->center_id = $center_id;
+                $chalanItem->save();
+
+                maintainStock($item['item_id'], $item['qty'], $center_id, 'out');
             }
 
             return response()->json(['status' => true]);
@@ -194,7 +198,28 @@ class ChalanController extends Controller
             $chalanItem->sold = $sellItems->where('item_id', $chalanItem->item_id)->sum('qty');
             $chalanItem->newremaning = $chalanItem->qty - $chalanItem->sold - $chalanItem->wastage;
         }
-
         return view('admin.chalan.closing.detail',compact('chalan', 'users', 'chalanItems'));
+    }
+
+    public function approve(Request $request,$id)
+    {
+        if($request->getMethod()=="POST"){
+            DB::update('update employee_chalans set approved=1 where id=?', [$id]);
+            return redirect()->route('');
+        }else{
+            $chalan=DB::selectOne('select c.*,u.name from employee_chalans c join users u on c.user_id=u.id where c.id=?',[$id]);
+            $items=DB::select('select c.*,i.title from chalan_items c join items i on c.item_id=i.id where c.employee_chalan_id=?',[$id]);
+            return view('admin.chalan.approve.index',compact('chalan','items'));
+        }
+    }
+
+    public function print($id)
+    {
+
+        $customers=getUsers(['customers','distributers'],['name','phone']);
+        // dd($customers);
+        $chalan=DB::selectOne('select c.*,u.name from employee_chalans c join users u on c.user_id=u.id where c.id=?',[$id]);
+        $items=DB::select('select c.*,i.title from chalan_items c join items i on c.item_id=i.id where c.employee_chalan_id=?',[$id]);
+        return view('admin.chalan.print.index',compact('chalan','items','customers'));
     }
 }

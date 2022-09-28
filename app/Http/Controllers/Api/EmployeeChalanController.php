@@ -18,11 +18,17 @@ class EmployeeChalanController extends Controller
         $chalan=DB::table('employee_chalans')
         ->where('date',$request->date)
         ->where('user_id',Auth::user()->id)->first(['id','closed']);
-        
+
+        if($chalan->approved==0){
+            return response()->json([
+                'status'=>false,
+                'message'=>'Chalan not approved'
+            ]);
+        }
         if($chalan->closed==1){
             return response()->json([
                 'status'=>false,
-                'message'=>'Chalan Is already closed'
+                'message'=>'Chalan is already closed'
             ]);
         }
         $user = getCustomer($request->phone,$request->name);
@@ -55,6 +61,13 @@ class EmployeeChalanController extends Controller
             return response()->json([
                 'status'=>false,
                 'message'=>'Chalan Is already closed'
+            ]);
+        }
+
+        if($chalan->approved==0){
+            return response()->json([
+                'status'=>false,
+                'message'=>'Chalan not approved'
             ]);
         }
         $user = getCustomer($request->phone,$request->name);

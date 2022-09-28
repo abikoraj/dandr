@@ -477,7 +477,6 @@ Route::name('admin.')->group(function () {
             Route::match(['get', 'post'], '/item-sell', [ChalanController::class, 'chalanItemSale'])->name('item.sell')->middleware('permmission:15.02');
 
             Route::middleware('permmission:15.03')->group(function () {
-
                 Route::post('/chalan-list', [ChalanController::class, 'chalanList'])->name('chalan.list');
                 Route::post('/chalan-delete', [ChalanController::class, 'chalanDelete'])->name('chalan.delete');
 
@@ -488,10 +487,18 @@ Route::name('admin.')->group(function () {
 
                 Route::post('/chalan-wastage', 'Admin\ChalanController@chalanWastage')->name('chalan.wastage');
                 Route::post('/chalan-wastage-delete', 'Admin\ChalanController@chalanWastageDelete')->name('chalan.wastage.delete');
+
             });
+
 
         });
 
+        Route::prefix('chalan-manage')->middleware('permmission:15.05')->name('chalan.manage.')->group(function () {
+            Route::match(['GET','POST'],'approve/{id}', [ChalanController::class, 'approve'])->name('approve');
+            Route::match(['GET','POST'],'edit/{id}', [ChalanController::class, 'edit'])->name('edit');
+            Route::match(['GET','POST'],'cancel/{id}', [ChalanController::class, 'cancel'])->name('cancel');
+            Route::match(['GET','POST'],'print/{id}', [ChalanController::class, 'print'])->name('print');
+        });
         //XXX chalan payments
         Route::prefix('chalan-payments')->middleware('permmission:15.03')->name('chalan.payment.')->group(function () {
             Route::post('del', [ChalanPaymentController::class, 'delPayment'])->name('del');
@@ -500,7 +507,7 @@ Route::name('admin.')->group(function () {
         });
 
         //XXX chalan closing 
-        Route::prefix('chalan-closing')->middleware('permmission:15.03')->name('chalan.closing.')->group(function () {
+        Route::prefix('chalan-closing')->middleware('permmission:15.04')->name('chalan.closing.')->group(function () {
             Route::match(['GET', 'POST'], 'start/{id}', [ChalanClosingController::class, 'index'])->name('index');
             Route::get('add', [ChalanClosingController::class, 'add'])->name('add');
         });

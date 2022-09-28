@@ -275,6 +275,7 @@ class ItemController extends Controller
     {
         if (env('multi_stock', false)) {
 
+            $maincenter=env('maincenter',null);
             $totalStock = 0;
             $item = Item::find($id);
             if ($request->getMethod() == "POST") {
@@ -288,11 +289,16 @@ class ItemController extends Controller
                         $stock->item_id = $id;
                         $stock->center_id = $center_id;
                     }
+
                     $stock->amount = $amount;
                     $stock->rate = $rate;
                     $stock->wholesale = $wholesale;
                     $stock->save();
                     $totalStock += $amount;
+                    if($center_id=$maincenter){
+                        $item->sell_price=$stock->rate;
+                        $item->wholesale=$stock->wholesale;
+                    }
                 }
                 $item->stock = $totalStock;
                 $item->save();

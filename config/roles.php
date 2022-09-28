@@ -214,8 +214,11 @@ return [
             'add' => ['use' => [], 'code' => '15.02'],
             'manage' => ['use' => [], 'code' => '15.03'],
             'close' => ['use' => [], 'code' => '15.04'],
+            'approve' => ['use' => [], 'code' => '15.05'],
             'api upload' => ['use' => [], 'code' => '15.06'],
             'mobile entry' => ['use' => [], 'code' => '15.07'],
+            'edit' => ['use' => [], 'code' => '15.08'],
+            'delete' => ['use' => [], 'code' => '15.09'],
         ]
     ]
 ];

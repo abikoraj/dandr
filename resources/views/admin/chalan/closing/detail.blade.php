@@ -117,63 +117,66 @@
             @endforeach
         </table>
     </div>
+    @php
+        $collection=json_decode($chalan->notes);
+    @endphp
 
-    <div class="shadow p-2 mb-3">
-        <h5>
-            Collection Detail
-        </h5>
-        <table class="table">
-            <tr>
+    @if ($collection!=null)
+        <div class="shadow p-2 mb-3">
+            <h5>
+                Collection Detail
+            </h5>
+            <table class="table">
+                <tr>
 
-                <th>
-                    Method
-                </th>
-                <th>
-                    Particular
-                </th>
-                <th>
-                    Amount
-                </th>
+                    <th>
+                        Method
+                    </th>
+                    <th>
+                        Particular
+                    </th>
+                    <th>
+                        Amount
+                    </th>
+                    
+                </tr>
                 
-            </tr>
             
-            @php
-                $collection=json_decode($chalan->notes);
-            @endphp
-            <tr>
-                <th>
-                    Cash
-                </th>
-                <th>
-                    @php
-                        $cashCollection=0;
-                    @endphp
-                    @foreach ($collection->notes as $note)
-                        {{$note->note}} X {{$note->amount/$note->note}},
-                        @php
-                            $cashCollection+=$note->amount;
-                        @endphp
-                    @endforeach
-                </th>
-                <th>
-                    {{$cashCollection}}
-                </th>
-            </tr>
-            @foreach ($collection->bank as $bank)
                 <tr>
                     <th>
-                        Bank
+                        Cash
                     </th>
                     <th>
-                        {{$bank->name}}
+                        @php
+                            $cashCollection=0;
+                        @endphp
+                        @foreach ($collection->notes as $note)
+                            {{$note->note}} X {{$note->amount/$note->note}},
+                            @php
+                                $cashCollection+=$note->amount;
+                            @endphp
+                        @endforeach
                     </th>
                     <th>
-                        {{$bank->amount}}
+                        {{$cashCollection}}
                     </th>
                 </tr>
-            @endforeach
-        </table>
-    </div>
+                @foreach ($collection->bank as $bank)
+                    <tr>
+                        <th>
+                            Bank
+                        </th>
+                        <th>
+                            {{$bank->name}}
+                        </th>
+                        <th>
+                            {{$bank->amount}}
+                        </th>
+                    </tr>
+                @endforeach
+            </table>
+        </div>        
+    @endif
     
   
 

@@ -244,6 +244,7 @@ function CheckItem(id) {
     return exists("#item-" + id);
 }
 
+
 function printDiv(id) {
     var divToPrint = document.getElementById(id);
 
