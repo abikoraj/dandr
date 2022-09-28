@@ -5,7 +5,7 @@
 <link rel="stylesheet" href="{{ asset('calender/nepali.datepicker.v3.2.min.css') }}" />
 @endsection
 @section('head-title')
-    <a href="{{route('admin.report.home')}}">Report</a> / stock
+    <a href="{{route('admin.report.home')}}">Report</a> / Stock
 
 @endsection
 @section('toobar')

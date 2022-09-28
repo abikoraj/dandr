@@ -28,6 +28,7 @@ class BackupController extends Controller
         return view('admin.backup.index',compact('files'));
     }
 
+
     public function del(Request $request){
         try {
             $path=backup_path().DIRECTORY_SEPARATOR.$request->file.'.sql';

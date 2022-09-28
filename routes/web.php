@@ -146,7 +146,7 @@ Route::name('admin.')->group(function () {
             });
             // XXX farmer routes
             Route::get('', [FarmerController::class, 'index'])->name('list')->middleware('permmission:01.01');
-            Route::match(["GET", "POST"], 'switch', [FarmerController::class, 'switch'])->name('switch')->middleware('permmission:01.01');
+            Route::match(["GET", "POST"], 'on-off', [FarmerController::class, 'switch'])->name('switch')->middleware('permmission:01.01');
             Route::match(["GET", "POST"], 'printSlip', [FarmerController::class, 'printSlip'])->name('printSlip')->middleware('permmission:01.01');
             Route::match(["GET", "POST"], 'switchSave', [FarmerController::class, 'switchSave'])->name('switchSave')->middleware('permmission:01.01');
             Route::post('list-by-center', [FarmerController::class, 'listFarmerByCenter'])->name('list-bycenter');
@@ -466,12 +466,11 @@ Route::name('admin.')->group(function () {
         //XXX employee chalan
 
         Route::prefix('employee-chalan')->name('chalan.')->group(function () {
-
             Route::middleware('permmission:15.01')->group(function () {
 
                 Route::get('/', [ChalanController::class, 'index'])->name('index');
                 Route::match(['get', 'post'], '/items', [ChalanController::class, 'ItemList'])->name('item.list');
-                
+               
             });
 
             Route::match(['get', 'post'], '/item-sell', [ChalanController::class, 'chalanItemSale'])->name('item.sell')->middleware('permmission:15.02');
@@ -487,7 +486,6 @@ Route::name('admin.')->group(function () {
 
                 Route::post('/chalan-wastage', 'Admin\ChalanController@chalanWastage')->name('chalan.wastage');
                 Route::post('/chalan-wastage-delete', 'Admin\ChalanController@chalanWastageDelete')->name('chalan.wastage.delete');
-
             });
 
 

@@ -2,7 +2,7 @@
 @section('title','Farmer - switch')
 @section('head-title')
     <a href="{{route('admin.farmer.list')}}">Farmers</a>
-    / Switch
+    / On-Off
 @endsection
 @section('css')
 @endsection
@@ -10,7 +10,7 @@
 @endsection
 @section('content')
 <div class="row">
-    
+
     <div class="col-md-3 text-right"><div class="mt-2"><strong> Collection Center : </strong></div></div>
     <div class="col-md-6">
         <div class="form-group text-right">

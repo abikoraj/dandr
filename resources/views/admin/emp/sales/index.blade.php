@@ -142,7 +142,7 @@
 @section('js')
     <script src="{{ asset('backend/plugins/select2/select2.min.js') }}"></script>
     <script src="{{ asset('calender/nepali.datepicker.v3.2.min.js') }}"></script>
-    
+
     <script>
         const items={!! json_encode($items) !!};
         $("input#nepali-datepicker").bind('click', function(e) {
@@ -217,7 +217,7 @@
         }
 
 
-       
+
 
 
         function saveData(e,ele) {
@@ -239,7 +239,7 @@
                     })
                     .then(function(response) {
                         console.log(response);
-                        // showNotification('bg-success', 'Employee advance added successfully!');
+                        showNotification('bg-success', 'Employee sell item added successfully!');
                         // $('#largeModal').modal('toggle');
                         $('#advanceData').prepend(response.data);
                         // ele.reset();
@@ -261,7 +261,7 @@
                             showNotification('bg-danger', err.response.data.message);
                         }else{
                             showNotification('bg-danger', "Some error occured please try again");
-                            
+
                         }
                     });
 
@@ -277,7 +277,7 @@
             $('#nepali-datepicker').val(NepaliFunctions.GetCurrentBsYear() + '-' + month + '-' + day);
             $('.select2').select2({allowClear: true});
             loadEmpSell();
-            $('#item_id').change(function (e) { 
+            $('#item_id').change(function (e) {
                 e.preventDefault();
                 // alert(this.value);
                 $('#rate').val(null).trigger('change');

@@ -4,13 +4,13 @@
     <link rel="stylesheet" href="{{ asset('calender/nepali.datepicker.v3.2.min.css') }}" />
 @endsection
 @section('head-title')
-    <a href="{{ route('admin.farmer.list') }}">Famers</a>/ Farmer Details - <span id="farmername"></span>
+    <a href="{{ route('admin.farmer.list') }}">Famers</a>/ Farmer Details  <span id="farmername"></span>
 @endsection
 @section('toobar')
 @endsection
 @section('content')
     @php
-        
+
     @endphp
     @include('admin.snf.update')
     @include('admin.farmer.snippet.updatemilkdata')

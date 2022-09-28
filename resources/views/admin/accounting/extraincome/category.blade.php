@@ -15,7 +15,7 @@
             @csrf
             <div>
                 <label for="name">Category Name</label>
-                <input type="text" name="name" id="name" class="form-control">
+                <input type="text" name="name" id="name" required class="form-control">
             </div>
             <div class="pt-2">
                 <button class="btn btn-primary">Add Category</button>

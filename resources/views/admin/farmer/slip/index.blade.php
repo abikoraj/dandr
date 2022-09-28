@@ -2,7 +2,7 @@
 @section('title','Farmer - switch')
 @section('head-title')
     <a href="{{route('admin.farmer.list')}}">Farmers</a>
-    / Switch
+    / Print Slip
 @endsection
 @section('css')
 @endsection
@@ -10,13 +10,13 @@
 @endsection
 @section('content')
 <div class="row">
-    
+
     <div class="col-md-3">
-        
+
         <div class="form-group ">
             <label for="date">date</label>
             <input type="text" name="date" id="date" class="form-control show-tick ms next calender" />
-          
+
         </div>
     </div>
     <div class="col-md-3">
@@ -49,7 +49,7 @@
             print
         </button>
     </div>
-   
+
 </div>
 <div id="allData">
 

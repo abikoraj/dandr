@@ -10,7 +10,7 @@
 <div class="row">
     <div class="col-md-3">
         <div id="_farmers">
-            Select Collection center for load farmers !
+            Choose a collection center to load farmers !
         </div>
     </div>
     <div class="col-md-9">
@@ -23,7 +23,7 @@
                         <option value="{{$c->id}}">{{ $c->name }}</option>
                         @endforeach
                     </select>
-                    <small>Center Collection</small>
+                    <small>Collection Center</small>
                 </div>
             </div>
             <div class="col-md-6">

@@ -13,7 +13,7 @@
     <div class="row">
         <div class="col-md-3">
             <div id="_farmers">
-                Select Collection center for load farmers !
+                Choose a collection center to load farmers!
             </div>
         </div>
 
@@ -238,7 +238,7 @@
             }
         }
 
-   
+
 
 
 
@@ -431,7 +431,7 @@
         }
 
 
-        
+
         @if(env('use_sell_item_batch'))
         const batchURL = '{{ route('admin.simple.manufacture.batches', ['id' => 'xxx_id']) }}';
         var batches = [];

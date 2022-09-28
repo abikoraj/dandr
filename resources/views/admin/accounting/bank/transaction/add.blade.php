@@ -16,7 +16,7 @@
             <div class="col-md-3 mb-2">
                 <label for="type">Transaction Type</label>
                 <select name="type" id="type" class="form-control ms" onchange="typeChanged(this)" required>
-                    <option value="1">Cash withdrawl from bank</option>
+                    <option value="1">Cash withdrawal from bank</option>
                     <option value="2">Cash deposit to bank</option>
                     <option value="3">Bank Transfer</option>
                 </select>
@@ -48,7 +48,7 @@
             </div>
             <div class="col-md-3 mb-2">
                 <label for="transaction_by">Transaction By</label>
-                <input type="text" name="transaction_by" id="transaction_by" class="form-control" required> 
+                <input type="text" name="transaction_by" id="transaction_by" class="form-control" required>
 
             </div>
             <div class="col-md-12 mb-2">
@@ -71,7 +71,7 @@
             }
         }
 
-        
+
         function saveData(ele,e){
             e.preventDefault();
             const type=$('#type').val();
@@ -82,8 +82,8 @@
                     alert('Destination and transferring bank cannot be same');
                     return;
                 }
-                
-            }   
+
+            }
 
             const amount= parseFloat($('#amount').val());
             if(isNaN(amount) || amount==0){
