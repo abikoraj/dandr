@@ -20,6 +20,11 @@
         </th>
 
     </tr>
+
+    @php
+        $dueTotal=0;
+        $paidTotal=0;
+    @endphp
     @foreach ($dues as $due)
         <tr>
             <td>
@@ -33,9 +38,15 @@
             </td>
             <td>
                 {{$due->amount}}
+                @php
+                    $dueTotal+=$due->amount;
+                @endphp
             </td>
             <td>
                 {{$due->paid}}
+                @php
+                    $paidTotal+=$due->paid;
+                @endphp
             </td>
             <td>
                 {{$due->amount-$due->paid}}
@@ -50,13 +61,13 @@
             Total
         </th>
         <th>
-            {{$dues->sum('dues')}}
+            {{$dueTotal}}
         </th>
         <th>
-            {{$dues->sum('paid')}}
+            {{$paidTotal}}
         </th>
         <th>
-            {{$dues->sum('dues') - $dues->sum('paid')}}
+            {{$dueTotal-$paidTotal}}
         </th>
     </tr>
 </table>
