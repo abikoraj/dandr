@@ -85,7 +85,7 @@
                 <ul class="ml-menu">
                     <li><a href="{{ route('admin.distributer.index') }}" class="waves-effect waves-block">Distributer List</a></li>
                     <li><a href="{{ route('admin.distributer.sell') }}" class="waves-effect waves-block">Distributer Sell</a></li>
-                    <li><a href="{{ route('admin.distributer.payemnt') }}" class="waves-effect waves-block">Payment</a></li>
+                    <li><a href="{{ route('admin.distributer.payemnt') }}" class="waves-effect waves-block">Payment Receive</a></li>
                     <li><a href="{{ route('admin.distributer.detail.opening') }}" class="waves-effect waves-block">Account Opening</a></li>
                     <li><a href="{{ route('admin.distributer.request') }}" class="waves-effect waves-block">Distributor Request</a></li>
                     <li><a href="{{ route('admin.distributer.credit.list') }}" class="waves-effect waves-block"> Credit List</a></li>
