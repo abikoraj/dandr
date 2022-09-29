@@ -32,6 +32,9 @@ class BillingController extends Controller
         ifnull((select sum(qty) from sellitems where batch_id=simple_manufacturing_items.id ),0) -
         ifnull((select sum(s.amount) from simple_manufacturing_items s where s.batch_id=simple_manufacturing_items.id ),0)) as amount,batch_no
         from simple_manufacturing_items where item_id={$id} and batch_no is not null {$finisedBatcheSTR}) c where c.amount>0");
+
+        
+
         $item=DB::table('items')->where('id',$connectedItem->item_id)->first(['id','title','sell_price']);
         $cats=ItemCategory::where('item_id',$connectedItem->item_id)->get();
         $rate=$cats->count()==0?$item->sell_price:$cats->first()->price;

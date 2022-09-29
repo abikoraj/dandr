@@ -87,6 +87,18 @@ class Menu
                     ["Advance Return", '05.08', route('admin.employee.ret')],
                 ],
             ],
+            "employee_chalan" => [
+                'condition'=>env('use_employee_calan',false),
+                'code' => '15',
+                'link' => null,
+                'icon' => 'apps',
+                'text' => "Employees Chalan",
+                'children' => [
+                    ["Employees Chalan", '15.01', route('admin.chalan.index')],
+                    ["Chalan Dues", '05.11', route('admin.employee.chalan.due.index')],
+                  
+                ],
+            ],
 
             "expese" => [
                 'condition'=>env('use_expense',false),

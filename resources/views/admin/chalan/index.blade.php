@@ -20,47 +20,38 @@
 @endsection
 @section('head-title','Distributer Sell')
 @section('toobar')
-<a href="{{ route('admin.chalan.item.sell') }}" class="btn btn-primary">Create Employee Chalan</a>
+@if (auth_has_per('15.02'))
+    <a href="{{ route('admin.chalan.item.sell') }}" class="btn btn-primary">Create Employee Chalan</a>
+@endif
 @endsection
 @section('content')
-<div class="row">
-    <div class="col-md-3">
-        <div>
-            <input type="hidden" id="currentdate">
-            <input type="text" placeholder="Search Employee" id="s_dis" class="form-control mb-3">
+<div class="shadow mb-3 p-2">
+    <div class="row">
+        <div class="col-md-4">
+            <input type="checkbox"  id="use_date" checked> <label for="use_date">Date</label>
+            <input type="text" id="date" class="form-control calender">
+
         </div>
-        <table class="table">
-            <thead>
-                <tr>
-                    <th>No</th>
-                    <th>Name</th>
-                </tr>
-            </thead>
-            <tbody id="distributors">
-                @foreach($users as $user)
-
-                    <tr style="cursor:pointer;" onclick="setData({{$user->id}})" id="employee-{{$user->id}}" data-name="{{ $user->name }}" class="searchable">
-                        <td>
-                            {{$user->id}}
-                        </td>
-                        <td>
-                            {{$user->name}}
-                        </td>
-                    </tr>
-
+        <div class="col-md-4">
+            <label for="employee_id">Employee</label>
+            <select  id="employee_id" class="form-control ms">
+                <option value="-1" >All</option>
+                @foreach (getUsers(['employees'],['id','name']) as $emp)
+                    <option value="{{$emp->id}}">{{$emp->name}}</option>
                 @endforeach
-            </tbody>
-        </table>
-    </div>
-    <div class="col-md-9 bg-light pt-2">
-        <div id="dataList">
-
+            </select>
         </div>
-
+        <div class="col-md-4 d-flex align-items-end">
+            <button class="btn btn-primary w-100" onclick="loadData()">
+                Load Data
+            </button>
+        </div>
     </div>
 </div>
+<div id="dataList">
 
-<!-- edit modal -->
+</div>
+
 
 @endsection
 @section('js')
@@ -73,8 +64,14 @@
     initTableSearch('s_dis', 'distributors', ['name']);
     initTableSearch('isid', 'itemData', ['number','name']);
 
-    function setData(emp_id){
-    axios.post('{{ route('admin.chalan.item.list')}}',{employee_id:emp_id})
+    function loadData(){
+        const data={
+            employee_id: $('#employee_id').val()
+        };
+        if($('#use_date')[0].checked){
+            data.date=$('#date').val();
+        }
+    axios.post('{{ route('admin.chalan.item.list')}}',data)
         .then(function(response) {
             // console.log(response.data);
             $('#dataList').html(response.data);

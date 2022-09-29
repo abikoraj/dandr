@@ -118,4 +118,11 @@
         hideProgress();
         showNotification('bg-success',$msg)
     }
+
+    function yes(msg=''){
+        if(msg==''){
+            msg='Enter yes to continue';
+        }
+        return prompt(msg)=='yes';
+    }
 </script>

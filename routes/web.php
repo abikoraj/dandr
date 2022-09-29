@@ -491,10 +491,11 @@ Route::name('admin.')->group(function () {
 
         });
 
-        Route::prefix('chalan-manage')->middleware('permmission:15.05')->name('chalan.manage.')->group(function () {
-            Route::match(['GET','POST'],'approve/{id}', [ChalanController::class, 'approve'])->name('approve');
-            Route::match(['GET','POST'],'edit/{id}', [ChalanController::class, 'edit'])->name('edit');
-            Route::match(['GET','POST'],'cancel/{id}', [ChalanController::class, 'cancel'])->name('cancel');
+        Route::prefix('chalan-manage')->name('chalan.manage.')->group(function () {
+            Route::match(['GET','POST'],'approve/{id}', [ChalanController::class, 'approve'])->name('approve')->middleware('permmission:15.05');
+            Route::match(['GET','POST'],'edit/{id}', [ChalanController::class, 'edit'])->name('edit')->middleware('permmission:15.08');
+            Route::match(['GET','POST'],'cancel/{id}', [ChalanController::class, 'cancel'])->name('cancel')->middleware('permmission:15.09');
+            Route::match(['GET','POST'],'del', [ChalanController::class, 'del'])->name('del')->middleware('permmission:15.09');
             Route::match(['GET','POST'],'print/{id}', [ChalanController::class, 'print'])->name('print');
         });
         //XXX chalan payments

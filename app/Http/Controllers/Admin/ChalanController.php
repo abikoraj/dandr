@@ -8,6 +8,7 @@ use App\Models\ChalanSale;
 use App\Models\EmployeeChalan;
 use App\Models\Item;
 use App\Models\User;
+use App\NepaliDateHelper;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -16,6 +17,8 @@ class ChalanController extends Controller
 {
     public function index()
     {
+        $today=nepaliToday();
+
         $users = DB::table('users')->where('role', 4)->get(['id', 'name']);
         return view('admin.chalan.index', compact('users'));
     }
@@ -78,8 +81,19 @@ class ChalanController extends Controller
 
     public function ItemList(Request $request)
     {
-        $datas = DB::table('employee_chalans')
-        ->where('user_id', $request->employee_id)->get();
+        $datasQuery = DB::table('employee_chalans')
+        ->join('users','users.id','=','employee_chalans.user_id');
+        if($request->filled('employee_id')){
+            if($request->employee_id>0){
+                $datasQuery=$datasQuery->where('user_id', $request->employee_id);
+            }
+        }
+        if($request->filled('date')){
+            $date=getNepaliDate($request->date);
+            $datasQuery=$datasQuery->where('date', $date);
+        }
+        $datas=  $datasQuery->get(['employee_chalans.*','users.name']);
+
         $chalanItems = DB::table('chalan_items')
             ->join('items', 'items.id', '=', 'chalan_items.item_id')
             ->select('chalan_items.*', 'items.title')
@@ -222,4 +236,29 @@ class ChalanController extends Controller
         $items=DB::select('select c.*,i.title from chalan_items c join items i on c.item_id=i.id where c.employee_chalan_id=?',[$id]);
         return view('admin.chalan.print.index',compact('chalan','items','customers'));
     }
+
+    public function edit(Request $request,$id)
+    {
+        if($request->getMethod()=="POST"){
+            // dd($request->all());
+            DB::update('update chalan_items set qty=?,rate=? where id=?',[$request->qty,$request->rate,$id]);
+
+        }else{
+            $chalan=DB::selectOne('select c.*,u.name from employee_chalans c join users u on c.user_id=u.id where c.id=?',[$id]);
+            $items=DB::select('select c.*,i.title from chalan_items c join items i on c.item_id=i.id where c.employee_chalan_id=?',[$id]);
+            return view('admin.chalan.edit.index',compact('chalan','items'));
+
+        }
+    }
+
+    public function del(Request $request)
+    {
+        if($request->getMethod()=="POST"){
+            if(DB::table('chalan_sells')->where('chalan_item_id',$request->id)->count()>0){
+                throw new \Exception('Chalan item already used.');
+            }
+            DB::update('delete from chalan_items where id=?',[$request->id]);
+        }
+    }
+
 }

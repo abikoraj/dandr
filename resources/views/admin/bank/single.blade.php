@@ -30,7 +30,7 @@
             <div class="p-0 col-lg-2">
                 <label for="">Balance</label>
                 <div class="form-group">
-                    <input type="text" id="" name="" class="form-control next"  required value="{{$bank->balance}}">
+                    <input type="text" id="" name="" class="form-control next"  readonly required value="{{$bank->balance}}">
                 </div>
             </div>
             {{-- <div class="p-0 col-lg-12">

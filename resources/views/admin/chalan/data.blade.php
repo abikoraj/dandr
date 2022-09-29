@@ -2,6 +2,7 @@
     <table class="table-table-bordered mb-3">
         <tr>
             <th>Date</th>
+            <th>Issued To</th>
             <th>Items</th>
             <th>Total</th>
             <th>Action</th>
@@ -9,6 +10,7 @@
         @foreach ($datas as $data)
             <tr>
                 <td>{{ _nepalidate($data->date) }} </td>
+                <td>{{$data->name}}</td>
                 <td>
                     @php
                         $tot = 0;
@@ -35,22 +37,18 @@
                             @if (auth_has_per('15.04'))
                                 <a href="{{ route('admin.chalan.closing.index',$data->id) }}" class="btn btn-primary btn-sm">Close</a>
                             @endif
-                            @if (auth_has_per('15.09') && canDeleteChalan($data->id))
-                                <a href="{{ route('admin.chalan.manage.cancel',$data->id) }}" class="btn btn-danger btn-sm">Cancel</a>
-                            @endif
+                           
                             <a href="{{ route('admin.chalan.manage.print',$data->id) }}" class="btn btn-success btn-sm">Print</a>
 
                         @endif
                     @else
                         @if (auth_has_per('15.05'))
-                            <a href="{{ route('admin.chalan.manage.approved',$data->id) }}" class="btn btn-primary btn-sm">Approve</a>
+                            <a href="{{ route('admin.chalan.manage.approve',$data->id) }}" class="btn btn-primary btn-sm">Approve</a>
                         @endif
                         @if (auth_has_per('15.08'))
                             <a href="{{ route('admin.chalan.manage.edit',$data->id) }}" class="btn btn-success btn-sm">Edit</a>
                         @endif
-                        @if (auth_has_per('15.09') && canDeleteChalan($data->id))
-                            <a href="{{ route('admin.chalan.manage.cancel',$data->id) }}" class="btn btn-danger btn-sm">Cancel</a>
-                        @endif
+                      
                         <a href="{{ route('admin.chalan.manage.print',$data->id) }}" class="btn btn-success btn-sm">Print</a>
                     
                     @endif
