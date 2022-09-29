@@ -26,11 +26,11 @@
                     <i class="zmdi zmdi-plus"></i>
                 </span> --}}
                 <span class="btn btn-primary" onclick="updateSubUnitData({{$conversion->id}})">
-                    u
+                    <i class="zmdi zmdi-edit"></i>
                 </span>
                 @if ($conversion->used==0)
                     <span class="btn btn-danger" onclick="deleteData({{$conversion->id}})">
-                        u
+                        <i class="zmdi zmdi-hc-fw"></i>
                     </span>
                 @endif
             </div>

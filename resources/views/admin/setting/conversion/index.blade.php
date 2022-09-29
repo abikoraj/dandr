@@ -58,14 +58,14 @@
                             <div class="col-md-6 text-right">
                                 <span class="btn btn-success"
                                     onclick="initAddSubUnit({{ $conversion->id }},'{{ $conversion->name }}')">
-                                    +
+                                    <i class="zmdi zmdi-hc-fw"></i>
                                 </span>
                                 <button class="btn btn-primary" onclick="updateData({{ $conversion->id }})">
-                                    u
+                                    <i class="zmdi zmdi-edit"></i>
                                 </button>
                                 @if ($conversion->used == 0)
                                     <button class="btn btn-danger" onclick="deleteData({{ $conversion->id }})">
-                                        u
+                                        <i class="zmdi zmdi-hc-fw"></i>
                                     </button>
                                 @endif
 
