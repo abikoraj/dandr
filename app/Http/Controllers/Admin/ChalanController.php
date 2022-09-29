@@ -219,9 +219,13 @@ class ChalanController extends Controller
     {
         if($request->getMethod()=="POST"){
             DB::update('update employee_chalans set approved=1 where id=?', [$id]);
-            return redirect()->route('');
+            return redirect()->route('admin.chalan.index');
         }else{
             $chalan=DB::selectOne('select c.*,u.name from employee_chalans c join users u on c.user_id=u.id where c.id=?',[$id]);
+            if($chalan->approved==1){
+                return redirect()->route('admin.chalan.index');
+            }
+
             $items=DB::select('select c.*,i.title from chalan_items c join items i on c.item_id=i.id where c.employee_chalan_id=?',[$id]);
             return view('admin.chalan.approve.index',compact('chalan','items'));
         }

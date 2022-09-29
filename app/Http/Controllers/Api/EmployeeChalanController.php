@@ -43,7 +43,6 @@ class EmployeeChalanController extends Controller
         $sellItem->due=$sellItem->total;
         $sellItem->paid=0;
 
-
         $sellItem->user_id=$user->id;
         $sellItem->chalan_item_id=$chalanItem->id;
         $sellItem->employee_chalan_id=$chalan->id;

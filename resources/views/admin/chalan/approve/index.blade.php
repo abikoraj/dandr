@@ -43,9 +43,11 @@
     <div class="shadow p-3 mb-3">
         <div class="row">
             <div class="col-md-3">
-                <button class="btn btn-success w-100">
-                    Edit
-                </button>
+                @if (auth_has_per('15.08'))
+                    <a href="{{ route('admin.chalan.manage.edit',$chalan->id) }}" class="btn btn-success w-100">
+                        Edit
+                    </a>
+                @endif
 
             </div>
             <div class="col-md-3">
