@@ -17,7 +17,7 @@ class EmployeeChalanController extends Controller
         
         $chalan=DB::table('employee_chalans')
         ->where('date',$request->date)
-        ->where('user_id',Auth::user()->id)->first(['id','closed']);
+        ->where('user_id',Auth::user()->id)->first(['id','closed','approved']);
 
         if($chalan->approved==0){
             return response()->json([
@@ -55,7 +55,7 @@ class EmployeeChalanController extends Controller
     {
         $chalan=DB::table('employee_chalans')
         ->where('date',$request->date)
-        ->where('user_id',Auth::user()->id)->first(['id','closed']);
+        ->where('user_id',Auth::user()->id)->first(['id','closed','approved']);
         if($chalan->closed==1){
             return response()->json([
                 'status'=>false,
