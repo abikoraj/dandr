@@ -64,7 +64,11 @@
                 </select>
             </div>
             <div class="mb-2 col-md-4" id="batch_id_holder">
-                <label for="batch_id">Batch</label>
+                <div class="d-flex justify-content-between">
+
+                    <label for="batch_id">Batch </label> <span class="text-primary font-weight-bold"
+                        style="cursor: pointer;" onclick="loadAllQty()">Load All Qty</span>
+                </div>
                 <select name="batch_id" id="batch_id" class="ms form-control">
 
                 </select>
@@ -90,11 +94,11 @@
             </div>
         </div>
         <hr>
-        <div id="current-stock-holder" >
+        <div id="current-stock-holder">
 
             <div class="row">
 
-                <div class="col-md-4" >
+                <div class="col-md-4">
                     <strong>
                         Current Stock :
                     </strong>
@@ -189,10 +193,10 @@
     <script>
         var centerStocks = {!! json_encode($centerStocks) !!};
         console.log(centerStocks);
-        const batchURL="{{route('admin.simple.manufacture.batches',['id'=>'xx_id'])}}";
+        const batchURL = "{{ route('admin.simple.manufacture.batches', ['id' => 'xx_id']) }}";
         var data = {
-            batchtype:'milk',
-            batches:[],
+            batchtype: 'milk',
+            batches: [],
             rawMaterials: [],
             wastage: [],
             items: [],
@@ -266,52 +270,56 @@
                         html += `<tr>
                                 <td>${localData.item.title}</td>
                                 <td>${localData.center.name}</td>`;
-                        if(type=='rawMaterials' || type=='wastage'){
-                                html += `<td>${localData.batch_id}</td>`;
+                        if (type == 'rawMaterials' || type == 'wastage') {
+                            html += `<td>${localData.batch_id}</td>`;
                         }
-                            html+=`<td>${localData.amount}</td><td><button onclick="data.clear(${localData.uid},${localData.type})">Del</button></td>
+                        html += `<td>${localData.amount}</td><td><button onclick="data.clear(${localData.uid},${localData.type})">Del</button></td>
                             </tr>`;
                     });
                     $('#' + type + "Data").html(html);
                 });
             },
-            loadBatch:function(){
-                if(CurrentStep==1 || CurrentStep==3){
+            loadBatch: function() {
+                if (CurrentStep == 1 || CurrentStep == 3) {
 
-                    const item_id=$('#item_id').val();
-                    if(item_id==undefined){
+                    const item_id = $('#item_id').val();
+                    if (item_id == undefined) {
                         return;
                     }
-                    const url=batchURL.replace('xx_id',item_id);
+                    const url = batchURL.replace('xx_id', item_id);
                     axios.get(url)
-                    .then((res)=>{
+                        .then((res) => {
 
-                        data.batchtype=res.data.type;
-                        if(data.batchtype=='nobatch'){
+                            data.batchtype = res.data.type;
+                            if (data.batchtype == 'nobatch') {
 
-                            $('#batch_id_holder').hide();
-                        }else{
-                            $('#batch_id_holder').show();
+                                $('#batch_id_holder').hide();
+                            } else {
+                                $('#batch_id_holder').show();
 
 
-                            if(data.batchtype=='others'){
-                                data.batches=res.data.data;
-                                $('#batch_id').html(data.batches.map(o=>`<option value="${o.batch_id}">${o.batch_no} (${o.amount})</option>`).join(''));
+                                if (data.batchtype == 'others') {
+                                    data.batches = res.data.data;
+                                    $('#batch_id').html(data.batches.map(o =>
+                                        `<option value="${o.batch_id}">${o.batch_no} (${o.amount})</option>`
+                                        ).join(''));
 
-                            }else if(res.data.type=='milk'){
-                                data.batches=res.data.data.map(o=>{
-                                    return {
-                                        batch_no:toNepaliDate(o.batch_no),
-                                        amount:o.amount
-                                    }
-                                })
-                                $('#batch_id').html(data.batches.map(o=>`<option value="${o.batch_no}">${o.batch_no} (${o.amount})</option>`).join(''));
+                                } else if (res.data.type == 'milk') {
+                                    data.batches = res.data.data.map(o => {
+                                        return {
+                                            batch_no: toNepaliDate(o.batch_no),
+                                            amount: o.amount
+                                        }
+                                    })
+                                    $('#batch_id').html(data.batches.map(o =>
+                                        `<option value="${o.batch_no}">${o.batch_no} (${o.amount})</option>`
+                                        ).join(''));
+                                }
                             }
-                        }
-                    })
-                    .catch((err)=>{
-                        console.log(err);
-                    });
+                        })
+                        .catch((err) => {
+                            console.log(err);
+                        });
                 }
             }
         }
@@ -327,10 +335,10 @@
             $('.steps').removeClass('active');
             $('.step-' + CurrentStep).addClass('active');
             $('#add-type').html(steps[CurrentStep]);
-            if(CurrentStep==1 || CurrentStep==3){
+            if (CurrentStep == 1 || CurrentStep == 3) {
                 $('#current-stock-holder').show();
                 $('#batch_id_holder').show();
-            }else{
+            } else {
                 $('#current-stock-holder').hide();
                 $('#batch_id_holder').hide();
             }
@@ -355,7 +363,7 @@
             }).join('')));
             data.load();
 
-            $('#item_id').blur(function (e) {
+            $('#item_id').blur(function(e) {
                 e.preventDefault();
                 $('#batch_id').html("");
                 data.loadBatch();
@@ -398,7 +406,7 @@
             if (prompt('Enter yes to continue') != 'yes') {
                 return;
             }
-            
+
             data.date = $('#nepali-date').val();
             const localData = {
                 date: data.date,
@@ -415,7 +423,7 @@
                         center_id: local.center.id,
                         amount: local.amount,
                         type: local.type,
-                        batch_id:local.type==1?local.batch_id:null,
+                        batch_id: local.type == 1 ? local.batch_id : null,
                     })
                     localData.item_ids.push(local.item.id);
                 });
@@ -457,20 +465,21 @@
 
             }
 
-            if (CurrentStep == 1 || CurrentStep == 3 ) {
+            if (CurrentStep == 1 || CurrentStep == 3) {
 
-                if(data.batchtype=='nobatch'){
+                if (data.batchtype == 'nobatch') {
                     const stock = centerStocks.find(o => o.item_id == item_id && o.center_id == center_id);
                     if (stock != undefined) {
                         const stockAmount = parseFloat(stock.amount);
-                        let loadedStockAmount =0;
-                        const loadedStocks=data.rawMaterials.filter(o=>o.item.id==item_id && o.center.id==center_id);
-                        console.log(stock, amount, CurrentStep,loadedStocks,loadedStockAmount, "all data");
+                        let loadedStockAmount = 0;
+                        const loadedStocks = data.rawMaterials.filter(o => o.item.id == item_id && o.center.id ==
+                        center_id);
+                        console.log(stock, amount, CurrentStep, loadedStocks, loadedStockAmount, "all data");
                         loadedStocks.forEach(loadedStock => {
-                            loadedStockAmount+=loadedStock.amount;
+                            loadedStockAmount += loadedStock.amount;
                         });
 
-                        if (amount > (stockAmount-loadedStockAmount)) {
+                        if (amount > (stockAmount - loadedStockAmount)) {
                             alert('Not Enough Stock');
                             return;
                         }
@@ -478,44 +487,46 @@
                         alert('Not Enough Stock');
                         return;
                     }
-                }else{
-                    if(batch_id!=undefined && batch_id!=null){
+                } else {
+                    if (batch_id != undefined && batch_id != null) {
                         let stock;
-                        if(data.batchtype=='milk'){
-                            stock=data.batches.find(o=>o.batch_no==batch_id);
-                        }else{
-                            stock=data.batches.find(o=>o.batch_id==batch_id);
+                        if (data.batchtype == 'milk') {
+                            stock = data.batches.find(o => o.batch_no == batch_id);
+                        } else {
+                            stock = data.batches.find(o => o.batch_id == batch_id);
                         }
 
-                        if(stock!=undefined){
-                            const stockAmount=stock.amount;
-                            loadedStockAmount=0;
-                            const loadedStocks=data.rawMaterials.filter(o=>o.item.id==item_id && o.batch_id==batch_id);
-                           if(loadedStocks!=null && loadedStocks !=null)
-                            loadedStocks.forEach(loadedStock => {
-                                loadedStockAmount+=loadedStock.amount;
-                            });
+                        if (stock != undefined) {
+                            const stockAmount = stock.amount;
+                            loadedStockAmount = 0;
+                            const loadedStocks = data.rawMaterials.filter(o => o.item.id == item_id && o.batch_id ==
+                                batch_id);
+                            if (loadedStocks != null && loadedStocks != null)
+                                loadedStocks.forEach(loadedStock => {
+                                    loadedStockAmount += loadedStock.amount;
+                                });
 
-                            const loadedStockswastage=data.wastage.filter(o=>o.item.id==item_id && o.batch_id==batch_id);
-                            if(loadedStockswastage!=null && loadedStockswastage!= undefined){
+                            const loadedStockswastage = data.wastage.filter(o => o.item.id == item_id && o.batch_id ==
+                                batch_id);
+                            if (loadedStockswastage != null && loadedStockswastage != undefined) {
                                 loadedStockswastage.forEach(loadedStock => {
-                                    loadedStockAmount+=loadedStock.amount;
+                                    loadedStockAmount += loadedStock.amount;
                                 });
                             }
 
-                        if (amount > (stockAmount-loadedStockAmount)) {
-                            alert('Not Enough Stock');
-                            return;
-                        }
-                            if(stock.amount<amount){
+                            if (amount > (stockAmount - loadedStockAmount)) {
                                 alert('Not Enough Stock');
                                 return;
                             }
-                        }else{
+                            if (stock.amount < amount) {
+                                alert('Not Enough Stock');
+                                return;
+                            }
+                        } else {
                             alert('Not Enough Stock');
                             return;
                         }
-                    }else{
+                    } else {
                         alert("Please choose batch;")
                         return;
                     }
@@ -526,7 +537,7 @@
                     item: items.find(o => o.id == item_id),
                     center: centers.find(o => o.id == center_id),
                     amount: amount,
-                    batch_id:batch_id,
+                    batch_id: batch_id,
                     uid: uid++,
                     type: CurrentStep
                 };
@@ -552,5 +563,18 @@
                 AddData();
             }
         });
+
+        function loadAllQty() {
+            const batch_id = $('#batch_id').val();
+            if (batch_id != undefined && batch_id != null) {
+                let stock;
+                if (data.batchtype == 'milk') {
+                    stock = data.batches.find(o => o.batch_no == batch_id);
+                } else {
+                    stock = data.batches.find(o => o.batch_id == batch_id);
+                }
+                $('#amount').val(stock.amount);
+            }
+        }
     </script>
 @endsection
