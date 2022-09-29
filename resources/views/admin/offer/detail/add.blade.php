@@ -82,9 +82,9 @@
                     @else
                     <div class="col-md-12">
                         <div class="col-5 pr-1">
-                            <select type="text" class="form-control" id="free_item" placeholder="Free Item">
+                            <select type="text" class="form-control ms" id="free_item" placeholder="Free Item">
                                 @foreach ($items as $item)
-                                    <option value="{{$item->id}}">{{$item->name}}</option>
+                                    <option value="{{$item->id}}">{{$item->title}}</option>
                                 @endforeach
                             </select>
                         </div>
@@ -154,7 +154,7 @@
         }
 
         @if($large)
-        
+
             function filteritems (_keyword) {
                 console.log(this,_keyword);
                 let _list=[];
@@ -174,7 +174,7 @@
 
             function renderItem(){
                 html="";
-           
+
                 this.forEach((item) => {
                     html +='<tr id="item-'+item.id+'"><td>'+item.title+'</td>'+
                     '<td class="text-right">'+
@@ -184,7 +184,7 @@
             }
             function renderFreeItem(){
                 html='<table> ';
-           
+
                 this.forEach((item) => {
                     html+='<tr class="search-item" onclick="selectFree('+item.id+',\''+item.title+'\')">'+
                         '<td>'+item.title+'</td>'+

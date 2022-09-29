@@ -62,12 +62,12 @@
         </div>
         <div class="col-md-12 py-2">
             <label>
-                Payment Detail
+                Payment Receive Detail
             </label>
-            <textarea id="method" class="form-control" placeholder="Enter Payment Method"></textarea>
+            <textarea id="method" class="form-control" placeholder="Payment Receive Detail"></textarea>
         </div>
         <div class="col-md-4">
-            <button class="btn btn-success" onclick="pay()">Pay</button>
+            <button class="btn btn-success" onclick="pay()">Save Data</button>
         </div>
         <div class="col-12">
             <div class="row">
