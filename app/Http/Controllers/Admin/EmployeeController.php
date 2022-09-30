@@ -199,7 +199,7 @@ class EmployeeController extends Controller
         $employee = Employee::where('id', $request->employee_id)->first();
 
         if (!($employee->sessionClosed($np->year, $np->month))) {
-            return response('previous Month Not Closed', 500);
+            return response('Previous month not closed', 500);
         }
         $advance = new EmployeeAdvance();
         $advance->employee_id = $request->employee_id;
@@ -349,7 +349,7 @@ class EmployeeController extends Controller
             $salaryPay->save();
 
             $taxtitle= env('use_employeetax',false)?(" ( -".env('emp_tax',1)."% tax)"):"";
-               
+
             if (env('acc_system', 'old') == 'old') {
                 $ledger->addLedger('Salary Paid for ' . $request->year . "-" . ($request->month < 10 ? "0" . $request->month : $request->month) .$taxtitle, 1, $request->pay, $date, '124', $salaryPay->id);
             } else {
@@ -362,7 +362,7 @@ class EmployeeController extends Controller
                     $salaryPay->id
                 );
             }
-            
+
 
             $sessionClose = new EmployeeSession();
             $sessionClose->user_id = $employee->user_id;
@@ -449,7 +449,7 @@ class EmployeeController extends Controller
             $sessionClose->save();
             return response('ok');
         } else {
-            return response('previous Month Not Closed', 500);
+            return response('Previous month not closed', 500);
         }
     }
 

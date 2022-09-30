@@ -68,6 +68,8 @@
                     })
                     .then((res) => {
                         loaddata();
+                    showNotification('bg-success', 'Payment received deleted successfully!');
+
                     })
                     .catch((err) => {
 
@@ -114,6 +116,7 @@
                     loaddata();
                     hideProgress();
                     // setDate();
+                    showNotification('bg-success', 'Payment received added successfully!');
                 })
                 .catch(function(response) {
                     //handle error

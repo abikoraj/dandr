@@ -20,7 +20,7 @@
   </style>
     <div class="row">
       <div class="col-md-6">
-        <label for="">supplier </label>
+        <label for="">Supplier </label>
         <div>{{$bill->user->name}}</div>
       </div>
       <div class="col-md-3">

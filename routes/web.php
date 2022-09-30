@@ -362,6 +362,7 @@ Route::name('admin.')->group(function () {
             Route::get('categories', 'Admin\ExpenseController@categoryIndex')->name('category')->middleware('permmission:06.01');
             Route::post('category-add', 'Admin\ExpenseController@categoryAdd')->name('category.add');
             Route::post('category-update', 'Admin\ExpenseController@categoryUpdate')->name('category.update');
+            Route::post('category-delete/{id}', 'Admin\ExpenseController@categoryDelete')->name('category.delete');
             Route::post('category/expenses', 'Admin\ExpenseController@categoryExpenses')->name('list-category');
 
             // XXX  expensess
@@ -470,7 +471,7 @@ Route::name('admin.')->group(function () {
 
                 Route::get('/', [ChalanController::class, 'index'])->name('index');
                 Route::match(['get', 'post'], '/items', [ChalanController::class, 'ItemList'])->name('item.list');
-               
+
             });
 
             Route::match(['get', 'post'], '/item-sell', [ChalanController::class, 'chalanItemSale'])->name('item.sell')->middleware('permmission:15.02');
@@ -505,7 +506,7 @@ Route::name('admin.')->group(function () {
             Route::post('', [ChalanPaymentController::class, 'index'])->name('index');
         });
 
-        //XXX chalan closing 
+        //XXX chalan closing
         Route::prefix('chalan-closing')->middleware('permmission:15.04')->name('chalan.closing.')->group(function () {
             Route::match(['GET', 'POST'], 'start/{id}', [ChalanClosingController::class, 'index'])->name('index');
             Route::get('add', [ChalanClosingController::class, 'add'])->name('add');

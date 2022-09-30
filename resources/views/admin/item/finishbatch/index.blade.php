@@ -1,5 +1,8 @@
 @extends('admin.layouts.app')
 @section('content')
+@section('head-title')
+Batch Finished
+@endsection
     <div class="row">
         <div class="col-md-3">
             <label for="item_id">Items</label>

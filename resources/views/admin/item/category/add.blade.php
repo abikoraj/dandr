@@ -4,11 +4,11 @@
         <div class="row justify-content-center">
             <div class="col-md-3">
                 <label for="name">Category Name</label>
-                <input type="text" name="name" id="name" class="form-control">
+                <input type="text" name="name" id="name" required class="form-control">
             </div>
             <div class="col-md-3">
                 <label for="price">Category Rate</label>
-                <input type="number" min="0" name="price" id="price" class="form-control">
+                <input type="number" min="0" name="price" required id="price" class="form-control">
             </div>
             <div class="col-md-3 d-flex align-items-end">
                 <button class="btn btn-primary">
