@@ -41,7 +41,7 @@
                             <button class="btn btn-primary w-50">Update</button>
                             @endif
                             @if (auth_has_per('06.04'))
-                            <span class="btn btn-danger w-50 text-white" onclick="delete()">Delete</span>
+                            <span class="btn btn-danger w-50 text-white" onclick="del()">Delete</span>
                             @endif
                         </div>
                     </form>
