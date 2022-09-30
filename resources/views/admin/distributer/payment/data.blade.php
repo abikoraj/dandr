@@ -74,6 +74,5 @@
                 @include('admin.payment.take')
             </div>
         </div>
-
     </div>
 </div>

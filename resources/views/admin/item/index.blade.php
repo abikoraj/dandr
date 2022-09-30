@@ -29,7 +29,7 @@
                 <tr>
                     <th>Item Name</th>
                     <th>Item Number</th>
-                    <th>sell Price </th>
+                    <th>Sell Price </th>
                     <th>Stock </th>
                     <th>Unit Type</th>
                     {{-- <th>Reward </th> --}}

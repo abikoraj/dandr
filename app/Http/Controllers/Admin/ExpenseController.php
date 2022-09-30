@@ -44,6 +44,12 @@ class ExpenseController extends Controller
         return view('admin.expense.list', compact('exps'));
     }
 
+    public function categoryDelete($id){
+        $expcat = Expcategory::where('id', $id)->first();
+        $expcat->delete();
+        return redirect()->back()->with('message', 'Category deleted successfully!');
+    }
+
 
     //XXX expenses
     public function index()
