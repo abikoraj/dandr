@@ -59,10 +59,10 @@
     <table class="w-100">
         <tr>
             <th>
-                Average SNF: {{ truncate_decimals($farmers->avg('snf'), 2) }}
+                Average SNF: {{ truncate_decimals($farmers->where('snf','>',0)->avg('snf'), 2) }}
             </th>
             <th>
-                Average Fat: {{ truncate_decimals($farmers->avg('fat'), 2) }}
+                Average Fat: {{ truncate_decimals($farmers->where('fat','>',0)->avg('fat'), 2) }}
             </th>
           
             <th>

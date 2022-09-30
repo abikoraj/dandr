@@ -94,8 +94,8 @@ class DayReportController extends Controller
         
             $farmers=$farmers->where('milk','>',0)->where('rate','>',0);
             $summary=(object)[
-                "snf"=>truncate_decimals( $farmers->avg('snf'),2),
-                "fat"=>truncate_decimals( $farmers->avg('fat'),2),
+                "snf"=>truncate_decimals( $farmers->where('snf','>',0)->avg('snf'),2),
+                "fat"=>truncate_decimals( $farmers->where('fat','>',0)->avg('fat'),2),
                 "milk"=>$farmers->sum('milk'),
                 "grandtotal"=>$farmers->sum('grandtotal'),
             ];
