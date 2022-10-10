@@ -290,4 +290,14 @@ class DistributerController extends Controller
             return view('admin.distributer.credit.index', compact('data'));
         }
     }
+
+    public function changePassword(Request $request,User $user)
+    {
+       
+        if($request->getMethod()=="POST"){
+
+        }else{
+            return view('admin.distributer.changepass',compact('user'));
+        }
+    }
 }

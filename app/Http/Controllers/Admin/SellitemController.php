@@ -30,7 +30,7 @@ class SellitemController extends Controller
     public function addSellItem(Request $request)
     {
 
-        $date = getNepaliDate('-', '', $request->date);
+        $date = getNepaliDate( $request->date);
         $large = env('large', false);
 
         $user = User::join('farmers', 'users.id', '=', 'farmers.user_id')->where('users.no', $request->user_id)->where('farmers.center_id', $request->center_id)->select('users.*', 'farmers.center_id')->first();

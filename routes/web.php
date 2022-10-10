@@ -234,6 +234,7 @@ Route::name('admin.')->group(function () {
             Route::post('add', [DistributerController::class, 'add'])->name('add')->middleware('permmission:04.02');
             Route::get('list', [DistributerController::class, 'list'])->name('list');
             Route::post('update', [DistributerController::class, 'update'])->name('update')->middleware('permmission:04.03');
+            Route::match(['GET','POST'],'changePassword/{user}', [DistributerController::class, 'changePassword'])->name('changePassword')->middleware('permmission:04.03');
             Route::post('delete', [DistributerController::class, 'delete'])->name('delete')->middleware('permmission:04.04');
             Route::middleware('permmission:04.04')->group(function () {
 

@@ -10,6 +10,8 @@
 
         <button type="button" data-distributer="{{$user->toJson()}}" class="btn btn-primary btn-sm" onclick="initEdit(this);">Edit</button>
         |
+        <a href="" class="btn btn-primary btn-sm" href="{{route('admin.distributer.changePassword',['user'=>$user->id])}}">change pass</a>
+        |
         @endif
         @if (auth_has_per('04.11'))
         <a href="{{ route('admin.distributer.detail',$user->id) }}" class="btn btn-primary btn-sm">View</a>
@@ -17,7 +19,8 @@
         @endif
         @if (auth_has_per('04.04'))
 
-        <button class="btn btn-danger btn-sm" onclick="removeData({{$user->id}});">Delete</button></td>
+            <button class="btn btn-danger btn-sm" onclick="removeData({{$user->id}});">Delete</button></td>
+            
         @endif
 </tr>
 {{-- dfdfdf --}}
