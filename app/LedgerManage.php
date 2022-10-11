@@ -103,6 +103,9 @@ class LedgerManage
             $particular = substr($particular, 0, 187) . '...';
         }
         $l->amount = $amount;
+        if(strlen($particular)>190){
+            $particular=substr($particular,0,190);
+        }
         $l->title = $particular;
         $l->date = $date;
         $l->identifire = $identifier;
