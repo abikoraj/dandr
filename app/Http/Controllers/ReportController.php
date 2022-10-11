@@ -251,7 +251,7 @@ class ReportController extends Controller
                 }
 
                 
-                if($balance!=0 && $farmer->milk!=0 ){
+                if($balance!=0 || $farmer->milk!=0 ){
 
                     array_push($minList, $farmer);
                     $index += 1;
