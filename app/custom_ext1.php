@@ -56,4 +56,11 @@ function getUsers($arr = [], $columns = [])
         }
     }
     return $users;
-};
+}
+
+function isPositive($num){
+
+}
+function getPositive($num){
+    return isPositive($num)?$num:(-1*$num);
+}

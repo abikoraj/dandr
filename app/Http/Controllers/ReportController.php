@@ -103,6 +103,7 @@ class ReportController extends Controller
             return view('admin.report.farmer.index');
         }
     }
+    
     public function farmer(Request $request)
     {
         if ($request->getMethod() == "POST") {

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -44,8 +45,14 @@ class GeneralController extends Controller
             ->join('users', 'users.id', '=', 'distributers.user_id')
             ->select(['users.name', 'users.phone'])->get();
         $customers = array_merge($customer->toArray(), $distributors->toArray());
-
         return response()->json($customers);
+    }
+
+    public function latestCustomerFetch()
+    {
+        $max=Carbon::now();
+       
+        return response()->json(compact('latestCustomer','latestDistributer'));
     }
 
     public function employeeChalan(Request $request)

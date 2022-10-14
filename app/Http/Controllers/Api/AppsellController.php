@@ -61,7 +61,7 @@ class AppsellController extends Controller
 
     public function customerPay(Request $request)
     {
-        $date = getNepaliDate($request->date);
+        $date = $request->date;
         $phone = $request->phone;
         if ($request->filled('phone')) {
             $user = User::where('phone', $phone)->first();
@@ -81,15 +81,20 @@ class AppsellController extends Controller
                 $customer->save();
             }
             $ledger = new LedgerManage($user->id);
-            if ($request->paid > 0) {
-                $ledger->addLedger('Payment Receipt', 1, $request->paid, $date, 503);
+            if ($request->amount > 0) {
+                $ledger->addLedger('Payment Received', 1, $request->amount, $date, 503);
             }
             return response()->json([
-                'status' => 'success',
+                'status' => true,
                 'message' => 'Customer Payment Received Successfully',
-                'data' => $request->all()
             ]);
         }
+
+        return response()->json([
+            'status' => false,
+            'message' => 'Some error occured please try again',
+        ]);
+
     }
 
     public function appBuy(Request $request)
@@ -149,5 +154,40 @@ class AppsellController extends Controller
             'message' => 'Due List',
             'users' => $users
         ]);
+    }
+
+    public function customerDue($phone)
+    {
+        $user = User::where('phone', $phone)->first();
+        if ($user == null) {
+            abort(404, 'customer not found');
+        }
+        $data=DB::selectOne("select (select sum(amount) from ledgers where user_id={$user->id} and type=1) as cr,(select sum(amount) from ledgers where user_id={$user->id} and type=2) as dr");
+        return response()->json($data);
+        
+    }
+
+    // public function balance(){
+
+    // }
+
+    public function CustomerSearch(Request $request)
+    {
+        // return response()->json([$request->phones,gettype($request->phones)]);
+        $phones = '';
+        if (count($request->phones) > 0) {
+            $phoneList=[];
+            foreach ($request->phones as $key => $phone) {
+                array_push($phoneList,"'{$phone}'");
+            }
+            $phonesSTR = implode(',', $phoneList);
+            $phones = "and u.phone not in ({$phonesSTR})";
+        }
+        // return response()->json([$request->phones, $phones]);
+
+        $customers = DB::select("select u.name,u.phone from users u join customers c on c.user_id=u.id where 
+        (LOWER(u.name) like '{$request->keyword}%' or u.phone like '{$request->keyword}%'  ) {$phones}
+        limit {$request->limit}");
+        return response()->json($customers);
     }
 }

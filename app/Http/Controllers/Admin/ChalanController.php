@@ -244,8 +244,15 @@ class ChalanController extends Controller
     public function edit(Request $request,$id)
     {
         if($request->getMethod()=="POST"){
-            // dd($request->all());
-            DB::update('update chalan_items set qty=?,rate=? where id=?',[$request->qty,$request->rate,$id]);
+            $chalanItem=ChalanItem::where('id',$id)->first();
+            $chalanItem->rate=$request->rate;
+            $qtyChange=$request->qty-$chalanItem->qty;
+            $chalanItem->qty=$request->qty;
+            $chalanItem->save();
+            if($qtyChange!=0){
+                maintainStock($chalanItem->item_id,getPositive($qtyChange),$chalanItem->center_id,isPositive($qtyChange)?'out':'in');
+            }
+
 
         }else{
             $chalan=DB::selectOne('select c.*,u.name from employee_chalans c join users u on c.user_id=u.id where c.id=?',[$id]);
@@ -261,7 +268,9 @@ class ChalanController extends Controller
             if(DB::table('chalan_sells')->where('chalan_item_id',$request->id)->count()>0){
                 throw new \Exception('Chalan item already used.');
             }
-            DB::update('delete from chalan_items where id=?',[$request->id]);
+            $chalanItem=ChalanItem::where('id',$request->id)->first();
+            maintainStock($chalanItem->item_id,$chalanItem->qty,$chalanItem->center_id,'in');
+
         }
     }
 
