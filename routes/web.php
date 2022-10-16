@@ -28,6 +28,7 @@ use App\Http\Controllers\Admin\ItemCategoryController;
 use App\Http\Controllers\Admin\ItemController;
 use App\Http\Controllers\Admin\ItemStockController;
 use App\Http\Controllers\Admin\ItemVariantController;
+use App\Http\Controllers\Admin\JinsiMilanController;
 use App\Http\Controllers\Admin\Manufacture\ManufactreProductController;
 use App\Http\Controllers\Admin\Manufacture\ManufactureProcessController;
 use App\Http\Controllers\Admin\MilkController;
@@ -55,6 +56,7 @@ use App\Http\Controllers\ExpenseReportController;
 use App\Http\Controllers\FarmerReportController;
 use App\Http\Controllers\FixedAssetController;
 use App\Http\Controllers\HomeController as ControllersHomeController;
+use App\Http\Controllers\LedgerController;
 use App\Http\Controllers\MilkReportController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\POS\BillingController;
@@ -623,6 +625,13 @@ Route::name('admin.')->group(function () {
             Route::post('del', [PackagingController::class, 'del'])->name('del');
         });
 
+        Route::prefix('jinsimilan')->name('jinsimilan.')->group(function () {
+            Route::match(['GET','POST'],'',[JinsiMilanController::class,'index'])->name('index');
+            Route::match(['GET','POST'],'add',[JinsiMilanController::class,'add'])->name('add');
+            Route::match(['GET','POST'],'del',[JinsiMilanController::class,'del'])->name('del');
+            Route::match(['GET','POST'],'edit/{id}',[JinsiMilanController::class,'edit'])->name('edit');
+        });
+
         Route::get('xpay/{id}/{identifire}', [PaymentController::class, 'index'])->name('xpay');
 
 
@@ -701,6 +710,7 @@ Route::name('admin.')->group(function () {
         // XXX Ledgers
         Route::group(['prefix' => 'ledger'], function () {
             Route::name('ledger.')->group(function () {
+                Route::post('balance',[LedgerController::class,'balance'])->name('balance');
                 Route::match(['GET', 'POST'], 'update', 'LedgerController@update')->name('update')->middleware('authority');
                 Route::match(['GET', 'POST'], 'edit', 'LedgerController@edit')->name('edit')->middleware('authority');
                 Route::match(['GET', 'POST'], 'del', 'LedgerController@del')->name('del')->middleware('authority');

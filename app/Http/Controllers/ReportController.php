@@ -103,7 +103,7 @@ class ReportController extends Controller
             return view('admin.report.farmer.index');
         }
     }
-    
+
     public function farmer(Request $request)
     {
         if ($request->getMethod() == "POST") {
@@ -114,7 +114,7 @@ class ReportController extends Controller
             $center = Center::find($request->center_id);
             $year = $request->year;
             $month = $request->month;
-            $session = $request->session??1;
+            $session = $request->session ?? 1;
             $usetc = (env('usetc', 0) == 1) && ($center->show_ts);
             $usecc = (env('usecc', 0) == 1) && ($center->show_cc);
 
@@ -122,23 +122,26 @@ class ReportController extends Controller
             $usetransport = (env('usetransportamount', 0) == 1) && ($center->use_transport);
 
             $newsession = SessionWatch::where(['year' => $year, 'month' => $month, 'session' => $session, 'center_id' => $center->id])->count() == 0;
+            // $query = "select  u.id,u.no,u.name,u.usecc,u.rate,u.usetc,u.userate,u.ts_amount,u.use_ts_amount,u.protsahan,u.use_protsahan,u.transport,u.use_transport,
 
 
-            $query = "select  u.id,u.no,u.name,u.usecc,u.rate,u.usetc,u.userate,u.ts_amount,u.use_ts_amount,u.protsahan,u.use_protsahan,u.transport,u.use_transport,
+            $query = "select  u.*,
             (select sum(m_amount) + sum(e_amount) from milkdatas where user_id= u.id and date>={$range[1]} and date<={$range[2]}) as milk,
             (select avg(snf) from snffats where user_id= u.id and date>={$range[1]} and date<={$range[2]}) as snf,
             (select avg(fat) from snffats where user_id= u.id and date>={$range[1]} and date<={$range[2]}) as fat,
-            (select sum(amount) from advances where user_id= u.id and date>={$range[1]} and date<={$range[2]}) as advance,
-            (select sum(amount) from ledgers where user_id= u.id and date>={$range[1]} and date<={$range[2]} and identifire=121) as paidamount,
-            (select sum(amount) from ledgers where user_id= u.id and date>={$range[1]} and date<={$range[2]} and (identifire=106 or identifire=107)) as fpaid,
-            (select sum(amount) from ledgers where user_id= u.id and date>={$range[1]} and date<={$range[2]} and identifire=103) as purchase,
-            (select sum(amount) from ledgers where user_id= u.id and date<{$range[1]} and type=1) as prevcr,
-            (select sum(amount) from ledgers where user_id= u.id and date<{$range[1]} and type=2) as prevdr,
-            (select sum(amount) from ledgers where user_id= u.id and date>={$range[1]} and date<={$range[2]} and (identifire=101 or identifire=102) and type=1) as openingcr,
-            (select sum(amount) from ledgers where user_id= u.id and date>={$range[1]} and date<={$range[2]} and (identifire=101 or identifire=102) and type=2) as openingdr,
-            (select sum(amount) from ledgers where user_id= u.id and date>={$range[1]} and date<={$range[2]} and identifire=120 and type=1) as closingcr,
-            (select sum(amount) from ledgers where user_id= u.id and date>={$range[1]} and date<={$range[2]} and identifire=120  and type=2) as closingdr
-            from (select iu.name,iu.id,iu.no,f.usecc,f.rate,f.usetc,f.userate,f.ts_amount,f.use_ts_amount,f.protsahan,f.use_protsahan,f.transport,f.use_transport  from users iu join farmers f on iu.id=f.user_id where  f.center_id={$center->id}  {$farmerRange}) u order by u.no asc";
+            ifnull((select sum(amount) from advances where user_id= u.id and date>={$range[1]} and date<={$range[2]}),0) as advance,
+            ifnull((select sum(amount) from ledgers where user_id= u.id and date>={$range[1]} and date<={$range[2]} and identifire=121),0) as paidamount,
+            ifnull((select sum(amount) from ledgers where user_id= u.id and date>={$range[1]} and date<={$range[2]} and identifire=408),0) as jinsipaid,
+            ifnull((select sum(amount) from ledgers where user_id= u.id and date>={$range[1]} and date<={$range[2]} and identifire=409),0) as jinsipurchase,
+            ifnull((select sum(amount) from ledgers where user_id= u.id and date>={$range[1]} and date<={$range[2]} and (identifire=106 or identifire=107)),0) as fpaid,
+            ifnull((select sum(amount) from ledgers where user_id= u.id and date>={$range[1]} and date<={$range[2]} and identifire=103),0) as purchase,
+            ifnull((select sum(amount) from ledgers where user_id= u.id and date<{$range[1]} and type=1),0) as prevcr,
+            ifnull((select sum(amount) from ledgers where user_id= u.id and date<{$range[1]} and type=2),0) as prevdr,
+            ifnull((select sum(amount) from ledgers where user_id= u.id and date>={$range[1]} and date<={$range[2]} and (identifire=101 or identifire=102) and type=1),0) as openingcr,
+            ifnull((select sum(amount) from ledgers where user_id= u.id and date>={$range[1]} and date<={$range[2]} and (identifire=101 or identifire=102) and type=2),0) as openingdr,
+            ifnull((select sum(amount) from ledgers where user_id= u.id and date>={$range[1]} and date<={$range[2]} and identifire=120 and type=1),0) as closingcr,
+            ifnull((select sum(amount) from ledgers where user_id= u.id and date>={$range[1]} and date<={$range[2]} and identifire=120  and type=2),0) as closingdr
+            from (select iu.name,iu.id,iu.no,f.usecc,f.rate,f.usetc,f.userate,f.ts_amount,f.use_ts_amount,f.protsahan,f.use_protsahan,f.transport,f.use_transport,f.use_custom_rate,f.snf_rate,f.fat_rate  from users iu join farmers f on iu.id=f.user_id where  f.center_id={$center->id}  {$farmerRange}) u order by u.no asc";
             $reports = DB::table('farmer_reports')->where(['year' => $year, 'month' => $month, 'session' => $session])->get();
 
             $farmers = DB::select($query);
@@ -149,38 +152,46 @@ class ReportController extends Controller
             $datas = [];
             $minList = [];
             $index = 1;
+            $jinsiMilan = env('jinsimilan', false);
 
             foreach ($farmers as $key => $farmer) {
                 $farmer->old = $reports->where('user_id', $farmer->id)->count() > 0;
 
                 $farmer->fat = truncate_decimals($farmer->fat);
                 $farmer->snf = truncate_decimals($farmer->snf);
-                $fatAmount = ($farmer->fat * $center->fat_rate);
-                $snfAmount = ($farmer->snf * $center->snf_rate);
+
+                if ($farmer->use_custom_rate) {
+                    $fatAmount = ($farmer->fat * $farmer->fat_rate);
+                    $snfAmount = ($farmer->snf * $farmer->snf_rate);
+                } else {
+
+                    $fatAmount = ($farmer->fat * $center->fat_rate);
+                    $snfAmount = ($farmer->snf * $center->snf_rate);
+                }
 
                 $report = $reports->where('user_id', $farmer->id)->first();
                 $hasRate = false;
                 $farmer->tc = 0;
                 $farmer->cc = 0;
                 $farmer->protsahan_amount = 0;
-                $farmer->transport_amount=0;
+                $farmer->transport_amount = 0;
                 if ($farmer->old) {
                     if ($report->has_passbook == 1) {
                         $farmer->rate = $report->rate;
                         $farmer->cc = $report->cc;
                         $farmer->tc = $report->tc;
-                        $farmer->protsahan_amount=$report->protsahan_amount;
-                        $farmer->transport_amount=$report->transport_amount;
+                        $farmer->protsahan_amount = $report->protsahan_amount;
+                        $farmer->transport_amount = $report->transport_amount;
                         $hasRate = true;
                     }
                 }
                 if (!$hasRate) {
-                    
+
                     if ($farmer->userate == 1) {
-                        
+
                         $farmer->rate = $farmer->rate;
                     } else {
-                        
+
                         $farmer->rate = truncate_decimals($fatAmount + $snfAmount);
                     }
 
@@ -201,9 +212,8 @@ class ReportController extends Controller
                     if ($farmer->use_transport == 1 && $farmer->total > 0) {
                         $farmer->transport_amount = truncate_decimals($farmer->transport * $farmer->milk, 2);
                     }
-                }else{
+                } else {
                     $farmer->total = truncate_decimals(($farmer->rate * $farmer->milk), 2);
-
                 }
 
 
@@ -213,7 +223,7 @@ class ReportController extends Controller
                     $farmer->bonus = (int)($farmer->grandtotal * $center->bonus / 100);
                 }
 
-                $farmer->grandtotal = (int)($farmer->total + $farmer->tc + $farmer->cc+$farmer->protsahan_amount+$farmer->transport_amount );
+                $farmer->grandtotal = (int)($farmer->total + $farmer->tc + $farmer->cc + $farmer->protsahan_amount + $farmer->transport_amount);
                 $prev = $farmer->prevdr - $farmer->prevcr;
                 $opening = $farmer->openingdr - $farmer->openingcr;
                 $farmer->prevTotal = $prev + $opening;
@@ -223,17 +233,21 @@ class ReportController extends Controller
                 if ($farmer->prevTotal > 0) {
                     $farmer->prevdue = $farmer->prevTotal;
                     $farmer->prevbalance = 0;
-                } else if($farmer->prevTotal<0) {
+                } else if ($farmer->prevTotal < 0) {
                     $farmer->prevdue = 0;
                     $farmer->prevbalance = (-1) * $farmer->prevTotal;
-                }else{
+                } else {
                     $farmer->prevdue = 0;
                     $farmer->prevbalance = 0;
-                    
                 }
 
                 $farmer->balance = 0;
                 $farmer->nettotal = 0;
+
+
+                $farmer->paidamount += $farmer->jinsipurchase;
+                $farmer->fpaid += $farmer->jinsipaid;
+
 
                 $balance = $farmer->grandtotal
                     + $farmer->fpaid
@@ -251,8 +265,8 @@ class ReportController extends Controller
                     $farmer->nettotal = $balance;
                 }
 
-                
-                if($balance!=0 || $farmer->milk!=0 ){
+
+                if ($balance != 0 || $farmer->milk != 0) {
 
                     array_push($minList, $farmer);
                     $index += 1;
@@ -282,7 +296,7 @@ class ReportController extends Controller
             $sessionDate = NepaliDate::getDateSessionLast($year, $month, $session);
             // dd($sessionDate);
             // dd($t2-$t1,$datas);
-            return view('admin.report.farmer.data', compact('newsession', 'usetc', 'usecc', 'datas', 'year', 'month', 'session', 'center', 'sessionDate','useprotsahan','usetransport'));
+            return view('admin.report.farmer.data', compact('jinsiMilan', 'newsession', 'usetc', 'usecc', 'datas', 'year', 'month', 'session', 'center', 'sessionDate', 'useprotsahan', 'usetransport'));
         } else {
 
             return view('admin.report.farmer.index');
@@ -330,7 +344,7 @@ class ReportController extends Controller
         $farmerreport->grandtotal = $request->grandtotal ?? $request->total;
         $farmerreport->year = $request->year;
         $farmerreport->month = $request->month;
-        $farmerreport->session = $request->session??1;
+        $farmerreport->session = $request->session ?? 1;
         $farmerreport->fpaid = $request->fpaid;
         $farmer = Farmer::where('user_id', $request->id)->first();
         $farmerreport->center_id = $farmer->center_id;
@@ -379,7 +393,7 @@ class ReportController extends Controller
             $farmerreport->prevbalance = $data->prevbalance ?? 0;
             $farmerreport->year = $request->year;
             $farmerreport->month = $request->month;
-            $farmerreport->session = $request->session??1;
+            $farmerreport->session = $request->session ?? 1;
             $farmerreport->center_id = $request->center_id;
             $farmerreport->save();
         }
@@ -387,7 +401,7 @@ class ReportController extends Controller
         $sessionwatch = new SessionWatch();
         $sessionwatch->year = $request->year;
         $sessionwatch->month = $request->month;
-        $sessionwatch->session = $request->session??1;
+        $sessionwatch->session = $request->session ?? 1;
         $sessionwatch->center_id = $request->center_id;
         $sessionwatch->save();
         return redirect()->back();
@@ -846,13 +860,12 @@ class ReportController extends Controller
 
                 $employee->prevbalance  = Ledger::where('date', '<', $range[1])->where('type', 2)->where('user_id', $employee->user_id)->sum('amount')
                     - Ledger::where('date', '<', $range[1])->where('type', 1)->where('user_id', $employee->user_id)->sum('amount')
-                    +Ledger::where('date', '<=', $range[2])->where('date', '>=', $range[1])->where('type', 2)->where('identifire',303)->where('user_id', $employee->user_id)->sum('amount')
-                    -Ledger::where('date', '<=', $range[2])->where('date', '>=', $range[1])->where('type', 1)->where('identifire',303)->where('user_id', $employee->user_id)->sum('amount')
-                    ;
+                    + Ledger::where('date', '<=', $range[2])->where('date', '>=', $range[1])->where('type', 2)->where('identifire', 303)->where('user_id', $employee->user_id)->sum('amount')
+                    - Ledger::where('date', '<=', $range[2])->where('date', '>=', $range[1])->where('type', 1)->where('identifire', 303)->where('user_id', $employee->user_id)->sum('amount');
 
                 $employee->advance = EmployeeAdvance::where('employee_id', $employee->id)->where('date', '>=', $range[1])->where('date', '<=', $range[2])->sum('amount')
                     +  Ledger::where('date', '>=', $range[1])->where('date', '<=', $range[2])->where('user_id', $employee->user_id)->where('identifire', 301)->sum('amount');
-                
+
                 $employee->salary = NepaliDate::calculateSalary($year, $month, $employee);
                 $employee->paid = Ledger::where('date', '>=', $range[1])->where('date', '<=', $range[2])->where('user_id', $employee->user_id)->where('identifire', 124)->sum('amount');
                 $employee->returned = Ledger::where('date', '>=', $range[1])

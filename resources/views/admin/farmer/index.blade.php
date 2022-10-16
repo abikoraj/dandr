@@ -87,7 +87,10 @@
         @endif
 
         $('#euserate')[0].checked=farmer.userate==1;
+        $('#euse_custom_rate')[0].checked=farmer.use_custom_rate==1;
         $('#erate').val(farmer.rate).change();
+        $('#efat_rate').val(farmer.fat_rate).change();
+        $('#esnf_rate').val(farmer.snf_rate).change();
         // $('#eadvance').val(ele.dataset.advance);
         $('#eid').val(farmer.id);
         $('#editModal').modal('show');
@@ -125,7 +128,7 @@
                 if(!(document.getElementById('another').checked)){
                     $('#largeModal').modal('toggle');
                 }
-                // $('#form_validation').trigger("reset");
+                $('#form_validation').trigger("reset");
                 $('#name').val('');
                 $('#farmer_no').val('');
                 $('#advance').val(0);

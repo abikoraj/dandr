@@ -71,6 +71,8 @@ class LedgerManage
     * "405" = "cash payment while chalan sales"
     * "406" = "bank payment while chalan sales"
     * "407" = "chalan due payment while chalan closing"
+    * "408" = "jinsin saman from"
+    * "409" = "jinsin saman to"
     * "135" = "customer Payment extra"
     * "134" = "customer opening Balance"
 
@@ -93,6 +95,7 @@ class LedgerManage
     * "503" = "Costumer Payment Received"
     * "504" = "Item Buy"
     * "505" = "Payment Made"
+
 
     */
     public function addLedger($particular, $type, $amount, $date, $identifier, $foreign_id = null)

@@ -35,21 +35,23 @@ class FarmerReportController extends Controller
                 user_id in (select iu.id from users iu join farmers f on iu.id=f.user_id where f.center_id={$center->id}  {$farmerRange}  order by iu.no asc ) group by user_id,date"));
         
 
-            $query = "select  u.id,u.no,u.name,u.usecc,u.rate,u.usetc,u.userate,u.ts_amount,u.use_ts_amount,u.protsahan,u.use_protsahan,u.transport,u.use_transport,
+            $query = "select  u.*,
             (select sum(m_amount) + sum(e_amount) from milkdatas where user_id= u.id and date>={$range[1]} and date<={$range[2]}) as milk,
             (select avg(snf) from snffats where user_id= u.id and date>={$range[1]} and date<={$range[2]}) as snf,
             (select avg(fat) from snffats where user_id= u.id and date>={$range[1]} and date<={$range[2]}) as fat,
-            (select sum(amount) from advances where user_id= u.id and date>={$range[1]} and date<={$range[2]}) as advance,
-            (select sum(amount) from ledgers where user_id= u.id and date>={$range[1]} and date<={$range[2]} and identifire=121) as paidamount,
-            (select sum(amount) from ledgers where user_id= u.id and date>={$range[1]} and date<={$range[2]} and (identifire=106 or identifire=107)) as fpaid,
-            (select sum(amount) from ledgers where user_id= u.id and date>={$range[1]} and date<={$range[2]} and identifire=103) as purchase,
-            (select sum(amount) from ledgers where user_id= u.id and date<{$range[1]} and type=1) as prevcr,
-            (select sum(amount) from ledgers where user_id= u.id and date<{$range[1]} and type=2) as prevdr,
-            (select sum(amount) from ledgers where user_id= u.id and date>={$range[1]} and date<={$range[2]} and (identifire=101 or identifire=102) and type=1) as openingcr,
-            (select sum(amount) from ledgers where user_id= u.id and date>={$range[1]} and date<={$range[2]} and (identifire=101 or identifire=102) and type=2) as openingdr,
-            (select sum(amount) from ledgers where user_id= u.id and date>={$range[1]} and date<={$range[2]} and identifire=120 and type=1) as closingcr,
-            (select sum(amount) from ledgers where user_id= u.id and date>={$range[1]} and date<={$range[2]} and identifire=120  and type=2) as closingdr
-            from (select iu.name,iu.id,iu.no,f.usecc,f.rate,f.usetc,f.userate,f.ts_amount,f.use_ts_amount,f.protsahan,f.use_protsahan,f.transport,f.use_transport  from users iu join farmers f on iu.id=f.user_id where f.center_id={$center->id}  {$farmerRange}) u order by u.no asc";
+            ifnull((select sum(amount) from advances where user_id= u.id and date>={$range[1]} and date<={$range[2]}),0) as advance,
+            ifnull((select sum(amount) from ledgers where user_id= u.id and date>={$range[1]} and date<={$range[2]} and identifire=121),0) as paidamount,
+            ifnull((select sum(amount) from ledgers where user_id= u.id and date>={$range[1]} and date<={$range[2]} and identifire=408),0) as jinsipaid,
+            ifnull((select sum(amount) from ledgers where user_id= u.id and date>={$range[1]} and date<={$range[2]} and identifire=409),0) as jinsipurchase,
+            ifnull((select sum(amount) from ledgers where user_id= u.id and date>={$range[1]} and date<={$range[2]} and (identifire=106 or identifire=107)),0) as fpaid,
+            ifnull((select sum(amount) from ledgers where user_id= u.id and date>={$range[1]} and date<={$range[2]} and identifire=103),0) as purchase,
+            ifnull((select sum(amount) from ledgers where user_id= u.id and date<{$range[1]} and type=1),0) as prevcr,
+            ifnull((select sum(amount) from ledgers where user_id= u.id and date<{$range[1]} and type=2),0) as prevdr,
+            ifnull((select sum(amount) from ledgers where user_id= u.id and date>={$range[1]} and date<={$range[2]} and (identifire=101 or identifire=102) and type=1),0) as openingcr,
+            ifnull((select sum(amount) from ledgers where user_id= u.id and date>={$range[1]} and date<={$range[2]} and (identifire=101 or identifire=102) and type=2),0) as openingdr,
+            ifnull((select sum(amount) from ledgers where user_id= u.id and date>={$range[1]} and date<={$range[2]} and identifire=120 and type=1),0) as closingcr,
+            ifnull((select sum(amount) from ledgers where user_id= u.id and date>={$range[1]} and date<={$range[2]} and identifire=120  and type=2),0) as closingdr
+            from (select iu.name,iu.id,iu.no,f.usecc,f.rate,f.usetc,f.userate,f.ts_amount,f.use_ts_amount,f.protsahan,f.use_protsahan,f.transport,f.use_transport,f.use_custom_rate,f.snf_rate,f.fat_rate  from users iu join farmers f on iu.id=f.user_id where f.center_id={$center->id}  {$farmerRange}) u order by u.no asc";
             $reports = DB::table('farmer_reports')->where(['year' => $year, 'month' => $month, 'session' => $session])->get();
             // $milkdatas=DB::table('milkdatas')->select(DB::raw('sum(m_amount) as morning,sum(e_amount) as evening,user_id,date '))->groupBy('user_id','date')->whereIn('uesr_id',)->get();
 
@@ -67,8 +69,14 @@ class FarmerReportController extends Controller
                 // $farmer->milkdata=$milkdatas->where('user_id',$farmer->id)->groupBy('date');
                 $farmer->fat = truncate_decimals($farmer->fat);
                 $farmer->snf = truncate_decimals($farmer->snf);
-                $fatAmount = ($farmer->fat * $center->fat_rate);
-                $snfAmount = ($farmer->snf * $center->snf_rate);
+                if ($farmer->use_custom_rate) {
+                    $fatAmount = ($farmer->fat * $farmer->fat_rate);
+                    $snfAmount = ($farmer->snf * $farmer->snf_rate);
+                } else {
+
+                    $fatAmount = ($farmer->fat * $center->fat_rate);
+                    $snfAmount = ($farmer->snf * $center->snf_rate);
+                }
 
                 $report = $reports->where('user_id', $farmer->id)->first();
                 $hasRate = false;
@@ -146,6 +154,9 @@ class FarmerReportController extends Controller
 
                 $farmer->balance = 0;
                 $farmer->nettotal = 0;
+
+                $farmer->paidamount += $farmer->jinsipurchase;
+                $farmer->fpaid += $farmer->jinsipaid;
 
                 $farmer->sessiondata=$farmer->fpaid
                 + $farmer->prevbalance

@@ -16,6 +16,7 @@ use App\Models\Supplierpayment;
 use App\Models\User;
 use App\PaymentManager;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class LedgerController extends Controller
 {
@@ -168,9 +169,18 @@ class LedgerController extends Controller
         if($foreign!=null){
             $foreign->delete();
         }
+        if($another!=null){
+            $another->delete();
+        }
         $ledger->deletePayment();
         $ledger->delete();
 
         return response('ok');
+    }
+
+    public function balance(Request $request)
+    {
+        return response()->json(DB::selectOne('select (ifnull((select sum(amount) from ledgers where user_id=? and type=2),0)
+        - ifnull((select sum(amount) from ledgers where user_id=? and type=1),0) ) as balance  ', [$request->id,$request->id]));
     }
 }

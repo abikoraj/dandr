@@ -1,5 +1,4 @@
-
-<div class="row">
+<div class="row" id="xdaterange">
     <div class="col-md-3 ">
         <label for="type">
             {{isset($reporttitle)?$reporttitle:"Report Duration"}}
@@ -7,13 +6,13 @@
         <select name="type" id="type" onchange="manageDisplay(this)" class="form-control show-tick ms ">
             <option value="-1" >{{isset($alltext)?$alltext:'All'}}</option>
             <option value="0">Session</option>
-            <option value="1" >Daily</option>
+            <option value="1">Daily</option>
             <option value="2">Weekly</option>
             <option value="3" >Monthly</option>
-            <option value="4" >Yearly</option>
+            <option value="4">Yearly</option>
             <option value="5">Custom</option>
             @if (env('use_pos',false))
-                <option value="6" >Fiscal Year</option>
+                <option value="6">Fiscal Year</option>
             @endif
         </select>
 

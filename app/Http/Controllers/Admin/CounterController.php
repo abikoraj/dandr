@@ -71,17 +71,12 @@ class CounterController extends Controller
         $date = str_replace('-', '', $request->date);
 
         $setting = PosSetting::first();
-        $stock=Stock::where('date',$date)->first();
-        if($stock==null){
-            $stock=new Stock();
-            $stock->date=$date;
-        }
+       
         if ($setting == null) {
             $setting = new PosSetting();
             $setting->date = $date;
             $setting->direct = $request->direct ?? 0;
             $setting->open = 1;
-            $stock->open();
             $setting->save();
         } else {
             if ($setting->open) {
@@ -91,7 +86,6 @@ class CounterController extends Controller
                     return redirect()->back()->withErrors([$counters . ' Counters Are Not Closed.Please Close These Counters To Close Day.']);
                 } else {
                     $setting->open = 0;
-                    $stock->close();
 
                     $setting->save();
                 }
@@ -99,7 +93,6 @@ class CounterController extends Controller
                 $setting->date = $date;
                 $setting->direct = $request->direct ?? 0;
                 $setting->open = 1;
-                $stock->open();
                 $setting->save();
 
             }

@@ -43,9 +43,14 @@ class DayReportController extends Controller
 
                     $farmer->fat = truncate_decimals($snffat->fat);
                     $farmer->snf = truncate_decimals($snffat->snf);
-    
-                    $fatAmount = ($farmer->fat * $center->fat_rate);
-                    $snfAmount = ($farmer->snf * $center->snf_rate);
+                    if($farmer->use_custom_rate){
+                        $fatAmount = ($farmer->fat * $farmer->fat_rate);
+                        $snfAmount = ($farmer->snf * $farmer->snf_rate);
+                    }else{
+                        $fatAmount = ($farmer->fat * $center->fat_rate);
+                        $snfAmount = ($farmer->snf * $center->snf_rate);
+
+                    }
                 }else{
                     $farmer->fat = 0;
                     $farmer->snf = 0;

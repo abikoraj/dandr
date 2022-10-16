@@ -153,6 +153,9 @@
                 showNotification('bg-danger','{{$error}}');
             @endforeach
         @endif
+
+
+        
     </script>
     @yield('js')
     @yield('js1')

@@ -84,7 +84,7 @@ class FarmerController extends Controller
     {
         $farmers = User::join('farmers', 'farmers.user_id', '=', 'users.id')
         ->where('farmers.center_id', $request->center)->
-        select('users.id', 'users.name', 'users.phone', 'users.address', 'farmers.center_id', 'farmers.usecc', 'farmers.usetc', 'farmers.userate', 'farmers.rate', 'farmers.no','farmers.ts_amount','farmers.use_ts_amount','farmers.protsahan','farmers.use_protsahan','farmers.transport','farmers.use_transport')
+        select('users.id', 'users.name', 'users.phone', 'users.address', 'farmers.center_id', 'farmers.usecc', 'farmers.usetc', 'farmers.userate', 'farmers.rate', 'farmers.no','farmers.ts_amount','farmers.use_ts_amount','farmers.protsahan','farmers.use_protsahan','farmers.transport','farmers.use_transport','farmers.use_custom_rate','farmers.snf_rate','farmers.fat_rate')
         ->orderByRaw('abs(farmers.no) asc')->get();
         return view('admin.farmer.list', ['farmers' => $farmers]);
     }
@@ -228,7 +228,9 @@ class FarmerController extends Controller
         $range = NepaliDate::getDate($r->year, $r->month, $r->session);
         $data = $r->all();
         $farmer1 = User::where('id', $r->user_id)->first();
-        $center = Center::where('id', $farmer1->farmer()->center_id)->first();
+        $farmerData=$farmer1->farmer();
+    
+        $center = Center::where('id', $farmerData->center_id)->first();
 
         $farmer1->old = FarmerReport::where(['year' => $r->year, 'month' => $r->month, 'session' => $r->session, 'user_id' => $r->user_id])->count() > 0;
 
@@ -238,16 +240,21 @@ class FarmerController extends Controller
         $snfAvg = truncate_decimals($snfFats->avg('snf'), 2);
         $fatAvg = truncate_decimals($snfFats->avg('fat'), 2);
 
+        if($farmerData->use_custom_rate){
+            $fatAmount = ($fatAvg * $farmerData->fat_rate);
+            $snfAmount = ($snfAvg * $farmerData->snf_rate);
+        }else{
 
-        $fatAmount = ($fatAvg * $center->fat_rate);
-        $snfAmount = ($snfAvg * $center->snf_rate);
+            $fatAmount = ($fatAvg * $center->fat_rate);
+            $snfAmount = ($snfAvg * $center->snf_rate);
+        }
 
         $farmer1->snfavg = $snfAvg;
         $farmer1->fatavg = $fatAvg;
 
-        if ($farmer1->farmer()->userate == 1) {
+        if ($farmerData->userate == 1) {
 
-            $farmer1->milkrate = $farmer1->farmer()->rate;
+            $farmer1->milkrate = $farmerData->rate;
         } else {
 
             $farmer1->milkrate = truncate_decimals($fatAmount + $snfAmount);
@@ -259,10 +266,10 @@ class FarmerController extends Controller
         $farmer1->cc = 0;
 
 
-        if ($farmer1->farmer()->usetc == 1 && $farmer1->total > 0) {
+        if ($farmerData->usetc == 1 && $farmer1->total > 0) {
             $farmer1->tc = truncate_decimals((($center->tc * ($snfAvg + $fatAvg) / 100) * $farmer1->milkamount), 2);
         }
-        if ($farmer1->farmer()->usecc == 1 && $farmer1->total > 0) {
+        if ($farmerData->usecc == 1 && $farmer1->total > 0) {
             $farmer1->cc = truncate_decimals($center->cc * $farmer1->milkamount, 2);
         }
 
@@ -381,6 +388,9 @@ class FarmerController extends Controller
         $farmer->protsahan = $request->protsahan??0;
         $farmer->use_transport = $request->use_transport??0;
         $farmer->transport = $request->transport??0;
+        $farmer->use_custom_rate = $request->use_custom_rate??0;
+        $farmer->snf_rate = $request->snf_rate;
+        $farmer->fat_rate = $request->fat_rate;
         $farmer->no = $max;
         $farmer->save();
 
@@ -396,6 +406,10 @@ class FarmerController extends Controller
         $user->protsahan = $farmer->protsahan;
         $user->use_transport = $farmer->use_transport;
         $user->transport = $farmer->transport;
+        $user->use_custom_rate = $farmer->use_custom_rate;
+        $user->snf_rate = $farmer->snf_rate;
+        $user->fat_rate = $farmer->fat_rate;
+
         return view('admin.farmer.single', compact('user'));
     }
 
@@ -423,6 +437,9 @@ class FarmerController extends Controller
         $farmer->protsahan = $request->protsahan??0;
         $farmer->use_transport = $request->use_transport??0;
         $farmer->transport = $request->transport??0;
+        $farmer->use_custom_rate = $request->use_custom_rate??0;
+        $farmer->snf_rate = $request->snf_rate;
+        $farmer->fat_rate = $request->fat_rate;
         $farmer->save();
 
         $user->usecc = $farmer->usecc;
@@ -436,6 +453,9 @@ class FarmerController extends Controller
         $user->protsahan = $farmer->protsahan;
         $user->use_transport = $farmer->use_transport;
         $user->transport = $farmer->transport;
+        $user->use_custom_rate = $farmer->use_custom_rate;
+        $user->snf_rate = $farmer->snf_rate;
+        $user->fat_rate = $farmer->fat_rate;
         return view('admin.farmer.single', compact('user'));
     }
 

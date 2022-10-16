@@ -118,6 +118,19 @@
                                                 <input type="number" step="0.01" min="0" value="0" id="transport" name="transport">
                                             </div>
                                         @endif
+                                        <div class="col-12">
+                                            <hr>
+                                        </div>
+                                        <div class="col-6">
+                                            <input type="checkbox" id="use_custom_rate"  name="use_custom_rate" class="mr-2" value="1" onchange="switchRequired(this,'.custom_rate')"> <label for="use_custom_rate"> Use Custom Rate</label>
+                                        </div>
+                                        <div class="col-12">
+                                            <div class="row">
+                                                <div class="col-6"><label for="snf_rate">SNF Rate</label><input type="number" name="snf_rate" id="snf_rate" placeholder="SNF Rate"  step=".01" class="form-control custom_rate"></div>
+                                                <div class="col-6"><label for="fat_rate">FAT Rate</label><input type="number" name="fat_rate" id="fat_rate" placeholder="FAT Rate" step=".01"  class="form-control custom_rate"></div>
+                                            </div>
+                                        </div>
+
                                     </div>
                                 </div>
                             </div>

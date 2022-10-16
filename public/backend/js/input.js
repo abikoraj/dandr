@@ -57,22 +57,26 @@ $(".load-session").each(function () {
 //XXX load nepali calenders
 $(".calender").each(function () {
     cc_id=$(this).attr("id");
-    $("#" + cc_id).nepaliDatePicker();
+    const currentDate= NepaliFunctions.GetCurrentBsYear() +
+    "-" +
+    (month < 10 ? "0" + month : month) +
+    "-" +
+    (day < 10 ? "0" + day : day);
+    if(this.value=="" || this.value==undefined){
+
+        $(this).val(
+           currentDate
+        );
+    }
+
+    $("#" + cc_id).nepaliDatePicker({
+        disableAfter: currentDate
+    });
     $("#" + cc_id).mask('0000-00-00');
     $(this).attr("placeholder",'YYYY-MM-DD');
     $(this).focus(function(){
         this.select();
     })
-    if(this.value=="" || this.value==undefined){
-
-        $(this).val(
-            NepaliFunctions.GetCurrentBsYear() +
-                "-" +
-                (month < 10 ? "0" + month : month) +
-                "-" +
-                (day < 10 ? "0" + day : day)
-        );
-    }
 });
 
 function loadDates(selector){

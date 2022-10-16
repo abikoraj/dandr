@@ -131,6 +131,11 @@ $_extratotal = 0;
                 @endif
                 <th>Purchase</th>
                 <th>Purchase <br>  Paid</th>
+                @if ($jinsiMilan)
+                   <th>
+                    Jinsi<br>Milan
+                    </th> 
+                @endif
                 <th>Advance</th>
                 <th>Prev <br>  Balance</th>
                 <th>Prev <br>  Due</th>
@@ -258,6 +263,12 @@ $_extratotal = 0;
                         @endphp
                     </td>
 
+                    @if ($jinsiMilan)
+                        <td>
+
+                            {{$farmer->jinsiMilan}}
+                        </td>
+                    @endif
                     <td>
                         {{ $farmer->advance }}
                         {{-- <input type="hidden" name="advance[{{$t}}]" value="{{($farmer->advance)}}" > --}}
