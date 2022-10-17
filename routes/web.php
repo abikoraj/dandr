@@ -151,6 +151,7 @@ Route::name('admin.')->group(function () {
             Route::match(["GET", "POST"], 'on-off', [FarmerController::class, 'switch'])->name('switch')->middleware('permmission:01.01');
             Route::match(["GET", "POST"], 'printSlip', [FarmerController::class, 'printSlip'])->name('printSlip')->middleware('permmission:01.01');
             Route::match(["GET", "POST"], 'switchSave', [FarmerController::class, 'switchSave'])->name('switchSave')->middleware('permmission:01.01');
+            Route::match(["GET", "POST"], 'changePassword', [FarmerController::class, 'changePassword'])->name('changePassword')->middleware('permmission:01.01');
             Route::post('list-by-center', [FarmerController::class, 'listFarmerByCenter'])->name('list-bycenter');
             Route::post('minlist-by-center', [FarmerController::class, 'minlistFarmerByCenter'])->name('minlist-bycenter');
 
@@ -236,7 +237,9 @@ Route::name('admin.')->group(function () {
             Route::post('add', [DistributerController::class, 'add'])->name('add')->middleware('permmission:04.02');
             Route::get('list', [DistributerController::class, 'list'])->name('list');
             Route::post('update', [DistributerController::class, 'update'])->name('update')->middleware('permmission:04.03');
-            Route::match(['GET','POST'],'changePassword/{user}', [DistributerController::class, 'changePassword'])->name('changePassword')->middleware('permmission:04.03');
+
+            Route::match(['GET','POST'],'changePassword', [DistributerController::class, 'changePassword'])->name('changePassword')->middleware('permmission:04.03');
+
             Route::post('delete', [DistributerController::class, 'delete'])->name('delete')->middleware('permmission:04.04');
             Route::middleware('permmission:04.04')->group(function () {
 

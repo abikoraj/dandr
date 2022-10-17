@@ -245,7 +245,8 @@ class ReportController extends Controller
                 $farmer->nettotal = 0;
 
 
-                $farmer->paidamount += $farmer->jinsipurchase;
+                
+                $farmer->paidamount += $farmer-> jinsipurchase;
                 $farmer->fpaid += $farmer->jinsipaid;
 
 

@@ -294,9 +294,10 @@ class FarmerDetailController extends Controller
         $farmer->paidamount = (float)Ledger::where('user_id', $farmer->id)->where('date', '>=', $range[1])->where('date', '<=', $range[2])->where('identifire', '121')->sum('amount');
 
 
-        $farmer->jinsipurchase=(float)Ledger::where('user_id', $farmer->id)->where('date', '>=', $range[1])->where('date', '<=', $range[2])->where('identifire', '408')->sum('amount');
-        $farmer->jinsipaid=(float)Ledger::where('user_id', $farmer->id)->where('date', '>=', $range[1])->where('date', '<=', $range[2])->where('identifire', '409')->sum('amount');
-        $farmer->paidamount += $farmer->jinsipurchase;
+        $farmer->jinsipaid=(float)Ledger::where('user_id', $farmer->id)->where('date', '>=', $range[1])->where('date', '<=', $range[2])->where('identifire', '408')->sum('amount');
+        $farmer->jinsipurchase=(float)Ledger::where('user_id', $farmer->id)->where('date', '>=', $range[1])->where('date', '<=', $range[2])->where('identifire', '409')->sum('amount');
+       
+        $farmer->paidamount += $farmer-> jinsipurchase;
         $farmer->fpaid += $farmer->jinsipaid;
 
         $balance = $farmer->grandtotal - $farmer->prevdue - $farmer->advance - $farmer->purchase - $farmer->paidamount + $farmer->prevbalance - $farmer->bonus + $farmer->fpaid;
@@ -563,7 +564,8 @@ class FarmerDetailController extends Controller
                 $farmer->balance = 0;
                 $farmer->nettotal = 0;
 
-                $farmer->paidamount += $farmer->jinsipurchase;
+               
+                $farmer->paidamount += $farmer-> jinsipurchase;
                 $farmer->fpaid += $farmer->jinsipaid;
 
                 $balance = $farmer->grandtotal

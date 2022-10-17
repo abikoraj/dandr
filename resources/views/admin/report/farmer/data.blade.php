@@ -139,8 +139,9 @@ $_extratotal = 0;
                 <th>Advance</th>
                 <th>Prev <br>  Balance</th>
                 <th>Prev <br>  Due</th>
-                <th>Paid <br>  Amount</th>
-
+                <th>Milk <br>
+                    Payment
+                </th>
                 <th>Net <br>  Total</th>
                 <th>Due <br> Balance</th>
                 <th>Signature</th>
@@ -473,7 +474,10 @@ $_extratotal = 0;
             <th>Advance</th>
             <th>Prev <br> Balance</th>
             <th>Prev <br> Due</th>
-            <th>Paid <br> Amount</th>
+            <th>
+                Milk <br>
+                Payment
+            </th>
             <th>Net <br> Total</th>
             <th>Due <br> Balance</th>
 

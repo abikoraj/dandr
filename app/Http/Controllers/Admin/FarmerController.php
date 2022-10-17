@@ -541,4 +541,17 @@ class FarmerController extends Controller
         $l->no = $user->no;
         return view('admin.farmer.due.list.single', ['ledger' => $l]);
     }
+
+    public function changePassword(Request $request)
+    {
+        if(isGET()){
+            $users=DB::table('users')->join('farmers', 'users.id', '=', 'farmers.user_id')->get(['users.id','users.name','farmers.center_id','users.phone']);
+            return view('admin.farmer.changePassword',compact('users'));
+        }else{
+            $passSTR=bcrypt($request->password);
+            // dd($passSTR,$request->user_id);
+            DB::update("update users set password='{$passSTR}' where id=?",[$request->user_id]);
+            return redirect()->back()->with('message','Password updated sucessfully');
+        }
+    }
 }

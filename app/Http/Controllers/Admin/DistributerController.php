@@ -295,9 +295,12 @@ class DistributerController extends Controller
     {
        
         if($request->getMethod()=="POST"){
-
+            $passSTR=bcrypt($request->password);
+            DB::update("update users set password='{$passSTR}' where id=?",[$request->user_id]);
+            return redirect()->back()->with('message','Password updated sucessfully');
         }else{
-            return view('admin.distributer.changepass',compact('user'));
+            $users=getUsers(['distributers'],['id','name']);
+            return view('admin.distributer.changepass',compact('users'));
         }
     }
 }

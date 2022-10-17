@@ -47,6 +47,7 @@ class User extends Authenticatable
     ];
 
 
+
     public function permissions(){
         return DB::table('user_permissions')->where('user_id',$this->id)->get(['id','code','enable']);
     }
@@ -55,6 +56,8 @@ class User extends Authenticatable
      * role=11;FloorManager
      * role=12;Pos User
      */
+
+
     public function getRole(){
         if($this->role == 0 || $this->role==4){
             return 'admin';
@@ -69,6 +72,10 @@ class User extends Authenticatable
         }
     }
 
+
+    // public function hasRole($role){
+    //     return 
+    // }
     public function employee(){
         return Employee::where('user_id',$this->id)->first();
     }

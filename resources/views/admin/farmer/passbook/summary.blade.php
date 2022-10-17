@@ -70,7 +70,8 @@
                     Prev <br> Due
                 </th>
                 <th>
-                    Paid
+                    Milk <br>
+                    Payment
                 </th>
                 <th>Net <br> Total</th>
                 <th>Due <br> Balance</th>

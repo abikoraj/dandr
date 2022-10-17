@@ -28,6 +28,7 @@
                 <li><a href="javascript:void(0);" class="waves-effect waves-block menu-toggle"><i class="zmdi zmdi-apps"></i><span>Farmer</span></a>
                     <ul class="ml-menu">
                         <li><a href="{{ route('admin.farmer.list') }}" class="waves-effect waves-block">Farmer List</a></li>
+                        <li><a href="{{ route('admin.farmer.changePassword') }}" class="waves-effect waves-block">Change Password</a></li>
                         <li><a href="{{ route('admin.farmer.advance') }}" class="waves-effect waves-block">Advance</a></li>
                         <li><a href="{{ route('admin.farmer.due') }}" class="waves-effect waves-block">Payment From Farmer</a></li>
                         <li><a href="{{ route('admin.farmer.due.add.list') }}" class="waves-effect waves-block">Account Opening</a></li>
@@ -84,6 +85,7 @@
             <li><a href="javascript:void(0);" class="waves-effect waves-block menu-toggle"><i class="zmdi zmdi-shopping-cart"></i><span>Distributers</span></a>
                 <ul class="ml-menu">
                     <li><a href="{{ route('admin.distributer.index') }}" class="waves-effect waves-block">Distributer List</a></li>
+                    <li><a href="{{ route('admin.distributer.changePassword') }}" class="waves-effect waves-block">Change Password</a></li>
                     <li><a href="{{ route('admin.distributer.sell') }}" class="waves-effect waves-block">Distributer Sell</a></li>
                     <li><a href="{{ route('admin.distributer.payemnt') }}" class="waves-effect waves-block">Payment Receive</a></li>
                     <li><a href="{{ route('admin.distributer.detail.opening') }}" class="waves-effect waves-block">Account Opening</a></li>
