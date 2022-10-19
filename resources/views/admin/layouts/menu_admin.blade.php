@@ -224,19 +224,21 @@
             <li><a href="{{route('admin.report.home')}}" class="waves-effect waves-block"><i class="zmdi zmdi-shopping-cart"></i><span>Reports</span></a></li>
 
             @endif
+
             @if (env('use_accounting',false))
 
             <li><a href="{{route('admin.accounting.index')}}" class="waves-effect waves-block"><i class="zmdi zmdi-shopping-cart"></i><span>Accounting</span></a></li>
             @endif
-            <li><a href="{{route('admin.jinsimilan.index')}}" class="waves-effect waves-block"><i class="zmdi zmdi-shopping-cart"></i><span>Jinsi Milan</span></a></li>
+
+            @if (env('use_jinsi',false))
+                <li><a href="{{route('admin.jinsimilan.index')}}" class="waves-effect waves-block"><i class="zmdi zmdi-shopping-cart"></i><span>Jinsi Milan</span></a></li>
+            @endif
+
             <li><a href="{{route('admin.user.users')}}" class="waves-effect waves-block"><i class="zmdi zmdi-shopping-cart"></i><span>Users</span></a></li>
             <li><a href="{{route('admin.backup.index')}}" class="waves-effect waves-block"><i class="zmdi zmdi-shopping-cart"></i><span>Backup</span></a></li>
 
+
             {{--
-
-
-
-
             <li><a href="{{route('product.home')}}" class="waves-effect waves-block"><i class="zmdi zmdi-shopping-cart"></i><span>Products</span></a></li>
             @endif
 
