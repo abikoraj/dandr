@@ -96,13 +96,13 @@ class Menu
                 'children' => [
                     ["Employees Chalan", '15.01', route('admin.chalan.index')],
                     ["Chalan Dues", '05.11', route('admin.employee.chalan.due.index')],
-                  
+
                 ],
             ],
 
             "expese" => [
                 'condition'=>env('use_expense',false),
-                
+
                 'code' => '06',
                 'link' => null,
                 'icon' => 'apps',
@@ -115,7 +115,7 @@ class Menu
 
             "supplier" => [
                 'condition'=>env('use_supplier',false),
-                
+
                 'code' => '07',
                 'link' => null,
                 'icon' => 'apps',
@@ -155,7 +155,7 @@ class Menu
             ],
             "Restaurant"=>[
                 'condition'=>env('use_restaurant',false),
-                
+
                 'code' => '14',
                 'link' => null,
                 'icon' => 'apps',
@@ -163,7 +163,7 @@ class Menu
                 'children' => [
                     ["Manage Tables", '14.01', route('admin.table.index')],
                     ["Table Orders", '14.02', route('restaurant.table')],
-                ],  
+                ],
             ],
             "old_pos"=>[
                 'condition'=>env('use_oldpos',false),
@@ -174,7 +174,7 @@ class Menu
                 'children' => [
                     ["Interface", '15.01', route('admin.billing.home')],
                     ["Search Bill", '15.02', route('admin.billing.list')],
-                ],  
+                ],
             ],
             "pos" => [
                 'condition'=>env('use_pos',false),
@@ -224,13 +224,37 @@ class Menu
 
             "Reports" => [
                 'condition'=>env('use_reports',false),
-                
+
                 'code' => '12',
                 'link' => null,
                 'icon' => 'apps',
                 'text' => "Reports",
                 'children' => [
                     ["Reports", '12.01', route('admin.report.home')],
+                ],
+            ],
+
+            "Jinsi Milan" => [
+                'condition'=>env('use_jinsi',false),
+
+                'code' => '13',
+                'link' => null,
+                'icon' => 'apps',
+                'text' => "Jinsi Milan",
+                'children' => [
+                    ["Jinsi Milan", '13.01', route('admin.jinsimilan.index')],
+                ],
+            ],
+
+            "Accounting" => [
+                'condition'=>env('use_accounting',false),
+
+                'code' => '14',
+                'link' => null,
+                'icon' => 'apps',
+                'text' => "Accounting",
+                'children' => [
+                    ["Accounting", '14.01', route('admin.accounting.index')],
                 ],
             ],
 
