@@ -220,5 +220,21 @@ return [
             'edit' => ['use' => [], 'code' => '15.08'],
             'delete' => ['use' => [], 'code' => '15.09'],
         ]
-    ]
+    ],
+
+    "Jinsi Milan" => [
+        'use' => ['use_jinsi'],
+        'code' => '16',
+        'children' => [
+            'Jinsi Milan' => ['use' => [], 'code' => '16.01'],
+        ]
+    ],
+
+    "Accounting" => [
+        'use' => ['use_accounting'],
+        'code' => '17',
+        'children' => [
+            'Accounting' => ['use' => [], 'code' => '17.01'],
+        ]
+    ],
 ];

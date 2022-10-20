@@ -34,9 +34,9 @@ class FarmerController extends Controller
 
     public function switch(Request $request){
         if($request->getMethod()=="POST"){
-            $farmers=DB::select('select 
+            $farmers=DB::select('select
             users.name,users.no,farmers.enabled ,farmers.id
-            from users join farmers on users.id=farmers.user_id 
+            from users join farmers on users.id=farmers.user_id
             where farmers.center_id=?',[$request->center_id]);
             return view('admin.farmer.switch.data',compact('farmers'));
         }else{
@@ -53,9 +53,9 @@ class FarmerController extends Controller
     public function printSlip(Request $request)
     {
         if($request->getMethod()=="POST"){
-            $farmers=DB::select('select 
+            $farmers=DB::select('select
             users.name,users.no
-            from users join farmers on users.id=farmers.user_id 
+            from users join farmers on users.id=farmers.user_id
             where farmers.center_id=? and farmers.enabled =1',[$request->center_id]);
             $view="admin.farmer.slip.all";
             $title="Milk Collection and Fat Snf for ";
@@ -63,7 +63,7 @@ class FarmerController extends Controller
             if($request->type==1){
                 $title="Milk Collection for ";
                 $view="admin.farmer.slip.milk";
-                
+
             }else if($request->type==2){
                 $title="Fat Snf For ";
                 $view="admin.farmer.slip.fatsnf";
@@ -229,7 +229,7 @@ class FarmerController extends Controller
         $data = $r->all();
         $farmer1 = User::where('id', $r->user_id)->first();
         $farmerData=$farmer1->farmer();
-    
+
         $center = Center::where('id', $farmerData->center_id)->first();
 
         $farmer1->old = FarmerReport::where(['year' => $r->year, 'month' => $r->month, 'session' => $r->session, 'user_id' => $r->user_id])->count() > 0;
@@ -553,5 +553,20 @@ class FarmerController extends Controller
             DB::update("update users set password='{$passSTR}' where id=?",[$request->user_id]);
             return redirect()->back()->with('message','Password updated sucessfully');
         }
+    }
+
+    // XXX transfer to
+
+    public function transportTo(){
+        $distributers = DB::table('distributers')->join('users','users.id','=','distributers.user_id')->select('distributers.user_id','users.name')->get();
+        $farmers = DB::table('farmers')->join('users','users.id','=','farmers.user_id')->select('farmers.user_id','users.name')->get();
+        return view('admin.farmer.transferTo.index',compact('distributers','farmers'));
+    }
+
+    public function transportToAdd(Request $request){
+        $farmer = Farmer::where('user_id',$request->farmer)->first();
+        $farmer->transfer_to = $request->distributor;
+        $farmer->save();
+        return redirect()->back()->with('success','Transfer successfully!');
     }
 }
