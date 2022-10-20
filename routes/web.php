@@ -61,6 +61,7 @@ use App\Http\Controllers\MilkReportController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\POS\BillingController;
 use App\Http\Controllers\POS\POSController;
+use App\Http\Controllers\ReconciliationController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\RestaurantController;
 use App\Http\Controllers\RestaurantReportController;
@@ -638,6 +639,13 @@ Route::name('admin.')->group(function () {
             Route::match(['GET','POST'],'del',[JinsiMilanController::class,'del'])->name('del');
             Route::match(['GET','POST'],'edit/{id}',[JinsiMilanController::class,'edit'])->name('edit');
         });
+
+
+        Route::prefix('reconciliation')->name('reconciliation.')->group(function () {
+            Route::match(['GET','POST'],'',[ReconciliationController::class,'index'])->name('index');
+            Route::match(['GET','POST'],'/add',[ReconciliationController::class,'add'])->name('add');
+        });
+
 
         Route::get('xpay/{id}/{identifire}', [PaymentController::class, 'index'])->name('xpay');
 

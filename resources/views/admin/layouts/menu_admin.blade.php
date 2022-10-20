@@ -235,6 +235,9 @@
                 <li><a href="{{route('admin.jinsimilan.index')}}" class="waves-effect waves-block"><i class="zmdi zmdi-shopping-cart"></i><span>Jinsi Milan</span></a></li>
             @endif
 
+            <li><a href="{{ route('admin.reconciliation.index') }}" class="waves-effect waves-block"><i class="zmdi zmdi-shopping-cart"></i><span>Reconciliation</span></a></li>
+
+
             <li><a href="{{route('admin.user.users')}}" class="waves-effect waves-block"><i class="zmdi zmdi-shopping-cart"></i><span>Users</span></a></li>
             <li><a href="{{route('admin.backup.index')}}" class="waves-effect waves-block"><i class="zmdi zmdi-shopping-cart"></i><span>Backup</span></a></li>
 

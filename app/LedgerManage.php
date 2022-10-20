@@ -75,6 +75,8 @@ class LedgerManage
     * "409" = "jinsin saman to"
     * "135" = "customer Payment extra"
     * "134" = "customer opening Balance"
+    * "411" = "Reconcilation Statement cr"
+    * "412" = "Reconcilation Statement Dr"
 
     **Expense Section
     * "201" = "index"
