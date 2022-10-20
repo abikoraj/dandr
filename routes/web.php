@@ -155,6 +155,10 @@ Route::name('admin.')->group(function () {
             Route::post('list-by-center', [FarmerController::class, 'listFarmerByCenter'])->name('list-bycenter');
             Route::post('minlist-by-center', [FarmerController::class, 'minlistFarmerByCenter'])->name('minlist-bycenter');
 
+            // XXX farmer transport to
+            Route::get('transport-to', [FarmerController::class, 'transportTo'])->name('transportto');
+            Route::post('transport-to', [FarmerController::class, 'transportToAdd'])->name('transporttoadd');
+
 
             Route::get('detail/{id}', [FarmerController::class, 'farmerDetail'])->name('detail');
             Route::post('update', [FarmerController::class, 'updateFarmer'])->name('update')->middleware('permmission:01.03');

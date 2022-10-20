@@ -37,6 +37,8 @@
                         <li><a href="{{ route('admin.farmer.passbook.index') }}" class="waves-effect waves-block">Check Passbook</a></li>
                         <li><a href="{{ route('admin.farmer.switch') }}" class="waves-effect waves-block">Enable Disable</a></li>
                         <li><a href="{{ route('admin.farmer.printSlip') }}" class="waves-effect waves-block">Print Slip</a></li>
+                        <li><a href="{{ route('admin.farmer.transportto')}}" class="waves-effect waves-block">Transport To</a></li>
+
                     </ul>
                 </li>
             @endif
@@ -226,8 +228,7 @@
             @endif
 
             @if (env('use_accounting',false))
-
-            <li><a href="{{route('admin.accounting.index')}}" class="waves-effect waves-block"><i class="zmdi zmdi-shopping-cart"></i><span>Accounting</span></a></li>
+              <li><a href="{{route('admin.accounting.index')}}" class="waves-effect waves-block"><i class="zmdi zmdi-shopping-cart"></i><span>Accounting</span></a></li>
             @endif
 
             @if (env('use_jinsi',false))

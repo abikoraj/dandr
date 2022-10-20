@@ -237,24 +237,24 @@ class Menu
             "Jinsi Milan" => [
                 'condition'=>env('use_jinsi',false),
 
-                'code' => '13',
+                'code' => '16',
                 'link' => null,
                 'icon' => 'apps',
                 'text' => "Jinsi Milan",
                 'children' => [
-                    ["Jinsi Milan", '13.01', route('admin.jinsimilan.index')],
+                    ["Jinsi Milan", '16.01', route('admin.jinsimilan.index')],
                 ],
             ],
 
             "Accounting" => [
                 'condition'=>env('use_accounting',false),
 
-                'code' => '14',
+                'code' => '17',
                 'link' => null,
                 'icon' => 'apps',
                 'text' => "Accounting",
                 'children' => [
-                    ["Accounting", '14.01', route('admin.accounting.index')],
+                    ["Accounting", '17.01', route('admin.accounting.index')],
                 ],
             ],
 
