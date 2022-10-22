@@ -644,6 +644,9 @@ Route::name('admin.')->group(function () {
         Route::prefix('reconciliation')->name('reconciliation.')->group(function () {
             Route::match(['GET','POST'],'',[ReconciliationController::class,'index'])->name('index');
             Route::match(['GET','POST'],'/add',[ReconciliationController::class,'add'])->name('add');
+            Route::match(['GET','POST'],'/list',[ReconciliationController::class,'list'])->name('list');
+            Route::match(['GET','POST'],'/delete',[ReconciliationController::class,'delete'])->name('delete');
+
         });
 
 

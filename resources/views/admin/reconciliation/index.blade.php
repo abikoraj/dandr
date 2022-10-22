@@ -3,7 +3,7 @@
     <link rel="stylesheet" href="{{ asset('backend/plugins/select2/select2.css') }}">
 @endsection
 @section('title')
-    Reconciliation
+  Reconciliation
 @endsection
 @section('head-title')
   Reconciliation
@@ -47,6 +47,23 @@
 
         </div>
     </form>
+
+    <hr>
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>Date</th>
+                <th>Name</th>
+                <th>Amount</th>
+                <th>Type</th>
+            </tr>
+        </thead>
+
+        <tbody id="reconciliationData">
+
+        </tbody>
+
+    </table>
 @endsection
 @section('js')
     <script src="{{ asset('backend/plugins/select2/select2.min.js') }}"></script>
@@ -97,8 +114,6 @@
                 }
             }
             $('#from_user_id').val(null).change();
-            $('#to_user_id').val(null).change();
-            $('#to_user_id_amount').html('');
             $('#from_user_id_amount').html('');
             $('#amount').val(null);
             $('#detail').val(null);
@@ -120,5 +135,35 @@
                     errAlert(err);
                 });
         }
+
+        window.onload = function(e){
+
+            axios.get('{{route('admin.reconciliation.list')}}')
+            .then((res) => {
+                    $('#reconciliationData').html(res.data);
+                })
+                .catch(err => {
+                    errAlert(err);
+                });
+        }
+
+        function deleteData(ele){
+            if(confirm('Are you sure?')){
+            axios.post('{{route('admin.reconciliation.delete')}}',{id:ele})
+            .then((res) => {
+                $('#recon-'+ele).remove();
+                successAlert('Reconciliation Deleted Sucessfully');
+                })
+                .catch(err => {
+                    errAlert(err);
+                });
+
+            }
+        }
+
+
+
+
+
     </script>
 @endsection

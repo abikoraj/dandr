@@ -1,7 +1,9 @@
 <hr>
 <div id="print" class="p-2">
     <div class="p-3">
+        <h3 class="text-center">{{ env('APP_NAME') }}</h3>
         <div style="font-weight: 800" class="d-flex justify-content-start">
+
             <span class="mr-4">
                 Farmer No : {{ $farmer->no }}
             </span>
@@ -118,8 +120,8 @@
                     <table class="table table-bordered table-striped table-hover js-basic-example dataTable">
                         <tr>
                             <th>Date</th>
-                            <th>Snf (%)</th>
                             <th>Fats (%)</th>
+                            <th>Snf (%)</th>
                             <td class="d-print-none">
 
                             </td>
@@ -127,8 +129,8 @@
                         @foreach ($farmer->snfFats as $sf)
                             <tr>
                                 <td>{{ _nepalidate($sf->date) }}</td>
-                                <td>{{ $sf->snf }}</td>
                                 <td>{{ $sf->fat }}</td>
+                                <td>{{ $sf->snf }}</td>
                                 <td class="d-print-none">
 
                                     @if (auth_has_per('02.05'))
@@ -191,7 +193,7 @@
                                 <tr>
                                     <th class="text-right">
 
-                                        +TS Commission (Rs.{{ (float) $farmer->ts_amount }} / Liter) 
+                                        +TS Commission (Rs.{{ (float) $farmer->ts_amount }} / Liter)
                                     </th>
                                     <th>
                                         Rs. {{ $farmer->tc }}
@@ -202,7 +204,7 @@
                                 <tr>
                                     <th class="text-right">
 
-                                        +TS Commission ({{ (float) $center->tc }}%) 
+                                        +TS Commission ({{ (float) $center->tc }}%)
                                     </th>
                                     <th>
                                         {{ $farmer->tc }}
@@ -214,7 +216,7 @@
                             <tr>
                                 <th class="text-right">
 
-                                    +Cooling Cost(Rs. {{ (float) $center->cc }}/Liter) 
+                                    +Cooling Cost(Rs. {{ (float) $center->cc }}/Liter)
                                 </th>
                                 <th>
                                     Rs. {{ $farmer->cc }}
@@ -258,13 +260,13 @@
                             @if ($farmer->tc > 0 )
                                 @if ($farmer->use_ts_amount)
                                     <strong>+TS Commission (Rs.{{ (float) $farmer->ts_amount }} / Liter) :
-                                    {{ $farmer->tc }}</strong> 
+                                    {{ $farmer->tc }}</strong>
                                 @else
                                     <strong>+TS Commission ({{ (float) $center->tc }}%) : {{ $farmer->tc }}</strong>
                                 @endif
                                 <br>
                             @endif
-                         
+
                             @if ($farmer->cc > 0)
                                 <strong>+Cooling Cost: {{ $farmer->cc }}</strong> <br>
                             @endif

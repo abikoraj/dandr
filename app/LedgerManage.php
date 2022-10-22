@@ -75,8 +75,7 @@ class LedgerManage
     * "409" = "jinsin saman to"
     * "135" = "customer Payment extra"
     * "134" = "customer opening Balance"
-    * "411" = "Reconcilation Statement cr"
-    * "412" = "Reconcilation Statement Dr"
+
 
     **Expense Section
     * "201" = "index"
@@ -97,6 +96,9 @@ class LedgerManage
     * "503" = "Costumer Payment Received"
     * "504" = "Item Buy"
     * "505" = "Payment Made"
+
+    ** Reconciliation statement
+    * "701" = "Reconciliation statement"
 
 
     */

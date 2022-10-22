@@ -44,7 +44,7 @@
 
             <div class="col-lg-3">
                 <label for="amount">Advance Amount</label>
-                <input type="number" id="amount" min="0" name="amount" class="form-control next xpay_handle" data-next="save" placeholder="Enter advance amount" value="0" required>
+                <input type="number" id="amount" min="0" oninput="this.value = Math.abs(this.value)" name="amount" class="form-control next xpay_handle" data-next="save" placeholder="Enter advance amount" value="0" required>
             </div>
             <div class="col-lg-2">
                 <input type="submit" id="save" class="btn btn-raised btn-primary waves-effect btn-block" value="Add" style="margin-top:30px;">
